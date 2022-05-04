@@ -12,7 +12,7 @@ John's Project Forecaster
    - available capacity per person (max availability specified in teams.csv, based on BAU workload),
    - specified holiday periods
 
-## User install
+## Installing Binary from Debian/Ubuntu Package
 
 ```
 sudo apt update
@@ -39,7 +39,7 @@ Upgrade: `sudo apt install --only-upgrade jpf`
 
 
 
-## Running
+## Running jps
 
 ### Manually
 
@@ -69,7 +69,7 @@ https://www.ganttproject.biz/
 
 
 
-## Development Setup
+## Development Setup (Compiling jpf from source)
 
 On either Ubuntu 20.04 or WSL2 under Windows:
 ```
@@ -89,7 +89,7 @@ Notes:
 - It is possbile on Ubuntu 18.04 if G++-9 is installed and configured as here: https://linuxconfig.org/how-to-switch-between-multiple-gcc-and-g-compiler-versions-on-ubuntu-20-04-lts-focal-fossa 
 - Ruby 3 doesn't work with package_cloud :( 
 
-## Make and upload debian package
+## Make the debian package
 ```
 make deb
 ```
