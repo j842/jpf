@@ -156,7 +156,7 @@ void backlog::displaybacklog(std::ostream & ofs) const
             ofs << s << std::endl;
             prevproj=z.mProject;
         }
-        ofs << std::setw(5) << z.mId << " ";
+        ofs << std::setw(7) << z.mId << " ";
         
         ofs << std::setw(12) << mTeams.at(z.mTeamNdx).mId << "  ";
         ofs << z.mActualStart.getStr_short() << " -> " << z.mActualEnd.getStr_short();

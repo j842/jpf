@@ -210,7 +210,7 @@ std::string quoted(std::string s)
 
 void backlog::schedule()
 {
-    std::cout << "Scheduling "<<mItems.size()<<" backlog items..."<<std::endl;
+    std::cout << "Scheduling backlog items..."<<std::endl;
 
     timer t;
 
