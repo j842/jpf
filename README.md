@@ -6,7 +6,7 @@ John's Project Forecaster
 - Does nothing for historical work or review.
 - Constraints are:
    - resources (people), and can have multiple on a task (even workload assumed),
-   - number of dev days per task per person (at full capacity),
+   - number of dev days per task total (at full capacity),
    - minimum calendar days to complete a task,
    - multiple cross-team dependencies on other tasks,
    - available capacity per person (max availability specified in teams.csv, based on BAU workload),
