@@ -20,14 +20,14 @@ bool iSame(const std::string &s1, const std::string &s2);
 // a few globals
 const unsigned int eNotFound = UINT_MAX;
 
-void terminate(const std::string &s);
-void terminate(const std::stringstream &s);
+void _terminate(const std::string &s, const std::string &func, const std::string &file, int line);
+void _terminate(const std::stringstream &s, const std::string &func, const std::string &file, int line);
 
 void removewhitespace(std::string & s);
 
 #define STR(x) #x
 #define ASSERT(x) if (!(x)) { printf("assertion failed: (%s), function %s, file %s, line %d.\n", STR(x), __PRETTY_FUNCTION__, __FILE__, __LINE__); exit(1); }
-
+#define TERMINATE(x) { _terminate(x, __PRETTY_FUNCTION__, __FILE__, __LINE__); }
 
 // terminate current calculation
 struct TerminateRunException : public std::exception

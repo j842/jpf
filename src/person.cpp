@@ -60,7 +60,7 @@ person::person(const member & m) :
         std::vector<std::string> items;
         unsigned int numitems;
         bool okay = simplecsv::splitcsv(mLeave, items, numitems);
-        if (!okay) terminate("Couldn't parse leave for "+mName+" -- "+mLeave);
+        if (!okay) TERMINATE("Couldn't parse leave for "+mName+" -- "+mLeave);
 
         for (auto & x : items)
         { // parse leave string. Could be date, or date-date (inclusive).

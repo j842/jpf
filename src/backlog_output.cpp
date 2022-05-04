@@ -115,7 +115,7 @@ void backlog::save_gantt_project_file(std::ostream & ofs) const
 
 void backlog::displaybacklog_raw(std::ostream & ofs) const
 {
-    ofs << std::setw(5) << "ID" << " ";
+    ofs << std::setw(7) << "ID" << " ";
     ofs << std::setw(12) << "Team" << "  ";
     ofs << std::setw(6) << "Start" << " -> " << std::setw(6) << "End  ";
     ofs << std::setw(10) << "Blocked" <<" ";
@@ -124,11 +124,11 @@ void backlog::displaybacklog_raw(std::ostream & ofs) const
     
     for (auto & z : mItems)
     {
-        ofs << std::setw(5) << z.mId << " ";
+        ofs << std::setw(7) << z.mId << " ";
         ofs << std::setw(12) << mTeams.at(z.mTeamNdx).mId << "  ";
         ofs << z.mActualStart.getStr_short() << " -> " << z.mActualEnd.getStr_short();
         ofs << std::setw(10) << z.mBlockedBy <<" ";
-        ofs << std::setw(4) << z.mOriginalPriority <<"   ";
+        ofs << std::setw(4) << z.mMergePriority <<"   ";
         ofs << z.getFullName() << " { ";
         
         for (auto r : z.mDependencies)

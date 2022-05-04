@@ -19,7 +19,7 @@ void settings::load_settings()
     simplecsv c("settings.csv");
 
     if (!c.openedOkay())
-        terminate("Could not open "+getInputPath()+"settings.csv.");
+        TERMINATE("Could not open "+getInputPath()+"settings.csv.");
 
     std::vector<std::string> row;
     unsigned int n;
@@ -41,9 +41,9 @@ void settings::load_settings()
         mEndDate = itemdate::parseDateStringDDMMYY(getSettingS("enddate"));
 
     if (getInputVersion()<getRequiredInputVersion())
-        terminate("The input files being used require a newer version of jpf.");
+        { TERMINATE("The input files being used require a newer version of jpf."); }
     else if (getInputVersion() > getRequiredInputVersion())
-        terminate(S()<<"The input files need to be updated to support the current version of jpf."
+        TERMINATE(S()<<"The input files need to be updated to support the current version of jpf."
         <<"\nUpdate inputversion in settings.csv to "<<getInputVersion()<<" when done.");
 }
 
@@ -52,7 +52,7 @@ std::string settings::getSettingS(std::string settingName) const
     ASSERT(mLoaded);
     auto pos = mSettings.find(settingName);
     if (pos == mSettings.end()) {
-        terminate("Setting "+settingName+" is not defined in settings.csv");
+        TERMINATE("Setting "+settingName+" is not defined in settings.csv");
     }  
     return pos->second;
 }
@@ -118,7 +118,7 @@ std::string settings::getJPFVersionStr()
 void settings::setRoot(std::string path)
 {
     if (path.length()==0)
-        terminate("Empty path when trying to set root directory.");
+        TERMINATE("Empty path when trying to set root directory.");
     
     if (path[0]=='/')
     { // absolute!

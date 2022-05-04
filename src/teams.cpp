@@ -11,7 +11,7 @@ teams::teams() : eNotFound(UINT_MAX)
     simplecsv c("teams.csv");
 
     if (!c.openedOkay())
-        terminate("Could not open teams.csv!");
+        TERMINATE("Could not open teams.csv!");
 
     std::vector<std::string> row;
     unsigned int n;
@@ -31,13 +31,13 @@ teams::teams() : eNotFound(UINT_MAX)
             tCentiDay EFTOverhead = atoi(row[4].c_str());
 
             if (EFTProject<0 || EFTProject>100)
-                terminate(S()<<"EFTProject set to "<<EFTProject<<" for "+row[0]);
+                TERMINATE(S()<<"EFTProject set to "<<EFTProject<<" for "+row[0]);
             if (EFTBAU<0 || EFTBAU>100)
-                terminate(S()<<"EFTBAU set to "<<EFTBAU<<" for "+row[0]);
+                TERMINATE(S()<<"EFTBAU set to "<<EFTBAU<<" for "+row[0]);
             if (EFTOverhead<0 || EFTOverhead>100)
-                terminate(S()<<"EFTOverhead set to "<<EFTOverhead<<" for "+row[0]);
+                TERMINATE(S()<<"EFTOverhead set to "<<EFTOverhead<<" for "+row[0]);
             if (EFTProject + EFTBAU + EFTOverhead > 100 )
-                terminate(S()<<row[1]<<" is assigned to work over 100\% of the time!");
+                TERMINATE(S()<<row[1]<<" is assigned to work over 100\% of the time!");
 
 
             std::string leave = row[5];

@@ -16,7 +16,7 @@ projects::projects()
     simplecsv c("projects.csv");
 
     if (!c.openedOkay())
-        terminate("Could not open projects.csv!");
+        TERMINATE("Could not open projects.csv!");
 
     std::vector<std::string> row;
     unsigned int n;

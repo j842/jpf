@@ -28,9 +28,9 @@ class resource
 class backlogitem
 {
     public:
-        backlogitem(const std::string s, const unsigned int teamndx, const projects &p,unsigned int priority);
-        backlogitem(const std::vector<std::string> items, const unsigned int numitems, const unsigned int teamndx, const projects &p,unsigned int priority);
-        void set(const std::vector<std::string> items, const unsigned int numitems, const unsigned int teamndx, const projects &p,unsigned int priority);
+        backlogitem(const std::string s, const unsigned int teamndx, const projects &p);
+        backlogitem(const std::vector<std::string> items, const unsigned int numitems, const unsigned int teamndx, const projects &p);
+        void set(const std::vector<std::string> items, const unsigned int numitems, const unsigned int teamndx, const projects &p);
 
         bool hasDependency(std::string d);
         itemdate getDuration() const;
@@ -48,9 +48,9 @@ class backlogitem
         std::vector<resource> mResources;
         std::vector<std::string> mDependencies;
 
-        // implicit: based on order in team backlog.
+        // set while scheduling the task.
         unsigned int mPriority;
-        unsigned int mOriginalPriority;
+        unsigned int mMergePriority;
 
         // set as part of scheduling.
         itemdate mActualStart;
@@ -83,6 +83,7 @@ class backlog
         static void outputHTMLError(std::string filename, std::string errormsg);
 
     private:
+        void _prioritiseAndMergeTeams();
         void _schedule();
         void _calc_project_summary();
         void _topological_sort();
@@ -118,6 +119,8 @@ class backlog
         static void writeresourcenames(std::ostream & oss, const std::vector<resource> & v);
 
         std::vector<backlogitem> mItems;
+        std::vector<std::deque<backlogitem>> mTeamsItems;
+
         std::vector<person> mPeople;
         const teams & mTeams;
         projects & mProjects;

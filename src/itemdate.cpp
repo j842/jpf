@@ -44,7 +44,7 @@ bool itemdate::set(const boost::gregorian::date & d)
     boost::gregorian::date d0 = Today();
     boost::gregorian::date d1 = nextWorkday(d);
 
-    if (d1<d0) terminate(S() << "Date in the past! Need to update input files: "<<d1);
+    if (d1<d0) TERMINATE(S() << "Date in the past! Need to update input files: "<<d1);
 
     mDay=countWeekDays(d0,d1);
     ASSERT(mDay>=0);
@@ -128,7 +128,7 @@ boost::gregorian::date itemdate::parseDateStringDDMMYY(std::string datestr)
                 s=i+1;
             }
     if (v.size()<3)
-        terminate( "Malformed date string: " + datestr);
+        TERMINATE( "Malformed date string: " + datestr);
     if (v[2]<2000) v[2]+=2000;
 
     boost::gregorian::date d1(v[2],v[1],v[0]);

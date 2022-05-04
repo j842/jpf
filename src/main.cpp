@@ -157,7 +157,7 @@ int getport(std::string s)
         }
 
     if (port<=1024)
-        terminate("Need user settable port - i.e. > 1024.");
+        TERMINATE("Need user settable port - i.e. > 1024.");
     return port;
 }
 
@@ -166,7 +166,7 @@ void checkcreate(std::string d)
     if (!std::filesystem::exists(d))
     {
         if (!std::filesystem::create_directory(d))
-            terminate("Could not create directory: "+d);
+            TERMINATE("Could not create directory: "+d);
         std::cout<<"Created directory: "<<d<<std::endl;
     }    
 }
@@ -187,17 +187,17 @@ void create_directories()
     std::string ex = "/opt/jpf/input/";
 
     if (std::filesystem::exists(pi))
-        terminate("Can't create directories - input dir already exists: "+pi);
+        TERMINATE("Can't create directories - input dir already exists: "+pi);
 
     checkcreate(pr);
     create_output_directories();
 
     if (!std::filesystem::exists(ex))
-        terminate("Expected example files were not installed in /opt/jpf/input.");
+        TERMINATE("Expected example files were not installed in /opt/jpf/input.");
 
     copy("/opt/jpf/input/", pr, std::filesystem::copy_options::recursive);
     if (!std::filesystem::exists(pi))
-        terminate("Input directory was not successfully created: "+pi);
+        TERMINATE("Input directory was not successfully created: "+pi);
 }
 
 int main(int argc, char **argv)
@@ -223,13 +223,13 @@ int main(int argc, char **argv)
 
         for (auto & s : params)
         {
-            if (s.length()<2) terminate("Bad parameter: " + s);
-            if (s[0]!='-')  terminate("Options must start with - : " + s);
+            if (s.length()<2) TERMINATE("Bad parameter: " + s);
+            if (s[0]!='-')  TERMINATE("Options must start with - : " + s);
             switch (s[1]) {
                 case 'w' : watch=true; break;
                 case 'p' : port = getport(s); break;
-                case 'c' : create = true; if (params.size()>1) terminate("Create option must be specified on its own."); break;
-                default: terminate("Bad parameter: " + s);
+                case 'c' : create = true; if (params.size()>1) TERMINATE("Create option must be specified on its own."); break;
+                default: TERMINATE("Bad parameter: " + s);
             }
         }               
         gSettings().setRoot(directory);
@@ -244,7 +244,7 @@ int main(int argc, char **argv)
         {
             gSettings().load_settings();
             if (!gSettings().RootExists())
-                terminate("Root directory "+gSettings().getRoot()+" does not exist.");
+                TERMINATE("Root directory "+gSettings().getRoot()+" does not exist.");
 
             if (watch)
                 run_watch(port);

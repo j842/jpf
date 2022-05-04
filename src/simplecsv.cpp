@@ -97,7 +97,7 @@ bool simplecsv::getline(std::vector<std::string> & line, unsigned int & numcols,
 
     if (requiredcols>0 && numcols != requiredcols)
     {
-        terminate( S() 
+        TERMINATE( S() 
             << "While parsing CSV row, required "<<requiredcols
             << " columns but received "<<numcols<<std::endl << std::endl
             << "The offending line was:" << std::endl

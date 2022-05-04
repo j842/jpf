@@ -24,20 +24,20 @@ bool iSame(const std::string &s1, const std::string &s2)
 }
 
 
-void terminate(const std::string &s)
+void _terminate(const std::string &s,const std::string &func, const std::string &file, int line)
 {
     std::ostringstream oss;
 
     oss << std::endl << std::endl;
-    oss << "Terminating due to error:" << std::endl;
+    oss << "Terminating due to error (" << func << ",  "<<file<<",  line "<<line<< ")"<<std::endl;
     oss << s << std::endl << std::endl;
 
     throw TerminateRunException(oss.str());
 }
 
-void terminate(const std::stringstream &s)
+void _terminate(const std::stringstream &s,const std::string &func, const std::string &file, int line)
 {
-    terminate(s.str());
+    _terminate(s.str(),func,file,line);
 }
 
 void removewhitespace(std::string & s)
@@ -52,7 +52,7 @@ watcher::watcher(std::string path)
     //https://developer.ibm.com/tutorials/l-ubuntu-inotify/
     fd = inotify_init();
     if ( fd < 0 ) 
-        terminate( "inotify_init" );
+        TERMINATE( "inotify_init" );
     wd = inotify_add_watch( fd, path.c_str(), IN_CLOSE_WRITE  | IN_CREATE | IN_DELETE ); // IN_MODIFY gets called 2x...
 }
 watcher::~watcher()
@@ -89,7 +89,7 @@ std::string customexec(const char* cmd) {
     std::string result;
     std::unique_ptr<FILE, decltype(&pclose)> pipe(popen(cmd, "r"), pclose);
     if (!pipe) {
-        terminate("Couldn't open pipe to external command.");
+        TERMINATE("Couldn't open pipe to external command.");
     }
     while (fgets(buffer.data(), buffer.size(), pipe.get()) != nullptr) {
         result += buffer.data();
@@ -122,7 +122,7 @@ webserver::webserver(int port)
         exit(1);
     }
     else
-        terminate("Could not create child process.");
+        TERMINATE("Could not create child process.");
 }
 
 webserver::~webserver()
