@@ -159,6 +159,10 @@ void itemdate::setForever()
 {
     mDay=UINT_MAX;
 }
+void itemdate::setToStart()
+{
+    mDay=0;
+}
 bool itemdate::isForever() const
 {
     return (mDay==UINT_MAX);

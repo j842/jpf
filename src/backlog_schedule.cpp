@@ -86,6 +86,7 @@ void backlog::_schedule()
         auto & z = mItems[zndx];
         // set start date based on EarliestStart
         z.mActualStart = z.mEarliestStart;
+        ASSERT(!z.mActualStart.isForever());
 
         // now update based on dependencies
         for (unsigned int j=0;j<z.mDependencies.size();j++)
@@ -156,6 +157,8 @@ void backlog::_schedule()
             double duration = (z.mActualEnd-z.mActualStart).getAsDurationDouble();
             for (unsigned int pi=0;pi<z.mResources.size();++pi)
                 z.mResources[pi].mLoadingPercent = sumCentiDays[pi]/duration;
+
+        ASSERT(!z.mActualStart.isForever());
         }
     }
 

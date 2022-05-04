@@ -65,6 +65,7 @@ class itemdate
         std::string getAsGoogleNewDate() const;
 
         void setForever();
+        void setToStart();
         bool isForever() const;
 
         std::string getAsDurationString() const;

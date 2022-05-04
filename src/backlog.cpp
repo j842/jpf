@@ -236,7 +236,7 @@ void backlog::_calc_project_summary()
     {
         z.mTotalDevDays=0.0;
         z.mActualStart.setForever();
-        z.mActualEnd=0;
+        z.mActualEnd.setToStart();
     }
     
     // iterate through tasks, taking max and min duration.
@@ -256,4 +256,8 @@ void backlog::_calc_project_summary()
             for (auto & x : task.mResources)
                 p.mTotalDevDays += task.getDuration().getAsDurationDouble() *x.mLoadingPercent/100.0;
     }
+
+    for (auto & proj : mProjects)
+        if (proj.mActualStart.isForever()) // no tasks.
+            proj.mActualStart.setToStart();
 }
