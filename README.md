@@ -15,26 +15,28 @@ John's Project Forecaster
 ## User install
 
 ```
-sudo apt-get update
-sudo apt-get install -y curl gnupg apt-transport-https
+sudo apt update
+sudo apt install -y curl gnupg apt-transport-https
 ```
 
 Installing the key seems to require being in a root shell (not sudo):
 ```
 sudo su -
 curl -fsSL https://packagecloud.io/j842/main/gpgkey | gpg --dearmor > /usr/share/keyrings/j842_main-archive-keyring.gpg
-sudo nano -w /etc/apt/sources.list.d/j842_main.list
+exit
 ```
-And add the content
+
+Then create `/etc/apt/sources.list.d/j842_main.list` with content:
 ```
 deb [signed-by=/usr/share/keyrings/j842_main-archive-keyring.gpg] https://packagecloud.io/j842/main/any/ any main
 deb-src [signed-by=/usr/share/keyrings/j842_main-archive-keyring.gpg] https://packagecloud.io/j842/main/any/ any main
 ```
-Then `exit`, and `sudo apt-get update` again to get the new repo info.
+Then `sudo apt update` again to get the new repo info.
 
 You should now be able to install and update using apt as you wish.  
-Install: `sudo apt-get install jpf`  
-Upgrade: `sudo apt-get upgrade jpf`
+Install: `sudo apt install jpf`  
+Upgrade: `sudo apt install --only-upgrade jpf`
+
 
 ## Related Software
 
