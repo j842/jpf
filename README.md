@@ -39,7 +39,7 @@ Upgrade: `sudo apt install --only-upgrade jpf`
 
 
 
-## Running jps
+## Running jpf
 
 ### Manually
 
