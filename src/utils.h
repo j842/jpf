@@ -1,0 +1,116 @@
+#ifndef __UTILS_H
+#define __UTILS_H
+
+#include <climits>
+#include <string>
+#include <sstream>
+#include <iostream>
+#include <sys/types.h>
+#include <sys/inotify.h>
+#include <chrono>
+
+
+// 1/100th of a day.
+typedef int tCentiDay;
+
+
+
+bool iSame(const std::string &s1, const std::string &s2);
+
+// a few globals
+const unsigned int eNotFound = UINT_MAX;
+
+void terminate(const std::string &s);
+void terminate(const std::stringstream &s);
+
+void removewhitespace(std::string & s);
+
+#define STR(x) #x
+#define ASSERT(x) if (!(x)) { printf("assertion failed: (%s), function %s, file %s, line %d.\n", STR(x), __PRETTY_FUNCTION__, __FILE__, __LINE__); exit(1); }
+
+
+// terminate current calculation
+struct TerminateRunException : public std::exception
+{
+   std::string s;
+   TerminateRunException(std::string ss) : s(ss) {}
+   ~TerminateRunException() throw () {} // Updated
+   const char* what() const throw() { return s.c_str(); }
+};
+//exit entire application
+struct ctrlcException : public std::exception
+{
+   std::string s;
+   ctrlcException(std::string ss) : s(ss) {}
+   ~ctrlcException() throw () {} // Updated
+   const char* what() const throw() { return s.c_str(); }
+};
+
+// class to inline ostringstream, which allows embedded end of line.
+class S
+{
+private:
+    std::ostringstream os_stream;
+
+public:
+    S() {}
+    S(const char *s) : os_stream(s) {}
+    S(const std::string &s) : os_stream(s) {}
+    template <class T>
+    S &operator<<(const T &t)
+    {
+        os_stream << t;
+        return *this;
+    }
+    S &operator<<(std::ostream &(*f)(std::ostream &))
+    {
+        os_stream << f;
+        return *this;
+    }
+    operator std::string() const
+    {
+        return os_stream.str();
+    }
+};
+
+
+
+#define EVENT_SIZE  ( sizeof (struct inotify_event) )
+#define BUF_LEN     ( 1024 * ( EVENT_SIZE + 16 ) )
+class watcher
+{
+    public:
+        watcher(std::string path);
+        ~watcher();
+
+        void waitforchange(); // create, modify, delete
+
+    private:
+        int wd,fd;
+        char buffer[BUF_LEN];
+};
+    
+
+
+void catch_ctrl_c();
+
+class webserver
+{
+    public:
+        webserver(int port);
+        ~webserver();
+};
+
+
+class timer
+{
+    public:
+        timer();
+        double stop();
+        double getms();
+    private:
+        std::chrono::_V2::system_clock::time_point t0;
+        double ms;
+};
+
+#endif

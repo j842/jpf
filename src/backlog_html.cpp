@@ -1,0 +1,503 @@
+#include <algorithm>
+#include <cctype>
+#include <string>
+#include <iomanip>  
+#include <sstream>
+#include <numeric>
+#include <chrono>
+
+#include "backlog.h"
+#include "simplecsv.h"
+#include "utils.h"
+#include "settings.h"
+#include "colourgradient.h"
+
+void backlog::CalculateDevDaysTally(
+            std::vector< std::vector<double>> & DevDaysTally,   // [project][month in future]
+            std::vector< std::string> & ProjectLabels,
+            std::vector<rgbcolour> & Colours
+    ) const
+{
+    DevDaysTally.resize(mProjects.size()+3);
+
+    for (auto & proj : mProjects)
+        ProjectLabels.push_back(proj.getId());
+    ProjectLabels.push_back("Unscheduled Time");
+    ProjectLabels.push_back("Other BAU");
+    ProjectLabels.push_back("Overhead (e.g. Management and Testing)");
+
+    unsigned int maxmonth = 0;
+    for (auto & z : mItems)
+        if (z.mActualEnd.getMonthFromStart()>maxmonth)
+            maxmonth=z.mActualEnd.getMonthFromStart()+1;
+
+    for (auto & p : DevDaysTally)
+        p.resize(maxmonth,0.0);
+
+    for (auto & z : mItems)
+    {
+        for (unsigned int m=z.mActualStart.getMonthFromStart(); m<maxmonth;++m)
+        {
+            itemdate monthstart( itemdate::firstdayofmonth(m));
+            itemdate monthend( itemdate::lastdayofmonth(m));
+            double tasktally = 0.0;
+            
+            double taskDuration = z.getDuration().getAsDurationDouble();
+            if (taskDuration>0)
+            {
+                unsigned int firstDayIndex = std::max(monthstart.getDayAsIndex(),z.mActualStart.getDayAsIndex());
+                unsigned int lastDayPlusOneIndex = std::min(monthend.getDayAsIndex()+1,z.mActualEnd.getDayAsIndex());
+
+                if (lastDayPlusOneIndex>firstDayIndex)
+                { // some active days for task this month.
+                    double daysthismonth = lastDayPlusOneIndex - firstDayIndex;
+
+                    if (z.mResources.size()==0) // nobody assigned.
+                        tasktally=((double)z.mDevDays) * daysthismonth / taskDuration;
+                    else
+                        for (unsigned int person=0;person<z.mResources.size();++person)
+                        {
+                            ASSERT(z.mResources[person].mLoadingPercent<100.001);
+                            tasktally += z.mResources[person].mLoadingPercent * daysthismonth / 100.0;
+                        }
+                }
+            }
+            ASSERT(tasktally>=0);
+            DevDaysTally[z.mProject][m] += tasktally;
+        }
+    }
+
+    for (unsigned int m=0;m<maxmonth;++m)
+    {
+        double devdaystotalinmonth = 0.0;
+        for (auto & p : DevDaysTally)
+            devdaystotalinmonth += p[m];
+        
+        double monthcapacity=0.0;
+        double monthbau=0.0;
+        double monthoverhead=0.0;
+
+        itemdate monthstart( itemdate::firstdayofmonth(m));
+        itemdate monthend( itemdate::lastdayofmonth(m));
+        double daysinmonth=monthend.getDayAsIndex()+1-monthstart.getDayAsIndex();
+
+        for (auto & worker : mPeople)
+        {
+            monthcapacity += daysinmonth * ((double)worker.mEFTProject)/100.0;
+            monthbau += daysinmonth * ((double)worker.mEFTBAU)/100.0;
+            monthoverhead += daysinmonth * ((double)worker.mEFTOverhead)/100.0;
+        }
+        double monthslack = monthcapacity - devdaystotalinmonth;
+
+        DevDaysTally[mProjects.size()+0][m]=monthslack;
+        DevDaysTally[mProjects.size()+1][m]=monthbau;
+        DevDaysTally[mProjects.size()+2][m]=monthoverhead;
+    }
+
+    Colours.resize(ProjectLabels.size(),rgbcolour {.r=0,.g=200,.b=100});
+
+    ColorGradient heatMapGradient; 
+    for (unsigned int ci=0;ci<Colours.size();++ci)
+    {
+        float r,g,b;
+        float v = (float)ci/(float)(Colours.size()-4);
+        heatMapGradient.getColorAtValue(v, r,g,b);
+        Colours[ci] = rgbcolour {.r=(int)(r*255.0+0.5), .g=(int)(g*255.0+0.5), .b=(int)(b*255.0+0.5)};
+    }
+
+    Colours[Colours.size()-3] = rgbcolour {.r=210,.g=180,.b=140}; // slack
+    Colours[Colours.size()-2] = rgbcolour {.r=100,.g=100,.b=100}; // BAU
+    Colours[Colours.size()-1] = rgbcolour {.r=200,.g=200,.b=200}; // overhead
+    }
+
+// backlog::rgbcolour backlog::heatmap(float minimum, float maximum, float value) const
+// {
+//     float ratio = (value-minimum) / (maximum - minimum);
+//     int r = int(std::max(0.0, 255.0*(1.0 - ratio)));
+//     int g = int(std::max(0.0, 255.0*(ratio - 1.0)));
+//     int b = 255 - r - g;
+//     return rgbcolour {.r=r, .g=g, .b=b };
+// }
+
+void backlog::Graph_Total_Project_Cost(std::ostream & ofs) const
+{
+    std::vector< std::vector<double> > DevDaysTally;
+    std::vector< std::string > Labels;
+    std::vector< rgbcolour > Colours;
+    CalculateDevDaysTally(DevDaysTally,Labels,Colours);
+    if (DevDaysTally.size()==0)
+        return; // no data.
+
+    ofs << R"(
+        <h2>Resourcing Cost Remaining</h2>
+        <div id="totalprojectcostpie" style="width:auto;height:800;"></div>    
+        <script>
+        )";   
+
+    std::vector<double> vProjectCostRemaining( Labels.size(),0.0 );
+    for (unsigned int i=0;i<Labels.size();++i)
+        for (double j : DevDaysTally[i])
+            vProjectCostRemaining[i] += j;
+
+    {
+        ofs << "var colorlist = [";
+        bool firstcolor=true;
+        for (auto & c : Colours)
+            {
+                if (!firstcolor) ofs << ", ";
+                firstcolor=false;
+                ofs << "'rgb("<<c.r<<","<<c.g<<","<<c.b<<")'";
+            }
+        ofs << "];" << std::endl;
+    }
+
+    ofs << "var datapie = [{" << std::endl << "values: [" << std::endl;
+    for (unsigned int i=0;i<vProjectCostRemaining.size();++i)
+    {
+        if (i>0) ofs <<", ";
+        ofs << std::setprecision(3) << gSettings().dailyDevCost() *vProjectCostRemaining[i];
+    }
+
+    ofs << "]," << std::endl << "labels: [";
+    for (unsigned int i=0;i<Labels.size();++i)
+    {
+        if (i>0) ofs <<", ";
+        ofs << "'" << Labels[i] << "'";
+    }
+    ofs << ", 'Unscheduled Time'";
+    ofs << ", 'Other BAU'";
+    ofs << ", 'Overhead (Management, Testing)'";
+
+    ofs << R"(
+        ],
+        type: 'pie',
+        textinfo: "label+percent",
+        marker: {
+            colors: colorlist
+        }
+        }];
+
+    var layoutpie = {
+        title: 'Resourcing Cost Remaining ($)',
+        margin: {"t": 100, "b": 0, "l": 300, "r": 0},
+    };
+
+    Plotly.newPlot('totalprojectcostpie',datapie,layoutpie);
+    </script>
+        )";   
+}
+
+
+void backlog::Graph_Project_Cost(std::ostream & ofs) const
+{
+    std::vector< std::vector<double> > DevDaysTally;
+    std::vector< std::string > Labels;
+    std::vector< rgbcolour > Colours;
+    CalculateDevDaysTally(DevDaysTally,Labels,Colours);
+    if (DevDaysTally.size()==0)
+        return; // no data.
+    unsigned int maxmonth = std::min((unsigned int)DevDaysTally[0].size(), itemdate::getEndMonth());
+
+    ofs << R"(
+        <h2>Resourcing Cost By Month</h2>
+        <div id="stackedbardevdays" style="width:auto;height:600;"></div>    
+        <script>
+        )";
+
+    for (unsigned int i=0;i<Labels.size();++i)
+        {
+            ofs << "var trace"<<i<<" ={"<<std::endl << "x: [";
+
+            for (unsigned int m=0;m<maxmonth;++m)
+            {
+                if (m>0) ofs <<", ";
+                ofs << "'" << itemdate::getMonthAsString(m) << "'";
+            }
+            ofs <<"]," <<std::endl << "y: [";
+            for (unsigned int m=0;m<maxmonth;++m)
+            {
+                if (m>0) ofs <<", ";
+                ofs << std::setprecision(3) << gSettings().dailyDevCost() * DevDaysTally[i][m];
+            }
+            ofs <<"]," << std::endl << "name: '" << Labels[i] <<"'," << std::endl;
+
+            auto & c = Colours[i];
+            ofs << "marker: { color: 'rgb(" << c.r <<", "<<c.g<<", "<<c.b<<")' }," <<std::endl;
+                
+            ofs << "type: 'bar'"<<std::endl<<"};"<<std::endl<<std::endl;
+        }
+
+    ofs << "var data = [";
+    for (unsigned int i=0;i<Labels.size();++i)
+    {
+        if (i>0) ofs<<", ";
+        ofs << "trace"<<Labels.size()-1-i; // reverse order so legend is nice.
+    }
+    ofs <<"];"<<std::endl;
+    ofs<< R"(
+        var layout = {
+              title: 'Resourcing Cost By Month ($)',
+            xaxis: {tickfont: {
+                size: 14,
+                color: 'rgb(107, 107, 107)'
+                }},
+            yaxis: {
+                title: 'NZD',
+                titlefont: {
+                size: 16,
+                color: 'rgb(107, 107, 107)'
+                },
+                tickfont: {
+                size: 14,
+                color: 'rgb(107, 107, 107)'
+                },
+            
+            },
+            barmode: 'stack'
+        };
+            Plotly.newPlot('stackedbardevdays', data, layout);
+        </script>
+    )";
+}
+
+
+void backlog::outputHTML_Index(std::ostream & ofs) const
+{
+    HTMLheaders(ofs,"");
+//<div id="firsttable" style="width:800px;height:250px;"></div>
+
+    ofs<<"<h2>Project Backlog</h2>Starting from "<< itemdate::date2strNice(gSettings().startDate()) << "<br/>"<<std::endl;
+    ofs << "<PRE>"<<std::endl;
+    backlog::displaybacklog(ofs);
+    ofs << "</PRE>"<<std::endl;    
+    HTMLfooters(ofs);
+}
+
+void backlog::outputHTML_People(std::ostream & ofs) const
+{
+    HTMLheaders(ofs,"");
+    ofs<<"<h2>Tasks by Person</h2>Starting from "<< itemdate::date2strNice(gSettings().startDate()) << "<br/>"<<std::endl;
+    ofs << "<PRE>"<<std::endl;
+    backlog::displaypeople(ofs);
+    ofs << "</PRE>"<<std::endl;    
+    HTMLfooters(ofs); 
+}
+
+void backlog::outputHTML_RawBacklog(std::ostream & ofs) const
+{
+    HTMLheaders(ofs,"");
+    ofs<<"<h2>Raw Backlog</h2>Starting from "<< itemdate::date2strNice(gSettings().startDate()) << "<br/>"<<std::endl;
+    ofs << "<PRE>"<<std::endl;
+    backlog::displaybacklog_raw(ofs);
+    ofs << "</PRE>"<<std::endl;    
+    HTMLfooters(ofs);  
+}
+
+
+void backlog::outputHTML_Dashboard(std::ostream & ofs) const
+{
+    HTMLheaders_Plotly(ofs);
+//<div id="firsttable" style="width:800px;height:250px;"></div>
+
+    Graph_Project_Cost(ofs);
+    Graph_Total_Project_Cost(ofs);
+
+    HTMLfooters(ofs);
+}
+
+void backlog::HTMLheaders(std::ostream & ofs,std::string inHead) 
+{
+ ofs << R"(
+    <html><head>
+    <script type="text/javascript" src="https://livejs.com/live.js"></script>
+    )";
+
+ofs << inHead <<std::endl;
+
+ofs << R"(
+    </head><body>
+    <h1>John's Project Forecaster</h1>
+    <a href="index.html">Project Backlog</a>&nbsp;&nbsp;
+    <a href="people.html">People</a>&nbsp;&nbsp;
+    <a href="costdashboard.html">Cost Dashboard</a>&nbsp;&nbsp;
+    <a href="highlevelgantt.html">High-Level Gantt</a>&nbsp;&nbsp;
+    <a href="detailedgantt.html">Detailed Gantt</a>&nbsp;&nbsp;
+    <a href="rawbacklog.html">Debug: Raw Backlog</a>&nbsp;&nbsp;
+    </br>
+ )";
+}
+
+
+void backlog::HTMLheaders_Plotly(std::ostream & ofs) const
+{
+    HTMLheaders(ofs, R"( <script src="https://cdn.plot.ly/plotly-2.11.1.min.js"></script> )" );
+}
+
+void backlog::HTMLfooters(std::ostream & ofs) 
+{
+ ofs << R"(
+    </body></html>
+    <!-- auto generated by JPF -->
+ )";
+}
+
+// remove half quotes.
+std::string __protect(std::string s)
+{
+    s.erase(std::remove(s.begin(), s.end(), '\''), s.end());
+    return s;
+}
+
+void backlog::outputHTML_High_Level_Gantt(std::ostream & ofs) const
+{
+    std::ostringstream oss;
+
+    oss << R"(
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+    google.charts.load('current', {'packages':['gantt']});
+    google.charts.setOnLoadCallback(drawChart);
+
+    function daysToMilliseconds(days) {
+      return days * 24 * 60 * 60 * 1000;
+    }
+
+    function drawChart() {
+        var data = new google.visualization.DataTable();
+        data.addColumn('string',    'Task ID');
+        data.addColumn('string',    'Task Name');
+        data.addColumn('string',    'Resource');
+        data.addColumn('date',      'Start Date');
+        data.addColumn('date',      'End Date');
+        data.addColumn('number',    'Duration');
+        data.addColumn('number', 'Percent Complete');
+        data.addColumn('string',    'Dependencies');
+
+        data.addRows([
+    )";
+
+    bool first=true;
+    for (auto & p : mProjects)
+    {
+        if (!first) oss <<", "<<std::endl;
+        first=false;
+        oss << "['" << __protect(p.getId()) <<"', '"<< __protect(p.getId()) <<"', '" << __protect(p.getId()) <<"', "
+            << p.mActualStart.getAsGoogleNewDate() << ", "
+            << p.mActualEnd.getAsGoogleNewDate() << ", "
+            << "null, 0, null ]";
+    }
+    oss << R"(
+        ]);
+    
+    var options = {
+        height: 1000,
+        gantt: {
+            sortTasks: false,
+            labelMaxWidth: 400
+        }
+      };
+
+      var chart = new google.visualization.Gantt(document.getElementById('chart_div'));
+
+      chart.draw(data, options);
+    }
+  </script>
+    )";
+
+    HTMLheaders(ofs,oss.str());
+    ofs << R"(
+        <h2>High-Level Gantt Chart</h2>
+        <div id="chart_div"></div>
+        )";
+
+    HTMLfooters(ofs);
+}
+
+
+
+// https://developers.google.com/chart/interactive/docs/gallery/ganttchart
+void backlog::outputHTML_Detailed_Gantt(std::ostream & ofs) const
+{
+    std::ostringstream oss;
+
+    oss << R"(
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+    google.charts.load('current', {'packages':['gantt']});
+    google.charts.setOnLoadCallback(drawChart);
+
+    function daysToMilliseconds(days) {
+      return days * 24 * 60 * 60 * 1000;
+    }
+
+    function drawChart() {
+        var data = new google.visualization.DataTable();
+        data.addColumn('string',    'Task ID');
+        data.addColumn('string',    'Task Name');
+        data.addColumn('string',    'Resource');
+        data.addColumn('date',      'Start Date');
+        data.addColumn('date',      'End Date');
+        data.addColumn('number',    'Duration');
+        data.addColumn('number', 'Percent Complete');
+        data.addColumn('string',    'Dependencies');
+
+        data.addRows([
+    )";
+
+    std::vector<int> v_sorted;
+    prioritySortArray(v_sorted);
+
+    bool first=true;
+    for (auto & x : v_sorted)
+    {
+        auto & z = mItems[x];
+        if (!first) oss <<", "<<std::endl;
+        first=false;
+
+        // google can't handle milestones.
+        itemdate tend = z.mActualEnd;
+        if (tend==z.mActualStart) tend = tend + 1;
+
+        oss << "['" << __protect(z.mId) <<"', '"<< __protect(z.getFullName())<<"', '" << 
+            __protect(mProjects[z.mProject].getId()) <<"', "
+            << z.mActualStart.getAsGoogleNewDate() << ", "
+            << tend.getAsGoogleNewDate() << ", "
+            << "null, 0, null ]";
+    }
+
+    oss << R"(
+        ]);
+    
+    var options = {
+        height: 50000,
+        gantt: {
+            sortTasks: false,
+            labelMaxWidth: 400
+        }
+      };
+
+      var chart = new google.visualization.Gantt(document.getElementById('chart_div'));
+
+      chart.draw(data, options);
+    }
+  </script>
+    )";
+
+    HTMLheaders(ofs,oss.str());
+    ofs << R"(
+        <h2>Detailed Gantt Chart</h2>
+        <div id="chart_div"></div>
+        )";
+
+    HTMLfooters(ofs);
+}
+
+void backlog::outputHTMLError(std::string filename, std::string errormsg) 
+{
+    std::ofstream ofs(filename);
+    HTMLheaders(ofs,"");
+
+    ofs << "<pre>" << errormsg << "</pre>";
+    HTMLfooters(ofs);
+    ofs.close();
+}
