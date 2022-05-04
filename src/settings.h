@@ -33,6 +33,7 @@ class settings
 
         std::string getSettingS(std::string settingName) const;
         int getSettingI(std::string settingName) const;     
+        double getSettingD(std::string settingName) const;     
         std::map<std::string,std::string> mSettings;   
 };
 

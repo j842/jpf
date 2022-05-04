@@ -52,7 +52,7 @@ std::string settings::getSettingS(std::string settingName) const
     ASSERT(mLoaded);
     auto pos = mSettings.find(settingName);
     if (pos == mSettings.end()) {
-        TERMINATE("Setting "+settingName+" is not defined in settings.csv");
+        TERMINATE(S() << "Setting " << settingName << " is not defined in settings.csv");
     }  
     return pos->second;
 }
@@ -62,6 +62,13 @@ int settings::getSettingI(std::string settingName) const
     ASSERT(mLoaded);
     return atoi(getSettingS(settingName).c_str());
 }
+
+double settings::getSettingD(std::string settingName) const
+{
+    ASSERT(mLoaded);
+    return strtod(getSettingS(settingName).c_str(),NULL);
+}
+
 
 boost::gregorian::date settings::startDate() const 
 {
@@ -78,10 +85,7 @@ boost::gregorian::date settings::endDate() const
 double settings::dailyDevCost() const
 {
     ASSERT(mLoaded);
-    double annualSalary = 100000;
-    double overhead = 0.15;
-    double workdaysinyear = 250.0;
-    return (annualSalary * (1.0 + overhead))/workdaysinyear;
+    return getSettingD("costperdevday");
 }
 
 settings & gSettings() {

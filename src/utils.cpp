@@ -26,13 +26,18 @@ bool iSame(const std::string &s1, const std::string &s2)
 
 void _terminate(const std::string &s,const std::string &func, const std::string &file, int line)
 {
-    std::ostringstream oss;
+    std::string ss;
+    {
+        std::ostringstream oss;
 
-    oss << std::endl << std::endl;
-    oss << "Terminating due to error (" << func << ",  "<<file<<",  line "<<line<< ")"<<std::endl;
-    oss << s << std::endl << std::endl;
+        oss << std::endl << std::endl;
+        oss << "Terminating due to error (" << func << ",  "<<file<<",  line "<<line<< ") : "<<std::endl<<std::endl;
+        oss << s << std::endl << std::endl;
 
-    throw TerminateRunException(oss.str());
+        ss = oss.str();
+    }
+
+    throw TerminateRunException(ss);
 }
 
 void _terminate(const std::stringstream &s,const std::string &func, const std::string &file, int line)

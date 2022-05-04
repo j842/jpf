@@ -31,7 +31,10 @@ bool simplecsv::splitcsv(const std::string s,
     items.push_back("");
     numitems=1;
 
-    for (unsigned int i=0;i<s.length();++i)
+    unsigned int i=0;
+    while (i < s.length() && (s[i]==' ' || s[i]=='\t')) ++i; // skip spaces at start of string.
+
+    for (;i<s.length();++i)
     {
         switch (s[i])
         {

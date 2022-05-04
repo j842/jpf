@@ -1,7 +1,7 @@
 #---------------------------------
 
-JPF_VERSION := 0.0.9
-JPF_RELEASE := 2
+JPF_VERSION := 0.0.10
+JPF_RELEASE := 1
 INPUT_VERSION := 6
 
 #---------------------------------
@@ -21,9 +21,8 @@ OBJ := $(SRC:$(SRC_DIR)/%.cpp=$(OBJ_DIR)/%.o)
 # sudo apt-get install libboost-date-time-dev
 
 CC=g++
-CPPFLAGS :=  
-CFLAGS   := -Wall -std=c++17 -fsanitize=address -pthread
-LDFLAGS  := -static-libstdc++ -static-libasan -fsanitize=address -pthread -L/usr/lib/gcc/x86_64-linux-gnu/9/
+CXXFLAGS := -fsanitize=address -fno-omit-frame-pointer -Wall -std=c++17 
+LDFLAGS  := -fsanitize=address -fno-omit-frame-pointer -static-libstdc++ -static-libgcc -static-libasan -pthread 
 LDLIBS   := -l:libboost_date_time.a
 
 .PHONY: all clean deb upload
@@ -39,7 +38,7 @@ $(EXE): $(OBJ) | $(BIN_DIR) $(OTH_DIR)
 	$(CC) $(LDFLAGS) $^ $(LDLIBS) -o $@
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp $(HDR) | $(OBJ_DIR)
-	$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -o $@
+	$(CC) $(CXXFLAGS) -c $< -o $@
 
 $(OBJ_DIR):
 	mkdir -p $@
