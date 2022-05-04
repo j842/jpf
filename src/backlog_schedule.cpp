@@ -57,6 +57,7 @@ void backlog::_prioritiseAndMergeTeams()
     for (auto & t:mTeamsItems)
         numItems += t.size();
     
+    ASSERT(numItems>0);
     ASSERT(mItems.size()==0);
     for (unsigned int c=0;c<numItems;++c)
     { // find a backlog item and move it across.
@@ -73,11 +74,14 @@ void backlog::_prioritiseAndMergeTeams()
 
     // first sort by priorty.
     std::sort( mItems.begin(), mItems.end(), comparePriority);
+
+    std::cout << "Priortised and Merged "<<numItems<<" items."<<std::endl;
 }
 
 
 void backlog::_schedule()
 {
+    _prioritiseAndMergeTeams();
     _topological_sort(); // sort based on dependency directed graph.
 
     // now figure out star and end dates for the items, reserving resources as we go.
