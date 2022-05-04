@@ -38,6 +38,27 @@ Install: `sudo apt install jpf`
 Upgrade: `sudo apt install --only-upgrade jpf`
 
 
+
+## Running
+
+### Manually
+
+`jpf .`
+
+Files are written to the output/ folder.
+
+### Watch for changes
+
+In this mode jpm starts a webserver (webfsd) on port 5000, displaying the HTML output of jpf. 
+It then watches the `input` folder and if any changes are made reschuleds and recreates all outputs.
+The pages automatically update in most web browsers (you shouldn't need to refresh the page).
+
+```
+jpf -watch .
+```
+
+Connect to `http://localhost:5000`
+
 ## Related Software
 
 A good CSV editor is Modern CSV:  https://www.moderncsv.com/
