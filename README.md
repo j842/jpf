@@ -111,5 +111,5 @@ Adjust the content for cStandard and cppStandard:
 ```
 
 ## WSL-2 memory
-16Gb needed:   
+Increasing memory to 16Gb was preiously needed, but is not essential now:   
 https://clay-atlas.com/us/blog/2021/08/31/windows-en-wsl-2-memory/
