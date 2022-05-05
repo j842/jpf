@@ -21,8 +21,8 @@ OBJ := $(SRC:$(SRC_DIR)/%.cpp=$(OBJ_DIR)/%.o)
 # sudo apt-get install libboost-date-time-dev
 
 CC=g++
-CXXFLAGS := -fsanitize=address -fno-omit-frame-pointer -Wall -std=c++17 
-LDFLAGS  := -fsanitize=address -fno-omit-frame-pointer -static-libstdc++ -static-libgcc -static-libasan -pthread 
+CXXFLAGS := -g -Wall -std=c++17 
+LDFLAGS  := -g -static-libstdc++ -static-libgcc -static-libasan -pthread 
 LDLIBS   := -l:libboost_date_time.a
 
 .PHONY: all clean deb upload
