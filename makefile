@@ -22,8 +22,8 @@ OBJ := $(SRC:$(SRC_DIR)/%.cpp=$(OBJ_DIR)/%.o)
 
 CC=g++
 CXXFLAGS := -g -Wall -std=c++17 
-LDFLAGS  := -g -static-libstdc++ -static-libgcc -static-libasan -pthread 
-LDLIBS   := -l:libboost_date_time.a
+LDFLAGS  := -g 
+LDLIBS   := -lboost_date_time
 
 .PHONY: all clean deb upload
 
@@ -69,6 +69,8 @@ $(DEB_NAME): $(EXE)
 		-d libgnutls30 \
 		-d lsb-base \
 		-d ucf \
+		-d libboost-date-time1.71.0 \
+		-d libstdc++6 \
 		--description "John's Project Forecaster" \
 		--url "https://github.com/j842/jpf" \
 		--maintainer "John Enlow" \
