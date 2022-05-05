@@ -73,7 +73,7 @@ https://www.ganttproject.biz/
 
 ## Development Setup (Compiling jpf from source)
 
-On either Ubuntu 20.04 or WSL2 under Windows:
+On either Ubuntu 20.04 or Debian 11 (including via WSL2 under Windows):
 ```
 sudo apt-get install libboost-date-time-dev build-essential webfs ruby ruby-dev libcppunit-dev
 
@@ -85,7 +85,7 @@ make
 ```
 Notes:
 - It is possbile on Ubuntu 18.04 if G++-9 is installed and configured as here: https://linuxconfig.org/how-to-switch-between-multiple-gcc-and-g-compiler-versions-on-ubuntu-20-04-lts-focal-fossa 
-- Ruby 3 doesn't work with package_cloud :( 
+- As of May 2022 Ruby 3 doesn't work with package_cloud :(  Installing Ruby 2.7 works fine.
 
 ## Make the debian package
 ```
