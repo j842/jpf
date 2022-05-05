@@ -14,6 +14,8 @@ John's Project Forecaster
 
 ## Installing Binary from Debian/Ubuntu Package
 
+Tested on Debian 11 (Bullseye), Ubuntu 18.04 and Ubuntu 22.04. Does not work on Debian 10 (G++ too old).   
+
 ```
 sudo apt update
 sudo apt install -y curl gnupg apt-transport-https
