@@ -20,8 +20,7 @@ SRC := $(wildcard $(SRC_DIR)/*.cpp)
 OBJ := $(SRC:$(SRC_DIR)/%.cpp=$(OBJ_DIR)/%.o)
 DEP := $(SRC:$(SRC_DIR)/%.cpp=$(DEP_DIR)/%.d)
 
-# sudo apt-get install libboost-date-time-dev
-
+# sudo apt-get install libboost-date-time-dev libcppunit-dev
 CXX=g++
 LD=g++
 CXXFLAGS := -g -Wall -std=c++17 
