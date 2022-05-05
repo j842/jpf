@@ -14,7 +14,7 @@ John's Project Forecaster
 
 ## Installing Binary from Debian/Ubuntu Package
 
-Tested on Debian 11 (Bullseye), Ubuntu 18.04 and Ubuntu 22.04. Does not work on Debian 10 (G++ too old).   
+Tested on Debian 11 (Bullseye), Ubuntu 18.04 (Bionic) and Ubuntu 22.04 (Jammy). Does not work on Debian 10 (Buster) as g++ and libs are too old.
 
 ```
 sudo apt update
