@@ -36,8 +36,12 @@ deb-src [signed-by=/usr/share/keyrings/j842_main-archive-keyring.gpg] https://pa
 Then `sudo apt update` again to get the new repo info.
 
 You should now be able to install and update using apt as you wish.  
-Install: `sudo apt install jpf`  
-Upgrade: `sudo apt install --only-upgrade jpf`
+  
+Install:  
+`sudo apt install jpf`  
+  
+Upgrade:  
+`sudo apt install --only-upgrade jpf`
 
 
 
