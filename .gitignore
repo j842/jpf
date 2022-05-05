@@ -7,6 +7,9 @@ jpf_debug
 /output
 /obj
 /bin
+.obj
+.dep
+
 
 # Prerequisites
 *.d

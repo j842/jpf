@@ -1,13 +1,14 @@
 #---------------------------------
 
 JPF_VERSION := 0.0.10
-JPF_RELEASE := 3
+JPF_RELEASE := 4
 INPUT_VERSION := 6
 
 #---------------------------------
 
 SRC_DIR := src
-OBJ_DIR := obj
+OBJ_DIR := .obj
+DEP_DIR := .dep
 BIN_DIR := bin
 INP_DIR := input
 
@@ -15,15 +16,24 @@ DEB_NAME := $(BIN_DIR)/jpf-$(JPF_VERSION)-$(JPF_RELEASE)-any.deb
 
 EXE := $(BIN_DIR)/jpf
 SRC := $(wildcard $(SRC_DIR)/*.cpp)
-HDR := $(wildcard $(SRC_DIR)/*.h)
+#HDR := $(wildcard $(SRC_DIR)/*.h)
 OBJ := $(SRC:$(SRC_DIR)/%.cpp=$(OBJ_DIR)/%.o)
+DEP := $(SRC:$(SRC_DIR)/%.cpp=$(DEP_DIR)/%.d)
 
 # sudo apt-get install libboost-date-time-dev
 
-CC=g++
+CXX=g++
+LD=g++
 CXXFLAGS := -g -Wall -std=c++17 
 LDFLAGS  := -g 
 LDLIBS   := -lboost_date_time -lcppunit
+DEPFLAGS = -MT $@ -MD -MP -MF $(DEP_DIR)/$*.Td
+
+PRECOMPILE =
+POSTCOMPILE = mv -f $(DEP_DIR)/$*.Td $(DEP_DIR)/$*.d
+
+COMPILE.cc = $(CXX) $(DEPFLAGS) $(CXXFLAGS) -c -o $@
+LINK.o = $(LD) $(LDFLAGS) -o $@
 
 .PHONY: all clean deb upload
 
@@ -32,15 +42,21 @@ all: $(EXE)
 $(SRC_DIR)/version.h: makefile
 	@echo "Generating $@"
 	@echo "#define __JPF_VERSION \"${JPF_VERSION}\"" > $@
+	@echo "#define __JPF_RELEASE \"${JPF_RELEASE}\"" >> $@
 	@echo "#define __INPUT_VERSION (${INPUT_VERSION})" >> $@
 
-$(EXE): $(OBJ) | $(BIN_DIR) $(OTH_DIR)
-	$(CC) $(LDFLAGS) $^ $(LDLIBS) -o $@
+$(EXE): $(OBJ) | $(BIN_DIR)
+	$(LINK.o) $^ $(LDLIBS)
 
-$(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp $(HDR) | $(OBJ_DIR)
-	$(CC) $(CXXFLAGS) -c $< -o $@
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp $(DEP_DIR)/%.d | $(OBJ_DIR) $(DEP_DIR)
+	$(PRECOMPILE)
+	$(COMPILE.cc) $<
+	$(POSTCOMPILE)
 
 $(OBJ_DIR):
+	mkdir -p $@
+
+$(DEP_DIR):
 	mkdir -p $@
 
 $(BIN_DIR):
@@ -49,9 +65,14 @@ $(BIN_DIR):
 clean:
 	@$(RM) -rv $(OBJ_DIR)
 	@$(RM) -rv $(BIN_DIR)
+	@$(RM) -rv $(DEP_DIR)
 	@$(RM) $(DEB_NAME)
+	
 
--include $(OBJ:.o=.d)
+.PRECIOUS: $(DEP_DIR)/%.d
+$(DEP_DIR)/%.d: ;
+
+-include $(DEP)
 
 # build debian package.
 # dependencies are for the webfsd binary included ( https://packages.ubuntu.com/bionic/webfs )

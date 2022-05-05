@@ -24,6 +24,7 @@ class settings
         static int getInputVersion();
         static std::string getInputVersionStr();
         static std::string getJPFVersionStr();
+        static std::string getJPFReleaseStr();
 
     private:
         bool mLoaded;

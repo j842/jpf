@@ -127,7 +127,8 @@ void run_watch(int port)
 void showhelp()
 {
     std::cout << std::endl;
-    std::cout << "jpf "<< gSettings().getJPFVersionStr()<< " is a simple auto-balancing forecasting tool for projects across multiple teams.";
+    std::cout << "jpf "<< gSettings().getJPFVersionStr()<<
+                        "-"<<gSettings().getJPFReleaseStr()<< " is a simple auto-balancing forecasting tool for projects across multiple teams.";
 
     std::cout << R"(
 
@@ -251,7 +252,10 @@ int main(int argc, char **argv)
         gSettings().setRoot(directory);
 
         std::cout << std::endl;
-        std::cout << "John's Project Forecaster "<<gSettings().getJPFVersionStr()<<" - An auto-balancing forecasting tool." <<std::endl<<std::endl;
+        std::cout << "John's Project Forecaster "<<
+                        gSettings().getJPFVersionStr()<<
+                        "-"<<gSettings().getJPFReleaseStr()<<
+                        " - An auto-balancing forecasting tool." <<std::endl<<std::endl;
         std::cout << "Root directory: "<<gSettings().getRoot()<<std::endl;
 
         if (create)
