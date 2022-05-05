@@ -13,12 +13,14 @@ class simplecsv_test : public CPPUNIT_NS::TestFixture
     CPPUNIT_TEST( splitcsv_test0 );
     CPPUNIT_TEST( splitcsv_test1 );
     CPPUNIT_TEST( splitcsv_test2 );
+    CPPUNIT_TEST( splitcsv_test3 );
     CPPUNIT_TEST_SUITE_END();
 
     public:
         void splitcsv_test0();
         void splitcsv_test1();
         void splitcsv_test2();
+        void splitcsv_test3();
 };
 
 

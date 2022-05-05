@@ -22,120 +22,57 @@ simplecsv::~simplecsv()
 {
 }
 
-void simplecsv_test::splitcsv_test2( )
-{
-    std::string s( R"literal(   a  ,,b,,"\\c,,,,,","" )literal" );
-    std::vector<std::string> items;
-
-    simplecsv::splitcsv(s,items);
-
-    CPPUNIT_ASSERT(items.size()==6);
-    CPPUNIT_ASSERT(strcmp(items[0].c_str(),"a")==0);
-    CPPUNIT_ASSERT(strcmp(items[1].c_str(),"")==0);
-    CPPUNIT_ASSERT(strcmp(items[2].c_str(),"b")==0);
-    CPPUNIT_ASSERT(strcmp(items[3].c_str(),"")==0);
-    CPPUNIT_ASSERT_MESSAGE(S()<<items[4]<< "   is not   \\c,,,,,",strcmp(items[4].c_str(),"\\c,,,,,")==0);
-    CPPUNIT_ASSERT_MESSAGE(S()<<">>"<<items[5]<< "<<   is not   >><<", strcmp(items[5].c_str(),"")==0);
-}
-void simplecsv_test::splitcsv_test1( )
-{
-    std::string s("a,b,c,d,");
-    std::vector<std::string> items;
-
-    simplecsv::splitcsv(s,items);
-
-    CPPUNIT_ASSERT(items.size()==5);
-    CPPUNIT_ASSERT(strcmp(items[0].c_str(),"a")==0);
-    CPPUNIT_ASSERT(strcmp(items[1].c_str(),"b")==0);
-    CPPUNIT_ASSERT(strcmp(items[2].c_str(),"c")==0);
-    CPPUNIT_ASSERT(strcmp(items[3].c_str(),"d")==0);
-    CPPUNIT_ASSERT(strcmp(items[4].c_str(),"")==0);
-}
-void simplecsv_test::splitcsv_test0( )
-{
-    std::string s( R"literal("\\c,\,\,"\,\ )literal" );
-    std::vector<std::string> items;
-
-    simplecsv::splitcsv(s,items);
-
-    CPPUNIT_ASSERT(items.size()==1);
-    CPPUNIT_ASSERT_MESSAGE(S()<<items[0]<< "   is not   \\c,,,,", strcmp(items[0].c_str(),"\\c,,,,")==0);
-}
-
 bool simplecsv::splitcsv(const std::string s, // copy
-    std::vector<std::string> & items)
-    {
+                         std::vector<std::string> &items)
+{
     items.clear();
-    if (s.length()==0 || s[0]=='\r' || s[0]=='\n')
+    if (s.length() == 0 || s[0] == '\r' || s[0] == '\n')
         return false;
 
-    bool inquotes=false;
-    unsigned int startpos=0;
-    for (unsigned int i=0;i<s.length();++i)
+    bool inquotes = false;
+    unsigned int startpos = 0;
+    for (unsigned int i = 0; i < s.length(); ++i)
         switch (s[i])
         {
-            case '\\': 
-                i++; // skip processing of next character.
-                break;               
-            
-            case '"':
-                inquotes = !inquotes;
-                break;
-            
-            case ',':
-                if (!inquotes)
-                {
-                    if (i>startpos)
-                        items.push_back(s.substr(startpos,i-startpos));
-                    else
-                        items.push_back("");
-                    startpos=i+1;
+        case '\\':
+            i++; // skip processing of next character.
+            break;
 
-                    if (startpos>=s.length()) 
-                    {
-                        items.push_back("");
-                        return true; // done!
-                    }
+        case '"':
+            inquotes = !inquotes;
+            break;
+
+        case ',':
+            if (!inquotes)
+            {
+                if (i > startpos)
+                    items.push_back( trimCSVentry( s.substr(startpos, i - startpos) ));
+                else
+                    items.push_back("");
+                startpos = i + 1;
+
+                if (startpos >= s.length())
+                { // string ends on a comma
+                    items.push_back("");
+                    return true; // done!
                 }
-                break;
-            default:
-                break;
+            }
+            break;
+        default:
+            break;
         };
 
-        if (inquotes)
-        {
-            std::cout << "Unmatched quotes in csv row: "<<std::endl<<s<<std::endl;
-            return false;
-        }
-
-        ASSERT(startpos<s.length());
-        items.push_back(s.substr(startpos,s.length()-startpos));
-
-
-        // now remove whitespace
-        inquotes=false;
-        for (auto & ii : items)
-        {
-            trim(ii);
-            
-            for (unsigned int i=0;i<ii.size();++i)
-                switch (ii[i])
-                {
-                    case '"':
-                        ii.erase(i,1);
-                        --i;
-                        break;
-                    case '\\':
-                        ii.erase(i,1);
-                        break;
-                    default:
-                        break;
-                }
-
-        }
-
-        return true;
+    if (inquotes)
+    {
+        std::cout << "Unmatched quotes in csv row: " << std::endl
+                  << s << std::endl;
+        return false;
     }
+
+    ASSERT(startpos < s.length());
+    items.push_back( trimCSVentry( s.substr(startpos, s.length() - startpos) ) );
+    return true;
+}
 
 bool simplecsv::getline(std::vector<std::string> & line, unsigned int requiredcols)
 {
@@ -175,3 +112,54 @@ bool simplecsv::getline(std::vector<std::string> & line, unsigned int requiredco
     return true;
 }
 
+// 0-------------------------------------------------------------------------------
+
+
+
+void simplecsv_test::splitcsv_test3()
+{
+    std::string s( R"literal(Stu,"W1,W3",)literal" );
+    std::vector<std::string> items;
+    simplecsv::splitcsv(s,items);
+    CPPUNIT_ASSERT(items.size()==3);
+    CPPUNIT_ASSERT_MESSAGE(S() << " Different:  "<<items[1]<< "   W1,W3",iSame(items[1],"W1,W3"));
+}
+void simplecsv_test::splitcsv_test2( )
+{
+    std::string s( R"literal(   a  ,,b,,"\\c,,,,,","" )literal" );
+    std::vector<std::string> items;
+
+    simplecsv::splitcsv(s,items);
+
+    CPPUNIT_ASSERT(items.size()==6);
+    CPPUNIT_ASSERT(strcmp(items[0].c_str(),"a")==0);
+    CPPUNIT_ASSERT(strcmp(items[1].c_str(),"")==0);
+    CPPUNIT_ASSERT(strcmp(items[2].c_str(),"b")==0);
+    CPPUNIT_ASSERT(strcmp(items[3].c_str(),"")==0);
+    CPPUNIT_ASSERT_MESSAGE(S()<<items[4]<< "   is not   \\c,,,,,",strcmp(items[4].c_str(),"\\c,,,,,")==0);
+    CPPUNIT_ASSERT_MESSAGE(S()<<">>"<<items[5]<< "<<   is not   >><<", strcmp(items[5].c_str(),"")==0);
+}
+void simplecsv_test::splitcsv_test1( )
+{
+    std::string s("a,b,c,d,");
+    std::vector<std::string> items;
+
+    simplecsv::splitcsv(s,items);
+
+    CPPUNIT_ASSERT(items.size()==5);
+    CPPUNIT_ASSERT(strcmp(items[0].c_str(),"a")==0);
+    CPPUNIT_ASSERT(strcmp(items[1].c_str(),"b")==0);
+    CPPUNIT_ASSERT(strcmp(items[2].c_str(),"c")==0);
+    CPPUNIT_ASSERT(strcmp(items[3].c_str(),"d")==0);
+    CPPUNIT_ASSERT(strcmp(items[4].c_str(),"")==0);
+}
+void simplecsv_test::splitcsv_test0( )
+{
+    std::string s( R"literal("\\c,\,\,"\,\ )literal" );
+    std::vector<std::string> items;
+
+    simplecsv::splitcsv(s,items);
+
+    CPPUNIT_ASSERT(items.size()==1);
+    CPPUNIT_ASSERT_MESSAGE(S()<<items[0]<< "   is not   \\c,,,,", strcmp(items[0].c_str(),"\\c,,,,")==0);
+}

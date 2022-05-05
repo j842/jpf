@@ -18,6 +18,7 @@ typedef int tCentiDay;
 
 bool iSame(const std::string &s1, const std::string &s2);
 void trim(std::string & str);
+std::string trimCSVentry(const std::string str);
 
 
 // a few globals

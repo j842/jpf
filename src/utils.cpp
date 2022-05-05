@@ -152,10 +152,33 @@ double timer::getms()
     return ms;
 }
 
-
-void trim(std::string & str) 
-    {
-    const char* typeOfWhitespaces = " \t\n\r\f\v";
+void trim(std::string &str)
+{
+    const char *typeOfWhitespaces = " \t\n\r\f\v";
     str.erase(str.find_last_not_of(typeOfWhitespaces) + 1);
-    str.erase(0,str.find_first_not_of(typeOfWhitespaces));
-    }
+    str.erase(0, str.find_first_not_of(typeOfWhitespaces));
+}
+
+std::string trimCSVentry(const std::string str)
+{
+    std::string s(str);
+
+    // now remove whitespace
+    trim(s);
+
+    for (unsigned int i = 0; i < s.size(); ++i)
+        switch (s[i])
+        {
+        case '"':
+            s.erase(i, 1);
+            --i;
+            break;
+        case '\\':
+            s.erase(i, 1);
+            break;
+        default:
+            break;
+        }
+
+    return s;
+}
