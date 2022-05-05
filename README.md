@@ -73,7 +73,7 @@ https://www.ganttproject.biz/
 
 ## Development Setup (Compiling jpf from source)
 
-On either Ubuntu 20.04 or Debian 11 (including via WSL2 under Windows if [memory is increased](## WSL-2 memory for zapcc):
+On either Ubuntu 20.04 or Debian 11 (including via WSL2 under Windows if [memory is increased](https://github.com/j842/jpf/blob/main/README.md#wsl-2-memory):
 ```
 sudo apt-get install libboost-date-time-dev build-essential webfs ruby ruby-dev libcppunit-dev
 
@@ -110,6 +110,6 @@ Adjust the content for cStandard and cppStandard:
    "cppStandard": "gnu++17",
 ```
 
-## WSL-2 memory for zapcc
+## WSL-2 memory
 16Gb needed:   
 https://clay-atlas.com/us/blog/2021/08/31/windows-en-wsl-2-memory/
