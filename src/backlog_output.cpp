@@ -169,8 +169,8 @@ void backlog::displaypeople(std::ostream & ofs) const
 {
     for (auto & z : mPeople)
     {
-        ofs <<std::endl<<z.mName<<std::endl;
-        ofs <<std::string(z.mName.size(),'-')<<std::endl;
+        ofs <<std::endl<<z.mName<<" [ "<<std::setw(3)<< z.getMaxAvialability() << "% ]"<<std::endl;
+        ofs <<std::string(z.mName.size()+9,'-')<<std::endl;
 
         for (auto & j : mItems)
             for (auto & p : j.mResources)
@@ -183,8 +183,8 @@ void backlog::displaypeople(std::ostream & ofs) const
                     std::ostringstream oss;
 
                     oss << " " << j.mActualStart.getStr_short() << " to "
-                    << std::setw(7)<< j.mActualEnd.getStr_short() << " [ "
-                    << std::setw(4)<<utilisation<<"% ]  :  ";
+                    << std::setw(7)<< j.mActualEnd.getStr_short() << "  [ "
+                    << std::setw(3)<<utilisation<<"% ]  :  ";
 
                     ofs << oss.str() << j.getFullName() << std::endl;
                 }

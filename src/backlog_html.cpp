@@ -390,7 +390,7 @@ void backlog::outputHTML_High_Level_Gantt(std::ostream & ofs) const
         ]);
     
     var options = {
-        height: 1000,
+        height: 5000,
         gantt: {
             sortTasks: false,
             labelMaxWidth: 400
@@ -469,7 +469,7 @@ void backlog::outputHTML_Detailed_Gantt(std::ostream & ofs) const
         ]);
     
     var options = {
-        height: 50000,
+        height: 20000,
         gantt: {
             sortTasks: false,
             labelMaxWidth: 400
