@@ -22,8 +22,7 @@ void settings::load_settings()
         TERMINATE("Could not open "+getInputPath()+"settings.csv.");
 
     std::vector<std::string> row;
-    unsigned int n;
-    while (c.getline(row,n,2))
+    while (c.getline(row,2))
         mSettings[row[0]]=row[1];
 
     mLoaded=true;

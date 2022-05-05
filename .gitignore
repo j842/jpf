@@ -2,6 +2,7 @@
 scheduler
 jpm
 jpf
+jpf_debug
 
 /output
 /obj

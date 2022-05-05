@@ -14,8 +14,7 @@ teams::teams() : eNotFound(UINT_MAX)
         TERMINATE("Could not open teams.csv!");
 
     std::vector<std::string> row;
-    unsigned int n;
-    while (c.getline(row,n,6))
+    while (c.getline(row,6))
     if (row[0].length()>0)
         {
             unsigned int ndx=get_index_by_name(row[0]);

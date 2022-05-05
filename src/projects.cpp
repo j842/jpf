@@ -19,8 +19,7 @@ projects::projects()
         TERMINATE("Could not open projects.csv!");
 
     std::vector<std::string> row;
-    unsigned int n;
-    while (c.getline(row,n,4))
+    while (c.getline(row,4))
     {
         project p( row[0], row[1], iSame(row[2],"BAU"), row[3] );
         this->push_back(p);

@@ -9,13 +9,16 @@
 #include <sys/inotify.h>
 #include <chrono>
 
+#include <cppunit/extensions/TestFactoryRegistry.h>
+#include <cppunit/ui/text/TestRunner.h>
 
 // 1/100th of a day.
 typedef int tCentiDay;
 
 
-
 bool iSame(const std::string &s1, const std::string &s2);
+void trim(std::string & str);
+
 
 // a few globals
 const unsigned int eNotFound = UINT_MAX;
@@ -28,6 +31,7 @@ void removewhitespace(std::string & s);
 #define STR(x) #x
 #define ASSERT(x) if (!(x)) { printf("assertion failed: (%s), function %s, file %s, line %d.\n", STR(x), __PRETTY_FUNCTION__, __FILE__, __LINE__); exit(1); }
 #define TERMINATE(x) { _terminate(x, __PRETTY_FUNCTION__, __FILE__, __LINE__); }
+
 
 // terminate current calculation
 struct TerminateRunException : public std::exception

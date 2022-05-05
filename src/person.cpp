@@ -58,8 +58,7 @@ person::person(const member & m) :
     if (mLeave.length()>0)
     {
         std::vector<std::string> items;
-        unsigned int numitems;
-        bool okay = simplecsv::splitcsv(mLeave, items, numitems);
+        bool okay = simplecsv::splitcsv(mLeave, items);
         if (!okay) TERMINATE("Couldn't parse leave for "+mName+" -- "+mLeave);
 
         for (auto & x : items)

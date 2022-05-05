@@ -73,11 +73,7 @@ https://www.ganttproject.biz/
 
 On either Ubuntu 20.04 or WSL2 under Windows:
 ```
-sudo apt-get install libboost-date-time-dev build-essential webfs ruby ruby-dev 
-
-sudo add-apt-repository ppa:ubuntu-toolchain-r/test
-sudo apt update
-sudo apt install gcc-9 g++-9
+sudo apt-get install libboost-date-time-dev build-essential webfs ruby ruby-dev libcppunit-dev
 
 sudo gem install fpm
 sudo gem install rake rainbow package_cloud
@@ -111,3 +107,10 @@ Adjust the content for cStandard and cppStandard:
    "cStandard": "gnu17",
    "cppStandard": "gnu++17",
 ```
+
+## WSL-2 memory for zapcc
+16Gb needed:   
+https://clay-atlas.com/us/blog/2021/08/31/windows-en-wsl-2-memory/
+
+## ZapCC
+https://github.com/yrnkrn/zapcc

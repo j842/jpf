@@ -3,7 +3,7 @@
 	"tasks": [
 		{
 			"type": "cppbuild",
-			"label": "C/C++: g++ build active file",
+			"label": "C/C++: g++ build project",
 			"command": "/usr/bin/g++-9",
 			"args": [
 				"-fdiagnostics-color=always",
@@ -11,7 +11,9 @@
 				"-g",
 				"${workspaceFolder}/src/*.cpp",
 				"-o",
-				"${fileDirname}/${fileBasenameNoExtension}"
+				"${fileDirname}/jpf_debug",
+				"-lboost_date_time",
+				"-lcppunit"
 			],
 			"options": {
 				"cwd": "${fileDirname}"

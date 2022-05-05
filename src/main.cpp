@@ -3,6 +3,8 @@
 #include <vector>
 #include <string>
 #include <filesystem>
+#include <cppunit/extensions/TestFactoryRegistry.h>
+#include <cppunit/ui/text/TestRunner.h>
 
 #include "projects.h"
 #include "teams.h"
@@ -143,6 +145,8 @@ Options:
     -c, -create     Create a skeleton working tree in DIRECTORY, which includes input and 
                     output directories, with example input files. 
                     Cannot be used with other options.
+
+    -t, -test       Run unit tests.
                 
 )";
 }
@@ -200,6 +204,16 @@ void create_directories()
         TERMINATE("Input directory was not successfully created: "+pi);
 }
 
+void runtests()
+{
+    CPPUNIT_NS::Test *suite = CPPUNIT_NS::TestFactoryRegistry::getRegistry().makeTest();
+    CppUnit::TextUi::TestRunner runner;
+    runner.addTest( suite );
+    bool wasSucessful = runner.run();
+
+    std::cout << ( wasSucessful ? "Success!!" : "Fail!!" )<< std::endl;
+}
+
 int main(int argc, char **argv)
 {    
     if (argc<=1)
@@ -207,6 +221,8 @@ int main(int argc, char **argv)
         showhelp();
         exit(0);
     }
+    if (iSame(argv[1],"-t") || iSame(argv[1],"-test"))
+        {runtests(); return 0;}
 
     catch_ctrl_c();
 

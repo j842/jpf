@@ -13,22 +13,21 @@
 backlogitem::backlogitem(const std::string s, const unsigned int teamndx, const projects &p) 
 {
     std::vector<std::string> items;
-    unsigned int numitems;
-    if (!simplecsv::splitcsv(s,items,numitems))
+    if (!simplecsv::splitcsv(s,items))
         TERMINATE("unable to parse backlog item:"+ s);
 
-    if (numitems!=11)
+    if (items.size()!=11)
         TERMINATE("Unexpected number of columns in backlog item: "+s);
 
-    set(items,numitems,teamndx,p);
+    set(items,teamndx,p);
 }
 
-backlogitem::backlogitem(const std::vector<std::string> items, const unsigned int numitems, const unsigned int teamndx, const projects &p)
+backlogitem::backlogitem(const std::vector<std::string> items, const unsigned int teamndx, const projects &p)
 {
-    set(items,numitems,teamndx,p);
+    set(items,teamndx,p);
 }
 
-void backlogitem::set(const std::vector<std::string> items, const unsigned int numitems, const unsigned int teamndx, const projects &p)
+void backlogitem::set(const std::vector<std::string> items, const unsigned int teamndx, const projects &p)
 {
     mTeamNdx = teamndx;
 
@@ -52,20 +51,19 @@ void backlogitem::set(const std::vector<std::string> items, const unsigned int n
     mEarliestStart.set(items[5]);
 
     // 6 - blocking resources
-    unsigned int x;
     std::vector<std::string> names;
-    simplecsv::splitcsv(items[6],names,x);
+    simplecsv::splitcsv(items[6],names);
     for (auto & name : names)
         mResources.push_back( resource(name, true) ); // blocking resources
 
     // 7 - contributing resources
     names.clear();
-    simplecsv::splitcsv(items[7],names,x);
+    simplecsv::splitcsv(items[7],names);
     for (auto & name : names)
         mResources.push_back( resource(name , false) ); // contributing resources
 
     // 8 - dependencies
-    simplecsv::splitcsv(items[8],mDependencies,x);
+    simplecsv::splitcsv(items[8],mDependencies);
 
     // 9 - comments (not stored)
 
@@ -118,10 +116,9 @@ backlog::backlog(projects & p, const teams & t) : mTeams(t), mProjects(p)
             if (!teambacklog.openedOkay())
                 TERMINATE("Failed to open team backlog file "+filename);
             std::vector<std::string> items;
-            unsigned int numitems;
-            while (teambacklog.getline(items,numitems,10))
+            while (teambacklog.getline(items,10))
             {
-                backlogitem b(items,numitems,i,p);
+                backlogitem b(items,i,p);
                 unsigned int n = getItemIndexFromId(b.mId);
                 if (n!=eNotFound)
                     TERMINATE(S()<<"Duplicate ID " << b.mId<<" of two backlog items:"<<std::endl<<b.mDescription<<std::endl<<mItems[n].mDescription);

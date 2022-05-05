@@ -23,7 +23,7 @@ OBJ := $(SRC:$(SRC_DIR)/%.cpp=$(OBJ_DIR)/%.o)
 CC=g++
 CXXFLAGS := -g -Wall -std=c++17 
 LDFLAGS  := -g 
-LDLIBS   := -lboost_date_time
+LDLIBS   := -lboost_date_time -lcppunit
 
 .PHONY: all clean deb upload
 
@@ -71,6 +71,7 @@ $(DEB_NAME): $(EXE)
 		-d ucf \
 		-d libboost-date-time1.71.0 \
 		-d libstdc++6 \
+		-d libcppunit-1.14-0 \
 		--description "John's Project Forecaster" \
 		--url "https://github.com/j842/jpf" \
 		--maintainer "John Enlow" \

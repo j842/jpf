@@ -29,8 +29,8 @@ class backlogitem
 {
     public:
         backlogitem(const std::string s, const unsigned int teamndx, const projects &p);
-        backlogitem(const std::vector<std::string> items, const unsigned int numitems, const unsigned int teamndx, const projects &p);
-        void set(const std::vector<std::string> items, const unsigned int numitems, const unsigned int teamndx, const projects &p);
+        backlogitem(const std::vector<std::string> items, const unsigned int teamndx, const projects &p);
+        void set(const std::vector<std::string> items, const unsigned int teamndx, const projects &p);
 
         bool hasDependency(std::string d);
         itemdate getDuration() const;

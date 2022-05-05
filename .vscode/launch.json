@@ -5,9 +5,11 @@
         "name": "g++ build and debug active file",
         "type": "cppdbg",
         "request": "launch",
-        "program": "${fileDirname}/${fileBasenameNoExtension}",
-        "args": [
-            "${workspaceFolder}"
+//        "program": "${fileDirname}/jpf_debug",
+        "program": "${fileDirname}/../bin/jpf",
+       "args": [
+//            "${workspaceFolder}"
+          "-t"
         ],
         "stopAtEntry": false,
         "cwd": "${workspaceFolder}/src",
