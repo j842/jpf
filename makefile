@@ -1,10 +1,12 @@
 #---------------------------------
 
 JPF_VERSION := 0.0.10
-JPF_RELEASE := 7
+JPF_RELEASE := 8
 INPUT_VERSION := 6
 
 #---------------------------------
+
+ROOT_DIR:=$(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 
 SRC_DIR := src
 OBJ_DIR := .obj
@@ -12,9 +14,11 @@ DEP_DIR := .dep
 BIN_DIR := bin
 INP_DIR := input
 
-DEB_NAME := $(BIN_DIR)/jpf-$(JPF_VERSION)-$(JPF_RELEASE)-any.deb
+DEB_BASE := jpf-$(JPF_VERSION)-$(JPF_RELEASE)-any.deb
+DEB_PATH := $(BIN_DIR)/$(DEB_BASE)
 
 EXE := $(BIN_DIR)/jpf
+FPM := $(BIN_DIR)/fpmscript.sh
 SRC := $(wildcard $(SRC_DIR)/*.cpp)
 #HDR := $(wildcard $(SRC_DIR)/*.h)
 OBJ := $(SRC:$(SRC_DIR)/%.cpp=$(OBJ_DIR)/%.o)
@@ -64,22 +68,21 @@ $(BIN_DIR):
 clean:
 	@$(RM) -rv $(OBJ_DIR)
 	@$(RM) -rv $(BIN_DIR)
-	@$(RM) -rv $(DEP_DIR)
-	@$(RM) $(DEB_NAME)
-	
+	@$(RM) -rv $(DEP_DIR)	
 
 .PRECIOUS: $(DEP_DIR)/%.d
 $(DEP_DIR)/%.d: ;
 
 -include $(DEP)
 
-# build debian package.
-# dependencies are for the webfsd binary included ( https://packages.ubuntu.com/bionic/webfs )
-$(DEB_NAME): $(EXE)
-	@$(RM) $(DEB_NAME)
+images: 
+	podman/build.sh
+
+$(FPM) = \
+\#!/bin/sh\n\
 	fpm \
 		-s dir -t deb \
-		-p $(DEB_NAME) \
+		-p /opt/$(DEB_PATH) \
 		--name jpf \
 		--license Artistic-2.0 \
 		--version $(JPF_VERSION)-$(JPF_RELEASE) \
@@ -90,15 +93,27 @@ $(DEB_NAME): $(EXE)
 		-d lsb-base \
 		-d ucf \
 		-d libstdc++6 \
-		--description "John's Project Forecaster" \
-		--url "https://github.com/j842/jpf" \
-		--maintainer "John Enlow" \
-		$(EXE)=/usr/bin/jpf \
-		contrib/webfsd-jpf=/usr/bin/webfsd-jpf
-		$(INP_DIR)=/opt/jpf/input/
+		--description \"John's Project Forecaster\" \
+		--url \"https://github.com/j842/jpf\" \
+		--maintainer \"John Enlow\" \
+		/opt/$(EXE)=/usr/bin/jpf \
+		/opt/contrib/webfsd-jpf=/usr/bin/webfsd-jpf \
+		/opt/$(INP_DIR)=/opt/jpf/input/ \
+#
+$(FPM):
+	@echo "$($(@))" | sed -e 's/^[ ]//' >$(@)
+	chmod a+x $(FPM)
+
+# build debian package.
+# dependencies are for the webfsd binary included ( https://packages.ubuntu.com/bionic/webfs )
+$(DEB_NAME): $(EXE) $(FPM)
+	@$(RM) $(BIN_DIR)/*.deb
+	podman run -it --rm -v $(ROOT_DIR):/opt/ fpm /bin/bash -c "/opt/$(FPM)"
+	@$(RM) $(FPM)
 
 deb: $(DEB_NAME)
 
 
 upload: deb
-	package_cloud push j842/main/any/any $(DEB_NAME)
+	podman run -it --rm -v $(ROOT_DIR):/opt -e PACKAGECLOUD_TOKEN=${PACKAGECLOUD_TOKEN} packagecloud push j842/main/any/any /opt/$(DEB_PATH) 
+#	package_cloud push j842/main/any/any $(DEB_PATH)

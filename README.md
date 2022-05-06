@@ -79,14 +79,24 @@ https://www.ganttproject.biz/
 
 On either Ubuntu 20.04 or Debian 11 (including via WSL2 under Windows if [memory is increased](https://github.com/j842/jpf/blob/main/README.md#wsl-2-memory):
 ```
-sudo apt-get install libboost-date-time-dev build-essential webfs ruby ruby-dev libcppunit-dev
+sudo apt-get install libboost-date-time-dev build-essential webfs libcppunit-dev
+```
 
-sudo gem install fpm
-sudo gem install rake rainbow package_cloud
+Then install podman:
+```
+sudo apt install podman
+```
+
+
+And try it out:
+```
 git clone https://github.com/j842/jpf.git
 cd jpf
+make images
 make
+make deb
 ```
+
 Notes:
 - It is possbile on Ubuntu 18.04 if G++-9 is installed and configured as here: https://linuxconfig.org/how-to-switch-between-multiple-gcc-and-g-compiler-versions-on-ubuntu-20-04-lts-focal-fossa 
 - As of May 2022 Ruby 3 doesn't work with package_cloud :(  Installing Ruby 2.7 works fine.
