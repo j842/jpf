@@ -14,6 +14,8 @@ John's Project Forecaster
 
 ## Installing Binary from Debian/Ubuntu Package
 
+Tested on Debian 11 (Bullseye), Ubuntu 18.04 (Bionic) and Ubuntu 22.04 (Jammy). Does not work on Debian 10 (Buster) as g++ and libs are too old.
+
 ```
 sudo apt update
 sudo apt install -y curl gnupg apt-transport-https
@@ -34,8 +36,12 @@ deb-src [signed-by=/usr/share/keyrings/j842_main-archive-keyring.gpg] https://pa
 Then `sudo apt update` again to get the new repo info.
 
 You should now be able to install and update using apt as you wish.  
-Install: `sudo apt install jpf`  
-Upgrade: `sudo apt install --only-upgrade jpf`
+  
+Install:  
+`sudo apt install jpf`  
+  
+Upgrade:  
+`sudo apt install --only-upgrade jpf`
 
 
 
@@ -71,7 +77,7 @@ https://www.ganttproject.biz/
 
 ## Development Setup (Compiling jpf from source)
 
-On either Ubuntu 20.04 or WSL2 under Windows:
+On either Ubuntu 20.04 or Debian 11 (including via WSL2 under Windows if [memory is increased](https://github.com/j842/jpf/blob/main/README.md#wsl-2-memory):
 ```
 sudo apt-get install libboost-date-time-dev build-essential webfs ruby ruby-dev libcppunit-dev
 
@@ -83,7 +89,7 @@ make
 ```
 Notes:
 - It is possbile on Ubuntu 18.04 if G++-9 is installed and configured as here: https://linuxconfig.org/how-to-switch-between-multiple-gcc-and-g-compiler-versions-on-ubuntu-20-04-lts-focal-fossa 
-- Ruby 3 doesn't work with package_cloud :( 
+- As of May 2022 Ruby 3 doesn't work with package_cloud :(  Installing Ruby 2.7 works fine.
 
 ## Make the debian package
 ```
@@ -108,9 +114,6 @@ Adjust the content for cStandard and cppStandard:
    "cppStandard": "gnu++17",
 ```
 
-## WSL-2 memory for zapcc
-16Gb needed:   
+## WSL-2 memory
+Increasing memory to 16Gb was preiously needed, but is not essential now:   
 https://clay-atlas.com/us/blog/2021/08/31/windows-en-wsl-2-memory/
-
-## ZapCC
-https://github.com/yrnkrn/zapcc
