@@ -206,7 +206,7 @@ listoutput::~listoutput()
 {
     mOfs << mSEnd;
 }
-void listoutput::write(std::string item)
+void listoutput::write(std::string item) const
 {
     if (!mFirstItem)
         mOfs << mSeperator;
@@ -215,3 +215,7 @@ void listoutput::write(std::string item)
     mFirstItem = false;
 }
 
+void listoutput::writehq(std::string item) const // add halfquotes.
+{
+    listoutput::write(S() << "'" << item <<"'" );
+}

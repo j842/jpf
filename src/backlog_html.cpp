@@ -151,23 +151,23 @@ void backlog::Graph_Total_Project_Cost(std::ostream & ofs) const
         ofs << "];" << std::endl;
     }
 
-    ofs << "var datapie = [{" << std::endl << "values: [" << std::endl;
-    for (unsigned int i=0;i<vProjectCostRemaining.size();++i)
+    ofs << "var datapie = [{" << std::endl;
     {
-        if (i>0) ofs <<", ";
-        ofs << std::setprecision(3) << gSettings().dailyDevCost() *vProjectCostRemaining[i];
+        listoutput lo(ofs,"values: [",", ","]");
+        for (auto & i : vProjectCostRemaining)
+            lo.write( S() << std::setprecision(3) << gSettings().dailyDevCost() * i);
     }
 
-    ofs << "]," << std::endl << "labels: [";
-    for (unsigned int i=0;i<Labels.size();++i)
+    ofs << "," << std::endl;
     {
-        if (i>0) ofs <<", ";
-        ofs << "'" << Labels[i] << "'";
+        listoutput lo(ofs,"labels: [",", ","");
+        for (auto & i :Labels)
+            lo.writehq( i );
+        lo.writehq("Unscheduled Time");
+        lo.writehq("Other BAU");
+        lo.writehq("Overhead (Management, Testing)");
     }
-    ofs << ", 'Unscheduled Time'";
-    ofs << ", 'Other BAU'";
-    ofs << ", 'Overhead (Management, Testing)'";
-
+    
     ofs << R"(
         ],
         type: 'pie',
@@ -205,15 +205,14 @@ void backlog::Graph_Project_Cost(std::ostream &ofs) const
 
     for (unsigned int i = 0; i < Labels.size(); ++i)
     {
-        ofs << "var trace" << i << " ={" << std::endl
-            << "x: [";
+        ofs << "var trace" << i << " ={" << std::endl;
         {
             listoutput lo(ofs, "x: [", ", ", "]");
             for (unsigned int m = 0; m < maxmonth; ++m)
                 lo.write(S() << "'" << itemdate::getMonthAsString(m) << "'");
         }
 
-        ofs << "]," << std::endl;
+        ofs << "," << std::endl;
         {
             listoutput lo(ofs, "y: [", ", ", "]");
             for (unsigned int m = 0; m < maxmonth; ++m)

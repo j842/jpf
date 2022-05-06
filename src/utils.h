@@ -127,13 +127,14 @@ class listoutput
     public:
         listoutput(std::ostream & ofs,std::string sstart, std::string seperator, std::string send);
         ~listoutput();
-        void write(std::string item);
+        void write(std::string item) const;
+        void writehq(std::string item) const; // add halfquotes.
 
     private:
         std::ostream & mOfs;
         std::string mSeperator;
         std::string mSEnd;
-        bool mFirstItem;
+        mutable bool mFirstItem;
 };
 
 #endif
