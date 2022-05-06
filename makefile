@@ -24,6 +24,23 @@ SRC := $(wildcard $(SRC_DIR)/*.cpp)
 OBJ := $(SRC:$(SRC_DIR)/%.cpp=$(OBJ_DIR)/%.o)
 DEP := $(SRC:$(SRC_DIR)/%.cpp=$(DEP_DIR)/%.d)
 
+
+COM_COLOR   = \033[0;34m
+LIN_COLOR   = \033[0;33m
+OBJ_COLOR   = \033[0;36m
+OK_COLOR    = \033[0;32m
+ERROR_COLOR = \033[0;31m
+WARN_COLOR  = \033[0;33m
+NO_COLOR    = \033[m
+
+OK_STRING    = "[OK]"
+ERROR_STRING = "[ERROR]"
+WARN_STRING  = "[WARNING]"
+COM_STRING   = "Compiling"
+LIN_STRING   = "Linking"
+
+#---------------------------------
+
 # sudo apt-get install libboost-date-time-dev libcppunit-dev
 CXX=g++
 LD=g++
@@ -49,21 +66,23 @@ $(SRC_DIR)/version.h: makefile
 	@echo "#define __INPUT_VERSION (${INPUT_VERSION})" >> $@
 
 $(EXE): $(OBJ) | $(BIN_DIR)
-	$(LINK.o) $^ $(LDLIBS)
+	@printf "%b" "$(LIN_COLOR)$(LIN_STRING) $(OBJ_COLOR)$(@)$(NO_COLOR)\n";
+	@$(LINK.o) $^ $(LDLIBS)
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp $(DEP_DIR)/%.d | $(OBJ_DIR) $(DEP_DIR)
-	$(PRECOMPILE)
-	$(COMPILE.cc) $<
-	$(POSTCOMPILE)
+	@printf "%b" "$(COM_COLOR)$(COM_STRING) $(OBJ_COLOR)$(@)$(NO_COLOR)\n";
+	@$(PRECOMPILE)
+	@$(COMPILE.cc) $< 
+	@$(POSTCOMPILE)
 
 $(OBJ_DIR):
-	mkdir -p $@
+	@mkdir -p $@
 
 $(DEP_DIR):
-	mkdir -p $@
+	@mkdir -p $@
 
 $(BIN_DIR):
-	mkdir -p $@
+	@mkdir -p $@
 
 clean:
 	@$(RM) -rv $(OBJ_DIR)
