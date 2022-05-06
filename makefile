@@ -1,7 +1,7 @@
 #---------------------------------
 
 JPF_VERSION := 0.0.10
-JPF_RELEASE := 4
+JPF_RELEASE := 5
 INPUT_VERSION := 6
 
 #---------------------------------
@@ -25,7 +25,7 @@ CXX=g++
 LD=g++
 CXXFLAGS := -g -Wall -std=c++17 
 LDFLAGS  := -g 
-LDLIBS   := -lboost_date_time -lcppunit
+LDLIBS   := -l:libboost_date_time.a -l:libcppunit.a
 DEPFLAGS = -MT $@ -MD -MP -MF $(DEP_DIR)/$*.Td
 
 PRECOMPILE =
@@ -89,9 +89,7 @@ $(DEB_NAME): $(EXE)
 		-d libgnutls30 \
 		-d lsb-base \
 		-d ucf \
-		-d libboost-date-time1.71.0 \
 		-d libstdc++6 \
-		-d libcppunit-1.14-0 \
 		--description "John's Project Forecaster" \
 		--url "https://github.com/j842/jpf" \
 		--maintainer "John Enlow" \
