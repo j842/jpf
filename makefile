@@ -106,14 +106,14 @@ $(FPM):
 
 # build debian package.
 # dependencies are for the webfsd binary included ( https://packages.ubuntu.com/bionic/webfs )
-$(DEB_NAME): $(EXE) $(FPM)
+$(DEB_PATH): $(EXE) $(FPM)
 	@$(RM) $(BIN_DIR)/*.deb
-	podman run -it --rm -v $(ROOT_DIR):/opt/ fpm /bin/bash -c "/opt/$(FPM)"
+	podman run -it --rm -v $(ROOT_DIR):/opt/ jpf /bin/bash -c "/opt/$(FPM)"
 	@$(RM) $(FPM)
 
-deb: $(DEB_NAME)
+deb: $(DEB_PATH)
 
 
 upload: deb
-	podman run -it --rm -v $(ROOT_DIR):/opt -e PACKAGECLOUD_TOKEN=${PACKAGECLOUD_TOKEN} packagecloud push j842/main/any/any /opt/$(DEB_PATH) 
+	podman run -it --rm -v $(ROOT_DIR):/opt -e PACKAGECLOUD_TOKEN=${PACKAGECLOUD_TOKEN} jpf package_cloud push j842/main/any/any /opt/$(DEB_PATH) 
 #	package_cloud push j842/main/any/any $(DEB_PATH)
