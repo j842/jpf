@@ -187,14 +187,13 @@ void backlog::Graph_Total_Project_Cost(std::ostream & ofs) const
         )";   
 }
 
-
-void backlog::Graph_Project_Cost(std::ostream & ofs) const
+void backlog::Graph_Project_Cost(std::ostream &ofs) const
 {
-    std::vector< std::vector<double> > DevDaysTally;
-    std::vector< std::string > Labels;
-    std::vector< rgbcolour > Colours;
-    CalculateDevDaysTally(DevDaysTally,Labels,Colours);
-    if (DevDaysTally.size()==0)
+    std::vector<std::vector<double>> DevDaysTally;
+    std::vector<std::string> Labels;
+    std::vector<rgbcolour> Colours;
+    CalculateDevDaysTally(DevDaysTally, Labels, Colours);
+    if (DevDaysTally.size() == 0)
         return; // no data.
     unsigned int maxmonth = std::min((unsigned int)DevDaysTally[0].size(), itemdate::getEndMonth());
 
@@ -204,37 +203,42 @@ void backlog::Graph_Project_Cost(std::ostream & ofs) const
         <script>
         )";
 
-    for (unsigned int i=0;i<Labels.size();++i)
+    for (unsigned int i = 0; i < Labels.size(); ++i)
+    {
+        ofs << "var trace" << i << " ={" << std::endl
+            << "x: [";
         {
-            ofs << "var trace"<<i<<" ={"<<std::endl << "x: [";
-
-            for (unsigned int m=0;m<maxmonth;++m)
-            {
-                if (m>0) ofs <<", ";
-                ofs << "'" << itemdate::getMonthAsString(m) << "'";
-            }
-            ofs <<"]," <<std::endl << "y: [";
-            for (unsigned int m=0;m<maxmonth;++m)
-            {
-                if (m>0) ofs <<", ";
-                ofs << std::setprecision(3) << gSettings().dailyDevCost() * DevDaysTally[i][m];
-            }
-            ofs <<"]," << std::endl << "name: '" << Labels[i] <<"'," << std::endl;
-
-            auto & c = Colours[i];
-            ofs << "marker: { color: 'rgb(" << c.r <<", "<<c.g<<", "<<c.b<<")' }," <<std::endl;
-                
-            ofs << "type: 'bar'"<<std::endl<<"};"<<std::endl<<std::endl;
+            listoutput lo(ofs, "x: [", ", ", "]");
+            for (unsigned int m = 0; m < maxmonth; ++m)
+                lo.write(S() << "'" << itemdate::getMonthAsString(m) << "'");
         }
 
-    ofs << "var data = [";
-    for (unsigned int i=0;i<Labels.size();++i)
-    {
-        if (i>0) ofs<<", ";
-        ofs << "trace"<<Labels.size()-1-i; // reverse order so legend is nice.
+        ofs << "]," << std::endl;
+        {
+            listoutput lo(ofs, "y: [", ", ", "]");
+            for (unsigned int m = 0; m < maxmonth; ++m)
+                lo.write(S() << std::setprecision(3) << gSettings().dailyDevCost() * DevDaysTally[i][m]);
+        }
+        ofs << "," << std::endl
+            << "name: '" << Labels[i] << "'," << std::endl;
+
+        auto &c = Colours[i];
+        ofs << "marker: { color: 'rgb(" << c.r << ", " << c.g << ", " << c.b << ")' }," << std::endl;
+
+        ofs << "type: 'bar'" << std::endl
+            << "};" << std::endl
+            << std::endl;
     }
-    ofs <<"];"<<std::endl;
-    ofs<< R"(
+
+    ofs << "var data = [";
+    for (unsigned int i = 0; i < Labels.size(); ++i)
+    {
+        if (i > 0)
+            ofs << ", ";
+        ofs << "trace" << Labels.size() - 1 - i; // reverse order so legend is nice.
+    }
+    ofs << "];" << std::endl;
+    ofs << R"(
         var layout = {
               title: 'Resourcing Cost By Month ($)',
             xaxis: {tickfont: {
@@ -259,7 +263,6 @@ void backlog::Graph_Project_Cost(std::ostream & ofs) const
         </script>
     )";
 }
-
 
 void backlog::outputHTML_Index(std::ostream & ofs) const
 {

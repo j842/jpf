@@ -24,11 +24,10 @@ void backlog::writelist(std::ostream & oss, const std::vector<std::string> & v)
 }
 void backlog::writeresourcenames(std::ostream & oss, const std::vector<resource> & v) 
 {
-    for (unsigned int j = 0; j < v.size(); ++j)
-    {
-        if (j > 0)
-            oss << ";";
-        oss << v[j].mName;
+    { // tidied on dtor.
+        listoutput lo(oss,"",";","");
+        for (auto & vv : v)
+            lo.write(vv.mName);
     }
     oss << ",";
 }
@@ -84,11 +83,12 @@ void backlog::save_gantt_project_file(std::ostream & ofs) const
 
         writeresourcenames(ofs, x.mResources); // resources
 
-        for (unsigned int j=0;j<x.mResources.size();++j)
         {
-            if (j>0) ofs << ";";
-            ofs <<  getPersonIndexFromName(x.mResources[j].mName)+1 << ":" << (int)(0.5 + x.mResources[j].mLoadingPercent);
+            listoutput lo(ofs,"",";","");
+            for (auto & y : x.mResources)
+                lo.write(S()<<getPersonIndexFromName(y.mName)+1 << ":" << (int)(0.5 + y.mLoadingPercent));
         }
+
         ofs << ","; // assignments
 
         ofs << ",,,"; // task colour, web link, notes.

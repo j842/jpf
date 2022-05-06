@@ -8,6 +8,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <libgen.h> 
+#include <sys/wait.h>
 
 #include "utils.h"
 #include "settings.h"
@@ -114,11 +115,11 @@ webserver::webserver(int port)
     std::ostringstream portstr;
     portstr << port;
     fflush(NULL);
-    pid_t pid = fork();
-    if (pid > 0) {
+    pid_t mChildPid = fork();
+    if (mChildPid > 0) {
         return;
     } 
-    else if (pid == 0) 
+    else if (mChildPid == 0) 
     {
         std::cout <<std::endl<< "Starting webserver for "<<getOutputPath_Html()<<", listening to port "<<port<<"." << std::endl<<std::endl;
         execlp(webfsd.c_str(), webfsd.c_str(), "-p",portstr.str().c_str(),"-r",getOutputPath_Html().c_str(),"-f","index.html","-n","localhost","-F", NULL);
@@ -132,6 +133,18 @@ webserver::webserver(int port)
 
 webserver::~webserver()
 {
+    kill(mChildPid,SIGTERM);
+    sleep(1000);
+
+    int ret = kill(mChildPid, SIGKILL);
+    int wstatus;
+    if (ret == -1) {
+        std::cerr<< "Unable to kill webserver." << std::endl;
+    }
+
+    if (waitpid(mChildPid, &wstatus, WUNTRACED | WCONTINUED) == -1) {
+        std::cerr<< "Waiting for webserver to exit failed." << std::endl;
+    }
 }
 
 timer::timer() : t0( std::chrono::high_resolution_clock::now()  )
@@ -182,3 +195,23 @@ std::string trimCSVentry(const std::string str)
 
     return s;
 }
+
+
+listoutput::listoutput(std::ostream & ofs,std::string sstart, std::string seperator, std::string send) : 
+    mOfs(ofs), mSeperator(seperator),mSEnd(send),mFirstItem(true)
+{
+    mOfs << sstart;
+}
+listoutput::~listoutput()
+{
+    mOfs << mSEnd;
+}
+void listoutput::write(std::string item)
+{
+    if (!mFirstItem)
+        mOfs << mSeperator;
+
+    mOfs << item;
+    mFirstItem = false;
+}
+

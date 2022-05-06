@@ -104,6 +104,9 @@ class webserver
     public:
         webserver(int port);
         ~webserver();
+
+    private:
+        pid_t mChildPid;
 };
 
 
@@ -116,6 +119,21 @@ class timer
     private:
         std::chrono::_V2::system_clock::time_point t0;
         double ms;
+};
+
+
+class listoutput
+{
+    public:
+        listoutput(std::ostream & ofs,std::string sstart, std::string seperator, std::string send);
+        ~listoutput();
+        void write(std::string item);
+
+    private:
+        std::ostream & mOfs;
+        std::string mSeperator;
+        std::string mSEnd;
+        bool mFirstItem;
 };
 
 #endif
