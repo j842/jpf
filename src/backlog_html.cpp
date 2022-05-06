@@ -207,18 +207,18 @@ void backlog::Graph_Project_Cost(std::ostream &ofs) const
     {
         ofs << "var trace" << i << " ={" << std::endl;
         {
-            listoutput lo(ofs, "x: [", ", ", "]");
+            listoutput lo(ofs, "x: [", ", ", "], ");
             for (unsigned int m = 0; m < maxmonth; ++m)
-                lo.write(S() << "'" << itemdate::getMonthAsString(m) << "'");
+                lo.writehq(itemdate::getMonthAsString(m));
         }
 
-        ofs << "," << std::endl;
+        ofs << std::endl;
         {
-            listoutput lo(ofs, "y: [", ", ", "]");
+            listoutput lo(ofs, "y: [", ", ", "], ");
             for (unsigned int m = 0; m < maxmonth; ++m)
                 lo.write(S() << std::setprecision(3) << gSettings().dailyDevCost() * DevDaysTally[i][m]);
         }
-        ofs << "," << std::endl
+        ofs << std::endl
             << "name: '" << Labels[i] << "'," << std::endl;
 
         auto &c = Colours[i];
@@ -229,14 +229,12 @@ void backlog::Graph_Project_Cost(std::ostream &ofs) const
             << std::endl;
     }
 
-    ofs << "var data = [";
-    for (unsigned int i = 0; i < Labels.size(); ++i)
     {
-        if (i > 0)
-            ofs << ", ";
-        ofs << "trace" << Labels.size() - 1 - i; // reverse order so legend is nice.
+        listoutput lo( ofs, "var data = [", ", ", "];" );
+        for ( auto it = Labels.size() ; it > 0 ; --it )
+            lo.write(S() << "trace" << it-1);
     }
-    ofs << "];" << std::endl;
+    ofs << std::endl;
     ofs << R"(
         var layout = {
               title: 'Resourcing Cost By Month ($)',

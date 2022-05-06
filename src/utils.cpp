@@ -198,13 +198,13 @@ std::string trimCSVentry(const std::string str)
 
 
 listoutput::listoutput(std::ostream & ofs,std::string sstart, std::string seperator, std::string send) : 
-    mOfs(ofs), mSeperator(seperator),mSEnd(send),mFirstItem(true)
+    mOfs(ofs), mSeperator(seperator),mSEnd(send),mFirstItem(true),mEnded(false)
 {
     mOfs << sstart;
 }
 listoutput::~listoutput()
 {
-    mOfs << mSEnd;
+    end(); 
 }
 void listoutput::write(std::string item) const
 {
@@ -218,4 +218,13 @@ void listoutput::write(std::string item) const
 void listoutput::writehq(std::string item) const // add halfquotes.
 {
     listoutput::write(S() << "'" << item <<"'" );
+}
+
+void listoutput::end()
+{
+    if (mEnded)
+        return;
+
+     mOfs << mSEnd;
+     mEnded=true;
 }

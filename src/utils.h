@@ -129,12 +129,14 @@ class listoutput
         ~listoutput();
         void write(std::string item) const;
         void writehq(std::string item) const; // add halfquotes.
+        void end();
 
     private:
         std::ostream & mOfs;
         std::string mSeperator;
         std::string mSEnd;
         mutable bool mFirstItem;
+        bool mEnded;
 };
 
 #endif
