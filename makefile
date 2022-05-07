@@ -126,4 +126,7 @@ upload: deb
 	podman run -it --rm -v $(ROOT_DIR):/opt \
 		jpf package_cloud push j842/main/any/any /opt/$(JPF_DEB) 
 
+check: $(JPF_EXE)
+	$(JPF_EXE) -t
+
 # ------------------------------------------------
