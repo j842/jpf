@@ -10,13 +10,13 @@ jobs:
     - uses: actions/checkout@v3
     - name: install prereqs
       run: sudo apt install build-essential libboost-date-time-dev libcppunit-dev webfs podman
-    - name: make images
-      run: make images
     - name: make
       run: make
     - name: make check
       run: make check
+    - name: make images
+      run: cd deploy ; make images
     - name: make deb
-      run: make deb
+      run: cd deploy ; make deb
     - name: make upload
-      run: make upload
+      run: cd deploy ; make upload
