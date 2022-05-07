@@ -1,7 +1,7 @@
 #---------------------------------
 
 JPF_VERSION := 0.0.10
-JPF_RELEASE := 16
+JPF_RELEASE := 17
 INPUT_VERSION := 6
 #---------------------------------
 
@@ -36,7 +36,9 @@ LIN_STRING   = "Linking"
 
 # sudo apt-get install libboost-date-time-dev libcppunit-dev
 CXX=g++
-LD=g++
+#CXX=podman/podrun.sh g++
+
+LD=$(CXX)
 CXXFLAGS := -g -Wall -std=c++17 
 LDFLAGS  := -g
 LDLIBS   := -l:libboost_date_time.a -l:libcppunit.a

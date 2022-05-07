@@ -1,0 +1,20 @@
+name: Deploy deb Package
+
+on:
+  workflow_dispatch
+
+jobs:
+  deploy:
+    runs-on: ubuntu-20.04
+    steps:
+    - uses: actions/checkout@v3
+    - name: install prereqs
+      run: sudo apt install build-essential libboost-date-time-dev libcppunit-dev webfs podman
+    - name: make
+      run: make
+    - name: make check
+      run: make check
+    - name: make deb
+      run: make deb
+    - name: make upload
+      run: make upload

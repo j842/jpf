@@ -79,16 +79,28 @@ https://www.ganttproject.biz/
 
 On either Ubuntu 20.04 or Debian 11 (including via WSL2 under Windows):
 ```
-sudo apt-get install build-essential libboost-date-time-dev libcppunit-dev webfs podman
+sudo apt install build-essential libboost-date-time-dev libcppunit-dev podman
 ```
 
-And try it out:
+Install webfsd-jpf:
 ```
 git clone https://github.com/j842/jpf.git
 cd jpf
+sudo cp webfsd-jpf/webfsd-jpf /usr/bin
+```
+
+Then compile:
+```
 make images
 make
 make deb
+```
+And test:
+
+```
+./jpf -t
+./jpf .
+./jpf -w .
 ```
 
 ## Make the debian package
