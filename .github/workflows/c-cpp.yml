@@ -1,17 +1,16 @@
-name: C/C++ CI
-
+name: Make jpf
 on:
   push:
     branches: [ main ]
   pull_request:
     branches: [ main ]
-
 jobs:
-  build:
+  make_jpf:
     runs-on: ubuntu-latest
-    - run: sudo apt install build-essential libboost-date-time-dev libcppunit-dev webfs podman
     steps:
     - uses: actions/checkout@v3
+    - name: install prereqs
+      run: sudo apt install build-essential libboost-date-time-dev libcppunit-dev webfs podman
     - name: make
       run: make
     - name: make check
