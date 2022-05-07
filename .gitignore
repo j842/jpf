@@ -9,6 +9,7 @@ jpf_debug
 /bin
 .obj
 .dep
+/webfsd-jpf/bin
 
 
 # Prerequisites
