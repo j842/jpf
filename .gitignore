@@ -46,3 +46,6 @@ jpf_debug
 *.app
 *.deb
 
+# log files!
+*.log
+
