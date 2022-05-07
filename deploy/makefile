@@ -19,7 +19,7 @@ $(JPF_SCRIPT_PATH) = \
 \#!/bin/sh\n\
 	fpm \
 		-s dir -t deb \
-		-p /opt/$(JPF_DEB) \
+		-p /opt/$(BIN_NAME)/$(JPF_DEB_NAME) \
 		--name $(JPF_NAME) \
 		--license Artistic-2.0 \
 		--version $(JPF_VERSION)-$(JPF_RELEASE) \
