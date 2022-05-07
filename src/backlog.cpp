@@ -115,19 +115,23 @@ backlog::backlog(projects & p, const teams & t) : mTeams(t), mProjects(p)
             unsigned int j=1;
             std::string filename="team-"+makelower(t[i].mId) + ".csv";
             simplecsv teambacklog(filename,true,10);
-            if (!teambacklog.openedOkay())
-                TERMINATE("Failed to open team backlog file "+filename);
-            std::vector<std::string> items;
-            while (teambacklog.getline(items,10))
+            if (teambacklog.openedOkay())
             {
-                backlogitem b(items,i,p);
-                unsigned int n = getItemIndexFromId(b.mId);
-                if (n!=eNotFound)
-                    TERMINATE(S()<<"Duplicate ID " << b.mId<<" of two backlog items:"<<std::endl<<b.mDescription<<std::endl<<mItems[n].mDescription);
-
-                mTeamsItems[b.mTeamNdx].push_back( b );
-                ++j;
+                std::vector<std::string> items;
+                while (teambacklog.getline(items,10))
+                {
+                    backlogitem b(items,i,p);
+                        {
+                        unsigned int n = getItemIndexFromId(b.mId);
+                        if (n!=eNotFound)
+                            TERMINATE(S()<<"Duplicate ID " << b.mId<<" of two backlog items:"<<std::endl<<b.mDescription<<std::endl<<mItems[n].mDescription);
+                        }
+                    mTeamsItems[b.mTeamNdx].push_back( b );
+                    ++j;
+                }
             }
+            else    
+                std::cout << "Unable to open team csv: "<<filename<<std::endl;
         }
 
     // copy people name/maxtime from the teams list into our people list.
@@ -221,6 +225,9 @@ void vmove(std::vector<backlogitem> & v, const std::size_t i_old, const std::siz
 
 unsigned int backlog::getItemIndexFromId(const std::string id) const
 {
+    if (id.length()==0)
+        return eNotFound;
+    
     for (unsigned int k=0;k<mItems.size();++k)
         if (iSame(mItems[k].mId,id) )
             return k;

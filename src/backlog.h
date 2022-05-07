@@ -39,7 +39,7 @@ class backlogitem
         // explicitly set from CSV file.
         unsigned int mTeamNdx;
         unsigned int mProject;
-        std::string mId;
+        std::string mId; // can be an empty string.
         std::string mDescription;
         std::string mProjectName;
         int mMinCalendarDays;
