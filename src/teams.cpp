@@ -90,5 +90,5 @@ void teams::load_public_holidays()
         mPublicHolidaysString += row[0];
     }
 
-    std::cout << mPublicHolidaysString << std::endl;
+//    std::cout << "Upcoming public holidays: "<< mPublicHolidaysString << std::endl;
 }
