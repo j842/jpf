@@ -38,10 +38,13 @@ class teams : public std::vector<team>
 
         const unsigned int eNotFound;
 
+        void load_public_holidays();
+
 
     private:
         unsigned int get_index_by_name(std::string n);
 
+        std::string mPublicHolidaysString;
 };
 
 #endif

@@ -8,6 +8,8 @@
 
 teams::teams() : eNotFound(UINT_MAX)
 {
+    load_public_holidays();
+
     simplecsv c("teams.csv");
 
     if (!c.openedOkay())
@@ -41,6 +43,8 @@ teams::teams() : eNotFound(UINT_MAX)
 
             std::string leave = row[5];
             removewhitespace(leave);
+            if (leave.length()>0) leave+=",";
+            leave += mPublicHolidaysString;
 
             this->at(ndx).mMembers.push_back( member(name,EFTProject,EFTBAU,EFTOverhead,leave));
         }
@@ -65,4 +69,26 @@ void teams::debug_displayTeams() const
             std::cout << " { " << c2.mName << ", "<<c2.mEFTProject<<" } ";
         std::cout<<std::endl;
     }
+}
+
+
+void teams::load_public_holidays()
+{
+    simplecsv ph("publicholidays.csv");
+
+    if (!ph.openedOkay())
+    {
+        std::cerr << "Could not read the public holidays from publicholidays.csv"<<std::endl;
+        return;
+    }
+
+    std::vector<std::string> row;
+    while (ph.getline(row,1))
+    {
+        if (mPublicHolidaysString.length()>0)
+            mPublicHolidaysString += ",";
+        mPublicHolidaysString += row[0];
+    }
+
+    std::cout << mPublicHolidaysString << std::endl;
 }
