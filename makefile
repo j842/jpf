@@ -1,7 +1,7 @@
 #---------------------------------
 
 JPF_VERSION := 0.0.10
-JPF_RELEASE := 15
+JPF_RELEASE := 16
 INPUT_VERSION := 6
 #---------------------------------
 
@@ -124,7 +124,6 @@ deb: $(JPF_DEB)
 
 upload: deb
 	podman run -it --rm -v $(ROOT_DIR):/opt \
-		-e PACKAGECLOUD_TOKEN=${PACKAGECLOUD_TOKEN} \
 		jpf package_cloud push j842/main/any/any /opt/$(JPF_DEB) 
 
 # ------------------------------------------------

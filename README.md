@@ -96,11 +96,11 @@ make deb
 make deb
 ```
 
-To upload, add to ~/.bashrc:
+To upload, make sure ~/.packagecloud exsts with the correct token:
 ```
-export PACKAGECLOUD_TOKEN="actual_token_from_packagecloud"
+{"url":"https://packagecloud.io", "token": "packagecloud_token"}
 ```
-log out and in again, then:
+(Note this token is baked into the podman image, so do not make that image public)
 ```
 make upload
 ```
