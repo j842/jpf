@@ -24,7 +24,7 @@ WEBJPF_SOURCE := $(WEBJPF_NAME)
 WEBJPF_DEB := $(BIN_DIR)/$(WEBJPF_NAME)-$(WEBJPF_VERSION)-any.deb
 WEBJPF_SCRIPT := $(BIN_DIR)/$(WEBJPF_NAME)_script.sh
 
-# dependencies are for the webfsd binary included ( https://packages.ubuntu.com/bionic/webfs )
+# dependencies are for the webfsd binary included ( https://packages.ubuntu.com/jammy/webfs )
 $(WEBJPF_SCRIPT) = \
 \#!/bin/sh\n\
 	fpm \

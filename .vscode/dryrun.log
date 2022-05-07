@@ -1,60 +1,6 @@
-make --dry-run --always-make --keep-going --print-directory
+make --dry-run --keep-going --print-directory
 make: Entering directory '/home/j/code/j842/jpf'
  
-mkdir -p .obj
-mkdir -p .dep
- 
-printf "%b" "\033[0;34m"Compiling" \033[0;36m.obj/backlog.o\n";
-g++ -MT .obj/backlog.o -MD -MP -MF .dep/backlog.Td -g -Wall -std=c++17  -c -o .obj/backlog.o src/backlog.cpp 
-mv -f .dep/backlog.Td .dep/backlog.d
- 
-printf "%b" "\033[0;34m"Compiling" \033[0;36m.obj/backlog_html.o\n";
-g++ -MT .obj/backlog_html.o -MD -MP -MF .dep/backlog_html.Td -g -Wall -std=c++17  -c -o .obj/backlog_html.o src/backlog_html.cpp 
-mv -f .dep/backlog_html.Td .dep/backlog_html.d
- 
-printf "%b" "\033[0;34m"Compiling" \033[0;36m.obj/backlog_output.o\n";
-g++ -MT .obj/backlog_output.o -MD -MP -MF .dep/backlog_output.Td -g -Wall -std=c++17  -c -o .obj/backlog_output.o src/backlog_output.cpp 
-mv -f .dep/backlog_output.Td .dep/backlog_output.d
- 
-printf "%b" "\033[0;34m"Compiling" \033[0;36m.obj/backlog_schedule.o\n";
-g++ -MT .obj/backlog_schedule.o -MD -MP -MF .dep/backlog_schedule.Td -g -Wall -std=c++17  -c -o .obj/backlog_schedule.o src/backlog_schedule.cpp 
-mv -f .dep/backlog_schedule.Td .dep/backlog_schedule.d
- 
-printf "%b" "\033[0;34m"Compiling" \033[0;36m.obj/colourgradient.o\n";
-g++ -MT .obj/colourgradient.o -MD -MP -MF .dep/colourgradient.Td -g -Wall -std=c++17  -c -o .obj/colourgradient.o src/colourgradient.cpp 
-mv -f .dep/colourgradient.Td .dep/colourgradient.d
- 
-printf "%b" "\033[0;34m"Compiling" \033[0;36m.obj/itemdate.o\n";
-g++ -MT .obj/itemdate.o -MD -MP -MF .dep/itemdate.Td -g -Wall -std=c++17  -c -o .obj/itemdate.o src/itemdate.cpp 
-mv -f .dep/itemdate.Td .dep/itemdate.d
- 
-printf "%b" "\033[0;34m"Compiling" \033[0;36m.obj/main.o\n";
-g++ -MT .obj/main.o -MD -MP -MF .dep/main.Td -g -Wall -std=c++17  -c -o .obj/main.o src/main.cpp 
-mv -f .dep/main.Td .dep/main.d
-printf "%b" "\033[0;34m"Compiling" \033[0;36m.obj/person.o\n";
-g++ -MT .obj/person.o -MD -MP -MF .dep/person.Td -g -Wall -std=c++17  -c -o .obj/person.o src/person.cpp 
-mv -f .dep/person.Td .dep/person.d
-printf "%b" "\033[0;34m"Compiling" \033[0;36m.obj/projects.o\n";
-g++ -MT .obj/projects.o -MD -MP -MF .dep/projects.Td -g -Wall -std=c++17  -c -o .obj/projects.o src/projects.cpp 
-mv -f .dep/projects.Td .dep/projects.d
-echo "Generating src/version.h"
-echo "#define __JPF_VERSION \"0.0.10\"" > src/version.h
-echo "#define __JPF_RELEASE \"8\"" >> src/version.h
-echo "#define __INPUT_VERSION (6)" >> src/version.h
-printf "%b" "\033[0;34m"Compiling" \033[0;36m.obj/settings.o\n";
-g++ -MT .obj/settings.o -MD -MP -MF .dep/settings.Td -g -Wall -std=c++17  -c -o .obj/settings.o src/settings.cpp 
-mv -f .dep/settings.Td .dep/settings.d
-printf "%b" "\033[0;34m"Compiling" \033[0;36m.obj/simplecsv.o\n";
-g++ -MT .obj/simplecsv.o -MD -MP -MF .dep/simplecsv.Td -g -Wall -std=c++17  -c -o .obj/simplecsv.o src/simplecsv.cpp 
-mv -f .dep/simplecsv.Td .dep/simplecsv.d
-printf "%b" "\033[0;34m"Compiling" \033[0;36m.obj/teams.o\n";
-g++ -MT .obj/teams.o -MD -MP -MF .dep/teams.Td -g -Wall -std=c++17  -c -o .obj/teams.o src/teams.cpp 
-mv -f .dep/teams.Td .dep/teams.d
-printf "%b" "\033[0;34m"Compiling" \033[0;36m.obj/utils.o\n";
-g++ -MT .obj/utils.o -MD -MP -MF .dep/utils.Td -g -Wall -std=c++17  -c -o .obj/utils.o src/utils.cpp 
-mv -f .dep/utils.Td .dep/utils.d
-mkdir -p bin
-printf "%b" "\033[0;33m"Linking" \033[0;36mbin/jpf\n";
-g++ -g  -o bin/jpf .obj/backlog.o .obj/backlog_html.o .obj/backlog_output.o .obj/backlog_schedule.o .obj/colourgradient.o .obj/itemdate.o .obj/main.o .obj/person.o .obj/projects.o .obj/settings.o .obj/simplecsv.o .obj/teams.o .obj/utils.o -l:libboost_date_time.a -l:libcppunit.a
+make: Nothing to be done for 'all'.
 make: Leaving directory '/home/j/code/j842/jpf'
  

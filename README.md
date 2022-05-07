@@ -96,6 +96,23 @@ make deb
 make deb
 ```
 
+To upload, add to ~/.bashrc:
+```
+export PACKAGECLOUD_TOKEN="actual_token_from_packagecloud"
+```
+log out and in again, then:
+```
+make upload
+```
+
+### webfsd-jpf
+
+```
+cd webfsd-jpf
+make
+```
+
+
 ## Project Tips
 
 - Put tasks assigned to a person in the team the person is in, not the team doing most of the project work.

@@ -33,6 +33,11 @@ void backlog::writeresourcenames(std::ostream & oss, const std::vector<resource>
 }
 
 
+outputfilewriter::outputfilewriter(std::string fname, tOutputTypes outputType, tFuncPtr fptr) :
+    mFileName(fname), mOutputType(outputType), mFuncPtr(fptr)
+{
+}
+
 
 
 // -----------------------------------------------------------------------------------------------------------------

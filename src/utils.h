@@ -28,6 +28,7 @@ void _terminate(const std::string &s, const std::string &func, const std::string
 void _terminate(const std::stringstream &s, const std::string &func, const std::string &file, int line);
 
 void removewhitespace(std::string & s);
+void checkcreatedirectory(std::string d);
 
 #define STR(x) #x
 #define ASSERT(x) if (!(x)) { printf("assertion failed: (%s), function %s, file %s, line %d.\n", STR(x), __PRETTY_FUNCTION__, __FILE__, __LINE__); exit(1); }

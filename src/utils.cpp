@@ -9,6 +9,7 @@
 #include <stdio.h>
 #include <libgen.h> 
 #include <sys/wait.h>
+#include <filesystem>
 
 #include "utils.h"
 #include "settings.h"
@@ -227,4 +228,15 @@ void listoutput::end()
 
      mOfs << mSEnd;
      mEnded=true;
+}
+
+
+void checkcreatedirectory(std::string d)
+{
+    if (!std::filesystem::exists(d))
+    {
+        if (!std::filesystem::create_directory(d))
+            TERMINATE("Could not create directory: "+d);
+        std::cout<<"Created directory: "<<d<<std::endl;
+    }    
 }

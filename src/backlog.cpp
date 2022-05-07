@@ -102,6 +102,8 @@ std::string makelower(const std::string & s)
 }
 
 
+//-----------------------------------------------------------------------------------------
+
 
 
 backlog::backlog(projects & p, const teams & t) : mTeams(t), mProjects(p)
@@ -132,6 +134,61 @@ backlog::backlog(projects & p, const teams & t) : mTeams(t), mProjects(p)
     for (const auto & x : mTeams)
         for (const auto & y : x.mMembers)
             mPeople.push_back( person( y ));
+
+
+    // load output types.
+
+    mOutputWriters = {
+        outputfilewriter("backlog.txt",kFile_Text,&backlog::displaybacklog),
+        outputfilewriter("people.txt",kFile_Text,&backlog::displaypeople),
+        outputfilewriter("gantt.csv",kFile_CSV,&backlog::save_gantt_project_file),
+        outputfilewriter("milestones.txt",kFile_Text,&backlog::displaymilestones),
+        outputfilewriter("raw_backlog.txt",kFile_Text,&backlog::displaybacklog_raw),
+        outputfilewriter("projects.txt",kFile_Text,&backlog::displayprojects),
+        outputfilewriter("index.html",kFile_HTML,&backlog::outputHTML_Index),
+        outputfilewriter("people.html",kFile_HTML,&backlog::outputHTML_People),
+        outputfilewriter("costdashboard.html",kFile_HTML,&backlog::outputHTML_Dashboard),
+        outputfilewriter("highlevelgantt.html",kFile_HTML,&backlog::outputHTML_High_Level_Gantt),
+        outputfilewriter("detailedgantt.html",kFile_HTML,&backlog::outputHTML_Detailed_Gantt),
+        outputfilewriter("rawbacklog.html",kFile_HTML,&backlog::outputHTML_RawBacklog)       
+    };
+
+}
+
+void backlog::createAllOutputFiles() const
+{
+    create_output_directories();
+
+    for (auto & f : mOutputWriters)
+    {
+        std::string p;
+        switch (f.mOutputType)
+        {
+            case kFile_Text:
+                p = getOutputPath_Txt();
+                break;
+            case kFile_HTML:
+                p = getOutputPath_Html();
+                break;
+            case kFile_CSV:
+                p = getOutputPath_Csv();
+                break;
+            default:
+                TERMINATE("Bad code, invalid output type.");
+        };
+        std::ofstream ofs(p+f.mFileName);
+        (this->*f.mFuncPtr)(ofs);
+        ofs.close();    
+    }
+}
+
+void backlog::create_output_directories() const
+{
+    std::string po =  gSettings().getRoot()+"/output/";
+    checkcreatedirectory(po);
+    checkcreatedirectory(getOutputPath_Txt());
+    checkcreatedirectory(getOutputPath_Csv());
+    checkcreatedirectory(getOutputPath_Html());
 }
 
 
@@ -258,3 +315,10 @@ void backlog::_calc_project_summary()
         if (proj.mActualStart.isForever()) // no tasks.
             proj.mActualStart.setToStart();
 }
+
+// -----------------------------------------------------------------------------------------------------------------
+// -----------------------------------------------------------------------------------------------------------------
+// -----------------------------------------------------------------------------------------------------------------
+
+
+

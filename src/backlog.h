@@ -58,6 +58,27 @@ class backlogitem
         std::string mBlockedBy;
 };
 
+typedef enum
+{
+    kFile_Text,
+    kFile_HTML,
+    kFile_CSV,
+} tOutputTypes;
+
+
+class backlog;
+
+typedef void(backlog::*tFuncPtr)(std::ostream & ofs) const;
+
+class outputfilewriter
+{
+    public: 
+        outputfilewriter(std::string fname, tOutputTypes outputType, tFuncPtr fptr);
+
+        std::string mFileName;
+        tOutputTypes mOutputType;
+        tFuncPtr mFuncPtr;
+};
 
 class backlog
 {
@@ -65,13 +86,20 @@ class backlog
         backlog(projects & p, const teams & t);
 
         void schedule();
+        void createAllOutputFiles() const;
+        void displayprojects(std::ostream & ofs) const;
+        static void outputHTMLError(std::string filename, std::string errormsg);
+
+    private:
+        std::vector< outputfilewriter > mOutputWriters;
+
+        void create_output_directories() const;
 
         void displaybacklog(std::ostream & ofs) const;
         void displaypeople(std::ostream & ofs) const;
         void displaymilestones(std::ostream & ofs) const;
         void displaybacklog_raw(std::ostream & ofs) const;
         void save_gantt_project_file(std::ostream &ofs) const;
-        void displayprojects(std::ostream & ofs) const;
 
         void outputHTML_Index(std::ostream & ofs) const;
         void outputHTML_Dashboard(std::ostream & ofs) const;
@@ -79,8 +107,6 @@ class backlog
         void outputHTML_Detailed_Gantt(std::ostream & ofs) const;
         void outputHTML_People(std::ostream & ofs) const;
         void outputHTML_RawBacklog(std::ostream & ofs) const;
-
-        static void outputHTMLError(std::string filename, std::string errormsg);
 
     private:
         void _prioritiseAndMergeTeams();
@@ -96,7 +122,6 @@ class backlog
         person & getPersonByName(const std::string name); //creates if not present, but checks against teams.
         unsigned int getItemIndexFromId(const std::string id) const;
         unsigned int getPersonIndexFromName(const std::string name) const;
-
 
         // HTML helper routines.
         

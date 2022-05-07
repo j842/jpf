@@ -91,9 +91,6 @@ $(DEP_DIR)/%.d: ;
 images: 
 	podman/build.sh
 
-#		 \
-
-
 $(JPF_SCRIPT) = \
 \#!/bin/sh\n\
 	fpm \

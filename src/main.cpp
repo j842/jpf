@@ -13,61 +13,6 @@
 #include "settings.h"
 #include "main.h"
 
-void run_common(backlog & b)
-{
-    create_output_directories();
-
-    std::ofstream ofs_backlog(getOutputPath_Txt()+"backlog.txt");
-    ofs_backlog<<"Project backlog starting from "<< itemdate::date2strNice(gSettings().startDate()) << std::endl;
-    b.displaybacklog(ofs_backlog);
-    ofs_backlog.close();
-
-    std::ofstream ofs_people(getOutputPath_Txt()+"people.txt");
-    b.displaypeople(ofs_people);
-    ofs_people.close();
-
-    std::ofstream ofs_ganttcsv(getOutputPath_Csv()+"gantt.csv");
-    b.save_gantt_project_file(ofs_ganttcsv);
-    ofs_ganttcsv.close();
-
-    std::ofstream ofs_milestones(getOutputPath_Txt()+"milestones.txt");
-    b.displaymilestones(ofs_milestones);
-    ofs_milestones.close();
-
-    std::ofstream ofs_raw(getOutputPath_Txt()+"raw_backlog.txt");
-    b.displaybacklog_raw(ofs_raw);
-    ofs_raw.close();
-
-    std::ofstream ofs_projects(getOutputPath_Txt()+"projects.txt");
-    b.displayprojects(ofs_projects);
-    ofs_projects.close();
-
-    // output HTML...
-    std::ofstream indexhtml(getOutputPath_Html()+"index.html");
-    b.outputHTML_Index(indexhtml);
-    indexhtml.close();
-
-    std::ofstream peoplehtml(getOutputPath_Html()+"people.html");
-    b.outputHTML_People(peoplehtml);
-    peoplehtml.close();
-
-    std::ofstream dashboardhtml(getOutputPath_Html()+"costdashboard.html");
-    b.outputHTML_Dashboard(dashboardhtml);
-    dashboardhtml.close();
-
-    std::ofstream biggantthtml(getOutputPath_Html()+"highlevelgantt.html");
-    b.outputHTML_High_Level_Gantt(biggantthtml);
-    biggantthtml.close();
-
-    std::ofstream detailedgantthtml(getOutputPath_Html()+"detailedgantt.html");
-    b.outputHTML_Detailed_Gantt(detailedgantthtml);
-    detailedgantthtml.close();    
-
-    std::ofstream rawbackloghtml(getOutputPath_Html()+"rawbacklog.html");
-    b.outputHTML_RawBacklog(rawbackloghtml);
-    rawbackloghtml.close();    
-}
-
 void run_console()
 {
     timer tmr;
@@ -80,7 +25,7 @@ void run_console()
         b.schedule();
         std::cout << std::endl << std::endl;
         b.displayprojects(std::cout);
-        run_common(b);        
+        b.createAllOutputFiles();      
 
         std::cout << std::endl << "Completed in "<<std::setprecision(3) << tmr.stop() <<"ms."<<std::endl;
     }
@@ -107,7 +52,7 @@ void run_watch(int port)
             b.schedule();
 
             timer tmr;
-            run_common(b);
+            b.createAllOutputFiles();
             std::cout << "File output done in "<<std::setprecision(3)<<tmr.stop()<<"ms."<<std::endl;
         }
         catch (TerminateRunException& pEx)
@@ -166,24 +111,8 @@ int getport(std::string s)
     return port;
 }
 
-void checkcreate(std::string d)
-{
-    if (!std::filesystem::exists(d))
-    {
-        if (!std::filesystem::create_directory(d))
-            TERMINATE("Could not create directory: "+d);
-        std::cout<<"Created directory: "<<d<<std::endl;
-    }    
-}
 
-void create_output_directories()
-{
-    std::string po =  gSettings().getRoot()+"/output/";
-    checkcreate(po);
-    checkcreate(getOutputPath_Txt());
-    checkcreate(getOutputPath_Csv());
-    checkcreate(getOutputPath_Html());
-}
+
 
 void create_directories()
 {
@@ -194,8 +123,7 @@ void create_directories()
     if (std::filesystem::exists(pi))
         TERMINATE("Can't create directories - input dir already exists: "+pi);
 
-    checkcreate(pr);
-    create_output_directories();
+    checkcreatedirectory(pr);
 
     if (!std::filesystem::exists(ex))
         TERMINATE("Expected example files were not installed in /opt/jpf/input.");
