@@ -139,18 +139,18 @@ backlog::backlog(projects & p, const teams & t) : mTeams(t), mProjects(p)
     // load output types.
 
     mOutputWriters = {
-        outputfilewriter("backlog.txt",kFile_Text,&backlog::displaybacklog),
-        outputfilewriter("people.txt",kFile_Text,&backlog::displaypeople),
-        outputfilewriter("gantt.csv",kFile_CSV,&backlog::save_gantt_project_file),
-        outputfilewriter("milestones.txt",kFile_Text,&backlog::displaymilestones),
-        outputfilewriter("raw_backlog.txt",kFile_Text,&backlog::displaybacklog_raw),
-        outputfilewriter("projects.txt",kFile_Text,&backlog::displayprojects),
-        outputfilewriter("index.html",kFile_HTML,&backlog::outputHTML_Index),
-        outputfilewriter("people.html",kFile_HTML,&backlog::outputHTML_People),
-        outputfilewriter("costdashboard.html",kFile_HTML,&backlog::outputHTML_Dashboard),
-        outputfilewriter("highlevelgantt.html",kFile_HTML,&backlog::outputHTML_High_Level_Gantt),
-        outputfilewriter("detailedgantt.html",kFile_HTML,&backlog::outputHTML_Detailed_Gantt),
-        outputfilewriter("rawbacklog.html",kFile_HTML,&backlog::outputHTML_RawBacklog)       
+        outputfilewriter("backlog.txt",         kFile_Text, &backlog::displaybacklog),
+        outputfilewriter("people.txt",          kFile_Text, &backlog::displaypeople),
+        outputfilewriter("gantt.csv",           kFile_CSV,  &backlog::save_gantt_project_file),
+        outputfilewriter("milestones.txt",      kFile_Text, &backlog::displaymilestones),
+        outputfilewriter("raw_backlog.txt",     kFile_Text, &backlog::displaybacklog_raw),
+        outputfilewriter("projects.txt",        kFile_Text, &backlog::displayprojects),
+        outputfilewriter("index.html",          kFile_HTML, &backlog::outputHTML_Index),
+        outputfilewriter("people.html",         kFile_HTML, &backlog::outputHTML_People),
+        outputfilewriter("costdashboard.html",  kFile_HTML, &backlog::outputHTML_Dashboard),
+        outputfilewriter("highlevelgantt.html", kFile_HTML, &backlog::outputHTML_High_Level_Gantt),
+        outputfilewriter("detailedgantt.html",  kFile_HTML, &backlog::outputHTML_Detailed_Gantt),
+        outputfilewriter("rawbacklog.html",     kFile_HTML, &backlog::outputHTML_RawBacklog)       
     };
 
 }
