@@ -77,7 +77,7 @@ $(DEP_DIR)/%.d: ;
 check: $(JPF_EXE)
 	$(JPF_EXE) -t
 
-deploy: $(JPF_EXE)
+deploy:
 	gh auth login --with-token < ~/.github_token
 	gh workflow run deploy_package.yml
 
