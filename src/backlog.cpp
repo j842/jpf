@@ -67,6 +67,14 @@ backlog::backlog(projects & p, const teams & t) : mTeams(t), mProjects(p)
 
 }
 
+void backlog::output(std::ostream & os, unsigned int teamNdx) const // output the backlog as a inputtable csv.
+{
+    os << "Project,ID,Description,Min Calendar WorkDays,Remaining DevDays Total,Earliest Start,Blocking,Contributing,Depends On,Comments" << std::endl;
+    for (auto & i : mItems)
+        if (i.mTeamNdx == teamNdx)
+            i.output(os,mProjects);
+}
+
 void backlog::createAllOutputFiles() const
 {
     create_output_directories();

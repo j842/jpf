@@ -21,7 +21,6 @@ void checkcreatedirectory(std::string d);
 std::string makelower(const std::string & s);
 bool iSame(const std::string &s1, const std::string &s2);
 void trim(std::string & str);
-std::string trimCSVentry(const std::string str);
 
 // a few globals
 const unsigned int eNotFound = UINT_MAX;

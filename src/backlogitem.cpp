@@ -72,7 +72,11 @@ void backlogitem::output(std::ostream & os, const projects &p) const
     csvitems.push_back(mDescription);
     csvitems.push_back(S() << mMinCalendarDays);
     csvitems.push_back(S() << mDevDays);
-    csvitems.push_back(mEarliestStart.getStr());
+
+    if (mEarliestStart == itemdate::Today())
+        csvitems.push_back("");
+    else
+        csvitems.push_back(mEarliestStart.getStr());
 
     std::string r;
     for (auto & i : mResources)

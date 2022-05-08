@@ -41,6 +41,7 @@ class backlog
         void createAllOutputFiles() const;
         void displayprojects(std::ostream & ofs) const;
         static void outputHTMLError(std::string filename, std::string errormsg);
+        void output(std::ostream & os, unsigned int teamNdx) const; // output the backlog as a inputtable csv for the given team.
 
     private:
         std::vector< outputfilewriter > mOutputWriters;

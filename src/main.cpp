@@ -25,7 +25,9 @@ void run_console()
         b.schedule();
         std::cout << std::endl << std::endl;
         b.displayprojects(std::cout);
-        b.createAllOutputFiles();      
+        b.createAllOutputFiles();     
+
+        // b.output(std::cout,0); 
 
         std::cout << std::endl << "Completed in "<<std::setprecision(3) << tmr.stop() <<"ms."<<std::endl;
     }
