@@ -240,3 +240,16 @@ void checkcreatedirectory(std::string d)
         std::cout<<"Created directory: "<<d<<std::endl;
     }    
 }
+
+
+
+std::string makelower(const std::string & s)
+{
+    std::string slower(s);
+    std::transform(slower.begin(), slower.end(), slower.begin(),
+        [](unsigned char c){ return std::tolower(c); });
+
+    return slower;
+}
+
+

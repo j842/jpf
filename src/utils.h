@@ -12,24 +12,24 @@
 #include <cppunit/extensions/TestFactoryRegistry.h>
 #include <cppunit/ui/text/TestRunner.h>
 
-// 1/100th of a day.
+// a centiday is 1/100th of a day.
 typedef int tCentiDay;
 
-
+// string manipulation etc.
+void removewhitespace(std::string & s);
+void checkcreatedirectory(std::string d);
+std::string makelower(const std::string & s);
 bool iSame(const std::string &s1, const std::string &s2);
 void trim(std::string & str);
 std::string trimCSVentry(const std::string str);
 
-
 // a few globals
 const unsigned int eNotFound = UINT_MAX;
 
+
+// termiantion routines.
 void _terminate(const std::string &s, const std::string &func, const std::string &file, int line);
 void _terminate(const std::stringstream &s, const std::string &func, const std::string &file, int line);
-
-void removewhitespace(std::string & s);
-void checkcreatedirectory(std::string d);
-
 #define STR(x) #x
 #define ASSERT(x) if (!(x)) { printf("assertion failed: (%s), function %s, file %s, line %d.\n", STR(x), __PRETTY_FUNCTION__, __FILE__, __LINE__); exit(1); }
 #define TERMINATE(x) { _terminate(x, __PRETTY_FUNCTION__, __FILE__, __LINE__); }
@@ -80,7 +80,7 @@ public:
 };
 
 
-
+// watch a folder for changes in it.
 #define EVENT_SIZE  ( sizeof (struct inotify_event) )
 #define BUF_LEN     ( 1024 * ( EVENT_SIZE + 16 ) )
 class watcher
@@ -96,8 +96,7 @@ class watcher
         char buffer[BUF_LEN];
 };
     
-
-
+// routine to trap ctrl-c.
 void catch_ctrl_c();
 
 class webserver
@@ -122,7 +121,7 @@ class timer
         double ms;
 };
 
-
+// output a list of things to a stream.
 class listoutput
 {
     public:
