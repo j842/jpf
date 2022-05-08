@@ -103,7 +103,7 @@ And test:
 ./jpf -w .
 ```
 
-## Make the debian package
+## Make the jpf debian package
 ```
 make deb
 ```
@@ -117,7 +117,7 @@ To upload, make sure ~/.packagecloud exsts with the correct token:
 make upload
 ```
 
-### webfsd-jpf
+### Make the webfsd-jpf debian package
 
 ```
 cd webfsd-jpf
