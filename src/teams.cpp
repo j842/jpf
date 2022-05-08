@@ -27,9 +27,9 @@ teams::teams() : eNotFound(UINT_MAX)
             }
 
             std::string name = row[1];
-            tCentiDay EFTProject  = atoi(row[2].c_str());
-            tCentiDay EFTBAU      = atoi(row[3].c_str());
-            tCentiDay EFTOverhead = atoi(row[4].c_str());
+            tCentiDay EFTProject  = str2uint(row[2]);
+            tCentiDay EFTBAU      = str2uint(row[3]);
+            tCentiDay EFTOverhead = str2uint(row[4]);
 
             if (EFTProject<0 || EFTProject>100)
                 TERMINATE(S()<<"EFTProject set to "<<EFTProject<<" for "+row[0]);

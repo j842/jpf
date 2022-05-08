@@ -33,12 +33,16 @@ void backlogitem::set(const std::vector<std::string> csvitems, const unsigned in
 
     // 1 - ID
     mId=csvitems[1];
+
     // 2 - Description
     mDescription=csvitems[2];
+
     // 3 - Min Calendar Workdays
-    mMinCalendarDays=atoi(csvitems[3].c_str());
+    mMinCalendarDays=str2uint(csvitems[3]);
+
     // 4 - Min Dev Days (TOTAL)
-    mDevDays=atoi(csvitems[4].c_str());
+    mDevDays=str2uint(csvitems[4]);
+
     // 5 - Earliest Start Date
     mEarliestStart.set(csvitems[5]);
 

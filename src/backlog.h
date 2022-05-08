@@ -9,6 +9,7 @@
 #include "person.h"
 #include "itemdate.h"
 #include "backlogitem.h"
+#include "utils.h"
 
 typedef enum
 {
@@ -69,6 +70,8 @@ class backlog
         void _topological_visit(int node, std::vector<bool> & tempMarks, std::vector<bool> & permMarks, std::vector<unsigned int> & scheduledList);
         void _dotask_v1(backlogitem & z);
         void _determinestart_and_dotask(unsigned int backlogitemNdx);
+        void _dotask_v2(backlogitem & z);
+        void _dotask_v2_limitedassign(backlogitem & z, const tCentiDay maxAllocation,tCentiDay & remainTeamToday, std::vector<double> & sumCentiDays,tCentiDay & totalDevCentiDaysRemaining,  const itemdate id);
 
         void _displaytable(std::ostream & ofs, std::vector<std::vector<std::string>> & vvs) const;
 

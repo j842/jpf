@@ -281,6 +281,11 @@ double itemdate::getAsDurationDouble() const
     return (double)mDay;
 }
 
+unsigned int itemdate::getAsDurationUInt() const
+{
+    return getDayAsIndex();
+}
+
 unsigned int itemdate::getDayAsIndex() const
 {
     return mDay;

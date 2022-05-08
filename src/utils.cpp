@@ -230,3 +230,29 @@ std::string makelower(const std::string & s)
 }
 
 
+unsigned int str2uint(std::string s)
+{
+    if (s.length()==0)
+        return 0;
+    int r;
+    try
+    {
+        r = stoi(s);
+    }
+    catch (const std::invalid_argument & e)
+    {
+        return 0;
+    }
+    catch (const std::out_of_range & e)
+    {
+        return 0;
+    }
+
+    if (r<0)
+    {
+        std::cerr << "String has negative number!" << std::endl;
+        return 0;
+    }
+
+    return (unsigned int)r;
+}

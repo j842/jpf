@@ -39,8 +39,8 @@ class backlogitem
         std::string mId; // can be an empty string.
         std::string mDescription;
         std::string mProjectName;
-        int mMinCalendarDays;
-        int mDevDays;
+        unsigned int mMinCalendarDays;
+        unsigned int mDevDays;
         itemdate mEarliestStart;
         std::vector<resource> mResources;
         std::vector<std::string> mDependencies;

@@ -124,7 +124,7 @@ void backlog::_determinestart_and_dotask(unsigned int backlogitemNdx)
                 }
         
         // 2. do the task.
-        _dotask_v1(z);
+        _dotask_v2(z);
     }
 }
 
@@ -163,6 +163,67 @@ void backlog::_dotask_v1(backlogitem & z)
         z.mResources[pi].mLoadingPercent = sumCentiDays[pi]/duration;
 }
 
+void backlog::_dotask_v2_limitedassign(backlogitem & z, const tCentiDay maxAllocation,tCentiDay & remainTeamToday, std::vector<double> & sumCentiDays,tCentiDay & totalDevCentiDaysRemaining, const itemdate id)
+{
+    ASSERT(maxAllocation<=remainTeamToday);
+    for (unsigned int pi=0;pi<z.mResources.size();++pi)
+    {
+        person & p = getPersonByName(z.mResources[pi].mName);
+        tCentiDay d = std::min(p.getAvailability(id), maxAllocation);
+        if (d>0)
+        {
+            p.decrementAvailability(id,d, z.getFullName());
+            totalDevCentiDaysRemaining-=d;
+            remainTeamToday-=d;
+            sumCentiDays[pi]+=d;
+        }
+    }
+}
+
+void backlog::_dotask_v2(backlogitem & z)
+{ //More advanced algorithm that moves forward as fast as possible, but not above average for team to finish on time.
+    //    Still march day by day, taking up as much availability as we can for each person,
+    //    until we have reached the desired devdays. 
+    std::vector<double> sumCentiDays(z.mResources.size(),0.0);
+    tCentiDay totalDevCentiDaysRemaining = 100 * z.mDevDays;
+    itemdate id=z.mActualStart;
+    ASSERT(!z.mActualStart.isForever());
+    while (totalDevCentiDaysRemaining>0)
+    { // loop over days (id)
+        unsigned int calDaysPast = (id - z.mActualStart).getAsDurationUInt();
+        unsigned int calDaysRemain = 0;
+        if (z.mMinCalendarDays>calDaysPast)
+            calDaysRemain = z.mMinCalendarDays - calDaysPast; // includes today.
+
+        tCentiDay maxTeamToday = std::min(totalDevCentiDaysRemaining, (tCentiDay)(100*z.mResources.size()));
+        if (calDaysRemain>0)
+        { // check if we're going to fast to finish in the calendar days remaining.
+            tCentiDay maxSpeedRemain = (tCentiDay)((double)totalDevCentiDaysRemaining/(double)calDaysRemain);
+            maxTeamToday = std::min(maxTeamToday, maxSpeedRemain);
+        }
+        tCentiDay remainTeamToday = maxTeamToday;
+
+        // no we need to see if we can allocate maxTeamToday centidays amongst the resources...
+        tCentiDay evenPace = maxTeamToday / (z.mResources.size()); // if everyone could go as fast as we like, this is how fast we'd go.
+
+        // go through once limiting to an even pace.
+        _dotask_v2_limitedassign(z,evenPace,remainTeamToday,sumCentiDays,totalDevCentiDaysRemaining,id);
+        // now go through again and overallocate (above evenPace) anything left over if we can. Will bias towards first resouce but good enough.
+        _dotask_v2_limitedassign(z,remainTeamToday,remainTeamToday,sumCentiDays,totalDevCentiDaysRemaining,id);
+
+        ++id;
+    }
+    z.mActualEnd = id;
+
+    double duration = (z.mActualEnd-z.mActualStart).getAsDurationDouble();
+    for (unsigned int pi=0;pi<z.mResources.size();++pi)
+        z.mResources[pi].mLoadingPercent = sumCentiDays[pi]/duration;
+}
+
+// ---------------------------------------------------------------------------------------------------------------------------------------
+// ---------------------------------------------------------------------------------------------------------------------------------------
+// ---------------------------------------------------------------------------------------------------------------------------------------
+
 void backlog::_schedule()
 {
     // these two order the tasks optimally.
@@ -175,6 +236,5 @@ void backlog::_schedule()
         _determinestart_and_dotask(zndx);
         ASSERT(!mItems[zndx].mActualStart.isForever());
     }
-
     // printorder(mItems);
 }

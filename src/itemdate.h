@@ -70,6 +70,7 @@ class itemdate
 
         std::string getAsDurationString() const;
         double getAsDurationDouble() const;
+        unsigned int getAsDurationUInt() const;
 
         private:
             unsigned int mDay; // number of workdays from today (today = 0, weekends don't count)

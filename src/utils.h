@@ -21,6 +21,7 @@ void checkcreatedirectory(std::string d);
 std::string makelower(const std::string & s);
 bool iSame(const std::string &s1, const std::string &s2);
 void trim(std::string & str);
+unsigned int str2uint(std::string s);
 
 // a few globals
 const unsigned int eNotFound = UINT_MAX;
