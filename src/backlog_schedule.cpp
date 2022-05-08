@@ -129,39 +129,39 @@ void backlog::_determinestart_and_dotask(unsigned int backlogitemNdx)
 }
 
 
-void backlog::_dotask_v1(backlogitem & z)
-{ // limit all people by the calendar day rate - simple algorithm.
-    //    Limit rate (dd/d) by  devdays/(n * calendar days), so we can't outpace the task.
-    tCentiDay maxindividualrate = 100;
-    if (z.mMinCalendarDays>0) 
-        maxindividualrate = (int)(0.5 + 100.0 * (double)z.mDevDays / (double)( z.mResources.size() * z.mMinCalendarDays ));
+// void backlog::_dotask_v1(backlogitem & z)
+// { // limit all people by the calendar day rate - simple algorithm.
+//     //    Limit rate (dd/d) by  devdays/(n * calendar days), so we can't outpace the task.
+//     tCentiDay maxindividualrate = 100;
+//     if (z.mMinCalendarDays>0) 
+//         maxindividualrate = (int)(0.5 + 100.0 * (double)z.mDevDays / (double)( z.mResources.size() * z.mMinCalendarDays ));
 
-    //    Now march day by day, taking up as much availability as we can for each person,
-    //    until we have reached the desired devdays. 
-    std::vector<double> sumCentiDays(z.mResources.size(),0.0);
-    tCentiDay totalDevCentiDaysRemaining = 100 * z.mDevDays;
-    itemdate id=z.mActualStart;
-    ASSERT(!z.mActualStart.isForever());
-    while (totalDevCentiDaysRemaining>0)
-    { // loop over days (id)
-        for (unsigned int pi=0;pi<z.mResources.size();++pi)
-        {
-            person & p = getPersonByName(z.mResources[pi].mName);
-            tCentiDay d = p.getAvailability(id);
-            if (d>totalDevCentiDaysRemaining) d=totalDevCentiDaysRemaining;
-            if (d>maxindividualrate) d=maxindividualrate;
-            p.decrementAvailability(id,d, z.getFullName());
-            totalDevCentiDaysRemaining-=d;
-            sumCentiDays[pi]+=d;
-        }
-        ++id;
-    }
-    z.mActualEnd = id;
+//     //    Now march day by day, taking up as much availability as we can for each person,
+//     //    until we have reached the desired devdays. 
+//     std::vector<double> sumCentiDays(z.mResources.size(),0.0);
+//     tCentiDay totalDevCentiDaysRemaining = 100 * z.mDevDays;
+//     itemdate id=z.mActualStart;
+//     ASSERT(!z.mActualStart.isForever());
+//     while (totalDevCentiDaysRemaining>0)
+//     { // loop over days (id)
+//         for (unsigned int pi=0;pi<z.mResources.size();++pi)
+//         {
+//             person & p = getPersonByName(z.mResources[pi].mName);
+//             tCentiDay d = p.getAvailability(id);
+//             if (d>totalDevCentiDaysRemaining) d=totalDevCentiDaysRemaining;
+//             if (d>maxindividualrate) d=maxindividualrate;
+//             p.decrementAvailability(id,d, z.getFullName());
+//             totalDevCentiDaysRemaining-=d;
+//             sumCentiDays[pi]+=d;
+//         }
+//         ++id;
+//     }
+//     z.mActualEnd = id;
 
-    double duration = (z.mActualEnd-z.mActualStart).getAsDurationDouble();
-    for (unsigned int pi=0;pi<z.mResources.size();++pi)
-        z.mResources[pi].mLoadingPercent = sumCentiDays[pi]/duration;
-}
+//     double duration = (z.mActualEnd-z.mActualStart).getAsDurationDouble();
+//     for (unsigned int pi=0;pi<z.mResources.size();++pi)
+//         z.mResources[pi].mLoadingPercent = sumCentiDays[pi]/duration;
+// }
 
 void backlog::_dotask_v2_limitedassign(backlogitem & z, const tCentiDay maxAllocation,tCentiDay & remainTeamToday, std::vector<double> & sumCentiDays,tCentiDay & totalDevCentiDaysRemaining, const itemdate id)
 {
@@ -197,7 +197,7 @@ void backlog::_dotask_v2(backlogitem & z)
 
         tCentiDay maxTeamToday = std::min(totalDevCentiDaysRemaining, (tCentiDay)(100*z.mResources.size()));
         if (calDaysRemain>0)
-        { // check if we're going to fast to finish in the calendar days remaining.
+        { // check if we're going too fast to finish in the calendar days remaining.
             tCentiDay maxSpeedRemain = (tCentiDay)((double)totalDevCentiDaysRemaining/(double)calDaysRemain);
             maxTeamToday = std::min(maxTeamToday, maxSpeedRemain);
         }

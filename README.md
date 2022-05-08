@@ -14,7 +14,7 @@ John's Project Forecaster
 
 ## Installing Binary from Debian/Ubuntu Package
 
-Tested on Debian 11 (Bullseye), Ubuntu 18.04 (Bionic) and Ubuntu 22.04 (Jammy). Does not work on Debian 10 (Buster) as g++ and libs are too old.
+Intended to work on Debian 11 (Bullseye), Ubuntu 20.04 (Focal) and Ubuntu 22.04 (Jammy). Does not work on Debian 10 (Buster) or Ubuntu 18.04 (Bionic) as g++ and libs are too old.
 
 ```
 sudo apt update
@@ -56,7 +56,7 @@ Files are written to the output/ folder.
 ### Watch for changes
 
 In this mode jpm starts a webserver (webfsd) on port 5000, displaying the HTML output of jpf. 
-It then watches the `input` folder and if any changes are made reschuleds and recreates all outputs.
+It then watches the input folder and if any changes are made reschedules and recreates all outputs.
 The pages automatically update in most web browsers (you shouldn't need to refresh the page).
 
 ```
