@@ -164,7 +164,7 @@ void backlog::displaybacklog(std::ostream & ofs) const
         ofs << std::setw(7) << z.mId << " ";
         
         ofs << std::setw(12) << mTeams.at(z.mTeamNdx).mId << "  ";
-        ofs << z.mActualStart.getStr_short() << " -> " << z.mActualEnd.getStr_short();
+        ofs << z.mActualStart.getStr() << " -> " << z.mActualEnd.getStr();
         ofs << std::setw(10) << z.mBlockedBy <<" ";
         ofs << z.mDescription << std::endl;   
     }
@@ -174,8 +174,8 @@ void backlog::displaypeople(std::ostream & ofs) const
 {
     for (auto & z : mPeople)
     {
-        ofs <<std::endl<<z.mName<<" [ "<<std::setw(3)<< z.getMaxAvialability() << "% ]"<<std::endl;
-        ofs <<std::string(z.mName.size()+9,'-')<<std::endl;
+        ofs <<std::endl<<z.mName<<" [ "<<std::setw(3)<< z.getMaxAvialability() << "% max ]"<<std::endl;
+        ofs <<std::string(z.mName.size()+13,'-')<<std::endl;
 
         for (auto & j : mItems)
             for (auto & p : j.mResources)
@@ -187,8 +187,8 @@ void backlog::displaypeople(std::ostream & ofs) const
 
                     std::ostringstream oss;
 
-                    oss << " " << j.mActualStart.getStr_short() << " to "
-                    << std::setw(7)<< j.mActualEnd.getStr_short() << "  [ "
+                    oss << " " << j.mActualStart.getStr() << " to "
+                    << std::setw(7)<< j.mActualEnd.getStr() << "  [ "
                     << std::setw(3)<<utilisation<<"% ]  :  ";
 
                     ofs << oss.str() << j.getFullName() << std::endl;

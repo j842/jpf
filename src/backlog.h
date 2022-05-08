@@ -67,6 +67,8 @@ class backlog
         void _calc_project_summary();
         void _topological_sort();
         void _topological_visit(int node, std::vector<bool> & tempMarks, std::vector<bool> & permMarks, std::vector<unsigned int> & scheduledList);
+        void _dotask_v1(backlogitem & z);
+        void _determinestart_and_dotask(unsigned int backlogitemNdx);
 
         void _displaytable(std::ostream & ofs, std::vector<std::vector<std::string>> & vvs) const;
 
