@@ -16,6 +16,7 @@ class simplecsv_test : public CPPUNIT_NS::TestFixture
     CPPUNIT_TEST( splitcsv_test2 );
     CPPUNIT_TEST( splitcsv_test3 );
     CPPUNIT_TEST( splitcsv_test4 );
+    CPPUNIT_TEST( roundtrip_test1 );
     CPPUNIT_TEST_SUITE_END();
 
     public:
@@ -24,6 +25,7 @@ class simplecsv_test : public CPPUNIT_NS::TestFixture
         void splitcsv_test2();
         void splitcsv_test3();
         void splitcsv_test4();
+        void roundtrip_test1();
 };
 
 

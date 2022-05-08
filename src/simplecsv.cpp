@@ -243,3 +243,13 @@ void simplecsv_test::splitcsv_test0( )
     CPPUNIT_ASSERT(items.size()==1);
     CPPUNIT_ASSERT_MESSAGE(S()<<items[0]<< "   is not   \\c,,,,", strcmp(items[0].c_str(),"\\c,,,,")==0);
 }
+
+void simplecsv_test::roundtrip_test1( )
+{
+    std::string s( R"literal(a,12,3.721,dog dog dog,"""heroes"" never die",,,"a,""b"",c")literal" );
+    std::vector<std::string> items;
+    simplecsv::splitcsv(s,items);
+    std::ostringstream oss;
+    simplecsv::output(oss, items);
+    CPPUNIT_ASSERT_MESSAGE(S()<<s<<" is not "<<oss.str(),strcmp(s.c_str(),oss.str().c_str())==0);
+}
