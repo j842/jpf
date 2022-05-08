@@ -79,7 +79,7 @@ https://www.ganttproject.biz/
 
 On either Ubuntu 20.04 or Debian 11 (including via WSL2 under Windows):
 ```
-sudo apt install build-essential libboost-date-time-dev libcppunit-dev podman
+sudo apt install build-essential libboost-date-time-dev libcppunit-dev podman gh
 ```
 
 Install webfsd-jpf:
