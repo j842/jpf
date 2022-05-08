@@ -9,7 +9,7 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: install .packagecloud
-      run: cat <<< "${{ secrets.PACKAGE_CLOUD_FILE }}" ~/.packagecloud
+      run: cat <<< "${{ secrets.PACKAGE_CLOUD_FILE }}" > ~/.packagecloud
     - name: install prereqs
       run: sudo apt install build-essential libboost-date-time-dev libcppunit-dev webfs podman
     - name: make
