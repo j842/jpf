@@ -34,7 +34,7 @@ POSTCOMPILE = mv -f $(DEP_DIR)/$*.Td $(DEP_DIR)/$*.d
 COMPILE.cc = $(CXX) $(DEPFLAGS) $(CXXFLAGS) -c -o $@
 LINK.o = $(LD) $(LDFLAGS) -o $@
 
-.PHONY: all clean check
+.PHONY: all clean check deploy
 
 all: $(JPF_EXE)
 
