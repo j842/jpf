@@ -146,3 +146,11 @@ Adjust the content for cStandard and cppStandard:
 ## WSL-2 memory
 Increasing memory to 16Gb was preiously needed, but is not essential now:   
 https://clay-atlas.com/us/blog/2021/08/31/windows-en-wsl-2-memory/
+
+
+## Github Actions
+
+This repo contains two github actions:
+
+- test_jpf, which runs the unit tests on any commit to Main
+- deploy_package, which is manually invoked. It builds the debian package and uploads it to the official repository. 

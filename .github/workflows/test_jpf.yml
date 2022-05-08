@@ -1,4 +1,4 @@
-name: Make jpf
+name: Test jpf
 on:
   push:
     branches: [ main ]
