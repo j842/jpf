@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <string>
+#include <ostream>
 
 #include "projects.h"
 
@@ -26,6 +27,7 @@ class backlogitem
         backlogitem(const std::string s, const unsigned int teamndx, const projects &p);
         backlogitem(const std::vector<std::string> csvitems, const unsigned int teamndx, const projects &p);
         void set(const std::vector<std::string> csvitems, const unsigned int teamndx, const projects &p);
+        void output(std::ostream & os, const projects &p) const;
 
         bool hasDependency(std::string d);
         itemdate getDuration() const;
@@ -42,12 +44,11 @@ class backlogitem
         itemdate mEarliestStart;
         std::vector<resource> mResources;
         std::vector<std::string> mDependencies;
+        std::string mComments;
 
         // set while scheduling the task.
         unsigned int mPriority;
         unsigned int mMergePriority;
-
-        // set as part of scheduling.
         itemdate mActualStart;
         itemdate mActualEnd;      
         std::string mBlockedBy;

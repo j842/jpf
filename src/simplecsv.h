@@ -5,6 +5,7 @@
 #include <vector>
 #include <iostream>
 #include <fstream>
+#include <ostream>
 #include <cppunit/extensions/HelperMacros.h>
 
 class simplecsv_test : public CPPUNIT_NS::TestFixture
@@ -14,6 +15,7 @@ class simplecsv_test : public CPPUNIT_NS::TestFixture
     CPPUNIT_TEST( splitcsv_test1 );
     CPPUNIT_TEST( splitcsv_test2 );
     CPPUNIT_TEST( splitcsv_test3 );
+    CPPUNIT_TEST( splitcsv_test4 );
     CPPUNIT_TEST_SUITE_END();
 
     public:
@@ -21,6 +23,7 @@ class simplecsv_test : public CPPUNIT_NS::TestFixture
         void splitcsv_test1();
         void splitcsv_test2();
         void splitcsv_test3();
+        void splitcsv_test4();
 };
 
 
@@ -33,6 +36,10 @@ class simplecsv
         bool openedOkay() {return mOpenedOkay;}
 
         static bool splitcsv(const std::string s, std::vector<std::string> & items);
+
+        static void output(std::ostream & os, const std::vector<std::string> csvitems);
+        static std::string makesafe(std::string s);
+        static std::string trimCSVentry(const std::string str);
 
     private:
         std::string mFileName;

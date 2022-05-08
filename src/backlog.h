@@ -101,7 +101,6 @@ class backlog
         std::vector<person> mPeople;
         const teams & mTeams;
         projects & mProjects;
-
 };
 
 

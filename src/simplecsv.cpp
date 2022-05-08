@@ -74,6 +74,37 @@ bool simplecsv::splitcsv(const std::string s, // copy
     return true;
 }
 
+
+std::string simplecsv::trimCSVentry(const std::string str)
+{
+    std::string s(str);
+
+    // now remove whitespace
+    trim(s);
+    bool inquotes=false;
+
+    for (unsigned int i = 0; i < s.size(); ++i)
+        switch (s[i])
+        {
+        case '"':
+            if (inquotes && i+2<s.size() && s[i+1]=='"') // double quotes, within a quoted string. Keep one as per CSV standard (MIME etc).
+                break;
+
+            s.erase(i, 1); // erase all quotes.
+            --i;
+            if (!inquotes)
+                inquotes=true;
+            break;
+        case '\\':
+            s.erase(i, 1);
+            break;
+        default:
+            break;
+        }
+
+    return s;
+}
+
 bool simplecsv::getline(std::vector<std::string> & line, unsigned int requiredcols)
 {
     line.clear();
@@ -112,9 +143,58 @@ bool simplecsv::getline(std::vector<std::string> & line, unsigned int requiredco
     return true;
 }
 
+std::string simplecsv::makesafe(std::string s)
+{
+    std::string ss;
+    bool needsquotes=false;
+    for (unsigned int i=0;i<s.length();++i)
+    {
+        switch (s[i])
+        {
+            case ',':
+                needsquotes=true;
+                break;
+            case '"':
+                needsquotes=true;
+                ss.push_back('"'); // quotes come out double.
+                break;
+            case '\\':
+                ss.push_back('\\'); // slashes are escaped.
+                break;
+        }
+        ss.push_back(s[i]);
+    }
+    if (needsquotes)
+    {
+        ss.insert(ss.begin(),'\"');
+        ss.push_back('"');
+    }
+    return ss;
+}
+
+
+void simplecsv::output(std::ostream & os, const std::vector<std::string> csvitems)
+{
+    for (unsigned int i=0;i<csvitems.size();++i)
+        if (i>0)
+            os << "," << makesafe(csvitems[i]);
+        else
+            os << makesafe(csvitems[i]);
+}
+
+
 // 0-------------------------------------------------------------------------------
 
 
+void simplecsv_test::splitcsv_test4()
+{
+    std::string s( R"literal(Stu,"""W1,W3""","hello "" hello")literal" );
+    std::vector<std::string> items;
+    simplecsv::splitcsv(s,items);
+    CPPUNIT_ASSERT(items.size()==3);
+    CPPUNIT_ASSERT_MESSAGE(S() << " Different:  "<<items[1]<< "   \"W1,W3\"",iSame(items[1],"\"W1,W3\""));
+    CPPUNIT_ASSERT_MESSAGE(S() << " Different:  "<<items[2]<< "   hello \" hello",iSame(items[2],"hello \" hello"));
+}
 
 void simplecsv_test::splitcsv_test3()
 {

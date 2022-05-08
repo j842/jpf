@@ -57,11 +57,45 @@ void backlogitem::set(const std::vector<std::string> csvitems, const unsigned in
     // 8 - dependencies
     simplecsv::splitcsv(csvitems[8],mDependencies);
 
-    // 9 - comments (not stored)
+    // 9 - comments 
+    mComments = csvitems[9];
 
     mPriority=0;
     mMergePriority=0;
 }
+
+void backlogitem::output(std::ostream & os, const projects &p) const
+{
+    std::vector<std::string> csvitems;
+    csvitems.push_back(p[mProject].getId());
+    csvitems.push_back(mId);
+    csvitems.push_back(mDescription);
+    csvitems.push_back(S() << mMinCalendarDays);
+    csvitems.push_back(S() << mDevDays);
+    csvitems.push_back(mEarliestStart.getStr());
+
+    std::string r;
+    for (auto & i : mResources)
+        if (i.mBlocking)
+            r += (r.length()>0 ? std::string(", ") + i.mName : i.mName);
+    csvitems.push_back(r);
+
+    r.clear();
+    for (auto & i : mResources)
+        if (!i.mBlocking)
+            r += (r.length()>0 ? std::string(", ") + i.mName : i.mName);
+    csvitems.push_back(r);
+
+    r.clear();
+    for (auto & i : mDependencies)
+        r+=(r.length()>0 ? std::string(", ") + i : i);
+    csvitems.push_back(r);
+
+    csvitems.push_back(mComments);
+
+    simplecsv::output(os,csvitems);
+}
+
 
 
 bool backlogitem::hasDependency(std::string d)
