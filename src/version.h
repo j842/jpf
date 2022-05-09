@@ -1,3 +1,3 @@
-#define __JPF_VERSION "0.0.10"
-#define __JPF_RELEASE "17"
+#define __JPF_VERSION "0.0.11"
+#define __JPF_RELEASE "1"
 #define __INPUT_VERSION (6)

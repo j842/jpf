@@ -11,6 +11,17 @@ project::project(std::string id, std::string desc, bool BAU, std::string comment
     {}
 
 
+bool isBAU(std::string s)
+{
+    if (s.length()==0)
+    {
+        std::cout << "ERROR - empty string passed to isBAU." << std::endl;
+        return true;
+    }
+    return (tolower(s[0])=='b');
+}
+
+
 projects::projects()
 {
     simplecsv c("projects.csv");
@@ -21,7 +32,7 @@ projects::projects()
     std::vector<std::string> row;
     while (c.getline(row,4))
     {
-        project p( row[0], row[1], iSame(row[2],"BAU"), row[3] );
+        project p( row[0], row[1], isBAU(row[2]), row[3] );
         this->push_back(p);
     }
 }

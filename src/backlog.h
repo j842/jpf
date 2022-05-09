@@ -33,6 +33,13 @@ class outputfilewriter
         tFuncPtr mFuncPtr;
 };
 
+typedef enum
+{
+    kBAU=0,
+    kNew=1,
+    kUna=2, // unassigned
+} tItemTypes;
+
 class backlog
 {
     public:
@@ -89,11 +96,14 @@ class backlog
         void CalculateDevDaysTally(
             std::vector< std::vector<double>> & DevDaysTally,   // [project][month in future]
             std::vector< std::string> & ProjectLabels,          // [project]
-            std::vector<rgbcolour> & Colours
+            std::vector<rgbcolour> & Colours,                   // [project]
+            std::vector<tItemTypes> & BAU                       // [project]
             ) const; 
 
         void Graph_Project_Cost(std::ostream & ofs) const;
         void Graph_Total_Project_Cost(std::ostream & ofs) const;
+        void Graph_BAU(std::ostream & ofs) const;
+
         void HTMLheaders_Plotly(std::ostream & ofs) const;
         static void HTMLfooters(std::ostream & ofs);
         static void HTMLheaders(std::ostream & ofs,std::string inHead);

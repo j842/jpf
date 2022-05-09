@@ -14,8 +14,9 @@
 
 void backlog::CalculateDevDaysTally(
             std::vector< std::vector<double>> & DevDaysTally,   // [project][month in future]
-            std::vector< std::string> & ProjectLabels,
-            std::vector<rgbcolour> & Colours
+            std::vector< std::string> & ProjectLabels,          // [project]
+            std::vector<rgbcolour> & Colours,                   // [project]
+            std::vector<tItemTypes> & BAU                       // [project]
     ) const
 {
     DevDaysTally.resize(mProjects.size()+3);
@@ -94,6 +95,14 @@ void backlog::CalculateDevDaysTally(
         DevDaysTally[mProjects.size()+2][m]=monthoverhead;
     }
 
+    BAU.resize(ProjectLabels.size(),kBAU);
+    for (unsigned int pi=0;pi<BAU.size();++pi)
+        BAU[pi]=mProjects[pi].getBAU() ? kBAU : kNew;
+    BAU[BAU.size()-3] = kUna; // slack - assume new projects.
+    BAU[BAU.size()-2] = kBAU;  // BAU.
+    BAU[BAU.size()-1] = kNew; // overhead.
+
+
     Colours.resize(ProjectLabels.size(),rgbcolour {.r=0,.g=200,.b=100});
 
     ColorGradient heatMapGradient; 
@@ -108,7 +117,7 @@ void backlog::CalculateDevDaysTally(
     Colours[Colours.size()-3] = rgbcolour {.r=210,.g=180,.b=140}; // slack
     Colours[Colours.size()-2] = rgbcolour {.r=100,.g=100,.b=100}; // BAU
     Colours[Colours.size()-1] = rgbcolour {.r=200,.g=200,.b=200}; // overhead
-    }
+}
 
 // backlog::rgbcolour backlog::heatmap(float minimum, float maximum, float value) const
 // {
@@ -124,7 +133,8 @@ void backlog::Graph_Total_Project_Cost(std::ostream & ofs) const
     std::vector< std::vector<double> > DevDaysTally;
     std::vector< std::string > Labels;
     std::vector< rgbcolour > Colours;
-    CalculateDevDaysTally(DevDaysTally,Labels,Colours);
+    std::vector< tItemTypes > BAU;
+    CalculateDevDaysTally(DevDaysTally,Labels,Colours,BAU);
     if (DevDaysTally.size()==0)
         return; // no data.
 
@@ -192,10 +202,11 @@ void backlog::Graph_Project_Cost(std::ostream &ofs) const
     std::vector<std::vector<double>> DevDaysTally;
     std::vector<std::string> Labels;
     std::vector<rgbcolour> Colours;
-    CalculateDevDaysTally(DevDaysTally, Labels, Colours);
+    std::vector< tItemTypes > BAU;
+    CalculateDevDaysTally(DevDaysTally, Labels, Colours,BAU);
     if (DevDaysTally.size() == 0)
         return; // no data.
-    unsigned int maxmonth = std::min((unsigned int)DevDaysTally[0].size(), itemdate::getEndMonth());
+    unsigned int maxmonth = std::min((unsigned int)DevDaysTally[0].size(), itemdate::getEndMonth()+1);
 
     ofs << R"(
         <h2>Resourcing Cost By Month</h2>
@@ -261,6 +272,107 @@ void backlog::Graph_Project_Cost(std::ostream &ofs) const
     )";
 }
 
+
+
+void backlog::Graph_BAU(std::ostream &ofs) const
+{
+    std::vector<std::vector<double>> DevDaysTally; // [project][month]
+    std::vector<std::string> Labels;
+    std::vector<rgbcolour> Colours;
+    std::vector< tItemTypes > BAU;
+    CalculateDevDaysTally(DevDaysTally, Labels, Colours,BAU);
+    if (DevDaysTally.size() == 0)
+        return; // no data.
+    unsigned int maxmonth = std::min((unsigned int)DevDaysTally[0].size(), itemdate::getEndMonth()+1);
+
+    std::vector<std::vector<double>> DDT; // [BAU/New][month]
+    DDT.resize(3);
+    DDT[kBAU].resize(maxmonth,0.0);
+    DDT[kNew].resize(maxmonth,0.0);
+    DDT[kUna].resize(maxmonth,0.0);
+
+    for (unsigned int pi=0;pi<DevDaysTally.size();++pi)
+        for (unsigned int m=0;m<maxmonth;++m)
+            DDT[BAU[pi]][m] += DevDaysTally[pi][m];
+
+    for (unsigned int m=0;m<maxmonth;++m)
+    { // make percentages.
+        int tot = DDT[kBAU][m]+DDT[kNew][m]+DDT[kUna][m];
+        DDT[kBAU][m] = (DDT[kBAU][m]*100)/tot;
+        DDT[kNew][m] = (DDT[kNew][m]*100)/tot;
+        DDT[kUna][m] = 100-DDT[kBAU][m]-DDT[kNew][m];
+    }
+
+    ofs << R"(
+        <h2>BAU work versus New Project Work</h2>
+        <div id="stackedbarBAU" style="width:auto;height:600;"></div>    
+        <script>
+        )";
+
+    for (unsigned int i = 0; i < 3; ++i)
+    {
+        ofs << "var trace" << i << " ={" << std::endl;
+        {
+            listoutput lo(ofs, "x: [", ", ", "], ");
+            for (unsigned int m = 0; m < maxmonth; ++m)
+                lo.writehq(itemdate::getMonthAsString(m));
+        }
+
+        ofs << std::endl;
+        {
+            listoutput lo(ofs, "y: [", ", ", "], ");
+            for (unsigned int m = 0; m < maxmonth; ++m)
+                lo.write(S() << std::setprecision(3) << DDT[i][m]);
+        }
+        ofs << std::endl << "name: '";
+        if (i==kBAU) ofs << "BAU";
+        if (i==kNew) ofs << "New";
+        if (i==kUna) ofs << "Unscheduled";
+        ofs << "'," << std::endl;
+
+        rgbcolour c;
+        if (i==kBAU) c= {190,30,50};
+        if (i==kNew) c= {30,190,30};
+        if (i==kUna) c= {180,180,180};
+        ofs << "marker: { color: 'rgb(" << c.r << ", " << c.g << ", " << c.b << ")' }," << std::endl;
+
+        ofs << "type: 'bar'" << std::endl
+            << "};" << std::endl
+            << std::endl;
+    }
+
+    {
+        listoutput lo( ofs, "var data = [", ", ", "];" );
+        for ( auto it = 3 ; it > 0 ; --it )
+            lo.write(S() << "trace" << it-1);
+    }
+    ofs << std::endl;
+    ofs << R"(
+        var layout = {
+              title: 'BAU versus New by Month',
+            xaxis: {tickfont: {
+                size: 14,
+                color: 'rgb(107, 107, 107)'
+                }},
+            yaxis: {
+                title: 'Percent',
+                titlefont: {
+                size: 16,
+                color: 'rgb(107, 107, 107)'
+                },
+                tickfont: {
+                size: 14,
+                color: 'rgb(107, 107, 107)'
+                },
+            
+            },
+            barmode: 'stack'
+        };
+            Plotly.newPlot('stackedbarBAU', data, layout);
+        </script>
+    )";
+}
+
 void backlog::outputHTML_Index(std::ostream & ofs) const
 {
     HTMLheaders(ofs,"");
@@ -301,6 +413,7 @@ void backlog::outputHTML_Dashboard(std::ostream & ofs) const
 
     Graph_Project_Cost(ofs);
     Graph_Total_Project_Cost(ofs);
+    Graph_BAU(ofs);
 
     HTMLfooters(ofs);
 }
