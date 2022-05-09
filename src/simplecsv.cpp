@@ -180,7 +180,6 @@ void simplecsv::output(std::ostream & os, const std::vector<std::string> csvitem
             os << "," << makesafe(csvitems[i]);
         else
             os << makesafe(csvitems[i]);
-    os << std::endl;
 }
 
 
@@ -254,5 +253,6 @@ void simplecsv_test::roundtrip_test1( )
     simplecsv::splitcsv(s,items);
     std::ostringstream oss;
     simplecsv::output(oss, items);
-    CPPUNIT_ASSERT_MESSAGE(S()<<s<<" is not "<<oss.str(),strcmp(s.c_str(),oss.str().c_str())==0);
+    CPPUNIT_ASSERT_MESSAGE(S()<<std::endl<<"["<<s<<"]"<<std::endl<<" is not "<<std::endl<<"["<<oss.str()<<"]"<<std::endl,
+        strcmp(s.c_str(),oss.str().c_str())==0);
 }

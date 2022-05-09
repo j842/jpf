@@ -135,7 +135,7 @@ void create_directories()
         TERMINATE("Input directory was not successfully created: "+pi);
 }
 
-void runtests()
+bool runtests()
 {
     CPPUNIT_NS::Test *suite = CPPUNIT_NS::TestFactoryRegistry::getRegistry().makeTest();
     CppUnit::TextUi::TestRunner runner;
@@ -143,6 +143,8 @@ void runtests()
     bool wasSucessful = runner.run();
 
     std::cout << ( wasSucessful ? "Success!!" : "Fail!!" )<< std::endl;
+
+    return wasSucessful;
 }
 
 int main(int argc, char **argv)
@@ -153,7 +155,7 @@ int main(int argc, char **argv)
         exit(0);
     }
     if (iSame(argv[1],"-t") || iSame(argv[1],"-test"))
-        {runtests(); return 0;}
+        {return runtests();}
 
     catch_ctrl_c();
 

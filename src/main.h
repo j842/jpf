@@ -1,6 +1,7 @@
 #ifndef __MAIN_H
 #define __MAIN_H
 
+bool runtests();
 void run_console();
 void run_watch(int port);
 void showhelp();

@@ -102,6 +102,7 @@ void backlogitem::output(std::ostream & os, const projects &p) const
     csvitems.push_back(mComments);
 
     simplecsv::output(os,csvitems);
+    os << std::endl;
 }
 
 
