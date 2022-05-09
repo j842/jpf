@@ -25,7 +25,7 @@ void backlog::CalculateDevDaysTally(
         ProjectLabels.push_back(proj.getId());
     ProjectLabels.push_back("Unscheduled Time");
     ProjectLabels.push_back("Other BAU");
-    ProjectLabels.push_back("Overhead (e.g. Management and Testing)");
+    ProjectLabels.push_back("Project Overhead");
 
     unsigned int maxmonth = 0;
     for (auto & z : mItems)
@@ -128,6 +128,24 @@ void backlog::CalculateDevDaysTally(
 //     return rgbcolour {.r=r, .g=g, .b=b };
 // }
 
+std::string getDollars(double x)
+{    
+    long int kilodollarz = (int)(0.5 + x/1000.0);
+    std::ostringstream oss;
+    oss << kilodollarz*1000;
+
+    std::string s = oss.str();
+    unsigned int n = s.length();
+    for (unsigned int i=n-1;i>0;i--)
+    {
+        unsigned int j = n-i;
+        if (j%3==0)
+            s.insert(s.begin()+i,',');
+    }
+    s.insert(s.begin(),'$');
+    return s;
+}
+
 void backlog::Graph_Total_Project_Cost(std::ostream & ofs) const
 {
     std::vector< std::vector<double> > DevDaysTally;
@@ -139,7 +157,7 @@ void backlog::Graph_Total_Project_Cost(std::ostream & ofs) const
         return; // no data.
 
     ofs << R"(
-        <h2>Resourcing Cost Remaining</h2>
+        <h2>Projected Total Salary Cost Remaining</h2>
         <div id="totalprojectcostpie" style="width:auto;height:800;"></div>    
         <script>
         )";   
@@ -170,26 +188,39 @@ void backlog::Graph_Total_Project_Cost(std::ostream & ofs) const
 
     ofs << "," << std::endl;
     {
-        listoutput lo(ofs,"labels: [",", ","");
+        listoutput lo(ofs,"labels: [",", ","]");
         for (auto & i :Labels)
             lo.writehq( i );
-        lo.writehq("Unscheduled Time");
-        lo.writehq("Other BAU");
-        lo.writehq("Overhead (Management, Testing)");
     }
+
+    double totalProjectCostRemaining=0.0;
+    for (auto & vpc : vProjectCostRemaining)
+        totalProjectCostRemaining += vpc;
+
+    ofs << "," << std::endl;
+    {
+        listoutput lo(ofs,"text: [",", ","]");
+        for (unsigned int i=0;i<Labels.size();++i)
+            if (vProjectCostRemaining[i]>0.01*totalProjectCostRemaining)
+                lo.writehq(S()<<Labels[i]<<"   " << getDollars(gSettings().dailyDevCost() *vProjectCostRemaining[i]));
+            else
+                lo.writehq("");
+    }
+    // textinfo: "label+percent",
     
-    ofs << R"(
-        ],
+    ofs << R"(,
         type: 'pie',
-        textinfo: "label+percent",
+        textinfo: "text",
+        hoverinfo: "label+value+percent",
+        automargin: true,
         marker: {
             colors: colorlist
         }
         }];
 
     var layoutpie = {
-        title: 'Resourcing Cost Remaining ($)',
-        margin: {"t": 100, "b": 0, "l": 300, "r": 0},
+        title: 'Projected Salary Cost Remaining ($)',
+        margin: {"t": 100, "b": 100, "l": 100, "r": 100},
     };
 
     Plotly.newPlot('totalprojectcostpie',datapie,layoutpie);
@@ -209,7 +240,7 @@ void backlog::Graph_Project_Cost(std::ostream &ofs) const
     unsigned int maxmonth = std::min((unsigned int)DevDaysTally[0].size(), itemdate::getEndMonth()+1);
 
     ofs << R"(
-        <h2>Resourcing Cost By Month</h2>
+        <h2>Projected Salary Costs by Month</h2>
         <div id="stackedbardevdays" style="width:auto;height:600;"></div>    
         <script>
         )";
@@ -235,7 +266,7 @@ void backlog::Graph_Project_Cost(std::ostream &ofs) const
         auto &c = Colours[i];
         ofs << "marker: { color: 'rgb(" << c.r << ", " << c.g << ", " << c.b << ")' }," << std::endl;
 
-        ofs << "type: 'bar'" << std::endl
+        ofs << "type: 'bar'," << std::endl
             << "};" << std::endl
             << std::endl;
     }
@@ -248,7 +279,7 @@ void backlog::Graph_Project_Cost(std::ostream &ofs) const
     ofs << std::endl;
     ofs << R"(
         var layout = {
-              title: 'Resourcing Cost By Month ($)',
+              title: 'Projected Salary Costs ($)',
             xaxis: {tickfont: {
                 size: 14,
                 color: 'rgb(107, 107, 107)'
@@ -272,7 +303,12 @@ void backlog::Graph_Project_Cost(std::ostream &ofs) const
     )";
 }
 
-
+std::string backlog::ItemType2String(tItemTypes i) const
+{
+    if (i==kBAU) return "BAU";
+    if (i==kNew) return "New";
+    return "Slack";
+}
 
 void backlog::Graph_BAU(std::ostream &ofs) const
 {
@@ -297,14 +333,14 @@ void backlog::Graph_BAU(std::ostream &ofs) const
 
     for (unsigned int m=0;m<maxmonth;++m)
     { // make percentages.
-        int tot = DDT[kBAU][m]+DDT[kNew][m]+DDT[kUna][m];
+        double tot = DDT[kBAU][m]+DDT[kNew][m]+DDT[kUna][m];
         DDT[kBAU][m] = (DDT[kBAU][m]*100)/tot;
         DDT[kNew][m] = (DDT[kNew][m]*100)/tot;
         DDT[kUna][m] = 100-DDT[kBAU][m]-DDT[kNew][m];
     }
 
     ofs << R"(
-        <h2>BAU work versus New Project Work</h2>
+        <h2>Projected BAU work versus New Project work</h2>
         <div id="stackedbarBAU" style="width:auto;height:600;"></div>    
         <script>
         )";
@@ -324,17 +360,20 @@ void backlog::Graph_BAU(std::ostream &ofs) const
             for (unsigned int m = 0; m < maxmonth; ++m)
                 lo.write(S() << std::setprecision(3) << DDT[i][m]);
         }
-        ofs << std::endl << "name: '";
-        if (i==kBAU) ofs << "BAU";
-        if (i==kNew) ofs << "New";
-        if (i==kUna) ofs << "Unscheduled";
-        ofs << "'," << std::endl;
+        ofs << std::endl << "name: '" << ItemType2String(static_cast<tItemTypes>(i)) << "'," << std::endl;
 
         rgbcolour c;
         if (i==kBAU) c= {190,30,50};
         if (i==kNew) c= {30,190,30};
-        if (i==kUna) c= {180,180,180};
+        if (i==kUna) c= Colours[Colours.size()-3];
         ofs << "marker: { color: 'rgb(" << c.r << ", " << c.g << ", " << c.b << ")' }," << std::endl;
+
+        {
+            listoutput lo(ofs, "text: [",", ","], ");
+            for (unsigned int m = 0; m < maxmonth; ++m)
+                lo.write( S() << "'" <<   ItemType2String(static_cast<tItemTypes>(i)) << " - " << (int)(0.5+ DDT[i][m]) << "%'");
+        }
+        ofs << std::endl;
 
         ofs << "type: 'bar'" << std::endl
             << "};" << std::endl
@@ -349,7 +388,7 @@ void backlog::Graph_BAU(std::ostream &ofs) const
     ofs << std::endl;
     ofs << R"(
         var layout = {
-              title: 'BAU versus New by Month',
+              title: 'Projected BAU versus New',
             xaxis: {tickfont: {
                 size: 14,
                 color: 'rgb(107, 107, 107)'

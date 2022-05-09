@@ -110,6 +110,7 @@ class backlog
 
         static void writelist(std::ostream & oss, const std::vector<std::string> & v);
         static void writeresourcenames(std::ostream & oss, const std::vector<resource> & v);
+        std::string ItemType2String(tItemTypes i) const;
 
         std::vector<backlogitem> mItems;
         std::vector<std::deque<backlogitem>> mTeamsItems;
