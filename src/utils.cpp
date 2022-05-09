@@ -52,6 +52,13 @@ void removewhitespace(std::string & s)
     s.erase( std::remove(s.begin(), s.end(), ' '), s.end());
 }
 
+void trim(std::string &str)
+{
+    const char *typeOfWhitespaces = " \t\n\r\f\v";
+    str.erase(str.find_last_not_of(typeOfWhitespaces) + 1);
+    str.erase(0, str.find_first_not_of(typeOfWhitespaces));
+}
+
 
 
 watcher::watcher(std::string path)
@@ -164,13 +171,6 @@ double timer::stop()
 double timer::getms()
 {
     return ms;
-}
-
-void trim(std::string &str)
-{
-    const char *typeOfWhitespaces = " \t\n\r\f\v";
-    str.erase(str.find_last_not_of(typeOfWhitespaces) + 1);
-    str.erase(0, str.find_first_not_of(typeOfWhitespaces));
 }
 
 

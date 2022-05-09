@@ -38,7 +38,7 @@ LINK.o = $(LD) $(LDFLAGS) -o $@
 
 all: $(JPF_EXE)
 
-$(VER_HEADER): makefile
+$(VER_HEADER): deploy/versions.makefile
 	@echo "Generating $@"
 	@echo "#define __JPF_VERSION \"${JPF_VERSION}\"" > $@
 	@echo "#define __JPF_RELEASE \"${JPF_RELEASE}\"" >> $@

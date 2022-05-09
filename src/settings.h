@@ -26,16 +26,21 @@ class settings
         static std::string getJPFVersionStr();
         static std::string getJPFReleaseStr();
 
+        std::string getTitle() const;
+
     private:
+        std::string getSettingS(std::string settingName) const;
+        int getSettingI(std::string settingName) const;     
+        double getSettingD(std::string settingName) const;     
+        bool isValid(std::string key) const;
+
         bool mLoaded;
         boost::gregorian::date mStartDate;
         boost::gregorian::date mEndDate;
         std::string mRootDir;
 
-        std::string getSettingS(std::string settingName) const;
-        int getSettingI(std::string settingName) const;     
-        double getSettingD(std::string settingName) const;     
         std::map<std::string,std::string> mSettings;   
+        const std::vector<std::string> mValidSettings;
 };
 
 settings & gSettings();

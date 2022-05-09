@@ -10,7 +10,8 @@
 #include "itemdate.h"
 #include "version.h"
 
-settings::settings() : mLoaded(false), mRootDir()
+settings::settings() : mLoaded(false), mRootDir(),
+    mValidSettings({"startdate","minversion","enddate","inputversion","costperdevday","title"})
 {
 }
 
@@ -23,7 +24,12 @@ void settings::load_settings()
 
     std::vector<std::string> row;
     while (c.getline(row,2))
-        mSettings[row[0]]=row[1];
+    {
+        if (isValid(row[0]))
+            mSettings[row[0]]=row[1];
+        else
+            TERMINATE("Unrecognised setting in settings.csv:  "+row[0]);
+    }
 
     mLoaded=true;
 
@@ -46,12 +52,22 @@ void settings::load_settings()
         <<"\nUpdate inputversion in settings.csv to "<<getInputVersion()<<" when done.");
 }
 
+std::string settings::getTitle() const
+{
+    std::string title = getSettingS("title");
+    if (title.length()==0)
+        title="John's Project Forecaster";
+
+    return title;
+}
+
+
 std::string settings::getSettingS(std::string settingName) const
 {
     ASSERT(mLoaded);
     auto pos = mSettings.find(settingName);
     if (pos == mSettings.end()) {
-        TERMINATE(S() << "Setting " << settingName << " is not defined in settings.csv");
+        TERMINATE(S() << "Setting \"" << settingName << "\" is not defined in settings.csv.");
     }  
     return pos->second;
 }
@@ -162,6 +178,14 @@ bool settings::RootExists() const
         return false;
     }
 }
+
+bool settings::isValid(std::string key) const
+{
+    for (auto &i : mValidSettings)
+        if (iSame(key,i)) return true;
+    return false;
+}
+
 
 const std::string getInputPath() { return gSettings().getRoot()+"/input/"; }
 const std::string getOutputPath_Txt() { return gSettings().getRoot()+"/output/"; }

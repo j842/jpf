@@ -468,7 +468,9 @@ ofs << inHead <<std::endl;
 
 ofs << R"(
     </head><body>
-    <h1>John's Project Forecaster</h1>
+    <h1>)";
+ofs << gSettings().getTitle();
+ofs << R"(</h1>
     <a href="index.html">Project Backlog</a>&nbsp;&nbsp;
     <a href="people.html">People</a>&nbsp;&nbsp;
     <a href="costdashboard.html">Cost Dashboard</a>&nbsp;&nbsp;
