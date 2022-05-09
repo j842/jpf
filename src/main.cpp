@@ -155,7 +155,7 @@ int main(int argc, char **argv)
         exit(0);
     }
     if (iSame(argv[1],"-t") || iSame(argv[1],"-test"))
-        {return runtests();}
+        {return runtests() ? 0 : 1;}
 
     catch_ctrl_c();
 
