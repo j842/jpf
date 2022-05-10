@@ -151,21 +151,27 @@ void backlog::displaybacklog(std::ostream & ofs) const
     unsigned int prevproj=UINT_MAX;
 //    unsigned int c=0;
 
+    unsigned int maxtitlew = std::max( mTeams.getMaxTeamNameWidth() + 22, mProjects.getMaxProjectNameWidth());
+    unsigned int maxnamew = mPeople.getMaxNameWidth();
     for (auto & x : v_sorted)
     {
         auto & z = mItems[x];
 
         if (z.mProject != prevproj) {
-            ofs << std::endl << mProjects[z.mProject].getId() << std::endl; // blank line between projects.
-            std::string s(mProjects[z.mProject].getId().length(),'-');
+            std::string pname = mProjects[z.mProject].getId();
+
+            ofs << std::endl << std::endl
+                << CENTERSTREAM(pname, maxtitlew)
+                << std::endl; // blank line between projects.
+            std::string s(maxtitlew,'-');
             ofs << s << std::endl;
             prevproj=z.mProject;
         }
-        ofs << std::setw(7) << z.mId << " ";
+        //ofs << std::setw(7) << z.mId << " ";
         
-        ofs << std::setw(12) << mTeams.at(z.mTeamNdx).mId << "  ";
+        ofs << std::setw(mTeams.getMaxTeamNameWidth()) << mTeams.at(z.mTeamNdx).mId << "  ";
         ofs << z.mActualStart.getStr() << " -> " << z.mActualEnd.getStr();
-        ofs << std::setw(10) << z.mBlockedBy <<" ";
+        ofs << "  " << RIGHTSTREAM(z.mBlockedBy, maxnamew) << "  ";
         ofs << z.mDescription << std::endl;   
     }
 }

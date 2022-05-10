@@ -23,12 +23,10 @@ class project
         double mTotalDevDays; // proportional to cost.
 
     private:
-        std::string mId;
-        std::string mDescription;
-        bool mBAU;
-        std::string mComments;
-        bool BAU;
-
+        const std::string mId;
+        const std::string mDescription;
+        const bool mBAU;
+        const std::string mComments;
 };
 
 class projects : public std::vector<project>
@@ -38,9 +36,13 @@ class projects : public std::vector<project>
         void load_projects();
         void save_projects_CSV(std::ostream & os) const;
 
+        unsigned int getMaxProjectNameWidth() const;
         void debug_displayProjects() const;
 
         unsigned int getIndexByID(std::string id) const; // returns eNotFound if index isn't there.
+    
+    private:
+        unsigned int mMaxProjectNameWidth;
 };
 
 #endif

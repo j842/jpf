@@ -6,7 +6,7 @@
 #include "teams.h"
 #include "utils.h"
 
-teams::teams() : eNotFound(UINT_MAX)
+teams::teams() : eNotFound(UINT_MAX), mMaxNameWidth(0)
 {
     load_public_holidays();
     load_teams();
@@ -19,6 +19,7 @@ void teams::load_teams()
     if (!c.openedOkay())
         TERMINATE("Could not open teams.csv!");
 
+    mMaxNameWidth = 0;
     std::vector<std::string> row;
     while (c.getline(row,7))
         if (row[0].length()>0)
@@ -31,6 +32,8 @@ void teams::load_teams()
                 }
                 else if (!iSame(row[1],this->at(ndx).mRefCode))
                     TERMINATE(S()<<"Inconsistent reference codes for team "<<row[0]<<" : "<<row[1] <<" and "<<this->at(ndx).mRefCode);
+
+                mMaxNameWidth=std::max((unsigned int)row[0].length(),mMaxNameWidth);
 
                 std::string personname = row[2];
                 tCentiDay EFTProject  = str2uint(row[3]);
@@ -126,3 +129,7 @@ void teams::save_public_holidays_CSV(std::ostream & os) const
         os << simplecsv::makesafe(d) << std::endl;
 }
 
+unsigned int teams::getMaxTeamNameWidth() const
+{
+    return mMaxNameWidth;
+}

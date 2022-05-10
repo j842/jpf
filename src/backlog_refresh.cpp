@@ -32,7 +32,7 @@ void backlog::refresh()
                 std::string old = mItems[ii].mId;
                 unsigned int teamndx = mItems[ii].mTeamNdx;
                 teamitemcount[teamndx] += 1;
-                newRefs[ii] = (S() << mTeams[teamndx].mRefCode << std::setw(3) << std::setfill('0') << 10*teamitemcount[teamndx]);
+                newRefs[ii] = (S() << mTeams[teamndx].mRefCode << std::setw(2) << std::setfill('0') << teamitemcount[teamndx]);
             }
         }
 

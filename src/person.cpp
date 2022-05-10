@@ -103,3 +103,18 @@ void person::decrementAvailability(itemdate day, tCentiDay decrement, const std:
 {
     mIntervals.decrementAvailability(day, decrement);
 }
+
+people::people() : tPersonVec()
+{
+
+}
+
+unsigned int people::getMaxNameWidth() const
+{
+    unsigned int lpn = 0;
+    for (auto & i : *this)
+        lpn=std::max(lpn, (unsigned int)i.mName.length());
+    return lpn;
+}
+
+

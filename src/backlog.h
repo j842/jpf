@@ -117,7 +117,7 @@ class backlog
         std::vector<backlogitem> mItems;
         std::vector<std::deque<backlogitem>> mTeamsItems;
 
-        std::vector<person> mPeople;
+        people mPeople;
         const teams & mTeams;
         projects & mProjects;
 };

@@ -22,13 +22,14 @@ bool isBAU(std::string s)
 }
 
 
-projects::projects()
+projects::projects() : mMaxProjectNameWidth(0)
 {
     load_projects();
 }
 
 void projects::load_projects()
 {
+    mMaxProjectNameWidth = 0;
     simplecsv c("projects.csv");
 
     if (!c.openedOkay())
@@ -38,6 +39,7 @@ void projects::load_projects()
     while (c.getline(row,4))
     {
         project p( row[0], row[1], isBAU(row[2]), row[3] );
+        mMaxProjectNameWidth = std::max(mMaxProjectNameWidth,(unsigned int)p.getId().length());
         this->push_back(p);
     }
 }
@@ -73,4 +75,9 @@ void projects::debug_displayProjects() const
     std::cout << "Loaded "<< this->size() << " projects:" << std::endl;
     for (unsigned int i=0;i<this->size();++i)
         std::cout<<"   " << i+1 << "  " <<this->at(i).getId() << std::endl;
+}
+
+unsigned int projects::getMaxProjectNameWidth() const
+{
+    return mMaxProjectNameWidth;
 }

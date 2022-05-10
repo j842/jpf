@@ -59,4 +59,13 @@ class person : public member
 
 };
 
+typedef std::vector<person> tPersonVec;
+class people : public tPersonVec
+{
+    public:
+        people();
+
+        unsigned int getMaxNameWidth() const;
+};
+
 #endif

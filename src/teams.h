@@ -47,11 +47,13 @@ class teams : public std::vector<team>
         void load_public_holidays();
         void save_public_holidays_CSV(std::ostream & os) const;
 
+        unsigned int getMaxTeamNameWidth() const;
 
     private:
         unsigned int get_index_by_name(std::string n);
 
         std::string mPublicHolidaysString;
+        unsigned int mMaxNameWidth;
 };
 
 #endif

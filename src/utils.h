@@ -34,6 +34,12 @@ void _terminate(const std::stringstream &s, const std::string &func, const std::
 #define ASSERT(x) if (!(x)) { printf("assertion failed: (%s), function %s, file %s, line %d.\n", STR(x), __PRETTY_FUNCTION__, __FILE__, __LINE__); exit(1); }
 #define TERMINATE(x) { _terminate(x, __PRETTY_FUNCTION__, __FILE__, __LINE__); }
 
+#define HALFWIDTHPADLEFT(n1,maxw)   (n1<maxw ? (int)(0.5 + 0.5*(maxw+n1)) : 0)
+#define HALFWIDTHPADRIGHT(n1,maxw)  (n1<maxw ? maxw-HALFWIDTHPADLEFT(n1,maxw) : 0)
+#define EXTRAPADRIGHT(n1,maxw)      (n1<maxw ? maxw-n1 : 0)
+#define CENTERSTREAM(s,maxw)        std::setw(HALFWIDTHPADLEFT(s.length(),maxw)) <<  s  << std::setw(HALFWIDTHPADRIGHT(s.length(),maxw)) << ""
+#define LEFTSTREAM(s,maxw)          s << std::setw(EXTRAPADRIGHT(s.length(),maxw)) << ""
+#define RIGHTSTREAM(s,maxw)         std::setw(maxw) << s
 
 // terminate current calculation
 struct TerminateRunException : public std::exception
