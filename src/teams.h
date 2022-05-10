@@ -27,8 +27,9 @@ class member
 class team
 {
     public: 
-        team(std::string id) : mId(id) {}
+        team(std::string Id, std::string refCode) : mId(Id), mRefCode(refCode) {}
         std::string mId;
+        std::string mRefCode;
         std::vector<member> mMembers;
 };
 

@@ -20,50 +20,52 @@ void teams::load_teams()
         TERMINATE("Could not open teams.csv!");
 
     std::vector<std::string> row;
-    while (c.getline(row,6))
-    if (row[0].length()>0)
-        {
-            unsigned int ndx=get_index_by_name(row[0]);
-            if (ndx==eNotFound)
+    while (c.getline(row,7))
+        if (row[0].length()>0)
             {
-                this->push_back(team(row[0]));
-                ndx=get_index_by_name(row[0]);
+                unsigned int ndx=get_index_by_name(row[0]);
+                if (ndx==eNotFound)
+                {
+                    this->push_back(team(row[0],row[1]));
+                    ndx=get_index_by_name(row[0]);
+                }
+                else if (!iSame(row[1],this->at(ndx).mRefCode))
+                    TERMINATE(S()<<"Inconsistent reference codes for team "<<row[0]<<" : "<<row[1] <<" and "<<this->at(ndx).mRefCode);
+
+                std::string personname = row[2];
+                tCentiDay EFTProject  = str2uint(row[3]);
+                tCentiDay EFTBAU      = str2uint(row[4]);
+                tCentiDay EFTOverhead = str2uint(row[5]);
+
+                if (EFTProject<0 || EFTProject>100)
+                    TERMINATE(S()<<"EFTProject set to "<<EFTProject<<" for "+row[0]);
+                if (EFTBAU<0 || EFTBAU>100)
+                    TERMINATE(S()<<"EFTBAU set to "<<EFTBAU<<" for "+row[0]);
+                if (EFTOverhead<0 || EFTOverhead>100)
+                    TERMINATE(S()<<"EFTOverhead set to "<<EFTOverhead<<" for "+row[0]);
+                if (EFTProject + EFTBAU + EFTOverhead > 100 )
+                    TERMINATE(S()<<personname<<" is assigned to work over 100\% of the time!");
+
+
+                std::string leave = row[6];
+                removewhitespace(leave);
+                std::string oleave=leave;
+                if (leave.length()>0) leave+=",";
+                leave += mPublicHolidaysString;
+
+                this->at(ndx).mMembers.push_back( member(personname,EFTProject,EFTBAU,EFTOverhead,leave,oleave));
             }
-
-            std::string name = row[1];
-            tCentiDay EFTProject  = str2uint(row[2]);
-            tCentiDay EFTBAU      = str2uint(row[3]);
-            tCentiDay EFTOverhead = str2uint(row[4]);
-
-            if (EFTProject<0 || EFTProject>100)
-                TERMINATE(S()<<"EFTProject set to "<<EFTProject<<" for "+row[0]);
-            if (EFTBAU<0 || EFTBAU>100)
-                TERMINATE(S()<<"EFTBAU set to "<<EFTBAU<<" for "+row[0]);
-            if (EFTOverhead<0 || EFTOverhead>100)
-                TERMINATE(S()<<"EFTOverhead set to "<<EFTOverhead<<" for "+row[0]);
-            if (EFTProject + EFTBAU + EFTOverhead > 100 )
-                TERMINATE(S()<<row[1]<<" is assigned to work over 100\% of the time!");
-
-
-            std::string leave = row[5];
-            removewhitespace(leave);
-            std::string oleave=leave;
-            if (leave.length()>0) leave+=",";
-            leave += mPublicHolidaysString;
-
-            this->at(ndx).mMembers.push_back( member(name,EFTProject,EFTBAU,EFTOverhead,leave,oleave));
-        }
 }
 
 void teams::save_teams_CSV(std::ostream & os) const
 {
-    os << R"-(Team,Person,"%EFT Projects","%EFT Other BAU","%EFT Overhead for Projects (mgmt, test)","Upcoming Leave (first + last day on leave)")-" << std::endl;
+    os << R"-(Team,Ref,Person,"%EFT Projects","%EFT Other BAU","%EFT Overhead for Projects (mgmt, test)","Upcoming Leave (first + last day on leave)")-" << std::endl;
     for (unsigned int ti = 0 ; ti < this->size() ; ++ ti)
     {
         auto & t = this->at(ti);
         for (auto & m : this->at(ti).mMembers)
         {
-            std::vector<std::string> row = {t.mId,m.mName,S()<<m.mEFTProject,S()<<m.mEFTBAU,S()<<m.mEFTOverhead,m.mOriginalLeave}; // don't include holidays.
+            std::vector<std::string> row = {t.mId,t.mRefCode,m.mName,S()<<m.mEFTProject,S()<<m.mEFTBAU,S()<<m.mEFTOverhead,m.mOriginalLeave}; // don't include holidays.
             simplecsv::output(os,row);
             os << std::endl;
         }

@@ -50,9 +50,6 @@ void run_refresh()
         projects p;
         teams t;
         backlog b(p,t);
-        b.schedule();
-        std::cout << std::endl << std::endl;
-
         b.refresh();
 
         replace_all_input_CSV_files(p,t,b);
