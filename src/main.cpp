@@ -38,6 +38,10 @@ void run_console()
         t.save_public_holidays_CSV(std::cout); 
         std::cout << std::endl;        
 
+        t.save_teams_CSV(std::cout);
+        std::cout << std::endl;        
+
+
         std::cout << std::endl << "Completed in "<<std::setprecision(3) << tmr.stop() <<"ms."<<std::endl;
     }
     catch(TerminateRunException& pEx)

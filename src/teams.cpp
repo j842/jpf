@@ -9,8 +9,12 @@
 teams::teams() : eNotFound(UINT_MAX)
 {
     load_public_holidays();
+    load_teams();
+}
 
-    simplecsv c("teams.csv");
+void teams::load_teams()
+{
+   simplecsv c("teams.csv");
 
     if (!c.openedOkay())
         TERMINATE("Could not open teams.csv!");
@@ -43,12 +47,29 @@ teams::teams() : eNotFound(UINT_MAX)
 
             std::string leave = row[5];
             removewhitespace(leave);
+            std::string oleave=leave;
             if (leave.length()>0) leave+=",";
             leave += mPublicHolidaysString;
 
-            this->at(ndx).mMembers.push_back( member(name,EFTProject,EFTBAU,EFTOverhead,leave));
+            this->at(ndx).mMembers.push_back( member(name,EFTProject,EFTBAU,EFTOverhead,leave,oleave));
         }
 }
+
+void teams::save_teams_CSV(std::ostream & os) const
+{
+    os << R"-(Team,Person,"%EFT Projects","%EFT Other BAU","%EFT Overhead for Projects (mgmt, test)","Upcoming Leave (first + last day on leave)")-" << std::endl;
+    for (unsigned int ti = 0 ; ti < this->size() ; ++ ti)
+    {
+        auto & t = this->at(ti);
+        for (auto & m : this->at(ti).mMembers)
+        {
+            std::vector<std::string> row = {t.mId,m.mName,S()<<m.mEFTProject,S()<<m.mEFTBAU,S()<<m.mEFTOverhead,m.mOriginalLeave}; // don't include holidays.
+            simplecsv::output(os,row);
+            os << std::endl;
+        }
+    }
+}
+
 
 unsigned int teams::get_index_by_name(std::string n)
 {

@@ -52,7 +52,7 @@ void intervals::decrementAvailability(itemdate day, tCentiDay decrement)
 }
 
 person::person(const member & m) :
-    member(m.mName,m.mEFTProject,m.mEFTBAU,m.mEFTOverhead,m.mLeave),
+    member(m.mName,m.mEFTProject,m.mEFTBAU,m.mEFTOverhead,m.mLeave,m.mOriginalLeave),
     mIntervals(m.mEFTProject)
 {
     if (mLeave.length()>0)

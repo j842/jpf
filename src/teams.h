@@ -9,16 +9,19 @@
 class member
 {
     public:
-        member(std::string n, double project, double bau, double overhead, std::string l) : 
+        member(std::string n, double project, double bau, double overhead, std::string l, std::string origl) : 
             mName(n), 
             mEFTProject(project), 
             mEFTBAU(bau),
             mEFTOverhead(overhead),
-            mLeave(l) {}
+            mLeave(l),
+            mOriginalLeave(origl)
+         {
+         }
             
         const std::string mName;
         const tCentiDay mEFTProject, mEFTBAU, mEFTOverhead;
-        const std::string mLeave;
+        const std::string mLeave, mOriginalLeave;
 };
 
 class team
@@ -33,6 +36,8 @@ class teams : public std::vector<team>
 {
     public:
         teams();
+        void load_teams();
+        void save_teams_CSV(std::ostream & os) const;
 
         void debug_displayTeams() const;
 
