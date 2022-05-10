@@ -42,6 +42,7 @@ class simplecsv
         static void output(std::ostream & os, const std::vector<std::string> csvitems);
         static std::string makesafe(std::string s);
         static std::string trimCSVentry(const std::string str);
+        static std::string filename2path(const std::string filename);
 
     private:
         std::string mFileName;

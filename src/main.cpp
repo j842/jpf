@@ -12,6 +12,57 @@
 #include "utils.h"
 #include "settings.h"
 #include "main.h"
+#include "simplecsv.h"
+
+void replace_all_input_CSV_files(projects &p , teams & t, backlog & b)
+{
+    for (unsigned int i=0 ; i<t.size();++i)
+    { // output team-X
+        std::ofstream ofs(simplecsv::filename2path("team-"+t[i].mId+".csv"));
+        b.save_team_CSV(ofs,i);
+    }
+
+    {
+        std::ofstream ofs(simplecsv::filename2path("settings.csv"));
+        gSettings().save_settings_CSV(ofs);
+    }
+
+    {
+        std::ofstream ofs(simplecsv::filename2path("publicholidays.csv"));
+        t.save_public_holidays_CSV(ofs); 
+    }
+
+    {
+        std::ofstream ofs(simplecsv::filename2path("teams.csv"));
+        t.save_teams_CSV(std::cout);
+    }
+
+    {
+        std::ofstream ofs(simplecsv::filename2path("projects.csv"));
+        p.save_projects_CSV(std::cout);
+    }
+}
+
+void run_refresh()
+{
+    try
+    {
+        projects p;
+        teams t;
+        backlog b(p,t);
+        b.schedule();
+        std::cout << std::endl << std::endl;
+
+        b.refresh();
+
+        replace_all_input_CSV_files(p,t,b);
+    }
+    catch(TerminateRunException& pEx)
+    {
+        std::cerr << pEx.what() << std::endl;
+    }
+
+}
 
 void run_console()
 {
@@ -26,31 +77,13 @@ void run_console()
         std::cout << std::endl << std::endl;
         b.displayprojects(std::cout);
         b.createAllOutputFiles();     
-
-        for (unsigned int i=0 ; i<t.size();++i)
-        {
-            b.save_team_CSV(std::cout,i);
-            std::cout << std::endl;
-        }
-        gSettings().save_settings_CSV(std::cout);
-        std::cout << std::endl;
-
-        t.save_public_holidays_CSV(std::cout); 
-        std::cout << std::endl;        
-
-        t.save_teams_CSV(std::cout);
-        std::cout << std::endl;        
-
-        p.save_projects_CSV(std::cout);
-        std::cout << std::endl;        
-
-        std::cout << std::endl << "Completed in "<<std::setprecision(3) << tmr.stop() <<"ms."<<std::endl;
     }
     catch(TerminateRunException& pEx)
     {
         std::cerr << pEx.what() << std::endl;
     }
 
+    std::cout << std::endl << "Completed in "<<std::setprecision(3) << tmr.stop() <<"ms."<<std::endl;
 }
 
 
@@ -107,9 +140,10 @@ Options:
 
     -c, -create     Create a skeleton working tree in DIRECTORY, which includes input and 
                     output directories, with example input files. 
-                    Cannot be used with other options.
 
     -t, -test       Run unit tests.
+
+    -r, -refresh    Refresh the input files (read, tidy, write).
                 
 )";
 }
@@ -163,69 +197,89 @@ bool runtests()
 }
 
 int main(int argc, char **argv)
-{    
-    if (argc<=1)
+{
+    if (argc <= 1)
     {
         showhelp();
         exit(0);
     }
-    if (iSame(argv[1],"-t") || iSame(argv[1],"-test"))
-        {return runtests() ? 0 : 1;}
+    if (iSame(argv[1], "-t") || iSame(argv[1], "-test"))
+    {
+        return runtests() ? 0 : 1;
+    }
 
     catch_ctrl_c();
 
     try
     {
-        bool watch=false, create=false;
-        int port=5000;
+        bool watch = false, create = false, refresh = false;
+        int port = 5000;
 
         std::vector<std::string> params;
-        for (int i=1;i<argc-1;++i)
+        for (int i = 1; i < argc - 1; ++i)
             params.push_back(argv[i]);
 
-        std::string directory(argv[argc-1]);
+        std::string directory(argv[argc - 1]);
 
-        for (auto & s : params)
+        for (auto &s : params)
         {
-            if (s.length()<2) TERMINATE("Bad parameter: " + s);
-            if (s[0]!='-')  TERMINATE("Options must start with - : " + s);
-            switch (s[1]) {
-                case 'w' : watch=true; break;
-                case 'p' : port = getport(s); break;
-                case 'c' : create = true; if (params.size()>1) TERMINATE("Create option must be specified on its own."); break;
-                default: TERMINATE("Bad parameter: " + s);
+            if (s.length() < 2)
+                TERMINATE("Bad parameter: " + s);
+            if (s[0] != '-')
+                TERMINATE("Options must start with - : " + s);
+            switch (s[1])
+            {
+            case 'w':
+                watch = true;
+                break;
+            case 'p':
+                port = getport(s);
+                break;
+            case 'c':
+                create = true;
+                break;
+            case 'r':
+                refresh = true;
+                break;
+            default:
+                TERMINATE("Bad parameter: " + s);
             }
-        }               
+        }
         gSettings().setRoot(directory);
 
         std::cout << std::endl;
-        std::cout << "John's Project Forecaster "<<
-                        gSettings().getJPFVersionStr()<<
-                        "-"<<gSettings().getJPFReleaseStr()<<
-                        " - An auto-balancing forecasting tool." <<std::endl<<std::endl;
-        std::cout << "Root directory: "<<gSettings().getRoot()<<std::endl;
+        std::cout << "John's Project Forecaster " << gSettings().getJPFVersionStr() << "-" << gSettings().getJPFReleaseStr() << " - An auto-balancing forecasting tool." << std::endl
+                  << std::endl;
+        std::cout << "Root directory: " << gSettings().getRoot() << std::endl;
 
         if (create)
             create_directories();
-        else
-        {
-            gSettings().load_settings();
-            if (!gSettings().RootExists())
-                TERMINATE("Root directory "+gSettings().getRoot()+" does not exist.");
 
+        gSettings().load_settings();
+        if (!gSettings().RootExists())
+            TERMINATE("Root directory " + gSettings().getRoot() + " does not exist.");
+
+        if (refresh)
+        {
             if (watch)
-                run_watch(port);
-            else
-                run_console();
+                TERMINATE("Cannot specify both watch and refresh together. Refresh first then run again.");
+            run_refresh();
         }
+        else if (watch)
+            run_watch(port);
+        else
+            run_console();
     }
-    catch(const ctrlcException& e)
+
+    catch (const ctrlcException &e)
     {
-        std::cerr << "\n\n" << e.what() << '\n';
+        std::cerr << "\n\n"
+                  << e.what() << '\n';
     }
-    catch(const TerminateRunException& e)
+    catch (const TerminateRunException &e)
     {
-        std::cerr << "\n\n" << e.what() << '\n';
+        std::cerr << "\n\n"
+                  << e.what() << '\n';
     }
 
     return 0;

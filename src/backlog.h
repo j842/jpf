@@ -46,6 +46,8 @@ class backlog
         backlog(projects & p, const teams & t);
 
         void schedule();
+        void refresh();
+
         void createAllOutputFiles() const;
         void displayprojects(std::ostream & ofs) const;
         static void outputHTMLError(std::string filename, std::string errormsg);

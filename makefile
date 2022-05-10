@@ -1,3 +1,5 @@
+MAKEFLAGS+="-j -l $(shell grep -c ^processor /proc/cpuinfo) "
+
 ROOT_DIR:=$(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 
 include $(ROOT_DIR)/deploy/versions.makefile

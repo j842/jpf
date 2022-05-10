@@ -8,7 +8,7 @@ CPPUNIT_TEST_SUITE_REGISTRATION( simplecsv_test );
 
 
 simplecsv::simplecsv(std::string filename, bool hasHeaderRow, unsigned int requiredcols) :  
-    mFileName(filename), mFile(getInputPath()+filename), mOpenedOkay(false)
+    mFileName(filename), mFile(filename2path(filename)), mOpenedOkay(false)
 {
     mOpenedOkay = mFile.is_open();
     
@@ -21,6 +21,12 @@ simplecsv::simplecsv(std::string filename, bool hasHeaderRow, unsigned int requi
 simplecsv::~simplecsv()
 {
 }
+
+std::string simplecsv::filename2path(const std::string filename)
+{
+    return getInputPath()+filename;
+}
+
 
 bool simplecsv::splitcsv(const std::string s, // copy
                          std::vector<std::string> &items)
