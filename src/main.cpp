@@ -18,7 +18,7 @@ void replace_all_input_CSV_files(projects &p , teams & t, backlog & b)
 {
     for (unsigned int i=0 ; i<t.size();++i)
     { // output team-X
-        std::ofstream ofs(simplecsv::filename2path("team-"+t[i].mId+".csv"));
+        std::ofstream ofs(simplecsv::filename2path("team-"+makelower(t[i].mId)+".csv"));
         b.save_team_CSV(ofs,i);
     }
 
@@ -34,12 +34,12 @@ void replace_all_input_CSV_files(projects &p , teams & t, backlog & b)
 
     {
         std::ofstream ofs(simplecsv::filename2path("teams.csv"));
-        t.save_teams_CSV(std::cout);
+        t.save_teams_CSV(ofs);
     }
 
     {
         std::ofstream ofs(simplecsv::filename2path("projects.csv"));
-        p.save_projects_CSV(std::cout);
+        p.save_projects_CSV(ofs);
     }
 }
 

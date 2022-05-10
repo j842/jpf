@@ -1,8 +1,6 @@
 Setting Name,Value,Description
-startdate,2/5/22,Start of Scheduled Period
+startdate,2/5/22,Start of scheduled period
 enddate,30/12/22,Last month to display in monthly graphs
-inputversion,7,Input Version Required
+inputversion,7,Input file format version required
 costperdevday,500,Cost per developer per day (including overheads)
-title,Demo Project Forecast,Title for Reports
-
-
+title,Demo Project Forecast,Title for reports

@@ -1,8 +1,6 @@
 Project,ID,Description,Min Calendar WorkDays,Remaining DevDays Total,Earliest Start,Blocking,Contributing,Depends On,Comments
-Android App,AA1,Update App to Android 17,,10,,Stephen,"Blair,Carly",,
-Android App,,Release Milestone,,,,,,,
-iPhone App,,Port from Android,,15,,Blair,,,
-Desktop Client,,Write whole desktop client,,22,,Carly,,AA1,
-Concrete Sculpture,,Build a gorgeous sculpture,,12,,"Stephen,Blair",Carly,,
-
-
+Android App,AA1,Update App to Android 17,0,10,,Stephen,"Blair, Carly",,
+Android App,,Release Milestone,0,0,,,,,
+iPhone App,,Port from Android,0,15,,Blair,,,
+Desktop Client,,Write whole desktop client,0,22,,Carly,,AA1,
+Concrete Sculpture,,Build a gorgeous sculpture,0,12,,"Stephen, Blair",Carly,,

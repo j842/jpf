@@ -1,10 +1,9 @@
-Team,Person,%EFT Projects,%EFT Other BAU,"%EFT Overhead for Projects (mgmt, test)",Upcoming Leave (first + last day on leave)
-Web,Stu,80,10,10,16/5/22 - 17/5/22
-Web,Mark,90,10,,
-Web,Sarah,90,10,,
+Team,Person,"%EFT Projects","%EFT Other BAU","%EFT Overhead for Projects (mgmt, test)","Upcoming Leave (first + last day on leave)"
+Web,Stu,80,10,10,16/5/22-17/5/22
+Web,Mark,90,10,0,
+Web,Sarah,90,10,0,
 Apps,Stephen,80,10,10,
-Apps,Blair,100,,,
-Apps,Carly,100,,,
-DevOps,Fred,100,,,
-Product,Sarah,100,,,
-
+Apps,Blair,100,0,0,
+Apps,Carly,100,0,0,
+DevOps,Fred,100,0,0,
+Product,Sarah,100,0,0,
