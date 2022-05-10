@@ -14,7 +14,7 @@ teams::teams() : eNotFound(UINT_MAX)
 
 void teams::load_teams()
 {
-   simplecsv c("teams.csv");
+    simplecsv c("teams.csv");
 
     if (!c.openedOkay())
         TERMINATE("Could not open teams.csv!");

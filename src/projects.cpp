@@ -24,6 +24,11 @@ bool isBAU(std::string s)
 
 projects::projects()
 {
+    load_projects();
+}
+
+void projects::load_projects()
+{
     simplecsv c("projects.csv");
 
     if (!c.openedOkay())
@@ -36,6 +41,23 @@ projects::projects()
         this->push_back(p);
     }
 }
+void projects::save_projects_CSV(std::ostream & os) const
+{
+    os << R"(Project ID,Description,BAU or New,Comments)" << std::endl;
+
+    for (const auto &i : *this)
+        {
+            std::vector<std::string> row = {
+                i.getId(),
+                i.getDesc(),
+                i.getBAU() ? "BAU" : "New",
+                i.getmComments()
+            };
+            simplecsv::output(os,row);
+            os << std::endl;
+        }
+}
+
 
 unsigned int projects::getIndexByID(std::string id) const // returns eNotFound if index isn't there.
 {

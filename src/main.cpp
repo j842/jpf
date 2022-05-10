@@ -41,6 +41,8 @@ void run_console()
         t.save_teams_CSV(std::cout);
         std::cout << std::endl;        
 
+        p.save_projects_CSV(std::cout);
+        std::cout << std::endl;        
 
         std::cout << std::endl << "Completed in "<<std::setprecision(3) << tmr.stop() <<"ms."<<std::endl;
     }

@@ -35,6 +35,8 @@ class projects : public std::vector<project>
 {
     public:
         projects();
+        void load_projects();
+        void save_projects_CSV(std::ostream & os) const;
 
         void debug_displayProjects() const;
 
