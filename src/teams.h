@@ -39,6 +39,7 @@ class teams : public std::vector<team>
         const unsigned int eNotFound;
 
         void load_public_holidays();
+        void save_public_holidays_CSV(std::ostream & os) const;
 
 
     private:

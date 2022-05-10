@@ -92,3 +92,14 @@ void teams::load_public_holidays()
 
 //    std::cout << "Upcoming public holidays: "<< mPublicHolidaysString << std::endl;
 }
+
+void teams::save_public_holidays_CSV(std::ostream & os) const
+{
+    os << "Public Holdiay (Date or Range)" << std::endl;
+
+    std::vector<std::string> vd;
+    simplecsv::splitcsv(mPublicHolidaysString,vd);
+    for (auto d : vd)
+        os << simplecsv::makesafe(d) << std::endl;
+}
+

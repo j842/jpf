@@ -27,7 +27,16 @@ void run_console()
         b.displayprojects(std::cout);
         b.createAllOutputFiles();     
 
-        // b.output(std::cout,0); 
+        for (unsigned int i=0 ; i<t.size();++i)
+        {
+            b.save_team_CSV(std::cout,i);
+            std::cout << std::endl;
+        }
+        gSettings().save_settings_CSV(std::cout);
+        std::cout << std::endl;
+
+        t.save_public_holidays_CSV(std::cout); 
+        std::cout << std::endl;        
 
         std::cout << std::endl << "Completed in "<<std::setprecision(3) << tmr.stop() <<"ms."<<std::endl;
     }

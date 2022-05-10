@@ -11,6 +11,7 @@ class settings
         settings();
         void setRoot(std::string path);
         void load_settings();
+        void save_settings_CSV(std::ostream & os) const;
 
         boost::gregorian::date startDate() const;
         boost::gregorian::date endDate() const;
@@ -33,6 +34,7 @@ class settings
         int getSettingI(std::string settingName) const;     
         double getSettingD(std::string settingName) const;     
         bool isValid(std::string key) const;
+        std::string getDescription(std::string set) const;
 
         bool mLoaded;
         boost::gregorian::date mStartDate;

@@ -11,7 +11,7 @@
 #include "version.h"
 
 settings::settings() : mLoaded(false), mRootDir(),
-    mValidSettings({"startdate","minversion","enddate","inputversion","costperdevday","title"})
+    mValidSettings({"startdate","enddate","inputversion","costperdevday","title"})
 {
 }
 
@@ -23,7 +23,7 @@ void settings::load_settings()
         TERMINATE("Could not open "+getInputPath()+"settings.csv.");
 
     std::vector<std::string> row;
-    while (c.getline(row,2))
+    while (c.getline(row,3))
     {
         if (isValid(row[0]))
             mSettings[row[0]]=row[1];
@@ -51,6 +51,30 @@ void settings::load_settings()
         TERMINATE(S()<<"The input files need to be updated to support the current version of jpf."
         <<"\nUpdate inputversion in settings.csv to "<<getInputVersion()<<" when done.");
 }
+
+void settings::save_settings_CSV(std::ostream & os) const
+{
+    os << "Setting Name,Value,Description" << std::endl;
+    for (const auto & i : mValidSettings)
+        {
+            std::vector<std::string> vs = { i , getSettingS(i), getDescription(i) };
+            simplecsv::output(os,vs);
+            os << std::endl;
+        }
+}
+
+std::string settings::getDescription(std::string set) const
+{
+    if (iSame(set,"startdate")) return "Start of scheduled period";
+    if (iSame(set,"enddate")) return "Last month to display in monthly graphs";
+    if (iSame(set,"inputversion")) return "Input file format version required";
+    if (iSame(set,"costperdevday")) return "Cost per developer per day (including overheads)";
+    if (iSame(set,"title")) return "Title for reports";
+
+    TERMINATE(S()<<"Unknown setting "<<set);
+    return "";
+}
+
 
 std::string settings::getTitle() const
 {

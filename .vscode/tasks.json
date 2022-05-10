@@ -4,7 +4,7 @@
 		{
 			"type": "cppbuild",
 			"label": "C/C++: g++ build project",
-			"command": "/usr/bin/g++-9",
+			"command": "/usr/bin/g++",
 			"args": [
 				"-fdiagnostics-color=always",
 				"-std=c++17",
