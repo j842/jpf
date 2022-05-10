@@ -169,7 +169,7 @@ void backlog::displaybacklog(std::ostream & ofs) const
         }
         //ofs << std::setw(7) << z.mId << " ";
         
-        ofs << std::setw(mTeams.getMaxTeamNameWidth()) << mTeams.at(z.mTeamNdx).mId << "  ";
+        ofs << RIGHTSTREAM( mTeams.at(z.mTeamNdx).mId, mTeams.getMaxTeamNameWidth()) << "  ";
         ofs << z.mActualStart.getStr() << " -> " << z.mActualEnd.getStr();
         ofs << "  " << RIGHTSTREAM(z.mBlockedBy, maxnamew) << "  ";
         ofs << z.mDescription << std::endl;   
