@@ -21,7 +21,7 @@ void backlog::refresh()
                 }
 
         if (removedRefs>0)
-            std::cout << "Removed "<<removedRefs<< " unneeded references." << std::endl;
+            std::cout << "Removed "<<removedRefs<< " unneeded reference" << (removedRefs>1 ? "s." : ".") << std::endl;
         else 
             std::cout << "References are clean." << std::endl;
     }
