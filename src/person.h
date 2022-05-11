@@ -52,7 +52,7 @@ class person : public member
         tCentiDay getMaxAvialability() const;
         tCentiDay getAvailability(itemdate day) const;
         void decrementAvailability(itemdate day, tCentiDay decrement,const std::string & task);
-        void registerHoliday(itemdate start, itemdate end);
+        void registerHoliday(daterange dr);
 
     private:
         intervals mIntervals;

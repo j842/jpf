@@ -11,7 +11,7 @@
 #include "version.h"
 
 settings::settings() : mLoaded(false), mRootDir(),
-    mValidSettings({"startdate","enddate","inputversion","costperdevday","title"})
+    mValidSettings({"startdate","enddate","inputversion","costperdevday","title","port"})
 {
 }
 
@@ -45,6 +45,8 @@ void settings::load_settings()
     else    
         mEndDate = itemdate::parseDateStringDDMMYY(getSettingS("enddate"));
 
+    mPort = getSettingI("port");
+
     if (getInputVersion()<getRequiredInputVersion())
         { TERMINATE("The input files being used require a newer version of jpf."); }
     else if (getInputVersion() > getRequiredInputVersion())
@@ -70,6 +72,7 @@ std::string settings::getDescription(std::string set) const
     if (iSame(set,"inputversion")) return "Input file format version required";
     if (iSame(set,"costperdevday")) return "Cost per developer per day (including overheads)";
     if (iSame(set,"title")) return "Title for reports";
+    if (iSame(set,"port")) return "Port to use when webserver run";
 
     TERMINATE(S()<<"Unknown setting "<<set);
     return "";
@@ -210,6 +213,15 @@ bool settings::isValid(std::string key) const
     return false;
 }
 
+int settings::getPort() const
+{
+    return mPort;
+}
+
+void settings::advance(itemdate newStart)
+{
+    mStartDate = newStart.getGregorian();
+}
 
 const std::string getInputPath() { return gSettings().getRoot()+"/input/"; }
 const std::string getOutputPath_Txt() { return gSettings().getRoot()+"/output/"; }

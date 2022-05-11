@@ -41,6 +41,8 @@ class projects : public std::vector<project>
 
         unsigned int getIndexByID(std::string id) const; // returns eNotFound if index isn't there.
     
+        void advance(itemdate newStart);
+
     private:
         unsigned int mMaxProjectNameWidth;
 };

@@ -5,6 +5,7 @@
 #include <vector>
 
 #include "utils.h"
+#include "itemdate.h"
 
 class member
 {
@@ -21,7 +22,13 @@ class member
             
         const std::string mName;
         const tCentiDay mEFTProject, mEFTBAU, mEFTOverhead;
-        const std::string mLeave, mOriginalLeave;
+        const std::string mLeave;
+
+        const std::string getOriginalLeave() const;
+        void advance(itemdate newStart);
+
+    private:
+        std::string mOriginalLeave;
 };
 
 class team
@@ -48,6 +55,8 @@ class teams : public std::vector<team>
         void save_public_holidays_CSV(std::ostream & os) const;
 
         unsigned int getMaxTeamNameWidth() const;
+
+        void advance(itemdate newStart);
 
     private:
         unsigned int get_index_by_name(std::string n);

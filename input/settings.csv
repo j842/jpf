@@ -4,3 +4,5 @@ enddate,30/12/22,Last month to display in monthly graphs
 inputversion,8,Input file format version required
 costperdevday,500,Cost per developer per day (including overheads)
 title,Demo Project Forecast,Title for reports
+port,5000,Port when run as web service
+

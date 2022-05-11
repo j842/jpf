@@ -52,7 +52,7 @@ void intervals::decrementAvailability(itemdate day, tCentiDay decrement)
 }
 
 person::person(const member & m) :
-    member(m.mName,m.mEFTProject,m.mEFTBAU,m.mEFTOverhead,m.mLeave,m.mOriginalLeave),
+    member(m.mName,m.mEFTProject,m.mEFTBAU,m.mEFTOverhead,m.mLeave,m.getOriginalLeave()),
     mIntervals(m.mEFTProject)
 {
     if (mLeave.length()>0)
@@ -63,16 +63,8 @@ person::person(const member & m) :
 
         for (auto & x : items)
         { // parse leave string. Could be date, or date-date (inclusive).
-
-            std::vector<std::string> strs;
-            boost::split(strs, x, boost::is_any_of("-"));
-            if (strs.size()==1) strs.push_back(strs[0]);
-            ASSERT(strs.size()==2);
-            itemdate ds;
-            ds.setclip(strs[0]);
-            itemdate de;
-            de.setclip(strs[1]);
-            registerHoliday(ds,de+1);// leave dates are inclusive, make open interval.
+            daterange dr(x,true);
+            registerHoliday(dr);
         }
     }
 }
@@ -83,9 +75,9 @@ itemdate person::getEarliestStart(itemdate fromstart)
     return mIntervals.getEarliestStart(fromstart);
 }
 
-void person::registerHoliday(itemdate start, itemdate end)
+void person::registerHoliday(daterange dr)
 { // end is open interval.
-    for (itemdate i=start;i<end;++i)
+    for (itemdate i=dr.getStart();i<dr.getEnd();++i)
         decrementAvailability(i, mIntervals.getAvailability(i), "Leave");
 }
 

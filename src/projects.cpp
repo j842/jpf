@@ -81,3 +81,8 @@ unsigned int projects::getMaxProjectNameWidth() const
 {
     return mMaxProjectNameWidth;
 }
+
+void projects::advance(itemdate newStart)
+{
+    // nothing to change in the projects file.
+}

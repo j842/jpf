@@ -14,12 +14,12 @@
 #include "main.h"
 #include "simplecsv.h"
 
-void replace_all_input_CSV_files(projects &p , teams & t, backlog & b)
+void cMain::replace_all_input_CSV_files(projects &p, teams &t, backlog &b)
 {
-    for (unsigned int i=0 ; i<t.size();++i)
+    for (unsigned int i = 0; i < t.size(); ++i)
     { // output team-X
-        std::ofstream ofs(simplecsv::filename2path("team-"+makelower(t[i].mId)+".csv"));
-        b.save_team_CSV(ofs,i);
+        std::ofstream ofs(simplecsv::filename2path("team-" + makelower(t[i].mId) + ".csv"));
+        b.save_team_CSV(ofs, i);
     }
 
     {
@@ -29,7 +29,7 @@ void replace_all_input_CSV_files(projects &p , teams & t, backlog & b)
 
     {
         std::ofstream ofs(simplecsv::filename2path("publicholidays.csv"));
-        t.save_public_holidays_CSV(ofs); 
+        t.save_public_holidays_CSV(ofs);
     }
 
     {
@@ -43,25 +43,26 @@ void replace_all_input_CSV_files(projects &p , teams & t, backlog & b)
     }
 }
 
-void run_refresh()
+int cMain::run_refresh()
 {
     try
     {
         projects p;
         teams t;
-        backlog b(p,t);
+        backlog b(p, t);
         b.refresh();
 
-        replace_all_input_CSV_files(p,t,b);
+        replace_all_input_CSV_files(p, t, b);
     }
-    catch(TerminateRunException& pEx)
+    catch (TerminateRunException &pEx)
     {
         std::cerr << pEx.what() << std::endl;
+        return 1;
     }
-
+    return 0;
 }
 
-void run_console()
+int cMain::run_console()
 {
     timer tmr;
 
@@ -69,71 +70,74 @@ void run_console()
     {
         projects p;
         teams t;
-        backlog b(p,t);
+        backlog b(p, t);
         b.schedule();
-        std::cout << std::endl << std::endl;
+        std::cout << std::endl
+                  << std::endl;
         b.displayprojects(std::cout);
-        b.createAllOutputFiles();     
+        b.createAllOutputFiles();
     }
-    catch(TerminateRunException& pEx)
+    catch (TerminateRunException &pEx)
     {
         std::cerr << pEx.what() << std::endl;
+        return 1;
     }
 
-    std::cout << std::endl << "Completed in "<<std::setprecision(3) << tmr.stop() <<"ms."<<std::endl;
+    std::cout << std::endl
+              << "Completed in " << std::setprecision(3) << tmr.stop() << "ms." << std::endl;
+    return 0;
 }
 
-
-void run_watch(int port)
+int cMain::run_watch()
 {
-    webserver wserver(port);
+    webserver wserver(gSettings().getPort());
     watcher w(getInputPath());
 
     while (true)
     {
-        try 
+        try
         {
             projects p;
             teams t;
-            backlog b(p,t);
+            backlog b(p, t);
             b.schedule();
 
             timer tmr;
             b.createAllOutputFiles();
-            std::cout << "File output done in "<<std::setprecision(3)<<tmr.stop()<<"ms."<<std::endl;
+            std::cout << "File output done in " << std::setprecision(3) << tmr.stop() << "ms." << std::endl;
         }
-        catch (TerminateRunException& pEx)
+        catch (TerminateRunException &pEx)
         {
-            std::vector<std::string> htmlfiles={"index.html","people.html","costdashboard.html","highlevelgantt.html","detailedgantt.html","rawbacklog.html"};
-            for (auto & x : htmlfiles)
-                backlog::outputHTMLError(getOutputPath_Html()+x, pEx.what());
+            std::vector<std::string> htmlfiles = {"index.html", "people.html", "costdashboard.html", "highlevelgantt.html", "detailedgantt.html", "rawbacklog.html"};
+            for (auto &x : htmlfiles)
+                backlog::outputHTMLError(getOutputPath_Html() + x, pEx.what());
             std::cerr << pEx.what() << std::endl;
         }
 
-        std::cout<<std::endl<<"Watching for changes. Ctrl-c to exit."<<std::endl;
+        std::cout << std::endl
+                  << "Watching for changes. Ctrl-c to exit." << std::endl;
         w.waitforchange();
-        std::cout<<"Files updated...recalculating!"<<std::endl;
+        std::cout << "Files updated...recalculating!" << std::endl;
     }
+    return 0;
 }
 
-void showhelp()
+int cMain::showhelp()
 {
     std::cout << std::endl;
-    std::cout << "jpf "<< gSettings().getJPFVersionStr()<<
-                        "-"<<gSettings().getJPFReleaseStr()<< " is a simple auto-balancing forecasting tool for projects across multiple teams.";
+    std::cout << "jpf " << gSettings().getJPFVersionStr() << "-" << gSettings().getJPFReleaseStr() << " is a simple auto-balancing forecasting tool for projects across multiple teams.";
 
     std::cout << R"(
 
 The directory used needs to contain an input folder, with appropriate csv files in it.
 
-usage: jpf [ options ] DIRECTORY
+usage: jpf [ mode ] DIRECTORY
 
-Options:
+Mode:
     -w, -watch      Watch the folder for changes, and update all output files as needed.
-                    Also starts a webserver on PORT, displaying the HTML output files.
+                    Also starts a webserver, displaying the HTML output files.
                     The corresponding webpages will auto-update as inputs change.
-
-    -port=PORT      Change the webserver port to the one specified.
+                    The port can be configured in settings.csv.
 
     -c, -create     Create a skeleton working tree in DIRECTORY, which includes input and 
                     output directories, with example input files. 
@@ -141,35 +145,36 @@ Options:
     -t, -test       Run unit tests.
 
     -r, -refresh    Refresh the input files (read, tidy, write).
+
+    -a=dd/mm/yy     Advance start to date, decrementing work expected to be completed and
+                    removing no longer relevant dates.
                 
 )";
+    return 0;
 }
 
-int getport(std::string s)
-{
-    int port=5000;
-    for (unsigned int i=0;i<s.length();++i)
-        if (s[i]=='=' && i<s.length()-1)
-        {
-            port=atoi(s.c_str()+i+1);
-        }
+// int getport(std::string s)
+// {
+//     int port = 5000;
+//     for (unsigned int i = 0; i < s.length(); ++i)
+//         if (s[i] == '=' && i < s.length() - 1)
+//         {
+//             port = atoi(s.c_str() + i + 1);
+//         }
 
-    if (port<=1024)
-        TERMINATE("Need user settable port - i.e. > 1024.");
-    return port;
-}
+//     if (port <= 1024)
+//         TERMINATE("Need user settable port - i.e. > 1024.");
+//     return port;
+// }
 
-
-
-
-void create_directories()
+int cMain::create_directories()
 {
     std::string pr = gSettings().getRoot();
-    std::string pi = pr+"/input/";
+    std::string pi = pr + "/input/";
     std::string ex = "/opt/jpf/input/";
 
     if (std::filesystem::exists(pi))
-        TERMINATE("Can't create directories - input dir already exists: "+pi);
+        TERMINATE("Can't create directories - input dir already exists: " + pi);
 
     checkcreatedirectory(pr);
 
@@ -178,105 +183,126 @@ void create_directories()
 
     copy("/opt/jpf/input/", pr, std::filesystem::copy_options::recursive);
     if (!std::filesystem::exists(pi))
-        TERMINATE("Input directory was not successfully created: "+pi);
+        TERMINATE("Input directory was not successfully created: " + pi);
+
+    return 0;
 }
 
-bool runtests()
+bool cMain::runtests()
 {
     CPPUNIT_NS::Test *suite = CPPUNIT_NS::TestFactoryRegistry::getRegistry().makeTest();
     CppUnit::TextUi::TestRunner runner;
-    runner.addTest( suite );
+    runner.addTest(suite);
     bool wasSucessful = runner.run();
 
-    std::cout << ( wasSucessful ? "Success!!" : "Fail!!" )<< std::endl;
+    std::cout << (wasSucessful ? "Success!!" : "Fail!!") << std::endl;
 
     return wasSucessful;
 }
 
-int main(int argc, char **argv)
-{
-    if (argc <= 1)
-    {
-        showhelp();
-        exit(0);
-    }
-    if (iSame(argv[1], "-t") || iSame(argv[1], "-test"))
-    {
-        return runtests() ? 0 : 1;
-    }
-
-    catch_ctrl_c();
+int cMain::advance(std::string s)
+{ // s of format -a=dd/mm/yy
+    s.erase(s.begin(), s.begin() + 3);
+    itemdate newStart(s);
+    std::cout << " Advancing start date " << (newStart - gSettings().startDate()).getAsDurationUInt() << " workdays --> " << newStart.getStr_nice() << std::endl;
 
     try
     {
-        bool watch = false, create = false, refresh = false;
-        int port = 5000;
+        projects p;
+        teams t;
+        backlog b(p, t);
+        b.schedule();
 
-        std::vector<std::string> params;
-        for (int i = 1; i < argc - 1; ++i)
-            params.push_back(argv[i]);
+        gSettings().advance(newStart);
+        p.advance(newStart);
+        t.advance(newStart);
 
-        std::string directory(argv[argc - 1]);
+    }
+    catch (TerminateRunException &pEx)
+    {
+        std::cerr << pEx.what() << std::endl;
+        return 1;
+    }
 
-        for (auto &s : params)
-        {
-            if (s.length() < 2)
-                TERMINATE("Bad parameter: " + s);
-            if (s[0] != '-')
-                TERMINATE("Options must start with - : " + s);
-            switch (s[1])
-            {
-            case 'w':
-                watch = true;
-                break;
-            case 'p':
-                port = getport(s);
-                break;
-            case 'c':
-                create = true;
-                break;
-            case 'r':
-                refresh = true;
-                break;
-            default:
-                TERMINATE("Bad parameter: " + s);
-            }
-        }
+    return 0;
+}
+
+int main(int argc, char **argv)
+{
+    cMain m(argc, argv);
+    return m.getrVal();
+}
+
+int cMain::getrVal() const
+{
+    return mrVal;
+}
+
+cMain::cMain(int argc, char **argv) : mrVal(0)
+{
+    mrVal = go(argc, argv);
+}
+
+int cMain::go(int argc, char **argv)
+{
+    if (argc <= 1 || argc > 3)
+        return showhelp();
+
+    try
+    {
+        std::string s = argv[1];
+        std::string directory = argv[argc - 1];
+
         gSettings().setRoot(directory);
+
+        gSettings().load_settings();
+        if (!gSettings().RootExists())
+            TERMINATE("Root directory " + gSettings().getRoot() + " does not exist.");
 
         std::cout << std::endl;
         std::cout << "John's Project Forecaster " << gSettings().getJPFVersionStr() << "-" << gSettings().getJPFReleaseStr() << " - An auto-balancing forecasting tool." << std::endl
                   << std::endl;
         std::cout << "Root directory: " << gSettings().getRoot() << std::endl;
 
-        if (create)
-            create_directories();
+        if (argc == 2)
+            return run_console();
 
-        gSettings().load_settings();
-        if (!gSettings().RootExists())
-            TERMINATE("Root directory " + gSettings().getRoot() + " does not exist.");
-
-        if (refresh)
+        if (s.length() < 2)
+            TERMINATE("Bad parameter: " + s);
+        if (s[0] != '-')
+            TERMINATE("Options must start with - : " + s);
+        switch (s[1])
         {
-            if (watch)
-                TERMINATE("Cannot specify both watch and refresh together. Refresh first then run again.");
-            run_refresh();
+        case 'w':
+        {
+            catch_ctrl_c();
+            run_watch();
+            return 0;
         }
-        else if (watch)
-            run_watch(port);
-        else
-            run_console();
+        case 'a':
+            return advance(s);
+        case 'c':
+            return create_directories();
+        case 't':
+            return runtests() ? 0 : 1;
+        case 'r':
+            return run_refresh();
+        default:
+            TERMINATE("Bad parameter: " + s);
+        }
     }
 
     catch (const ctrlcException &e)
     {
         std::cerr << "\n\n"
                   << e.what() << '\n';
+        return 1;
     }
     catch (const TerminateRunException &e)
     {
         std::cerr << "\n\n"
                   << e.what() << '\n';
+        return 1;
     }
 
     return 0;
