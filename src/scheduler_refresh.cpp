@@ -107,7 +107,6 @@ namespace scheduler
         iset.mH.advance(newStart); // just drops old holidays
         iset.mP.advance(newStart); // does nothing at present
         iset.mT.advance(newStart); // advances leave
-        gSettings().advance(newStart);
     }
 
 } // namespace

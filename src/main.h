@@ -19,7 +19,7 @@ class cMain
     private:
         int go(int argc, char **argv);
         void replace_all_input_CSV_files(inputfiles::inputset iset);
-
+        void replace_settings_CSV();
     private:
         int mrVal;
 };

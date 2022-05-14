@@ -30,11 +30,6 @@ void cMain::replace_all_input_CSV_files(inputfiles::inputset iset)
     }
 
     {
-        std::ofstream ofs(simplecsv::filename2path("settings.csv"));
-        gSettings().save_settings_CSV(ofs);
-    }
-
-    {
         std::ofstream ofs(simplecsv::filename2path("publicholidays.csv"));
         iset.mH.save_public_holidays_CSV(ofs);
     }
@@ -48,6 +43,12 @@ void cMain::replace_all_input_CSV_files(inputfiles::inputset iset)
         std::ofstream ofs(simplecsv::filename2path("projects.csv"));
         iset.mP.save_projects_CSV(ofs);
     }
+}
+
+void cMain::replace_settings_CSV()
+{
+    std::ofstream ofs(simplecsv::filename2path("settings.csv"));
+    gSettings().save_settings_CSV(ofs);
 }
 
 int cMain::run_refresh()
@@ -192,21 +193,19 @@ int cMain::run_advance(std::string s)
 
     try
     {
-        inputfiles::projects p;
-        inputfiles::teams t;
-        inputfiles::publicholidays h;
-        inputfiles::teambacklogs b(t);
-        inputfiles::inputset iset(p,t,h,b);
-        { // advance and throw away scheduler.
+        {
+            inputfiles::projects p;
+            inputfiles::teams t;
+            inputfiles::publicholidays h;
+            inputfiles::teambacklogs b(t);
+            inputfiles::inputset iset(p, t, h, b);
+            // advance and throw away scheduler.
             scheduler::scheduler s(iset);
-            s.advance(newStart,iset);
+            s.advance(newStart, iset);
+            replace_all_input_CSV_files(iset);
+            gSettings().advance(newStart);
+            replace_settings_CSV();
         }
-        scheduler::scheduler s2(iset);
-        s2.schedule();
-
-        std::cout << std::endl << std::endl;
-        s2.displayprojects(std::cout);
-        s2.createAllOutputFiles();
     }
     catch (TerminateRunException &pEx)
     {
@@ -214,6 +213,7 @@ int cMain::run_advance(std::string s)
         return 1;
     }
 
+    // new re-run from scratch.
     run_console();
 
     return 0;
