@@ -7,6 +7,9 @@
 #include "utils.h"
 #include "itemdate.h"
 
+namespace inputfiles
+{
+
 class teammember
 {
     public:
@@ -42,20 +45,21 @@ class teams : public std::vector<team>
 {
     public:
         teams();
-        void load_teams();
         void save_teams_CSV(std::ostream & os) const;
 
         void debug_displayTeams() const;
-
-        const unsigned int eNotFound;
-
         unsigned int getMaxTeamNameWidth() const;
-
         void advance(itemdate newStart);
 
+        const unsigned int eNotFound;
     private:
+        void load_teams();
+
         unsigned int get_index_by_name(std::string n);
         unsigned int mMaxNameWidth;
 };
+
+
+}
 
 #endif

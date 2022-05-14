@@ -6,20 +6,24 @@
 #include <cppunit/extensions/TestFactoryRegistry.h>
 #include <cppunit/ui/text/TestRunner.h>
 
-#include "projects.h"
-#include "teams.h"
-#include "backlog.h"
+#include "inputfiles_projects.h"
+#include "inputfiles_teams.h"
+#include "inputfiles_publicholidays.h"
+#include "inputfiles_teambacklogs.h"
+#include "inputfiles_inputset.h"
+
+#include "scheduler.h"
 #include "utils.h"
 #include "settings.h"
 #include "main.h"
 #include "simplecsv.h"
 
-void cMain::replace_all_input_CSV_files(projects &p, teams &t, backlog &b)
+void cMain::replace_all_input_CSV_files(inputfiles::inputset iset)
 {
-    for (unsigned int i = 0; i < t.size(); ++i)
-    { // output team-X
-        std::ofstream ofs(simplecsv::filename2path("team-" + makelower(t[i].mId) + ".csv"));
-        b.save_team_CSV(ofs, i);
+    for (unsigned int i = 0; i < iset.mB.mTeamItems.size(); ++i)
+    { // output backlog-X
+        std::ofstream ofs(simplecsv::filename2path("backlog-" + makelower(iset.mT[i].mId) + ".csv"));
+        iset.mB.save_team_CSV(ofs, i);
     }
 
     {
@@ -29,17 +33,17 @@ void cMain::replace_all_input_CSV_files(projects &p, teams &t, backlog &b)
 
     {
         std::ofstream ofs(simplecsv::filename2path("publicholidays.csv"));
-        b.save_public_holidays_CSV(ofs);
+        iset.mH.save_public_holidays_CSV(ofs);
     }
 
     {
         std::ofstream ofs(simplecsv::filename2path("teams.csv"));
-        t.save_teams_CSV(ofs);
+        iset.mT.save_teams_CSV(ofs);
     }
 
     {
         std::ofstream ofs(simplecsv::filename2path("projects.csv"));
-        p.save_projects_CSV(ofs);
+        iset.mP.save_projects_CSV(ofs);
     }
 }
 
@@ -47,12 +51,16 @@ int cMain::run_refresh()
 {
     try
     {
-        projects p;
-        teams t;
-        backlog b(p, t);
-        b.refresh();
+        inputfiles::projects p;
+        inputfiles::teams t;
+        inputfiles::publicholidays h;
+        inputfiles::teambacklogs b(t);
+        inputfiles::inputset iset(p,t,h,b);
 
-        replace_all_input_CSV_files(p, t, b);
+        scheduler::scheduler s(iset);
+        s.refresh(iset);
+
+        replace_all_input_CSV_files(iset);
     }
     catch (TerminateRunException &pEx)
     {
@@ -68,14 +76,19 @@ int cMain::run_console()
 
     try
     {
-        projects p;
-        teams t;
-        backlog b(p, t);
-        b.schedule();
+        inputfiles::projects p;
+        inputfiles::teams t;
+        inputfiles::publicholidays h;
+        inputfiles::teambacklogs b(t);
+        inputfiles::inputset iset(p,t,h,b);
+
+        scheduler::scheduler s(iset);
+        s.schedule();
+
         std::cout << std::endl
                   << std::endl;
-        b.displayprojects(std::cout);
-        b.createAllOutputFiles();
+        s.displayprojects(std::cout);
+        s.createAllOutputFiles();
     }
     catch (TerminateRunException &pEx)
     {
@@ -97,20 +110,24 @@ int cMain::run_watch()
     {
         try
         {
-            projects p;
-            teams t;
-            backlog b(p, t);
-            b.schedule();
+            inputfiles::projects p;
+            inputfiles::teams t;
+            inputfiles::publicholidays h;
+            inputfiles::teambacklogs b(t);
+            inputfiles::inputset iset(p,t,h,b);
+
+            scheduler::scheduler s(iset);
+            s.schedule();
 
             timer tmr;
-            b.createAllOutputFiles();
+            s.createAllOutputFiles();
             std::cout << "File output done in " << std::setprecision(3) << tmr.stop() << "ms." << std::endl;
         }
         catch (TerminateRunException &pEx)
         {
             std::vector<std::string> htmlfiles = {"index.html", "people.html", "costdashboard.html", "highlevelgantt.html", "detailedgantt.html", "rawbacklog.html"};
             for (auto &x : htmlfiles)
-                backlog::outputHTMLError(getOutputPath_Html() + x, pEx.what());
+                scheduler::scheduler::outputHTMLError(getOutputPath_Html() + x, pEx.what());
             std::cerr << pEx.what() << std::endl;
         }
 
@@ -208,21 +225,24 @@ int cMain::advance(std::string s)
 
     try
     {
-        projects p;
-        teams t;
-        backlog b(p, t);
-        b.schedule();
+        inputfiles::projects p;
+        inputfiles::teams t;
+        inputfiles::publicholidays h;
+        inputfiles::teambacklogs b(t);
+        inputfiles::inputset iset(p,t,h,b);
 
-        gSettings().advance(newStart);
-        p.advance(newStart);
-        t.advance(newStart);
+        scheduler::scheduler s(iset);
+        s.schedule();
 
+        s.advance(newStart,iset);
     }
     catch (TerminateRunException &pEx)
     {
         std::cerr << pEx.what() << std::endl;
         return 1;
     }
+
+    run_console();
 
     return 0;
 }

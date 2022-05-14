@@ -3,8 +3,11 @@
 #include <climits>
 
 #include "simplecsv.h"
-#include "teams.h"
+#include "inputfiles_teams.h"
 #include "utils.h"
+
+namespace inputfiles
+{
 
 const std::string teammember::getLeave() const
 {
@@ -64,10 +67,11 @@ void teams::load_teams()
 void teams::save_teams_CSV(std::ostream &os) const
 {
     os << R"-(Team,Ref,Person,"%EFT Projects","%EFT Other BAU","%EFT Overhead for Projects (mgmt, test)","Upcoming Leave (first + last day on leave)")-" << std::endl;
-    for (unsigned int ti = 0; ti < this->size(); ++ti)
+
+    for (unsigned int teamNdx=0 ; teamNdx < this->size() ; ++teamNdx)
     {
-        auto &t = this->at(ti);
-        for (auto &m : this->at(ti).mMembers)
+        auto &t = this->at(teamNdx);
+        for (auto &m : this->at(teamNdx).mMembers)
         {
             std::vector<std::string> row = {t.mId, t.mRefCode, m.mName, S() << m.mEFTProject, S() << m.mEFTBAU, S() << m.mEFTOverhead, m.getLeave()}; // don't include holidays.
             simplecsv::output(os, row);
@@ -113,3 +117,5 @@ void teams::advance(itemdate newStart)
         for (auto &j : m.mMembers)
             j.advance(newStart);
 }
+
+} // namespace

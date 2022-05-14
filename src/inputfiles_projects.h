@@ -6,6 +6,8 @@
 
 #include "itemdate.h"
 
+namespace inputfiles
+{
 
 class project
 {
@@ -16,11 +18,6 @@ class project
         const std::string & getDesc() const {return mDescription;}
         bool getBAU() const {return mBAU;}
         const std::string & getmComments() const {return mComments;}
-
-        // set when project scheduled.
-        itemdate mActualStart;
-        itemdate mActualEnd;
-        double mTotalDevDays; // proportional to cost.
 
     private:
         const std::string mId;
@@ -46,5 +43,7 @@ class projects : public std::vector<project>
     private:
         unsigned int mMaxProjectNameWidth;
 };
+
+} //namespace
 
 #endif

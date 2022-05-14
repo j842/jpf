@@ -350,3 +350,4 @@ std::string daterange::getRangeAsString() const
 
     return oss.str();
 }
+

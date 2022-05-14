@@ -18,7 +18,7 @@ class cMain
 
     private:
         int go(int argc, char **argv);
-        void replace_all_input_CSV_files(projects &p, teams &t, backlog &b);
+        void replace_all_input_CSV_files(inputfiles::inputset iset);
 
     private:
         int mrVal;

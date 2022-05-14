@@ -6,13 +6,16 @@
 #include <numeric>
 #include <chrono>
 
-#include "backlog.h"
+#include "scheduler.h"
 #include "simplecsv.h"
 #include "utils.h"
 #include "settings.h"
 #include "colourgradient.h"
 
-void backlog::CalculateDevDaysTally(
+namespace scheduler
+{
+
+void scheduler::CalculateDevDaysTally(
             std::vector< std::vector<double>> & DevDaysTally,   // [project][month in future]
             std::vector< std::string> & ProjectLabels,          // [project]
             std::vector<rgbcolour> & Colours,                   // [project]
@@ -119,7 +122,7 @@ void backlog::CalculateDevDaysTally(
     Colours[Colours.size()-1] = rgbcolour {.r=200,.g=200,.b=200}; // overhead
 }
 
-// backlog::rgbcolour backlog::heatmap(float minimum, float maximum, float value) const
+// scheduler::rgbcolour scheduler::heatmap(float minimum, float maximum, float value) const
 // {
 //     float ratio = (value-minimum) / (maximum - minimum);
 //     int r = int(std::max(0.0, 255.0*(1.0 - ratio)));
@@ -146,7 +149,7 @@ std::string getDollars(double x)
     return s;
 }
 
-void backlog::Graph_Total_Project_Cost(std::ostream & ofs) const
+void scheduler::Graph_Total_Project_Cost(std::ostream & ofs) const
 {
     std::vector< std::vector<double> > DevDaysTally;
     std::vector< std::string > Labels;
@@ -228,7 +231,7 @@ void backlog::Graph_Total_Project_Cost(std::ostream & ofs) const
         )";   
 }
 
-void backlog::Graph_Project_Cost(std::ostream &ofs) const
+void scheduler::Graph_Project_Cost(std::ostream &ofs) const
 {
     std::vector<std::vector<double>> DevDaysTally;
     std::vector<std::string> Labels;
@@ -303,14 +306,14 @@ void backlog::Graph_Project_Cost(std::ostream &ofs) const
     )";
 }
 
-std::string backlog::ItemType2String(tItemTypes i) const
+std::string scheduler::ItemType2String(tItemTypes i) const
 {
     if (i==kBAU) return "BAU";
     if (i==kNew) return "New";
     return "Slack";
 }
 
-void backlog::Graph_BAU(std::ostream &ofs) const
+void scheduler::Graph_BAU(std::ostream &ofs) const
 {
     std::vector<std::vector<double>> DevDaysTally; // [project][month]
     std::vector<std::string> Labels;
@@ -412,40 +415,40 @@ void backlog::Graph_BAU(std::ostream &ofs) const
     )";
 }
 
-void backlog::outputHTML_Index(std::ostream & ofs) const
+void scheduler::outputHTML_Index(std::ostream & ofs) const
 {
     HTMLheaders(ofs,"");
 //<div id="firsttable" style="width:800px;height:250px;"></div>
 
     ofs<<"<h2>Project Backlog</h2>Starting from "<< itemdate::date2strNice(gSettings().startDate()) << "<br/>"<<std::endl;
     ofs << "<PRE>"<<std::endl;
-    backlog::displaybacklog(ofs);
+    scheduler::displaybacklog(ofs);
     ofs << "</PRE>"<<std::endl;    
     HTMLfooters(ofs);
 }
 
-void backlog::outputHTML_People(std::ostream & ofs) const
+void scheduler::outputHTML_People(std::ostream & ofs) const
 {
     HTMLheaders(ofs,"");
     ofs<<"<h2>Tasks by Person</h2>Starting from "<< itemdate::date2strNice(gSettings().startDate()) << "<br/>"<<std::endl;
     ofs << "<PRE>"<<std::endl;
-    backlog::displaypeople(ofs);
+    scheduler::displaypeople(ofs);
     ofs << "</PRE>"<<std::endl;    
     HTMLfooters(ofs); 
 }
 
-void backlog::outputHTML_RawBacklog(std::ostream & ofs) const
+void scheduler::outputHTML_RawBacklog(std::ostream & ofs) const
 {
     HTMLheaders(ofs,"");
     ofs<<"<h2>Raw Backlog</h2>Starting from "<< itemdate::date2strNice(gSettings().startDate()) << "<br/>"<<std::endl;
     ofs << "<PRE>"<<std::endl;
-    backlog::displaybacklog_raw(ofs);
+    scheduler::displaybacklog_raw(ofs);
     ofs << "</PRE>"<<std::endl;    
     HTMLfooters(ofs);  
 }
 
 
-void backlog::outputHTML_Dashboard(std::ostream & ofs) const
+void scheduler::outputHTML_Dashboard(std::ostream & ofs) const
 {
     HTMLheaders_Plotly(ofs);
 //<div id="firsttable" style="width:800px;height:250px;"></div>
@@ -457,7 +460,7 @@ void backlog::outputHTML_Dashboard(std::ostream & ofs) const
     HTMLfooters(ofs);
 }
 
-void backlog::HTMLheaders(std::ostream & ofs,std::string inHead) 
+void scheduler::HTMLheaders(std::ostream & ofs,std::string inHead) 
 {
  ofs << R"(
     <html><head>
@@ -482,12 +485,12 @@ ofs << R"(</h1>
 }
 
 
-void backlog::HTMLheaders_Plotly(std::ostream & ofs) const
+void scheduler::HTMLheaders_Plotly(std::ostream & ofs) const
 {
     HTMLheaders(ofs, R"( <script src="https://cdn.plot.ly/plotly-2.11.1.min.js"></script> )" );
 }
 
-void backlog::HTMLfooters(std::ostream & ofs) 
+void scheduler::HTMLfooters(std::ostream & ofs) 
 {
  ofs << R"(
     </body></html>
@@ -502,7 +505,7 @@ std::string __protect(std::string s)
     return s;
 }
 
-void backlog::outputHTML_High_Level_Gantt(std::ostream & ofs) const
+void scheduler::outputHTML_High_Level_Gantt(std::ostream & ofs) const
 {
     std::ostringstream oss;
 
@@ -570,7 +573,7 @@ void backlog::outputHTML_High_Level_Gantt(std::ostream & ofs) const
 
 
 // https://developers.google.com/chart/interactive/docs/gallery/ganttchart
-void backlog::outputHTML_Detailed_Gantt(std::ostream & ofs) const
+void scheduler::outputHTML_Detailed_Gantt(std::ostream & ofs) const
 {
     std::ostringstream oss;
 
@@ -646,7 +649,7 @@ void backlog::outputHTML_Detailed_Gantt(std::ostream & ofs) const
     HTMLfooters(ofs);
 }
 
-void backlog::outputHTMLError(std::string filename, std::string errormsg) 
+void scheduler::outputHTMLError(std::string filename, std::string errormsg) 
 {
     std::ofstream ofs(filename);
     HTMLheaders(ofs,"");
@@ -655,3 +658,5 @@ void backlog::outputHTMLError(std::string filename, std::string errormsg)
     HTMLfooters(ofs);
     ofs.close();
 }
+
+} // namespace
