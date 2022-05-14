@@ -147,10 +147,10 @@ void teammember::advance(itemdate newStart)
 
     for (auto &d : items)
     {
-        daterange dr(d,true); // map from closed to half open.
+        daterange dr(d,kClosedInterval); // map from closed to half open.
         if (dr.getStart() < newStart)
             dr.setStart(newStart);
-        if (dr.getEnd() > newStart) 
+        if (dr.getEnd() > newStart) // if still valid
             newLeave.push_back(dr.getRangeAsString());
 
         mOriginalLeave.erase();

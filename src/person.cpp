@@ -70,7 +70,7 @@ void intervals::decrementAvailability(itemdate day, tCentiDay decrement,unsigned
 }
 
 void intervals::registerHoliday(daterange dr)
-{
+{ // dr is half open interval, so we don't include the end.
    for (itemdate i=dr.getStart();i<dr.getEnd();++i)
     _decrementAvailability(i,getAvailability(i));
 }
@@ -87,8 +87,8 @@ person::person(const teammember & m) :
         if (!okay) TERMINATE("Couldn't parse leave for "+mName+" -- "+mLeave);
 
         for (auto & x : items)
-        { // parse leave string. Could be date, or date-date (inclusive).
-            daterange dr(x,true);
+        { // parse leave string. Could be date, or date-date (inclusive). Closed interval.
+            daterange dr(x,kClosedInterval);
             registerHoliday(dr);
         }
     }

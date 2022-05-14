@@ -301,18 +301,21 @@ boost::gregorian::date itemdate::getGregorian() const
     return _day2date(mDay);
 }
 
-daterange::daterange(std::string s, bool mapClosedtoHalfOpen)
+daterange::daterange(std::string s, tIntervalTypes t)
 { // parse date range string. Could be date, or date-date (inclusive).
 
     std::vector<std::string> strs;
     boost::split(strs, s, boost::is_any_of("-"));
     if (strs.size() == 1)
+    {
         strs.push_back(strs[0]);
+        t=kClosedInterval; // treat as closed.
+    }
     ASSERT(strs.size() == 2);
     mStart.setclip(strs[0]);
-    mEnd.setclip(strs[1]);
+    mEnd.setclip(strs[1]);   
 
-    if (mapClosedtoHalfOpen)
+    if (t==kClosedInterval) // convert to half open.
         mEnd += 1;
 }
 itemdate daterange::getStart() const
@@ -329,9 +332,12 @@ void daterange::setStart(itemdate start)
 {
     mStart = start;
 }
-void daterange::setEnd(itemdate end)
+void daterange::setEnd(itemdate end, tIntervalTypes t)
 {
-    mEnd = end;
+    if (t==kClosedInterval)
+        mEnd = end + 1;     // convert to half open.
+    else
+        mEnd = end;
 }
 
 std::string daterange::getRangeAsString() const

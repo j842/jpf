@@ -83,22 +83,29 @@ class itemdate
             boost::gregorian::date _day2date(unsigned int day) const;
 };
 
+typedef enum
+{
+    kHalfOpenInterval,
+    kClosedInterval
+
+} tIntervalTypes;
+
 class daterange
 {
     public:
-        daterange(std::string s, bool mapClosedtoHalfOpen=false); 
+        daterange(std::string s, tIntervalTypes t); 
 
         itemdate getStart() const;
-        itemdate getEnd() const;
+        itemdate getEnd() const;    // half open interval (end is not in the interval)
 
         std::string getRangeAsString() const;
 
         void setStart(itemdate start);
-        void setEnd(itemdate end);
+        void setEnd(itemdate end, tIntervalTypes t);
 
         private:
             itemdate mStart;
-            itemdate mEnd; // half open interval
+            itemdate mEnd; // half open interval!
 };
 
 
