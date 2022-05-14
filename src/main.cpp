@@ -251,7 +251,7 @@ int cMain::go(int argc, char **argv)
     try
     {
         // handle options which do not require a directory.
-        if (argc==3 && strlen(argv[1])>1 && argv[1][0]=='-' && tolower(argv[1][1])=='t')
+        if (argc==2 && strlen(argv[1])>1 && argv[1][0]=='-' && tolower(argv[1][1])=='t')
             return runtests() ? 0 : 1;        
 
         // set directory.
