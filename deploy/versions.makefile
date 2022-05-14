@@ -1,8 +1,8 @@
 #---------------------------------
 
 JPF_VERSION := 0.0.12
-JPF_RELEASE := 2
-INPUT_VERSION := 8
+JPF_RELEASE := 3
+INPUT_VERSION := 9
 #---------------------------------
 
 BIN_NAME:= bin
