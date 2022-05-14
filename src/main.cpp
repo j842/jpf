@@ -251,8 +251,23 @@ int cMain::go(int argc, char **argv)
     try
     {
         std::string s = argv[1];
-        std::string directory = argv[argc - 1];
 
+        if (s.length() < 2)
+            TERMINATE("Bad parameter: " + s);
+        if (s[0] != '-')
+            TERMINATE("Options must start with - : " + s);
+
+        // handle options which do not require a directory.
+        switch (s[1])
+        {
+        case 't':
+            return runtests() ? 0 : 1;
+        default:
+            break;
+        }
+
+        // set directory.
+        std::string directory = argv[argc - 1];
         gSettings().setRoot(directory);
 
         gSettings().load_settings();
@@ -267,10 +282,6 @@ int cMain::go(int argc, char **argv)
         if (argc == 2)
             return run_console();
 
-        if (s.length() < 2)
-            TERMINATE("Bad parameter: " + s);
-        if (s[0] != '-')
-            TERMINATE("Options must start with - : " + s);
         switch (s[1])
         {
         case 'w':
@@ -283,8 +294,6 @@ int cMain::go(int argc, char **argv)
             return advance(s);
         case 'c':
             return create_directories();
-        case 't':
-            return runtests() ? 0 : 1;
         case 'r':
             return run_refresh();
         default:
