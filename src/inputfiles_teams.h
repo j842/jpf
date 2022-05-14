@@ -13,7 +13,7 @@ namespace inputfiles
 class teammember
 {
     public:
-        teammember(std::string n, double project, double bau, double overhead, std::string l) : 
+        teammember(std::string n, tCentiDay project, tCentiDay bau, tCentiDay overhead, std::string l) : 
             mName(n), 
             mEFTProject(project), 
             mEFTBAU(bau),

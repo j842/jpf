@@ -46,8 +46,8 @@ namespace inputfiles
         std::string mId; // can be an empty string.
         std::string mDescription;
         std::string mProjectName;
-        unsigned int mMinCalendarDays;
-        unsigned int mDevDays;
+        unsigned long mMinCalendarDays;
+        tCentiDay mDevCentiDays;
         itemdate mEarliestStart;
         std::vector<resource> mResources;
         std::vector<std::string> mDependencies;

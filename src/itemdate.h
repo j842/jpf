@@ -6,6 +6,27 @@
 #include <boost/date_time.hpp>
 #include "utils.h"
 
+// a centiday is 1/100th of a day.
+class tCentiDay
+{
+    public:
+        tCentiDay() : mD(0) {}
+        tCentiDay(unsigned long x) : mD(x) {}
+        unsigned long getL() const {return mD;}
+        unsigned long getRoundUpDays() const { return (unsigned long)((99.0 + mD)/100.0); }
+
+        explicit operator double() const { return mD; }
+        operator unsigned long() const { return mD; }
+
+        tCentiDay& operator+=(const tCentiDay& rhs) { mD+=rhs.getL(); return *this;}
+        tCentiDay& operator+=(const unsigned int rhs) { mD+=rhs; return *this;}
+        tCentiDay& operator-=(const tCentiDay& rhs) { ASSERT(rhs.getL()<=mD); mD-=rhs.getL(); return *this;}
+        tCentiDay& operator-=(const unsigned int rhs) { ASSERT(rhs>=mD); mD-=rhs; return *this;}
+    private:
+        unsigned long mD;
+};
+
+
 // simple class for coordinate transformation from calendar date (local timezone) to number of working days from today.
 class itemdate
 {

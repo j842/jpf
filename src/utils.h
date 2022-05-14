@@ -14,8 +14,6 @@
 
 class itemdate; // forward declaration to avoid circular dependency.
 
-// a centiday is 1/100th of a day.
-typedef int tCentiDay;
 
 // string manipulation etc.
 void removewhitespace(std::string & s);
@@ -23,7 +21,8 @@ void checkcreatedirectory(std::string d);
 std::string makelower(const std::string & s);
 bool iSame(const std::string &s1, const std::string &s2);
 void trim(std::string & str);
-unsigned int str2uint(std::string s);
+unsigned long str2L(std::string s);
+double str2positivedouble(std::string s);
 void advanceLeaveString(std::string & leaveStr, itemdate newStart);
 std::string getDollars(double x);
 
@@ -35,7 +34,7 @@ const unsigned int eNotFound = UINT_MAX;
 void _terminate(const std::string &s, const std::string &func, const std::string &file, int line);
 void _terminate(const std::stringstream &s, const std::string &func, const std::string &file, int line);
 #define STR(x) #x
-#define ASSERT(x) if (!(x)) { printf("assertion failed: (%s), function %s, file %s, line %d.\n", STR(x), __PRETTY_FUNCTION__, __FILE__, __LINE__); exit(1); }
+#define ASSERT(x) if (!(x)) {  _terminate(S()<<"Assertation failed: "<<STR(x), __PRETTY_FUNCTION__, __FILE__, __LINE__); }
 #define TERMINATE(x) { _terminate(x, __PRETTY_FUNCTION__, __FILE__, __LINE__); }
 
 #define HALFWIDTHPADLEFT(n1,maxw)   (n1<maxw ? (int)(0.5 + 0.5*(maxw+n1)) : 0)

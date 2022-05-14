@@ -252,14 +252,34 @@ std::string makelower(const std::string & s)
 }
 
 
-unsigned int str2uint(std::string s)
+unsigned long str2L(std::string s)
+{
+    if (s.length()==0)
+        return 0;
+    unsigned long r;
+    try
+    {
+        r = stol(s);
+    }
+    catch (const std::invalid_argument & e)
+    {
+        return 0;
+    }
+    catch (const std::out_of_range & e)
+    {
+        return 0;
+    }
+
+    return (unsigned int)r;
+}
+double str2positivedouble(std::string s)
 {
     if (s.length()==0)
         return 0;
     int r;
     try
     {
-        r = stoi(s);
+        r = stod(s);
     }
     catch (const std::invalid_argument & e)
     {
@@ -276,7 +296,7 @@ unsigned int str2uint(std::string s)
         return 0;
     }
 
-    return (unsigned int)r;
+    return (unsigned int)r;    
 }
 
 void advanceLeaveString(std::string & leaveStr, itemdate newStart)

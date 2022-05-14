@@ -64,7 +64,7 @@ namespace scheduler
 
             ofs << "0.0"
                 << ",";
-            ofs << 100 * x.mDevDays * std::max((size_t)1, x.mResources.size()) << ","; // cost
+            ofs << (int)(0.5 + ((double)(x.mDevCentiDays.getL() * std::max((size_t)1, x.mResources.size()) * gSettings().dailyDevCost())) / 100.0) << ","; // cost
             ofs << ",";
 
             // dependencies list. Too complicated for GanttProject.
@@ -180,7 +180,7 @@ namespace scheduler
         for (auto &z : mPeople)
         {
             ofs << std::endl
-                << z.mName << " [ " << std::setw(3) << z.getMaxAvialability() << "% max ]" << std::endl;
+                << z.mName << " [ " << std::setw(3) << z.getMaxAvialability().getL() << "% max ]" << std::endl;
             ofs << std::string(z.mName.size() + 13, '-') << std::endl;
 
             for (auto &j : mItems)
@@ -211,7 +211,7 @@ namespace scheduler
         {
             auto &z = mItems[x];
 
-            if (z.mDevDays == 0 && z.mMinCalendarDays == 0)
+            if (z.mDevCentiDays == 0 && z.mMinCalendarDays == 0)
             { // output all 0 day items.
                 if (prevproj != z.mProject)
                 {
@@ -239,7 +239,7 @@ namespace scheduler
             table.push_back({p.getId(),
                              p.mActualStart.getStr(),
                              p.mActualEnd.getStr(),
-                             (S() << getDollars( p.mTotalDevDays * gSettings().dailyDevCost()))});
+                             (S() << getDollars( 0.01 * p.mTotalDevCentiDays.getL() * gSettings().dailyDevCost()))});
         }
         _displaytable(ofs, table, " | ",false);
     }
@@ -258,7 +258,7 @@ namespace scheduler
             table.push_back({p.getId(),
                              p.mActualStart.getStr(),
                              p.mActualEnd.getStr(),
-                             (S() << getDollars( p.mTotalDevDays * gSettings().dailyDevCost()))});
+                             (S() << getDollars( 0.01 * p.mTotalDevCentiDays.getL() * gSettings().dailyDevCost()))});
         }
         _displaytable(std::cout, table, " | ",true);
     }

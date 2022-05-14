@@ -29,7 +29,7 @@ namespace scheduler
         return mActualEnd-mActualStart;
     }
 
-    scheduledproject::scheduledproject(const inputfiles::project &prj) : inputfiles::project(prj), mTotalDevDays(0.0)
+    scheduledproject::scheduledproject(const inputfiles::project &prj) : inputfiles::project(prj), mTotalDevCentiDays(0)
     {
 
     }
@@ -106,8 +106,8 @@ namespace scheduler
                 return mItems[index_left].mActualEnd < mItems[index_right].mActualEnd;
             else
             {
-                if (mItems[index_left].mDevDays==0) return false;
-                if (mItems[index_right].mDevDays==0) return true; 
+                if (mItems[index_left].mDevCentiDays==0) return false; // return left
+                if (mItems[index_right].mDevCentiDays==0) return true;  // return right.
                 return index_left<index_right;
             } }); // Ascending order.
     }
@@ -170,7 +170,7 @@ namespace scheduler
 
         for (auto &z : mProjects)
         {
-            z.mTotalDevDays = 0.0;
+            z.mTotalDevCentiDays = 0;
             z.mActualStart.setForever();
             z.mActualEnd.setToStart();
         }
@@ -187,10 +187,10 @@ namespace scheduler
                 p.mActualEnd = task.mActualEnd;
 
             if (task.mDependencies.size() == 0)
-                p.mTotalDevDays += task.mDevDays;
+                p.mTotalDevCentiDays += task.mDevCentiDays;
             else
                 for (auto &x : task.mResources)
-                    p.mTotalDevDays += task.getDuration().getAsDurationDouble() * x.mLoadingPercent / 100.0;
+                    p.mTotalDevCentiDays += (tCentiDay)(0.5 + task.getDuration().getAsDurationDouble() * x.mLoadingPercent);
         }
 
         for (auto &proj : mProjects)

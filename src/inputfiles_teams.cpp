@@ -49,9 +49,9 @@ void teams::load_teams()
             mMaxNameWidth = std::max((unsigned int)row[0].length(), mMaxNameWidth);
 
             std::string personname = row[1];
-            tCentiDay EFTProject = str2uint(row[2]);
-            tCentiDay EFTBAU = str2uint(row[3]);
-            tCentiDay EFTOverhead = str2uint(row[4]);
+            tCentiDay EFTProject = str2L(row[2]);
+            tCentiDay EFTBAU = str2L(row[3]);
+            tCentiDay EFTOverhead = str2L(row[4]);
 
             if (EFTProject < 0 || EFTProject > 100)
                 TERMINATE(S() << "EFTProject set to " << EFTProject << " for " + row[0]);

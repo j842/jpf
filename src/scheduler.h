@@ -39,7 +39,7 @@ namespace scheduler
             // set when project scheduled.
             itemdate mActualStart;
             itemdate mActualEnd;
-            double mTotalDevDays; // proportional to cost.
+            tCentiDay mTotalDevCentiDays; // proportional to cost.
     };
 
 
@@ -110,7 +110,7 @@ namespace scheduler
         void _topological_visit(int node, std::vector<bool> &tempMarks, std::vector<bool> &permMarks, std::vector<unsigned int> &scheduledList);
         void _determinestart_and_dotask(unsigned int backlogitemNdx);
         void _dotask_v2(unsigned int itemNdx);
-        void _dotask_v2_limitedassign(unsigned int itemNdx, const tCentiDay maxAllocation, tCentiDay &remainTeamToday, std::vector<double> &sumCentiDays, tCentiDay &totalDevCentiDaysRemaining, const itemdate id);
+        void _dotask_v2_limitedassign(unsigned int itemNdx, const tCentiDay maxAllocation, tCentiDay &remainTeamToday, std::vector<tCentiDay> &sumCentiDays, tCentiDay &totalDevCentiDaysRemaining, const itemdate id);
         void _calc_project_summary();
 
         void _displaytable(std::ostream &ofs, std::vector<std::vector<std::string>> &vvs, std::string sepChar, bool consoleColour) const;

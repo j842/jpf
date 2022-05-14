@@ -57,7 +57,7 @@ void scheduler::CalculateDevDaysTally(
                     double daysthismonth = lastDayPlusOneIndex - firstDayIndex;
 
                     if (z.mResources.size()==0) // nobody assigned.
-                        tasktally=((double)z.mDevDays) * daysthismonth / taskDuration;
+                        tasktally=((double)z.mDevCentiDays)/100.0 * daysthismonth / taskDuration;
                     else
                         for (unsigned int person=0;person<z.mResources.size();++person)
                         {

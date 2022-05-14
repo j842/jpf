@@ -1,7 +1,7 @@
-
 #include "scheduler.h"
 #include "simplecsv.h"
 #include "inputfiles_projects.h"
+#include "itemdate.h"
 
 namespace scheduler
 
@@ -124,9 +124,9 @@ namespace scheduler
         }
 
         // and update schedule based on resourcing (blocking and contributing).
-        if (z.mResources.size() == 0 || z.mDevDays == 0)
+        if (z.mResources.size() == 0 || z.mDevCentiDays == 0)
         { // no internal resources! Hurrah.
-            z.mActualEnd = z.mActualStart + std::max(z.mDevDays, z.mMinCalendarDays);
+            z.mActualEnd = z.mActualStart + std::max(z.mDevCentiDays.getRoundUpDays(), z.mMinCalendarDays);
         }
         else
         { // manage resources (people!)
@@ -153,14 +153,15 @@ namespace scheduler
         }
     }
 
-    void scheduler::_dotask_v2_limitedassign(unsigned int itemNdx, const tCentiDay maxAllocation, tCentiDay &remainTeamToday, std::vector<double> &sumCentiDays, tCentiDay &totalDevCentiDaysRemaining, const itemdate id)
+    void scheduler::_dotask_v2_limitedassign(unsigned int itemNdx, const tCentiDay maxAllocation, tCentiDay &remainTeamToday, std::vector<tCentiDay> &sumCentiDays, tCentiDay &totalDevCentiDaysRemaining, const itemdate id)
     {
         scheduleditem &z = mItems[itemNdx];
         ASSERT(maxAllocation <= remainTeamToday);
+        ASSERT(remainTeamToday <= totalDevCentiDaysRemaining);
         for (unsigned int pi = 0; pi < z.mResources.size(); ++pi)
         {
             person &p = getPersonByName(z.mResources[pi].mName);
-            tCentiDay d = std::min(p.getAvailability(id), maxAllocation);
+            tCentiDay d = std::min(std::min(p.getAvailability(id), maxAllocation), remainTeamToday);
             if (d > 0)
             {
                 p.decrementAvailability(id, d, itemNdx);
@@ -176,8 +177,8 @@ namespace scheduler
         //    Still march day by day, taking up as much availability as we can for each person,
         //    until we have reached the desired devdays.
         scheduleditem &z = mItems[itemNdx];
-        std::vector<double> sumCentiDays(z.mResources.size(), 0.0);
-        tCentiDay totalDevCentiDaysRemaining = 100 * z.mDevDays;
+        std::vector<tCentiDay> sumCentiDays(z.mResources.size(), 0);
+        tCentiDay totalDevCentiDaysRemaining = z.mDevCentiDays;
         itemdate id = z.mActualStart;
         ASSERT(!z.mActualStart.isForever());
         while (totalDevCentiDaysRemaining > 0)
@@ -196,7 +197,7 @@ namespace scheduler
             tCentiDay remainTeamToday = maxTeamToday;
 
             // no we need to see if we can allocate maxTeamToday centidays amongst the resources...
-            tCentiDay evenPace = maxTeamToday / (z.mResources.size()); // if everyone could go as fast as we like, this is how fast we'd go.
+            tCentiDay evenPace = maxTeamToday.getL() / (z.mResources.size()); // if everyone could go as fast as we like, this is how fast we'd go.
 
             // go through once limiting to an even pace.
             _dotask_v2_limitedassign(itemNdx, evenPace, remainTeamToday, sumCentiDays, totalDevCentiDaysRemaining, id);
@@ -209,7 +210,7 @@ namespace scheduler
 
         double duration = (z.mActualEnd - z.mActualStart).getAsDurationDouble();
         for (unsigned int pi = 0; pi < z.mResources.size(); ++pi)
-            z.mResources[pi].mLoadingPercent = sumCentiDays[pi] / duration;
+            z.mResources[pi].mLoadingPercent = sumCentiDays[pi].getL() / duration;
     }
 
     // ---------------------------------------------------------------------------------------------------------------------------------------

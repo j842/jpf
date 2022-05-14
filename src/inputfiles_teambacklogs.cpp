@@ -41,10 +41,10 @@ namespace inputfiles
         mDescription = csvitems[2];
 
         // 3 - Min Calendar Workdays
-        mMinCalendarDays = str2uint(csvitems[3]);
+        mMinCalendarDays = str2L(csvitems[3]);
 
         // 4 - Min Dev Days (TOTAL)
-        mDevDays = str2uint(csvitems[4]);
+        mDevCentiDays = (int)(0.5 + str2positivedouble(csvitems[4])*100.0);
 
         // 5 - Earliest Start Date
         mEarliestStart.set(csvitems[5]);
@@ -75,7 +75,7 @@ namespace inputfiles
         csvitems.push_back(mId);
         csvitems.push_back(mDescription);
         csvitems.push_back(S() << mMinCalendarDays);
-        csvitems.push_back(S() << mDevDays);
+        csvitems.push_back(S() << std::setprecision(2) << std::fixed << ((double)mDevCentiDays)/100.0);
 
         if (mEarliestStart == itemdate::Today())
             csvitems.push_back("");
