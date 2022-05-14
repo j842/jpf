@@ -76,7 +76,7 @@ namespace scheduler
 
         void schedule();
         void refresh(inputfiles::inputset & iset); 
-        void advance(itemdate newStart, inputfiles::inputset & iset) const;
+        void advance(itemdate newStart, inputfiles::inputset & iset);
 
         void createAllOutputFiles() const;
         void displayprojects(std::ostream &ofs) const;

@@ -60,10 +60,18 @@ int cMain::run_refresh()
         inputfiles::teambacklogs b(t);
         inputfiles::inputset iset(p,t,h,b);
 
-        scheduler::scheduler s(iset);
-        s.refresh(iset);
-
+        {
+            scheduler::scheduler s(iset);
+            s.refresh(iset);
+        }
         replace_all_input_CSV_files(iset);
+
+        {
+            std::cout << std::endl << "Rescheduling..." << std::endl;
+            scheduler::scheduler s(iset);
+            s.schedule();
+            s.createAllOutputFiles();
+        }
     }
     catch (TerminateRunException &pEx)
     {
@@ -189,11 +197,16 @@ int cMain::run_advance(std::string s)
         inputfiles::publicholidays h;
         inputfiles::teambacklogs b(t);
         inputfiles::inputset iset(p,t,h,b);
+        { // advance and throw away scheduler.
+            scheduler::scheduler s(iset);
+            s.advance(newStart,iset);
+        }
+        scheduler::scheduler s2(iset);
+        s2.schedule();
 
-        scheduler::scheduler s(iset);
-        s.schedule();
-
-        s.advance(newStart,iset);
+        std::cout << std::endl << std::endl;
+        s2.displayprojects(std::cout);
+        s2.createAllOutputFiles();
     }
     catch (TerminateRunException &pEx)
     {
@@ -273,7 +286,6 @@ int cMain::go(int argc, char **argv)
         // set directory.
         std::string directory = argv[argc - 1];
         gSettings().setRoot(directory);
-
         gSettings().load_settings();
         if (!gSettings().RootExists())
             TERMINATE("Root directory " + gSettings().getRoot() + " does not exist.");
