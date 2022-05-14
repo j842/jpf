@@ -6,6 +6,7 @@
 
 #include "itemdate.h"
 #include "teams.h"
+#include "publicholidays.h"
 
 
 class daychunk 
@@ -43,15 +44,18 @@ class intervals
 class person : public teammember
 {
     public:
-        person(const teammember & m);
+        person(const teammember & m, const publicholidays &pubh);
 
         itemdate getEarliestStart(itemdate fromstart);
         tCentiDay getMaxAvialability() const;
         tCentiDay getAvailability(itemdate day) const;
         void decrementAvailability(itemdate day, tCentiDay decrement,unsigned int itemNdx);
-        void registerHoliday(daterange dr);
 
         void getChunks(unsigned int day, const std::vector<daychunk> & chunks);
+
+    private:
+        void _registerHolidayString(std::string s);
+        void _registerHoliday(daterange dr);
 
     private:
         intervals mIntervals;

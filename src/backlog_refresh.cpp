@@ -40,3 +40,12 @@ void backlog::refresh()
                 j = refMap[j];
     }
 }
+
+
+void backlog::advance(itemdate newStart)
+{
+    mPubHols.advance(newStart);
+    for (auto & z : mItems)
+//        z.advance(newStart);
+    ;
+}

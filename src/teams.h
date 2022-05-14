@@ -10,25 +10,23 @@
 class teammember
 {
     public:
-        teammember(std::string n, double project, double bau, double overhead, std::string l, std::string origl) : 
+        teammember(std::string n, double project, double bau, double overhead, std::string l) : 
             mName(n), 
             mEFTProject(project), 
             mEFTBAU(bau),
             mEFTOverhead(overhead),
-            mLeave(l),
-            mOriginalLeave(origl)
+            mLeave(l)
          {
          }
             
         const std::string mName;
         const tCentiDay mEFTProject, mEFTBAU, mEFTOverhead;
-        const std::string mLeave;
 
-        const std::string getOriginalLeave() const;
+        const std::string getLeave() const;
         void advance(itemdate newStart);
 
     private:
-        std::string mOriginalLeave;
+        std::string mLeave;
 };
 
 class team
@@ -51,17 +49,12 @@ class teams : public std::vector<team>
 
         const unsigned int eNotFound;
 
-        void load_public_holidays();
-        void save_public_holidays_CSV(std::ostream & os) const;
-
         unsigned int getMaxTeamNameWidth() const;
 
         void advance(itemdate newStart);
 
     private:
         unsigned int get_index_by_name(std::string n);
-
-        std::string mPublicHolidaysString;
         unsigned int mMaxNameWidth;
 };
 

@@ -29,7 +29,7 @@ void cMain::replace_all_input_CSV_files(projects &p, teams &t, backlog &b)
 
     {
         std::ofstream ofs(simplecsv::filename2path("publicholidays.csv"));
-        t.save_public_holidays_CSV(ofs);
+        b.save_public_holidays_CSV(ofs);
     }
 
     {
@@ -251,7 +251,7 @@ int cMain::go(int argc, char **argv)
     try
     {
         // handle options which do not require a directory.
-        if (argc==2 && strlen(argv[1])>1 && argv[1][0]=='-' && tolower(argv[1][1])=='t')
+        if (argc>=2 && strlen(argv[1])>1 && argv[1][0]=='-' && tolower(argv[1][1])=='t')
             return runtests() ? 0 : 1;        
 
         // set directory.

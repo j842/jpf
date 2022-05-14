@@ -47,11 +47,13 @@ class backlog
 
         void schedule();
         void refresh();
+        void advance(itemdate newStart);
 
         void createAllOutputFiles() const;
         void displayprojects(std::ostream & ofs) const;
         static void outputHTMLError(std::string filename, std::string errormsg);
         void save_team_CSV(std::ostream & os, unsigned int teamNdx) const; // output the backlog as a inputtable csv for the given team.
+        void save_public_holidays_CSV(std::ostream & os) const;
 
     private:
         std::vector< outputfilewriter > mOutputWriters;
@@ -119,6 +121,7 @@ class backlog
 
         people mPeople;             // taken from teammembers, but with added fields.
         const teams & mTeams;
+        publicholidays mPubHols;
         projects & mProjects;
 };
 

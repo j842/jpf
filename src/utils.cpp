@@ -13,6 +13,7 @@
 
 #include "utils.h"
 #include "settings.h"
+#include "simplecsv.h"
 
 bool iSame(const std::string &s1, const std::string &s2)
 {
@@ -255,4 +256,28 @@ unsigned int str2uint(std::string s)
     }
 
     return (unsigned int)r;
+}
+
+void advanceLeaveString(std::string & leaveStr, itemdate newStart)
+{
+    std::vector<std::string> newLeave;
+    std::vector<std::string> items;
+    simplecsv::splitcsv(leaveStr, items);
+
+    for (auto &d : items)
+    {
+        daterange dr(d, kClosedInterval); // map from closed to half open.
+        if (dr.getStart() < newStart)
+            dr.setStart(newStart);
+        if (dr.getEnd() > newStart) // if still valid
+            newLeave.push_back(dr.getRangeAsString());
+
+        leaveStr.erase();
+        for (auto &newl : newLeave)
+        {
+            if (leaveStr.length() > 0)
+                leaveStr += ",";
+            leaveStr += newl;
+        }
+    }
 }

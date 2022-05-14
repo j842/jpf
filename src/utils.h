@@ -12,6 +12,8 @@
 #include <cppunit/extensions/TestFactoryRegistry.h>
 #include <cppunit/ui/text/TestRunner.h>
 
+class itemdate; // forward declaration to avoid circular dependency.
+
 // a centiday is 1/100th of a day.
 typedef int tCentiDay;
 
@@ -22,6 +24,7 @@ std::string makelower(const std::string & s);
 bool iSame(const std::string &s1, const std::string &s2);
 void trim(std::string & str);
 unsigned int str2uint(std::string s);
+void advanceLeaveString(std::string & leaveStr, itemdate newStart);
 
 // a few globals
 const unsigned int eNotFound = UINT_MAX;

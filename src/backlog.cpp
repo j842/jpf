@@ -9,6 +9,7 @@
 #include "simplecsv.h"
 #include "utils.h"
 #include "settings.h"
+#include "publicholidays.h"
 
 //-----------------------------------------------------------------------------------------
 
@@ -45,7 +46,7 @@ backlog::backlog(projects & p, const teams & t) : mTeams(t), mProjects(p)
     // copy people name/maxtime from the teams list into our people list.
     for (const auto & x : mTeams)
         for (const auto & y : x.mMembers)
-            mPeople.push_back( person( y ));
+            mPeople.push_back( person( y , mPubHols));
 
 
     // load output types.
@@ -73,6 +74,11 @@ void backlog::save_team_CSV(std::ostream & os, unsigned int teamNdx) const // ou
     for (auto & i : mItems)
         if (i.mTeamNdx == teamNdx)
             i.output(os,mProjects);
+}
+
+void backlog::save_public_holidays_CSV(std::ostream & os) const
+{
+    mPubHols.save_public_holidays_CSV(os);
 }
 
 void backlog::createAllOutputFiles() const

@@ -76,31 +76,36 @@ void intervals::registerHoliday(daterange dr)
 }
 
 
-person::person(const teammember & m) :
-    teammember(m.mName,m.mEFTProject,m.mEFTBAU,m.mEFTOverhead,m.mLeave,m.getOriginalLeave()),
+person::person(const teammember & m, const publicholidays &pubh) :
+    teammember(m.mName,m.mEFTProject,m.mEFTBAU,m.mEFTOverhead,m.getLeave()),
     mIntervals(m.mEFTProject)
 {
-    if (mLeave.length()>0)
+    _registerHolidayString(getLeave());
+    _registerHolidayString(pubh.getStr());
+}
+
+void person::_registerHolidayString(std::string s)
+{
+if (s.length()>0)
     {
         std::vector<std::string> items;
-        bool okay = simplecsv::splitcsv(mLeave, items);
-        if (!okay) TERMINATE("Couldn't parse leave for "+mName+" -- "+mLeave);
+        bool okay = simplecsv::splitcsv(s, items);
+        if (!okay) TERMINATE("Couldn't parse leave for "+mName+" -- "+s);
 
         for (auto & x : items)
         { // parse leave string. Could be date, or date-date (inclusive). Closed interval.
             daterange dr(x,kClosedInterval);
-            registerHoliday(dr);
+            _registerHoliday(dr);
         }
     }
 }
-
 
 itemdate person::getEarliestStart(itemdate fromstart)
 {
     return mIntervals.getEarliestStart(fromstart);
 }
 
-void person::registerHoliday(daterange dr)
+void person::_registerHoliday(daterange dr)
 { // end is open interval.
     mIntervals.registerHoliday(dr);
 }
