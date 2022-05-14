@@ -18,6 +18,9 @@
 #include "main.h"
 #include "simplecsv.h"
 
+// --------------------------------------------------------------------
+
+
 void cMain::replace_all_input_CSV_files(inputfiles::inputset iset)
 {
     for (unsigned int i = 0; i < iset.mB.mTeamItems.size(); ++i)
@@ -139,52 +142,8 @@ int cMain::run_watch()
     return 0;
 }
 
-int cMain::showhelp()
-{
-    std::cout << std::endl;
-    std::cout << "jpf " << gSettings().getJPFVersionStr() << "-" << gSettings().getJPFReleaseStr() << " is a simple auto-balancing forecasting tool for projects across multiple teams.";
 
-    std::cout << R"(
-
-The directory used needs to contain an input folder, with appropriate csv files in it.
-
-usage: jpf [ mode ] DIRECTORY
-
-Mode:
-    -w, -watch      Watch the folder for changes, and update all output files as needed.
-                    Also starts a webserver, displaying the HTML output files.
-                    The corresponding webpages will auto-update as inputs change.
-                    The port can be configured in settings.csv.
-
-    -c, -create     Create a skeleton working tree in DIRECTORY, which includes input and 
-                    output directories, with example input files. 
-
-    -t, -test       Run unit tests.
-
-    -r, -refresh    Refresh the input files (read, tidy, write).
-
-    -a=dd/mm/yy     Advance start to date, decrementing work expected to be completed and
-                    removing no longer relevant dates.
-                
-)";
-    return 0;
-}
-
-// int getport(std::string s)
-// {
-//     int port = 5000;
-//     for (unsigned int i = 0; i < s.length(); ++i)
-//         if (s[i] == '=' && i < s.length() - 1)
-//         {
-//             port = atoi(s.c_str() + i + 1);
-//         }
-
-//     if (port <= 1024)
-//         TERMINATE("Need user settable port - i.e. > 1024.");
-//     return port;
-// }
-
-int cMain::create_directories()
+int cMain::run_create_directories()
 {
     std::string pr = gSettings().getRoot();
     std::string pi = pr + "/input/";
@@ -217,7 +176,7 @@ bool cMain::runtests()
     return wasSucessful;
 }
 
-int cMain::advance(std::string s)
+int cMain::run_advance(std::string s)
 { // s of format -a=dd/mm/yy
     s.erase(s.begin(), s.begin() + 3);
     itemdate newStart(s);
@@ -246,6 +205,43 @@ int cMain::advance(std::string s)
 
     return 0;
 }
+
+// --------------------------------------------------------------------
+
+int cMain::showhelp()
+{
+    std::cout << std::endl;
+    std::cout << "jpf " << gSettings().getJPFVersionStr() << "-" << gSettings().getJPFReleaseStr() << " is a simple auto-balancing forecasting tool for projects across multiple teams.";
+
+    std::cout << R"(
+
+The directory used needs to contain an input folder, with appropriate csv files in it.
+
+usage: jpf [ mode ] DIRECTORY
+
+Mode:
+    -w, -watch      Watch the folder for changes, and update all output files as needed.
+                    Also starts a webserver, displaying the HTML output files.
+                    The corresponding webpages will auto-update as inputs change.
+                    The port can be configured in settings.csv.
+
+    -c, -create     Create a skeleton working tree in DIRECTORY, which includes input and 
+                    output directories, with example input files. 
+
+    -t, -test       Run unit tests.
+
+    -r, -refresh    Refresh the input files (read, tidy, write).
+
+    -a=dd/mm/yy     Advance start to date, decrementing work expected to be completed and
+                    removing no longer relevant dates.
+                
+)";
+    return 0;
+}
+
+
+// --------------------------------------------------------------------
+
 
 int main(int argc, char **argv)
 {
@@ -305,9 +301,9 @@ int cMain::go(int argc, char **argv)
             return 0;
         }
         case 'a':
-            return advance(s);
+            return run_advance(s);
         case 'c':
-            return create_directories();
+            return run_create_directories();
         case 'r':
             return run_refresh();
         default:
