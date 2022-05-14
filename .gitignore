@@ -12,6 +12,9 @@ jpf_debug
 /webfsd-jpf/bin
 
 
+version.h
+
+
 # Prerequisites
 *.d
 
