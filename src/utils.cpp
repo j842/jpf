@@ -118,6 +118,27 @@ std::string starbox(std::string s)
     return S() << ss << std::endl << "* "+s+" *" <<std::endl << ss;
 }
 
+std::string getDollars(double x)
+{    
+    long int kilodollarz = (int)(0.5 + x/1000.0);
+    std::ostringstream oss;
+    oss << kilodollarz*1000;
+
+    std::string s = oss.str();
+    unsigned int n = s.length();
+    for (unsigned int i=n-1;i>0;i--)
+    {
+        unsigned int j = n-i;
+        if (j%3==0)
+            s.insert(s.begin()+i,',');
+    }
+    s.insert(s.begin(),'$');
+    return s;
+}
+
+
+//---------------------------------------------------------------------------------------
+
 webserver::webserver(int port)
 {
     const std::string webfsd("webfsd-jpf");

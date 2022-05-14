@@ -25,6 +25,7 @@ bool iSame(const std::string &s1, const std::string &s2);
 void trim(std::string & str);
 unsigned int str2uint(std::string s);
 void advanceLeaveString(std::string & leaveStr, itemdate newStart);
+std::string getDollars(double x);
 
 // a few globals
 const unsigned int eNotFound = UINT_MAX;

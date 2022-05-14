@@ -238,7 +238,7 @@ namespace scheduler
             table.push_back({p.getId(),
                              p.mActualStart.getStr(),
                              p.mActualEnd.getStr(),
-                             (S() << "$" << std::setprecision(0) << std::fixed << p.mTotalDevDays * gSettings().dailyDevCost() + 0.5)});
+                             (S() << getDollars( p.mTotalDevDays * gSettings().dailyDevCost()))});
         }
         _displaytable(ofs, table);
     }
