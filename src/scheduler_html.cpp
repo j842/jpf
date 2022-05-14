@@ -10,7 +10,7 @@
 #include "simplecsv.h"
 #include "utils.h"
 #include "settings.h"
-#include "colourgradient.h"
+#include "colours.h"
 
 namespace scheduler
 {
@@ -108,7 +108,7 @@ void scheduler::CalculateDevDaysTally(
 
     Colours.resize(ProjectLabels.size(),rgbcolour {.r=0,.g=200,.b=100});
 
-    ColorGradient heatMapGradient; 
+    colours::ColorGradient heatMapGradient; 
     for (unsigned int ci=0;ci<Colours.size();++ci)
     {
         float r,g,b;

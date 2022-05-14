@@ -10,6 +10,7 @@
 #include "simplecsv.h"
 #include "utils.h"
 #include "settings.h"
+#include "colours.h"
 
 namespace scheduler
 {
@@ -266,6 +267,8 @@ namespace scheduler
 
     void scheduler::_displaytable(std::ostream &ofs, std::vector<std::vector<std::string>> &vvs, std::string sepChar, bool consoleColour) const
     {
+        using namespace colours;
+
         if (vvs.size() == 0)
             return;
         if (vvs[0].size() == 0)
@@ -286,8 +289,8 @@ namespace scheduler
             std::string rowcol = "", sepcol = "";
             if (consoleColour) 
             {   
-                sepcol = "\e[38;5;179m";
-                rowcol = (rowndx>0 ? (rowndx%2==0 ? "\e[38;5;150m" : "\e[38;5;69m" ): sepcol);
+                sepcol = cLightOrange;
+                rowcol = (rowndx>0 ? (rowndx%2==0 ? cLime : cBlue ): sepcol);
             }
 
             for (unsigned int i = 0; i < row.size(); ++i)
@@ -310,7 +313,7 @@ namespace scheduler
         }
 
         if (consoleColour)
-                std::cout << "\033[m";
+                std::cout << cNoColour;
     }
 
 } // namespace
