@@ -19,7 +19,8 @@ namespace scheduler
 {
 
 
-    scheduleditem::scheduleditem(const inputfiles::backlogitem &bli, unsigned int priority,  unsigned int projectndx) : inputfiles::backlogitem(bli), mProject(projectndx), mPriority(priority) 
+    scheduleditem::scheduleditem(const inputfiles::backlogitem &bli, unsigned int priority,  unsigned int projectndx, unsigned int itemIndexInTeamBacklog) : 
+        inputfiles::backlogitem(bli), mProject(projectndx), mPriority(priority),mItemIndexInTeamBacklog(itemIndexInTeamBacklog)
     {
     }
 

@@ -70,46 +70,44 @@ namespace scheduler
 
         // The main event: update the backlog items in the team files.
         ASSERT(!mScheduled); // assume we've not scheduled.
-
         schedule();
+
+        // advance mTeamItems devdays and calendardays.
+        {
+            std::vector<tCentiDay> itemDevDone(mItems.size(), 0);
+            for (auto &p : mPeople)
+            {
+                for (itemdate d = oldStart; d < newStart; ++d)
+                {
+                    const std::vector<daychunk> &chunks(p.getChunks(d.getDayAsIndex()));
+                    for (auto &c : chunks)
+                        itemDevDone[c.mItemIndex] += c.mEffort;
+                }
+            }
+            for (unsigned int itemndx = 0; itemndx < mItems.size(); ++itemndx)
+            { // find item and update.
+                unsigned int teamndx = mItems[itemndx].mTeamNdx;
+                unsigned int teamitemndx = mItems[itemndx].mItemIndexInTeamBacklog;
+                auto & bli = iset.mB.mTeamItems[teamndx][teamitemndx];
+                bli.mDevDays -= (int)(0.5 + 0.01*itemDevDone[itemndx]);
+
+                if (mItems[itemndx].mActualStart < newStart)
+                {
+                    if (newStart - mItems[itemndx].mActualStart >= mItems[itemndx].mMinCalendarDays)
+                        bli.mMinCalendarDays=0;
+                    else
+                        bli.mMinCalendarDays -= (newStart - mItems[itemndx].mActualStart).getAsDurationUInt();
+                }
+
+                if (bli.mEarliestStart < newStart)
+                    bli.mEarliestStart = newStart;
+            }
+        }
 
         iset.mH.advance(newStart); // just drops old holidays
         iset.mP.advance(newStart); // does nothing at present
         iset.mT.advance(newStart); // advances leave
-
         gSettings().advance(newStart);
-
-        // // advance mItems.
-        // std::vector<tCentiDay> itemDevDone(mItems.size(),0);
-        // for (auto & p : mPeople)
-        // {
-        //     for (itemdate d = today; d < newStart ; ++d)
-        //     {
-        //         const std::vector<daychunk> & chunks( p.getChunks(d.getDayAsIndex()) );
-        //         for (auto & c : chunks)
-        //         {
-        //             itemDevDone[c.mItemIndex] += c.mEffort;
-        //         }
-        //     }
-        // }
-
-        // for (unsigned int i =0 ; i< mItems.size(); ++i)
-        // {
-        //     mItems[i].mDevDays -= (int)(0.5 + 0.01*itemDevDone[i]);
-
-        //     if (mItems[i].mActualStart < newStart)
-        //         {
-        //             if (newStart - mItems[i].mActualStart >= mItems[i].mMinCalendarDays)
-        //                 mItems[i].mMinCalendarDays=0;
-        //             else
-        //                 mItems[i].mMinCalendarDays -= (newStart - mItems[i].mActualStart).getAsDurationUInt();
-        //         }
-
-        //     if (mItems[i].mActualStart < newStart)
-        //         mItems[i].mActualStart = newStart;
-        //     if (mItems[i].mActualEnd < newStart)
-        //         mItems[i].mActualEnd = newStart;
-        // }
     }
 
 } // namespace

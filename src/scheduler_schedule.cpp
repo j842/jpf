@@ -91,7 +91,7 @@ namespace scheduler
                 }
             }
 
-            scheduleditem si(*topt, c, bestProjNdx);
+            scheduleditem si(*topt, c, bestProjNdx, positions[bestTeam]);
             mItems.push_back(si);
             positions[bestTeam] += 1;
         }

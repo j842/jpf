@@ -18,7 +18,7 @@ namespace scheduler
     class scheduleditem : public inputfiles::backlogitem
     {
     public:
-        scheduleditem(const inputfiles::backlogitem &bli, unsigned int priority, unsigned int projectndx);
+        scheduleditem(const inputfiles::backlogitem &bli, unsigned int priority, unsigned int projectndx, unsigned int itemIndexInTeamBacklog);
         itemdate getDuration() const;
 
     public:
@@ -28,6 +28,7 @@ namespace scheduler
         itemdate mActualStart;
         itemdate mActualEnd;
         std::string mBlockedBy;
+        unsigned int mItemIndexInTeamBacklog;
     };
 
     class scheduledproject : public inputfiles::project
