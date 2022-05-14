@@ -7,10 +7,10 @@
 #include "utils.h"
 #include "itemdate.h"
 
-class member
+class teammember
 {
     public:
-        member(std::string n, double project, double bau, double overhead, std::string l, std::string origl) : 
+        teammember(std::string n, double project, double bau, double overhead, std::string l, std::string origl) : 
             mName(n), 
             mEFTProject(project), 
             mEFTBAU(bau),
@@ -37,7 +37,7 @@ class team
         team(std::string Id, std::string refCode) : mId(Id), mRefCode(refCode) {}
         std::string mId;
         std::string mRefCode;
-        std::vector<member> mMembers;
+        std::vector<teammember> mMembers;
 };
 
 class teams : public std::vector<team>

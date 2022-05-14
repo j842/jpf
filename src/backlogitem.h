@@ -26,13 +26,13 @@ class backlogitem
     public:
         backlogitem(const std::string s, const unsigned int teamndx, const projects &p);
         backlogitem(const std::vector<std::string> csvitems, const unsigned int teamndx, const projects &p);
-        void set(const std::vector<std::string> csvitems, const unsigned int teamndx, const projects &p);
         void output(std::ostream & os, const projects &p) const;
 
         bool hasDependency(std::string d);
         itemdate getDuration() const;
         std::string getFullName() const;
 
+    public:
         // explicitly set from CSV file.
         unsigned int mTeamNdx;
         unsigned int mProject;
@@ -46,12 +46,15 @@ class backlogitem
         std::vector<std::string> mDependencies;
         std::string mComments;
 
+    public:
         // set while scheduling the task.
         unsigned int mPriority;
-        unsigned int mMergePriority;
         itemdate mActualStart;
         itemdate mActualEnd;      
         std::string mBlockedBy;
+
+    private:
+        void _set(const std::vector<std::string> csvitems, const unsigned int teamndx, const projects &p);
 };
 
 

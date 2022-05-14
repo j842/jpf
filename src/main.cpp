@@ -250,21 +250,9 @@ int cMain::go(int argc, char **argv)
 
     try
     {
-        std::string s = argv[1];
-
-        if (s.length() < 2)
-            TERMINATE("Bad parameter: " + s);
-        if (s[0] != '-')
-            TERMINATE("Options must start with - : " + s);
-
         // handle options which do not require a directory.
-        switch (s[1])
-        {
-        case 't':
-            return runtests() ? 0 : 1;
-        default:
-            break;
-        }
+        if (argc==3 && strlen(argv[1])>1 && argv[1][0]=='-' && tolower(argv[1][1])=='t')
+            return runtests() ? 0 : 1;        
 
         // set directory.
         std::string directory = argv[argc - 1];
@@ -281,6 +269,12 @@ int cMain::go(int argc, char **argv)
 
         if (argc == 2)
             return run_console();
+
+        std::string s = argv[1];
+        if (s.length() < 2)
+            TERMINATE("Bad parameter: " + s);
+        if (s[0] != '-')
+            TERMINATE("Options must start with - : " + s);
 
         switch (s[1])
         {

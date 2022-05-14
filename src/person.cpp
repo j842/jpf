@@ -8,6 +8,12 @@
 #include "simplecsv.h"
 #include "itemdate.h"
 
+daychunk::daychunk(unsigned int itemNdx, tCentiDay effort) : mItemIndex(itemNdx), mEffort(effort)
+{
+
+}
+
+
 intervals::intervals(tCentiDay max_aviailability) : mMaxAvailability(max_aviailability)
 {
     ASSERT(mMaxAvailability>=0);
@@ -40,7 +46,7 @@ tCentiDay intervals::getAvailability(itemdate day) const
     return mMaxAvailability;
 }
 
-void intervals::decrementAvailability(itemdate day, tCentiDay decrement)
+void intervals::_decrementAvailability(itemdate day, tCentiDay decrement) // does not assign workchunk.
 {
     unsigned int uDay = day.getDayAsIndex();
 
@@ -51,8 +57,27 @@ void intervals::decrementAvailability(itemdate day, tCentiDay decrement)
     mRemainingAvailability[uDay] = mRemainingAvailability[uDay] - decrement;
 }
 
-person::person(const member & m) :
-    member(m.mName,m.mEFTProject,m.mEFTBAU,m.mEFTOverhead,m.mLeave,m.getOriginalLeave()),
+void intervals::decrementAvailability(itemdate day, tCentiDay decrement,unsigned int itemNdx)
+{
+    _decrementAvailability(day,decrement);
+    
+    unsigned int uDay = day.getDayAsIndex();
+    if (uDay>=mWorkChunks.size())
+        mWorkChunks.resize(uDay+20);
+
+    daychunk dc(itemNdx,decrement);
+    mWorkChunks[uDay].push_back(dc);
+}
+
+void intervals::registerHoliday(daterange dr)
+{
+   for (itemdate i=dr.getStart();i<dr.getEnd();++i)
+    _decrementAvailability(i,getAvailability(i));
+}
+
+
+person::person(const teammember & m) :
+    teammember(m.mName,m.mEFTProject,m.mEFTBAU,m.mEFTOverhead,m.mLeave,m.getOriginalLeave()),
     mIntervals(m.mEFTProject)
 {
     if (mLeave.length()>0)
@@ -77,8 +102,7 @@ itemdate person::getEarliestStart(itemdate fromstart)
 
 void person::registerHoliday(daterange dr)
 { // end is open interval.
-    for (itemdate i=dr.getStart();i<dr.getEnd();++i)
-        decrementAvailability(i, mIntervals.getAvailability(i), "Leave");
+    mIntervals.registerHoliday(dr);
 }
 
 tCentiDay person::getMaxAvialability() const
@@ -91,9 +115,9 @@ tCentiDay person::getAvailability(itemdate day) const
     return mIntervals.getAvailability(day);
 }
 
-void person::decrementAvailability(itemdate day, tCentiDay decrement, const std::string & task)
+void person::decrementAvailability(itemdate day, tCentiDay decrement,unsigned int itemNdx)
 {
-    mIntervals.decrementAvailability(day, decrement);
+    mIntervals.decrementAvailability(day, decrement, itemNdx);
 }
 
 people::people() : tPersonVec()

@@ -7,23 +7,14 @@
 #include "itemdate.h"
 #include "teams.h"
 
-// // half open interval!!
-// class interval
-// {
-//     public:
-//         interval(int start,int end,double avail) : mStart(start),mEnd(end),mAvailability(avail) 
-//         {}
 
-//         int fulldays() const {return mEnd-mStart;}
-
-//         //double get_total_interval_availability() const {return mAvailability * (mEnd-mStart);}
-
-//         int mStart;     // half open - interval does include the start day.
-//         int mEnd;       // half open - interval does _not_ include the end day!
-//         double mAvailability;
-
-//         std::vector<std::string> mTasks;
-// };
+class daychunk 
+{ // most basic component of work.
+    public:
+        daychunk(unsigned int itemNdx, tCentiDay effort);
+        unsigned int mItemIndex; // backlog item.
+        const tCentiDay mEffort;
+};
 
 // store a persons remaining availability.
 class intervals
@@ -36,23 +27,31 @@ class intervals
         tCentiDay getMaxAvialability() const {return mMaxAvailability;}
         tCentiDay getAvailability(itemdate day) const;
 
-        void decrementAvailability(itemdate day, tCentiDay decrement);
+        void decrementAvailability(itemdate day, tCentiDay decrement, unsigned int itemNdx);
+        void registerHoliday(daterange dr);
+        void getChunks(unsigned int day, std::vector<daychunk> & chunks);
+
+        private:
+            void _decrementAvailability(itemdate day, tCentiDay decrement); // does not assign workchunk.
 
         private:
             tCentiDay mMaxAvailability;
-            std::vector<tCentiDay> mRemainingAvailability; // Centidays.
+            std::vector<tCentiDay>              mRemainingAvailability; // Centidays. Index is days since start.
+            std::vector<std::vector<daychunk>>  mWorkChunks; // First index is days since start.
 };
 
-class person : public member
+class person : public teammember
 {
     public:
-        person(const member & m);
+        person(const teammember & m);
 
         itemdate getEarliestStart(itemdate fromstart);
         tCentiDay getMaxAvialability() const;
         tCentiDay getAvailability(itemdate day) const;
-        void decrementAvailability(itemdate day, tCentiDay decrement,const std::string & task);
+        void decrementAvailability(itemdate day, tCentiDay decrement,unsigned int itemNdx);
         void registerHoliday(daterange dr);
+
+        void getChunks(unsigned int day, const std::vector<daychunk> & chunks);
 
     private:
         intervals mIntervals;

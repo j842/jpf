@@ -133,7 +133,7 @@ void backlog::displaybacklog_raw(std::ostream & ofs) const
         ofs << std::setw(12) << mTeams.at(z.mTeamNdx).mId << "  ";
         ofs << z.mActualStart.getStr_short() << " -> " << z.mActualEnd.getStr_short();
         ofs << std::setw(10) << z.mBlockedBy <<" ";
-        ofs << std::setw(4) << z.mMergePriority <<"   ";
+        ofs << std::setw(4) << z.mPriority <<"   ";
         ofs << z.getFullName() << " { ";
         
         for (auto r : z.mDependencies)

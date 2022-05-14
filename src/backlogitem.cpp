@@ -11,15 +11,15 @@ backlogitem::backlogitem(const std::string s, const unsigned int teamndx, const 
     if (csvitems.size()!=11)
         TERMINATE("Unexpected number of columns in backlog item: "+s);
 
-    set(csvitems,teamndx,p);
+    _set(csvitems,teamndx,p);
 }
 
 backlogitem::backlogitem(const std::vector<std::string> csvitems, const unsigned int teamndx, const projects &p)
 {
-    set(csvitems,teamndx,p);
+    _set(csvitems,teamndx,p);
 }
 
-void backlogitem::set(const std::vector<std::string> csvitems, const unsigned int teamndx, const projects &p)
+void backlogitem::_set(const std::vector<std::string> csvitems, const unsigned int teamndx, const projects &p)
 {
     mTeamNdx = teamndx;
 
@@ -65,7 +65,6 @@ void backlogitem::set(const std::vector<std::string> csvitems, const unsigned in
     mComments = csvitems[9];
 
     mPriority=0;
-    mMergePriority=0;
 }
 
 void backlogitem::output(std::ostream & os, const projects &p) const

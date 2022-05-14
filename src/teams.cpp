@@ -6,7 +6,7 @@
 #include "teams.h"
 #include "utils.h"
 
-const std::string member::getOriginalLeave() const
+const std::string teammember::getOriginalLeave() const
 {
     return mOriginalLeave;
 }
@@ -63,7 +63,7 @@ void teams::load_teams()
                 leave += ",";
             leave += mPublicHolidaysString;
 
-            this->at(ndx).mMembers.push_back(member(personname, EFTProject, EFTBAU, EFTOverhead, leave, oleave));
+            this->at(ndx).mMembers.push_back(teammember(personname, EFTProject, EFTBAU, EFTOverhead, leave, oleave));
         }
 }
 
@@ -139,7 +139,7 @@ unsigned int teams::getMaxTeamNameWidth() const
     return mMaxNameWidth;
 }
 
-void member::advance(itemdate newStart)
+void teammember::advance(itemdate newStart)
 {
     std::vector<std::string> newLeave;
     std::vector<std::string> items;

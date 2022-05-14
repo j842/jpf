@@ -77,10 +77,10 @@ class backlog
         void _calc_project_summary();
         void _topological_sort();
         void _topological_visit(int node, std::vector<bool> & tempMarks, std::vector<bool> & permMarks, std::vector<unsigned int> & scheduledList);
-        void _dotask_v1(backlogitem & z);
+        void _dotask_v1(unsigned int itemNdx);
         void _determinestart_and_dotask(unsigned int backlogitemNdx);
-        void _dotask_v2(backlogitem & z);
-        void _dotask_v2_limitedassign(backlogitem & z, const tCentiDay maxAllocation,tCentiDay & remainTeamToday, std::vector<double> & sumCentiDays,tCentiDay & totalDevCentiDaysRemaining,  const itemdate id);
+        void _dotask_v2(unsigned int itemNdx);
+        void _dotask_v2_limitedassign(unsigned int itemNdx, const tCentiDay maxAllocation,tCentiDay & remainTeamToday, std::vector<double> & sumCentiDays,tCentiDay & totalDevCentiDaysRemaining,  const itemdate id);
 
         void _displaytable(std::ostream & ofs, std::vector<std::vector<std::string>> & vvs) const;
 
@@ -117,7 +117,7 @@ class backlog
         std::vector<backlogitem> mItems;
         std::vector<std::deque<backlogitem>> mTeamsItems;
 
-        people mPeople;
+        people mPeople;             // taken from teammembers, but with added fields.
         const teams & mTeams;
         projects & mProjects;
 };
