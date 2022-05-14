@@ -240,10 +240,31 @@ namespace scheduler
                              p.mActualEnd.getStr(),
                              (S() << getDollars( p.mTotalDevDays * gSettings().dailyDevCost()))});
         }
-        _displaytable(ofs, table);
+        _displaytable(ofs, table, " | ",false);
     }
 
-    void scheduler::_displaytable(std::ostream &ofs, std::vector<std::vector<std::string>> &vvs) const
+
+    void scheduler::displayprojects_Console() const
+    {
+        std::vector<std::vector<std::string>> table;
+
+        table.push_back({"Project Id", "Start Date", "End Date", "Remaining Cost"});
+
+//        std::cout << "\033[0;36m"; -- light blue
+//        std::cout << "\033[0;32m"; -- green
+        for (auto p : mProjects)
+        {
+            table.push_back({p.getId(),
+                             p.mActualStart.getStr(),
+                             p.mActualEnd.getStr(),
+                             (S() << getDollars( p.mTotalDevDays * gSettings().dailyDevCost()))});
+        }
+        _displaytable(std::cout, table, " | ",true);
+    }
+
+
+
+    void scheduler::_displaytable(std::ostream &ofs, std::vector<std::vector<std::string>> &vvs, std::string sepChar, bool consoleColour) const
     {
         if (vvs.size() == 0)
             return;
@@ -261,11 +282,19 @@ namespace scheduler
         for (unsigned int rowndx = 0; rowndx < vvs.size(); ++rowndx)
         {
             auto &row = vvs[rowndx];
+
+            std::string rowcol = "", sepcol = "";
+            if (consoleColour) 
+            {   
+                sepcol = "\e[38;5;179m";
+                rowcol = (rowndx>0 ? (rowndx%2==0 ? "\e[38;5;150m" : "\e[38;5;69m" ): sepcol);
+            }
+
             for (unsigned int i = 0; i < row.size(); ++i)
             {
                 if (i > 0)
-                    ofs << " | ";
-                ofs << std::setw(columnwidths[i] + 2) << row[i];
+                    ofs << sepcol << sepChar;
+                ofs << rowcol << std::setw(columnwidths[i] + 2) << row[i];
             }
             ofs << std::endl;
             if (rowndx == 0)
@@ -273,12 +302,15 @@ namespace scheduler
                 for (unsigned int i = 0; i < row.size(); ++i)
                 {
                     if (i > 0)
-                        ofs << " | ";
+                         ofs << sepcol << sepChar << rowcol;;
                     ofs << std::setw(columnwidths[i] + 2) << std::string(columnwidths[i] + 2, '-');
                 }
-            }
             ofs << std::endl;
+            }
         }
+
+        if (consoleColour)
+                std::cout << "\033[m";
     }
 
 } // namespace

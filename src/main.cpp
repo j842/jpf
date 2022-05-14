@@ -98,7 +98,7 @@ int cMain::run_console()
 
         std::cout << std::endl
                   << std::endl;
-        s.displayprojects(std::cout);
+        s.displayprojects_Console();
         s.createAllOutputFiles();
     }
     catch (TerminateRunException &pEx)

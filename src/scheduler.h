@@ -80,6 +80,7 @@ namespace scheduler
 
         void createAllOutputFiles() const;
         void displayprojects(std::ostream &ofs) const;
+        void displayprojects_Console() const;
         static void outputHTMLError(std::string filename, std::string errormsg);
 
     private:
@@ -111,7 +112,7 @@ namespace scheduler
         void _dotask_v2_limitedassign(unsigned int itemNdx, const tCentiDay maxAllocation, tCentiDay &remainTeamToday, std::vector<double> &sumCentiDays, tCentiDay &totalDevCentiDaysRemaining, const itemdate id);
         void _calc_project_summary();
 
-        void _displaytable(std::ostream &ofs, std::vector<std::vector<std::string>> &vvs) const;
+        void _displaytable(std::ostream &ofs, std::vector<std::vector<std::string>> &vvs, std::string sepChar, bool consoleColour) const;
 
         void prioritySortArray(std::vector<int> &v) const;
 
