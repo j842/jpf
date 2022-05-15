@@ -200,10 +200,15 @@ int cMain::run_advance(std::string s)
             inputfiles::teambacklogs b(t);
             inputfiles::inputset iset(p, t, h, b);
             // advance and throw away scheduler.
-            scheduler::scheduler s(iset);
-            s.advance(newStart, iset);
+            {
+                scheduler::scheduler s(iset);
+                s.advance(newStart, iset);
+            }
+            scheduler::scheduler s2(iset);
+            s2.schedule();
+            s2.createAllOutputFiles();
+
             replace_all_input_CSV_files(iset);
-            gSettings().advance(newStart);
             replace_settings_CSV();
         }
     }
@@ -214,7 +219,7 @@ int cMain::run_advance(std::string s)
     }
 
     // new re-run from scratch.
-    run_console();
+    //run_console();
 
     return 0;
 }

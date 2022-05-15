@@ -46,9 +46,7 @@ namespace scheduler
                 simpledate d(simpledate::WorkDays2Date(dayndx));
                 monthIndex mI(d);
                 for (const auto &zc : zp.getChunks(dayndx))
-                {
-                    DevDaysTally[mItems[zc.mItemIndex].mProject][mI] += (double)zc.mEffort / 100.0;
-                }
+                    DevDaysTally[mItems[zc.mItemIndex].mProject][mI] += ((double)zc.mEffort) / 100.0;
             }
         }
 
@@ -99,15 +97,6 @@ namespace scheduler
         Colours.push_back(rgbcolour{.r = 100, .g = 100, .b = 100}); // BAU
         Colours.push_back(rgbcolour{.r = 200, .g = 200, .b = 200}); // overhead
     }
-
-    // scheduler::rgbcolour scheduler::heatmap(float minimum, float maximum, float value) const
-    // {
-    //     float ratio = (value-minimum) / (maximum - minimum);
-    //     int r = int(std::max(0.0, 255.0*(1.0 - ratio)));
-    //     int g = int(std::max(0.0, 255.0*(ratio - 1.0)));
-    //     int b = 255 - r - g;
-    //     return rgbcolour {.r=r, .g=g, .b=b };
-    // }
 
     void scheduler::Graph_Total_Project_Cost(std::ostream &ofs) const
     {

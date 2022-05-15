@@ -9,9 +9,9 @@
         "program": "${fileDirname}/../bin/jpf",
        "args": [
 //            "${workspaceFolder}"
-          "-t"
-//            "-a=14/5/22",
-//            "~/code/tracmap/pf0/"
+//          "-t"
+            "-a=15/5/22",
+            "~/code/tracmap/pf0/"
         ],
         "stopAtEntry": false,
         "cwd": "${workspaceFolder}/src",
