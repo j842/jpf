@@ -15,6 +15,15 @@ settings::settings() : mLoaded(false), mRootDir(),
 {
 }
 
+void settings::setSettings( simpledate startDate, simpledate endDate, int port  )
+{
+    mStartDate = startDate;
+    mEndDate = endDate;
+    mPort = port;
+    mLoaded = true;
+    mRootDir = "";
+}
+
 void settings::load_settings()
 {
     simplecsv c("settings.csv");

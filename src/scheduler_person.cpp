@@ -78,9 +78,8 @@ namespace scheduler
     const std::vector<daychunk> &intervals::getChunks(unsigned int day) const
     {
         if (day >= mWorkChunks.size())
-           mWorkChunks.resize(day + 20);
+            return mEmptyChunk;
 
-        ASSERT(day >= 0 && day < mWorkChunks.size());
         return mWorkChunks[day];
     }
 

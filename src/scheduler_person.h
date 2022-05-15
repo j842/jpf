@@ -41,7 +41,8 @@ namespace scheduler
     private:
         tCentiDay mMaxAvailability;
         std::vector<tCentiDay> mRemainingAvailability;  // Centidays. Index is days since start.
-        mutable std::vector<std::vector<daychunk>> mWorkChunks; // First index is days since start.
+        std::vector<std::vector<daychunk>> mWorkChunks; // First index is days since start.
+        std::vector<daychunk> mEmptyChunk;
     };
 
     class person : public inputfiles::teammember

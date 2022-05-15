@@ -198,6 +198,11 @@ itemdate::itemdate() : simpledate(gSettings().startDate())
 {
 }
 
+itemdate::itemdate(simpledate s) : simpledate(s)
+{
+    ASSERT(mD >= gSettings().startDate().getGregorian());    
+}
+
 itemdate::itemdate(std::string datestr) : simpledate(nextWorkDay(parseDateStringDDMMYY(datestr)))
 {
     ASSERT(mD >= gSettings().startDate().getGregorian());
@@ -256,13 +261,15 @@ boost::gregorian::date monthIndex::getFirstMonthDay() const
 {
     using namespace boost::gregorian;
     date d(gSettings().startDate().getGregorian());
-    if (mN==0)
-        return d;
+    date d2(d.year(),d.month(),1);
 
-    month_iterator itr(d,mN); // use an iterator so we don't get trapped by end of month snapping and unexpected results - see Reversibility of Operations Pitfall in boost docs.
-    ++itr; // jumps mN steps in one go.
-
-    return *itr;
+    if (mN>0)
+    {
+        month_iterator mit(d2,mN);
+        ++mit;
+        d2=*mit;
+    }
+    return d2;
 }
 boost::gregorian::date monthIndex::getLastMonthDay() const
 {
@@ -424,4 +431,50 @@ void simpledate_test::simpledate_test4()
     simpledate d0("16/5/22");
     simpledate d1("22/5/22");
     CPPUNIT_ASSERT( simpledate::countWorkDays(d0,d1)==5 );
+}
+
+
+CPPUNIT_TEST_SUITE_REGISTRATION( itemdate_test );
+
+
+void itemdate_test::itemdate_test1()
+{
+    gSettings().setSettings(simpledate("16/5/22"),simpledate("12/12/22"),5000);
+
+    itemdate s( gSettings().startDate() );
+
+    CPPUNIT_ASSERT( s.getDayAsIndex() == 0);
+
+    s.increment();
+    CPPUNIT_ASSERT( s.getDayAsIndex() == 1);
+
+    auto g = gSettings().startDate().getGregorian();
+    boost::gregorian::day_iterator di(g,14);
+    ++di;
+    CPPUNIT_ASSERT( itemdate(*di).getDayAsIndex()  == 10);
+}
+void itemdate_test::itemdate_test2()
+{
+    CPPUNIT_ASSERT( simpledate::countWorkDays( simpledate("1/5/22"),simpledate("1/6/22")) == 22  );
+
+    CPPUNIT_ASSERT( wdduration( simpledate("1/5/22"),simpledate("1/6/22")) == 22);
+
+    monthIndex mI(simpledate("16/5/22"));
+
+    CPPUNIT_ASSERT( mI.getFirstMonthDay() == simpledate("1/5/22").getGregorian());
+    CPPUNIT_ASSERT( monthIndex(mI+1).getFirstMonthDay() == simpledate("1/6/22").getGregorian());
+
+    CPPUNIT_ASSERT_MESSAGE( S() << "Days in May 2022: 22, mI says " << mI.workingDaysInMonth(),   mI.workingDaysInMonth() == 22);
+}
+void itemdate_test::itemdate_test3()
+{
+
+}
+void itemdate_test::itemdate_test4()
+{
+
+}
+void itemdate_test::itemdate_test5()
+{
+
 }

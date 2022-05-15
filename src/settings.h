@@ -35,6 +35,9 @@ class settings
         std::string getTitle() const;
         int getPort() const;
 
+    public:
+        void setSettings( simpledate startDate, simpledate endDate, int port  ); // for testing.
+
     private:
         std::string getSettingS(std::string settingName) const;
         int getSettingI(std::string settingName) const;     

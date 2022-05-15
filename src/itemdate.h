@@ -119,6 +119,7 @@ class itemdate : public simpledate
 {
     public:
         itemdate();                     // set the date as today.
+        itemdate(simpledate s);
         itemdate(std::string datestr);  // set the date based on a dd/mm/yy string.
         itemdate(const itemdate &obj);  // copy ctor
         itemdate(const boost::gregorian::date & d);
@@ -134,6 +135,26 @@ class itemdate : public simpledate
     public:
         friend itemdate operator+(const itemdate& lhs, unsigned long rhs); // advance x work days.
 };
+
+
+class itemdate_test : public CPPUNIT_NS::TestFixture
+{
+    CPPUNIT_TEST_SUITE( itemdate_test );
+    CPPUNIT_TEST( itemdate_test1 );
+    CPPUNIT_TEST( itemdate_test2 );
+    CPPUNIT_TEST( itemdate_test3 );
+    CPPUNIT_TEST( itemdate_test4 );
+    CPPUNIT_TEST( itemdate_test5 );
+    CPPUNIT_TEST_SUITE_END();
+
+    public:
+        void itemdate_test1();
+        void itemdate_test2();
+        void itemdate_test3();
+        void itemdate_test4();
+        void itemdate_test5();
+};
+
 
 typedef enum
 {
