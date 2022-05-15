@@ -25,6 +25,8 @@ class tCentiDay
         unsigned long mD;
 };
 
+bool isWeekend(const boost::gregorian::date & d);
+
 class monthIndex;
 
 class simpledate

@@ -27,21 +27,25 @@ void cMain::replace_all_input_CSV_files(inputfiles::inputset iset)
     { // output backlog-X
         std::ofstream ofs(simplecsv::filename2path("backlog-" + makelower(iset.mT[i].mId) + ".csv"));
         iset.mB.save_team_CSV(ofs, i);
+        ofs.close();
     }
 
     {
         std::ofstream ofs(simplecsv::filename2path("publicholidays.csv"));
         iset.mH.save_public_holidays_CSV(ofs);
+        ofs.close();
     }
 
     {
         std::ofstream ofs(simplecsv::filename2path("teams.csv"));
         iset.mT.save_teams_CSV(ofs);
+        ofs.close();
     }
 
     {
         std::ofstream ofs(simplecsv::filename2path("projects.csv"));
         iset.mP.save_projects_CSV(ofs);
+        ofs.close();
     }
 }
 
@@ -49,6 +53,7 @@ void cMain::replace_settings_CSV()
 {
     std::ofstream ofs(simplecsv::filename2path("settings.csv"));
     gSettings().save_settings_CSV(ofs);
+    ofs.close();
 }
 
 int cMain::run_refresh()
@@ -201,7 +206,10 @@ int cMain::run_advance(std::string s)
             inputfiles::inputset iset(p, t, h, b);
             // advance and throw away scheduler.
             scheduler::scheduler s(iset);
-            s.advance(newStart, iset);
+            s.advance(newStart, iset); // advances the iset members.
+            gSettings().advance(newStart);
+
+            ASSERT(gSettings().startDate() == newStart);
 
             replace_all_input_CSV_files(iset);
             replace_settings_CSV();

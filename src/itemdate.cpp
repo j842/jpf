@@ -233,11 +233,17 @@ void itemdate::decrement()
     mD = itemdate(mDay).getGregorian();
 }
 
+bool isWeekend(const boost::gregorian::date & d)
+{
+    return (d.day_of_week()== boost::date_time::Saturday || d.day_of_week()== boost::date_time::Sunday);
+}
+
 void itemdate::increment()
 {
-    unsigned long mDay = getDayAsIndex();
-    ++mDay;
-    mD = itemdate(mDay).getGregorian();   
+    boost::gregorian::day_iterator di(mD);
+    ++di;
+    while (isWeekend(*di)) ++di;
+    mD=*di;
 }
 
 // -----------------------------------------------------------
@@ -461,7 +467,19 @@ void itemdate_test::itemdate_test2()
 }
 void itemdate_test::itemdate_test3()
 {
+    gSettings().setSettings(simpledate("16/5/22"),simpledate("12/12/22"),5000);
 
+    srand(time(NULL));
+    for (unsigned int i=0;i<1000;++i)
+    {
+        unsigned long date = rand()%1000;
+        itemdate d(date);
+        boost::gregorian::date d2 = d.getGregorian();
+
+        itemdate d3(d2);
+        unsigned long date2 = d3.getDayAsIndex();
+        CPPUNIT_ASSERT(date2==date);
+    }
 }
 void itemdate_test::itemdate_test4()
 {

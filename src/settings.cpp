@@ -234,6 +234,13 @@ int settings::getPort() const
 void settings::advance(itemdate newStart)
 {
     mStartDate = newStart.getGregorian();
+    mSettings["startdate"]=mStartDate.getStr();
+
+    if (mEndDate<=mStartDate)
+    {
+        mEndDate = boost::gregorian::date(mStartDate.getGregorian().year()+1,1,1);
+        mSettings["enddate"]=mEndDate.getStr();
+    }
 }
 
 const std::string getInputPath() { return gSettings().getRoot()+"/input/"; }

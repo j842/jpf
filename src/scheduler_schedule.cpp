@@ -188,7 +188,7 @@ namespace scheduler
             if (z.mMinCalendarDays > calDaysPast)
                 calDaysRemain = z.mMinCalendarDays - calDaysPast; // includes today.
 
-            tCentiDay maxTeamToday = std::min(totalDevCentiDaysRemaining, (tCentiDay)(100 * z.mResources.size()));
+            tCentiDay maxTeamToday = std::min(totalDevCentiDaysRemaining, (tCentiDay)(100 * z.mResources.size())); // each team member capped at 100 centidays/day.
             if (calDaysRemain > 0)
             { // check if we're going too fast to finish in the calendar days remaining.
                 tCentiDay maxSpeedRemain = (tCentiDay)((double)totalDevCentiDaysRemaining / (double)calDaysRemain);
