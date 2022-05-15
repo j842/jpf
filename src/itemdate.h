@@ -5,6 +5,7 @@
 #include <string>
 #include <boost/date_time.hpp>
 #include "utils.h"
+#include <cppunit/extensions/HelperMacros.h>
 
 // a centiday is 1/100th of a day.
 class tCentiDay
@@ -19,9 +20,7 @@ class tCentiDay
         operator unsigned long() const { return mD; }
 
         tCentiDay& operator+=(const tCentiDay& rhs) { mD+=rhs.getL(); return *this;}
-        tCentiDay& operator+=(const unsigned int rhs) { mD+=rhs; return *this;}
         tCentiDay& operator-=(const tCentiDay& rhs) { ASSERT(rhs.getL()<=mD); mD-=rhs.getL(); return *this;}
-        tCentiDay& operator-=(const unsigned int rhs) { ASSERT(rhs>=mD); mD-=rhs; return *this;}
     private:
         unsigned long mD;
 };
@@ -59,7 +58,6 @@ class simpledate
         static unsigned long Date2WorkDays(simpledate d0);
 
     public:
-        friend unsigned long operator-(const simpledate& lhs, const simpledate & rhs) { return (lhs.getGregorian()-rhs.getGregorian()).days(); }
         friend bool operator==(const simpledate& lhs, const simpledate & rhs) { return (lhs.getGregorian()==rhs.getGregorian()); }
         friend bool operator!=(const simpledate& lhs, const simpledate & rhs) { return !(lhs==rhs); }
         friend bool operator<(const simpledate& lhs, const simpledate & rhs) { return lhs.getGregorian()<rhs.getGregorian(); }
@@ -72,8 +70,29 @@ class simpledate
 
     protected:
         boost::gregorian::date mD;
-
 };
+
+unsigned long wdduration(const simpledate& istart, const simpledate& iend); // difference in work days
+
+
+class simpledate_test : public CPPUNIT_NS::TestFixture
+{
+    CPPUNIT_TEST_SUITE( simpledate_test );
+    CPPUNIT_TEST( simpledate_test0 );
+    CPPUNIT_TEST( simpledate_test1 );
+    CPPUNIT_TEST( simpledate_test2 );
+    CPPUNIT_TEST( simpledate_test3 );
+    CPPUNIT_TEST( simpledate_test4 );
+    CPPUNIT_TEST_SUITE_END();
+
+    public:
+        void simpledate_test0();
+        void simpledate_test1();
+        void simpledate_test2();
+        void simpledate_test3();
+        void simpledate_test4();
+};
+
 
 class monthIndex
 {

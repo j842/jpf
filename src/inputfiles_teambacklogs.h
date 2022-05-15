@@ -36,7 +36,7 @@ namespace inputfiles
         void writeresourcenames(std::ostream & oss) const; // helps with html output.
 
         bool hasDependency(std::string d);
-        itemdate getDuration() const;
+        unsigned long getDurationDays() const;
         std::string getFullName() const;
 
     public:

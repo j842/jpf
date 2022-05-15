@@ -24,9 +24,9 @@ namespace scheduler
     {
     }
 
-    unsigned long scheduleditem::getDuration() const 
+    unsigned long scheduleditem::getDurationDays() const 
     { 
-        return mActualEnd-mActualStart;
+        return wdduration(mActualStart,mActualEnd);
     }
 
     scheduledproject::scheduledproject(const inputfiles::project &prj) : inputfiles::project(prj), mTotalDevCentiDays(0)
@@ -190,7 +190,7 @@ namespace scheduler
                 p.mTotalDevCentiDays += task.mDevCentiDays;
             else
                 for (auto &x : task.mResources)
-                    p.mTotalDevCentiDays += (tCentiDay)(0.5 + task.getDuration() * x.mLoadingPercent);
+                    p.mTotalDevCentiDays += (tCentiDay)(0.5 + task.getDurationDays() * x.mLoadingPercent);
         }
 
         for (auto &proj : mProjects)

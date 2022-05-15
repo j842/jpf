@@ -183,7 +183,7 @@ namespace scheduler
         ASSERT(!z.mActualStart.isForever());
         while (totalDevCentiDaysRemaining > 0)
         { // loop over days (id)
-            unsigned long calDaysPast = (id - z.mActualStart);
+            unsigned long calDaysPast = wdduration(z.mActualStart,id);
             unsigned long calDaysRemain = 0;
             if (z.mMinCalendarDays > calDaysPast)
                 calDaysRemain = z.mMinCalendarDays - calDaysPast; // includes today.
@@ -208,7 +208,7 @@ namespace scheduler
         }
         z.mActualEnd = id;
 
-        double duration = (z.mActualEnd - z.mActualStart);
+        double duration = z.getDurationDays();
         for (unsigned int pi = 0; pi < z.mResources.size(); ++pi)
             z.mResources[pi].mLoadingPercent = sumCentiDays[pi].getL() / duration;
     }

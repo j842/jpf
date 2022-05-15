@@ -130,12 +130,33 @@ unsigned long simpledate::countWorkDays(simpledate dA, simpledate dB)
     boost::gregorian::date d0 = dA.getGregorian();
     boost::gregorian::date d1 = dB.getGregorian();
     long ndays = (d1 - d0).days();                       // would add +1 for inclusive
-    long nwkends = 2 * ((ndays + d0.day_of_week()) / 7); // 2*Saturdays
-    if (d0.day_of_week() == boost::date_time::Sunday)
-        ++nwkends;
-    if (d1.day_of_week() == boost::date_time::Saturday)
-        --nwkends;
-    return ndays - nwkends;
+
+    if (ndays==0)
+        return 0; 
+
+    long fullwks = (d1-d0).days()/7;
+    long numdays = 5*fullwks;
+
+    // now adjust for ends. day_of_week is [0,..,6] for [Sunday,...,Saturday]
+    long leftover = (d1-d0).days() - fullwks*7;
+
+    // handle end bits.
+    int startDoW = d0.day_of_week();
+    int endDoW = startDoW + leftover;
+    if (startDoW==0) startDoW=1;
+    if (startDoW==6) startDoW=8;
+    else if (endDoW>7) endDoW-=2;
+    else if (endDoW==7) endDoW--;
+    if (endDoW-startDoW>0)
+        numdays += endDoW-startDoW;
+    return numdays;
+
+    // long nwkends = 2 * ((ndays + d0.day_of_week()) / 7); // 2*Saturdays
+    // if (d0.day_of_week() == boost::date_time::Sunday)
+    //     ++nwkends;
+    // if (d1.day_of_week() == boost::date_time::Saturday)
+    //     --nwkends;
+    // return ndays - nwkends;
 }
 
 unsigned long simpledate::Date2WorkDays(simpledate d0)
@@ -163,6 +184,12 @@ monthIndex simpledate::getMonthIndex() const
 {
     return monthIndex(getGregorian());
 }
+
+unsigned long wdduration(const simpledate& istart, const simpledate& iend) // difference in work days
+{
+    return simpledate::countWorkDays(istart,iend);
+}
+
 
 // --------------------------------------------------------------------------------------------
 // --------------------------------------------------------------------------------------------
@@ -262,7 +289,6 @@ itemdate operator+(const itemdate& lhs, unsigned long rhs) // advance x work day
     return rval;
 }
 
-
 // ------------------------------------------------------------------------------
 
 unsigned long itemdate::getDayAsIndex() const
@@ -319,4 +345,74 @@ std::string daterange::getRangeAsString() const
     std::ostringstream oss;
     oss << mStart.getStr() << "-" << mEnd.getStr();
     return oss.str();
+}
+
+
+// ---------------
+
+
+CPPUNIT_TEST_SUITE_REGISTRATION( simpledate_test );
+
+
+void simpledate_test::simpledate_test0()
+{
+    simpledate d1("15/5/22"); //sunday
+    simpledate d2("16/5/22"); //monday
+    simpledate d2b("17/5/22");
+    CPPUNIT_ASSERT_MESSAGE( "Workday calc wrong", simpledate::nextWorkDay(d1)==d2 );
+    CPPUNIT_ASSERT_MESSAGE( "duration calc wrong", simpledate::countWorkDays(d1,d2)==0);
+    CPPUNIT_ASSERT_MESSAGE( "duration calc wrong", simpledate::countWorkDays(d1,d1)==0);
+    CPPUNIT_ASSERT_MESSAGE( "duration calc wrong", simpledate::countWorkDays(d1,d2b)==1);
+    CPPUNIT_ASSERT_MESSAGE( "duration calc wrong", simpledate::countWorkDays(d2,d2b)==1);
+}
+
+void simpledate_test::simpledate_test1()
+{
+    simpledate d2("16/5/22"); //monday
+    simpledate d3("18/5/22"); //wednesday
+    CPPUNIT_ASSERT(d2.isForever()==false);
+    CPPUNIT_ASSERT(d2!=d3);
+    CPPUNIT_ASSERT(d2==d2);
+    CPPUNIT_ASSERT(simpledate::countWorkDays(d2,d3) == 2);  
+    simpledate d4("21/5/22");
+    simpledate d5("22/5/22");
+    simpledate d6("23/5/22");
+    CPPUNIT_ASSERT(simpledate::countWorkDays(d2,d4)==5);
+    CPPUNIT_ASSERT(simpledate::countWorkDays(d2,d5)==5);
+    CPPUNIT_ASSERT(simpledate::countWorkDays(d2,d6)==5);
+}
+void simpledate_test::simpledate_test2()
+{
+    simpledate d2("16/5/22"); //monday
+    simpledate d7("30/5/22"); //
+    CPPUNIT_ASSERT(simpledate::countWorkDays(d2,d7)==10);
+}
+void simpledate_test::simpledate_test3()
+{
+    simpledate d0("16/5/22");
+    boost::gregorian::day_iterator dayit(d0.getGregorian());
+    //if (d0.day_of_week() == boost::date_time::Sunday)
+    for (unsigned int i = 0; i < 100; ++i, ++dayit)
+    {
+        int count = 0;
+        int wkndsbtw= 0;
+
+        simpledate d2(*dayit);
+        boost::gregorian::day_iterator day2it(d2.getGregorian());
+        for (unsigned int j = 0; j < 100; ++j, ++day2it)
+        {
+            CPPUNIT_ASSERT_MESSAGE( S()<< simpledate(*dayit).getStr() << " -> " << simpledate(*day2it).getStr() <<"  : " <<
+                "Count = "<<count<<"  Wknds = "<<wkndsbtw <<"   ...  countworkdays = "<< (int)simpledate::countWorkDays(*dayit,*day2it),   (int)simpledate::countWorkDays(*dayit,*day2it) == count-wkndsbtw) ;
+
+            if (day2it->day_of_week()== boost::date_time::Saturday || day2it->day_of_week() == boost::date_time::Sunday)
+                wkndsbtw++;
+            count++;
+        }
+    }
+}
+void simpledate_test::simpledate_test4()
+{
+    simpledate d0("16/5/22");
+    simpledate d1("22/5/22");
+    CPPUNIT_ASSERT( simpledate::countWorkDays(d0,d1)==5 );
 }

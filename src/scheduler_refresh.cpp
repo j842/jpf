@@ -93,10 +93,11 @@ namespace scheduler
 
                 if (mItems[itemndx].mActualStart < newStart)
                 {
-                    if (newStart - mItems[itemndx].mActualStart >= mItems[itemndx].mMinCalendarDays)
+                    unsigned long delta = wdduration(mItems[itemndx].mActualStart, newStart);
+                    if (delta >= mItems[itemndx].mMinCalendarDays)
                         bli.mMinCalendarDays=0;
                     else
-                        bli.mMinCalendarDays -= (newStart - mItems[itemndx].mActualStart);
+                        bli.mMinCalendarDays -= delta;
                 }
 
                 if (bli.mEarliestStart < newStart)

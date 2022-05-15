@@ -46,8 +46,8 @@ void scheduler::CalculateDevDaysTally(
             itemdate monthend   = monthIndex(m).getLastMonthDay();
             double tasktally = 0.0;
             
-            double taskDuration = z.getDuration();
-            if (taskDuration>0)
+            double taskDurationDays = z.getDurationDays();
+            if (taskDurationDays>0)
             {
                 unsigned int firstDayIndex = std::max(monthstart.getDayAsIndex(),z.mActualStart.getDayAsIndex());
                 unsigned int lastDayPlusOneIndex = std::min(monthend.getDayAsIndex()+1,z.mActualEnd.getDayAsIndex());
@@ -57,7 +57,7 @@ void scheduler::CalculateDevDaysTally(
                     double daysthismonth = lastDayPlusOneIndex - firstDayIndex;
 
                     if (z.mResources.size()==0) // nobody assigned.
-                        tasktally=((double)z.mDevCentiDays)/100.0 * daysthismonth / taskDuration;
+                        tasktally=((double)z.mDevCentiDays)/100.0 * daysthismonth / taskDurationDays;
                     else
                         for (unsigned int person=0;person<z.mResources.size();++person)
                         {
@@ -83,13 +83,13 @@ void scheduler::CalculateDevDaysTally(
 
         itemdate monthstart( monthIndex(m).getFirstMonthDay() );
         itemdate monthend( monthIndex(m).getLastMonthDay());
-        double daysinmonth=(monthend-monthstart)+1;
+        unsigned long workingdaysinmonth=wdduration(monthstart,monthend)+1;
         
         for (auto & worker : mPeople)
         {
-            monthcapacity += daysinmonth * ((double)worker.mEFTProject)/100.0;
-            monthbau += daysinmonth * ((double)worker.mEFTBAU)/100.0;
-            monthoverhead += daysinmonth * ((double)worker.mEFTOverhead)/100.0;
+            monthcapacity += workingdaysinmonth * ((double)worker.mEFTProject)/100.0;
+            monthbau += workingdaysinmonth * ((double)worker.mEFTBAU)/100.0;
+            monthoverhead += workingdaysinmonth * ((double)worker.mEFTOverhead)/100.0;
         }
         double monthslack = monthcapacity - devdaystotalinmonth;
 

@@ -19,7 +19,7 @@ namespace scheduler
     {
     public:
         scheduleditem(const inputfiles::backlogitem &bli, unsigned int priority, unsigned int projectndx, unsigned int itemIndexInTeamBacklog);
-        unsigned long getDuration() const;
+        unsigned long getDurationDays() const;
 
     public:
         // set while scheduling the task.
