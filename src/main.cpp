@@ -200,16 +200,13 @@ int cMain::run_advance(std::string s)
             inputfiles::teambacklogs b(t);
             inputfiles::inputset iset(p, t, h, b);
             // advance and throw away scheduler.
-            {
-                scheduler::scheduler s(iset);
-                s.advance(newStart, iset);
-            }
-            scheduler::scheduler s2(iset);
-            s2.schedule();
-            s2.createAllOutputFiles();
+            scheduler::scheduler s(iset);
+            s.advance(newStart, iset);
 
             replace_all_input_CSV_files(iset);
             replace_settings_CSV();
+
+            std::cout << "Replaced input and output files."<< std::endl;
         }
     }
     catch (TerminateRunException &pEx)
@@ -219,7 +216,7 @@ int cMain::run_advance(std::string s)
     }
 
     // new re-run from scratch.
-    //run_console();
+    run_console();
 
     return 0;
 }
