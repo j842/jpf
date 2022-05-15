@@ -289,6 +289,15 @@ itemdate operator+(const itemdate& lhs, unsigned long rhs) // advance x work day
     return rval;
 }
 
+unsigned long monthIndex::workingDaysInMonth() const
+{
+    return wdduration(
+        getFirstMonthDay(),        
+        monthIndex(mN+1).getFirstMonthDay()
+    );
+}
+
+
 // ------------------------------------------------------------------------------
 
 unsigned long itemdate::getDayAsIndex() const

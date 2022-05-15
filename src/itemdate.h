@@ -107,6 +107,8 @@ class monthIndex
 
         std::string getString() const;
 
+        unsigned long workingDaysInMonth() const;
+
     private:
         unsigned long mN;
 };

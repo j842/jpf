@@ -32,7 +32,8 @@ namespace scheduler
 
         void decrementAvailability(itemdate day, tCentiDay decrement, unsigned int itemNdx);
         void registerHoliday(daterange dr);
-        const std::vector<daychunk> &getChunks(unsigned int day);
+
+        const std::vector<daychunk> &getChunks(unsigned int day) const;
 
     private:
         void _decrementAvailability(itemdate day, tCentiDay decrement); // does not assign workchunk.
@@ -40,7 +41,7 @@ namespace scheduler
     private:
         tCentiDay mMaxAvailability;
         std::vector<tCentiDay> mRemainingAvailability;  // Centidays. Index is days since start.
-        std::vector<std::vector<daychunk>> mWorkChunks; // First index is days since start.
+        mutable std::vector<std::vector<daychunk>> mWorkChunks; // First index is days since start.
     };
 
     class person : public inputfiles::teammember
@@ -53,7 +54,7 @@ namespace scheduler
         tCentiDay getAvailability(itemdate day) const;
         void decrementAvailability(itemdate day, tCentiDay decrement, unsigned int itemNdx);
 
-        const std::vector<daychunk> &getChunks(unsigned int day);
+        const std::vector<daychunk> &getChunks(unsigned int day) const;
 
     private:
         void _registerHolidayString(std::string s);

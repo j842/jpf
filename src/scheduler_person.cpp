@@ -75,10 +75,10 @@ namespace scheduler
             _decrementAvailability(i, getAvailability(i));
     }
 
-    const std::vector<daychunk> &intervals::getChunks(unsigned int day)
+    const std::vector<daychunk> &intervals::getChunks(unsigned int day) const
     {
         if (day >= mWorkChunks.size())
-            mWorkChunks.resize(day + 20);
+           mWorkChunks.resize(day + 20);
 
         ASSERT(day >= 0 && day < mWorkChunks.size());
         return mWorkChunks[day];
@@ -135,7 +135,7 @@ namespace scheduler
         mIntervals.decrementAvailability(day, decrement, itemNdx);
     }
 
-    const std::vector<daychunk> &person::getChunks(unsigned int day)
+    const std::vector<daychunk> &person::getChunks(unsigned int day) const
     {
         return mIntervals.getChunks(day);
     }
