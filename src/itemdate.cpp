@@ -140,23 +140,16 @@ unsigned long simpledate::countWorkDays(simpledate dA, simpledate dB)
     // now adjust for ends. day_of_week is [0,..,6] for [Sunday,...,Saturday]
     long leftover = (d1-d0).days() - fullwks*7;
 
-    // handle end bits.
-    int startDoW = d0.day_of_week();
-    int endDoW = startDoW + leftover;
-    if (startDoW==0) startDoW=1;
-    if (startDoW==6) startDoW=8;
-    else if (endDoW>7) endDoW-=2;
-    else if (endDoW==7) endDoW--;
-    if (endDoW-startDoW>0)
-        numdays += endDoW-startDoW;
-    return numdays;
+    // handle end bits. Fiddly.
+    int startDoW = d0.day_of_week(); // [0,...,6]
+    int endDoW = startDoW + leftover; // [0,...,12]
 
-    // long nwkends = 2 * ((ndays + d0.day_of_week()) / 7); // 2*Saturdays
-    // if (d0.day_of_week() == boost::date_time::Sunday)
-    //     ++nwkends;
-    // if (d1.day_of_week() == boost::date_time::Saturday)
-    //     --nwkends;
-    // return ndays - nwkends;
+    startDoW=std::max(startDoW,1); // Advance past Sunday (day 0)
+    if (startDoW==6) startDoW=8;  // Sat advanced to Mon. startDoW can't be day 7.
+    else if (endDoW>7) endDoW-=2; // End is past weekend (>=Mon)... delete weekend. Note the 'else' - we only do this if we didn't skip the weekend with startDoW! 
+    else if (endDoW==7) endDoW=6;
+    numdays += std::max(endDoW-startDoW,0);
+    return numdays;
 }
 
 unsigned long simpledate::Date2WorkDays(simpledate d0)
@@ -408,14 +401,14 @@ void simpledate_test::simpledate_test3()
     simpledate d0("16/5/22");
     boost::gregorian::day_iterator dayit(d0.getGregorian());
     //if (d0.day_of_week() == boost::date_time::Sunday)
-    for (unsigned int i = 0; i < 100; ++i, ++dayit)
+    for (unsigned int i = 0; i < 400; ++i, ++dayit)
     {
         int count = 0;
         int wkndsbtw= 0;
 
         simpledate d2(*dayit);
         boost::gregorian::day_iterator day2it(d2.getGregorian());
-        for (unsigned int j = 0; j < 100; ++j, ++day2it)
+        for (unsigned int j = 0; j < 400; ++j, ++day2it)
         {
             CPPUNIT_ASSERT_MESSAGE( S()<< simpledate(*dayit).getStr() << " -> " << simpledate(*day2it).getStr() <<"  : " <<
                 "Count = "<<count<<"  Wknds = "<<wkndsbtw <<"   ...  countworkdays = "<< (int)simpledate::countWorkDays(*dayit,*day2it),   (int)simpledate::countWorkDays(*dayit,*day2it) == count-wkndsbtw) ;
