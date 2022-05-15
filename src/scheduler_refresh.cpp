@@ -77,11 +77,15 @@ namespace scheduler
             std::vector<tCentiDay> itemDevCentiDone(mItems.size(), 0);
             for (auto &p : mPeople)
             {
-                for (itemdate d = oldStart; d < newStart; d.increment())
+                ASSERT(oldStart.getDayAsIndex()==0);
+                for (unsigned long d = 0; d < newStart.getDayAsIndex(); ++d)
                 {
-                    const std::vector<daychunk> &chunks(p.getChunks(d.getDayAsIndex()));
+                    const std::vector<daychunk> &chunks = p.getChunks(d);
                     for (auto &c : chunks)
+                    {
                         itemDevCentiDone[c.mItemIndex] += c.mEffort;
+                        std::cout << mItems[c.mItemIndex].mDescription << " + " << p.mName <<" : " << c.mEffort << "   ->  " << itemDevCentiDone[c.mItemIndex] << " / " << mItems[c.mItemIndex].mDevCentiDays << std::endl;
+                    }
                 }
             }
             for (unsigned int itemndx = 0; itemndx < mItems.size(); ++itemndx)
@@ -108,7 +112,6 @@ namespace scheduler
         iset.mH.advance(newStart); // just drops old holidays
         iset.mP.advance(newStart); // does nothing at present
         iset.mT.advance(newStart); // advances leave
-        gSettings().advance(newStart);
     }
 
 } // namespace
