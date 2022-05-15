@@ -77,7 +77,7 @@ namespace scheduler
             std::vector<tCentiDay> itemDevCentiDone(mItems.size(), 0);
             for (auto &p : mPeople)
             {
-                for (itemdate d = oldStart; d < newStart; ++d)
+                for (itemdate d = oldStart; d < newStart; d.increment())
                 {
                     const std::vector<daychunk> &chunks(p.getChunks(d.getDayAsIndex()));
                     for (auto &c : chunks)
@@ -96,7 +96,7 @@ namespace scheduler
                     if (newStart - mItems[itemndx].mActualStart >= mItems[itemndx].mMinCalendarDays)
                         bli.mMinCalendarDays=0;
                     else
-                        bli.mMinCalendarDays -= (newStart - mItems[itemndx].mActualStart).getAsDurationUInt();
+                        bli.mMinCalendarDays -= (newStart - mItems[itemndx].mActualStart);
                 }
 
                 if (bli.mEarliestStart < newStart)

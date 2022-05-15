@@ -17,8 +17,9 @@ class settings
 
         void advance(itemdate newStart);
 
-        boost::gregorian::date startDate() const;
-        boost::gregorian::date endDate() const;
+        simpledate startDate() const;
+        simpledate endDate() const;
+        monthIndex endMonth() const;
         double dailyDevCost() const;
 
         int getRequiredInputVersion() const;
@@ -42,8 +43,8 @@ class settings
         std::string getDescription(std::string set) const;
 
         bool mLoaded;
-        boost::gregorian::date mStartDate;
-        boost::gregorian::date mEndDate;
+        simpledate mStartDate;
+        simpledate mEndDate;
         std::string mRootDir;
         int mPort;
 

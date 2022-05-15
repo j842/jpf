@@ -30,23 +30,23 @@ void scheduler::CalculateDevDaysTally(
     ProjectLabels.push_back("Other BAU");
     ProjectLabels.push_back("Project Overhead");
 
-    unsigned int maxmonth = 0;
+    unsigned long maxmonth = 0;
     for (auto & z : mItems)
-        if (z.mActualEnd.getMonthFromStart()>maxmonth)
-            maxmonth=z.mActualEnd.getMonthFromStart()+1;
+        if (z.mActualEnd.getMonthIndex() >= maxmonth)
+            maxmonth=z.mActualEnd.getMonthIndex()+1;
 
     for (auto & p : DevDaysTally)
         p.resize(maxmonth,0.0);
 
     for (auto & z : mItems)
     {
-        for (unsigned int m=z.mActualStart.getMonthFromStart(); m<maxmonth;++m)
+        for (unsigned long m=z.mActualStart.getMonthIndex(); m<maxmonth;++m)
         {
-            itemdate monthstart( itemdate::firstdayofmonth(m));
-            itemdate monthend( itemdate::lastdayofmonth(m));
+            itemdate monthstart = monthIndex(m).getFirstMonthDay();
+            itemdate monthend   = monthIndex(m).getLastMonthDay();
             double tasktally = 0.0;
             
-            double taskDuration = z.getDuration().getAsDurationDouble();
+            double taskDuration = z.getDuration();
             if (taskDuration>0)
             {
                 unsigned int firstDayIndex = std::max(monthstart.getDayAsIndex(),z.mActualStart.getDayAsIndex());
@@ -81,10 +81,10 @@ void scheduler::CalculateDevDaysTally(
         double monthbau=0.0;
         double monthoverhead=0.0;
 
-        itemdate monthstart( itemdate::firstdayofmonth(m));
-        itemdate monthend( itemdate::lastdayofmonth(m));
-        double daysinmonth=monthend.getDayAsIndex()+1-monthstart.getDayAsIndex();
-
+        itemdate monthstart( monthIndex(m).getFirstMonthDay() );
+        itemdate monthend( monthIndex(m).getLastMonthDay());
+        double daysinmonth=(monthend-monthstart)+1;
+        
         for (auto & worker : mPeople)
         {
             monthcapacity += daysinmonth * ((double)worker.mEFTProject)/100.0;
@@ -222,7 +222,8 @@ void scheduler::Graph_Project_Cost(std::ostream &ofs) const
     CalculateDevDaysTally(DevDaysTally, Labels, Colours,BAU);
     if (DevDaysTally.size() == 0)
         return; // no data.
-    unsigned int maxmonth = std::min((unsigned int)DevDaysTally[0].size(), itemdate::getEndMonth()+1);
+    unsigned long devdaysmonths = DevDaysTally[0].size();
+    unsigned int maxmonth = std::min(devdaysmonths, gSettings().endMonth()+1);
 
     ofs << R"(
         <h2>Projected Salary Costs by Month</h2>
@@ -236,7 +237,7 @@ void scheduler::Graph_Project_Cost(std::ostream &ofs) const
         {
             listoutput lo(ofs, "x: [", ", ", "], ");
             for (unsigned int m = 0; m < maxmonth; ++m)
-                lo.writehq(itemdate::getMonthAsString(m));
+                lo.writehq(monthIndex(m).getString());
         }
 
         ofs << std::endl;
@@ -304,7 +305,8 @@ void scheduler::Graph_BAU(std::ostream &ofs) const
     CalculateDevDaysTally(DevDaysTally, Labels, Colours,BAU);
     if (DevDaysTally.size() == 0)
         return; // no data.
-    unsigned int maxmonth = std::min((unsigned int)DevDaysTally[0].size(), itemdate::getEndMonth()+1);
+    unsigned long devdaysmonths = DevDaysTally[0].size(); 
+    unsigned long maxmonth = std::min(devdaysmonths, gSettings().endMonth()+1);
 
     std::vector<std::vector<double>> DDT; // [BAU/New][month]
     DDT.resize(3);
@@ -336,7 +338,7 @@ void scheduler::Graph_BAU(std::ostream &ofs) const
         {
             listoutput lo(ofs, "x: [", ", ", "], ");
             for (unsigned int m = 0; m < maxmonth; ++m)
-                lo.writehq(itemdate::getMonthAsString(m));
+                lo.writehq( monthIndex(m).getString() );
         }
 
         ofs << std::endl;
@@ -402,7 +404,7 @@ void scheduler::outputHTML_Index(std::ostream & ofs) const
     HTMLheaders(ofs,"");
 //<div id="firsttable" style="width:800px;height:250px;"></div>
 
-    ofs<<"<h2>Project Backlog</h2>Starting from "<< itemdate::date2strNice(gSettings().startDate()) << "<br/>"<<std::endl;
+    ofs<<"<h2>Project Backlog</h2>Starting from "<< simpledate(gSettings().startDate()).getStr_nice_long() << "<br/>"<<std::endl;
     ofs << "<PRE>"<<std::endl;
     scheduler::displaybacklog(ofs);
     ofs << "</PRE>"<<std::endl;    
@@ -412,7 +414,7 @@ void scheduler::outputHTML_Index(std::ostream & ofs) const
 void scheduler::outputHTML_People(std::ostream & ofs) const
 {
     HTMLheaders(ofs,"");
-    ofs<<"<h2>Tasks by Person</h2>Starting from "<< itemdate::date2strNice(gSettings().startDate()) << "<br/>"<<std::endl;
+    ofs<<"<h2>Tasks by Person</h2>Starting from "<< simpledate(gSettings().startDate()).getStr_nice_long() << "<br/>"<<std::endl;
     ofs << "<PRE>"<<std::endl;
     scheduler::displaypeople(ofs);
     ofs << "</PRE>"<<std::endl;    
@@ -422,7 +424,7 @@ void scheduler::outputHTML_People(std::ostream & ofs) const
 void scheduler::outputHTML_RawBacklog(std::ostream & ofs) const
 {
     HTMLheaders(ofs,"");
-    ofs<<"<h2>Raw Backlog</h2>Starting from "<< itemdate::date2strNice(gSettings().startDate()) << "<br/>"<<std::endl;
+    ofs<<"<h2>Raw Backlog</h2>Starting from "<< simpledate(gSettings().startDate()).getStr_nice_long() << "<br/>"<<std::endl;
     ofs << "<PRE>"<<std::endl;
     scheduler::displaybacklog_raw(ofs);
     ofs << "</PRE>"<<std::endl;    
@@ -595,8 +597,8 @@ void scheduler::outputHTML_Detailed_Gantt(std::ostream & ofs) const
 
         // google can't handle milestones.
         itemdate tend = z.mActualEnd;
-        if (tend==z.mActualStart) tend = tend + 1;
-
+        if (tend==z.mActualStart) tend.increment();
+        
         oss << "['" << __protect(z.mId) <<"', '"<< __protect(z.getFullName())<<"', '" << 
             __protect(mProjects[z.mProject].getId()) <<"', "
             << z.mActualStart.getAsGoogleNewDate() << ", "

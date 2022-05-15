@@ -1,5 +1,6 @@
 #include "inputfiles_teambacklogs.h"
 
+#include "settings.h"
 #include "simplecsv.h"
 #include "utils.h"
 #include "inputfiles_projects.h"
@@ -47,7 +48,7 @@ namespace inputfiles
         mDevCentiDays = (int)(0.5 + str2positivedouble(csvitems[4])*100.0);
 
         // 5 - Earliest Start Date
-        mEarliestStart.set(csvitems[5]);
+        mEarliestStart = itemdate(csvitems[5]);
 
         // 6 - blocking resources
         std::vector<std::string> names;
@@ -77,7 +78,7 @@ namespace inputfiles
         csvitems.push_back(S() << mMinCalendarDays);
         csvitems.push_back(S() << std::setprecision(2) << std::fixed << ((double)mDevCentiDays)/100.0);
 
-        if (mEarliestStart == itemdate::Today())
+        if (mEarliestStart == gSettings().startDate())
             csvitems.push_back("");
         else
             csvitems.push_back(mEarliestStart.getStr());

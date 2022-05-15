@@ -33,8 +33,8 @@ namespace scheduler
             es.setForever();
         else
             while (getAvailability(es) == 0)
-                es += 1;
-
+                es.increment();
+                
         return es;
     }
 
@@ -71,7 +71,7 @@ namespace scheduler
 
     void intervals::registerHoliday(daterange dr)
     { // dr is half open interval, so we don't include the end.
-        for (itemdate i = dr.getStart(); i < dr.getEnd(); ++i)
+        for (itemdate i = dr.getStart(); i < dr.getEnd(); i.increment())
             _decrementAvailability(i, getAvailability(i));
     }
 

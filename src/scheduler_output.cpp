@@ -59,8 +59,8 @@ namespace scheduler
             ofs << fin.getStrGantt() << ","; // end date
 
             // gantt project has duration 1 for same day completion.
-            itemdate duration = (x.mActualEnd - x.mActualStart);
-            ofs << duration.getAsDurationString() << ",";
+            unsigned long duration = (x.mActualEnd - x.mActualStart);
+            ofs << duration << ",";
 
             ofs << "0.0"
                 << ",";

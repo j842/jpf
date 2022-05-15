@@ -35,15 +35,15 @@ void settings::load_settings()
 
     std::string sdate=getSettingS("startdate");
     if (sdate.length()==0 || iSame(sdate,"today"))
-        mStartDate = itemdate::nextWorkday(boost::gregorian::day_clock::local_day());
+        mStartDate = simpledate::nextWorkDay(boost::gregorian::day_clock::local_day());
     else
-        mStartDate = itemdate::nextWorkday(itemdate::parseDateStringDDMMYY(getSettingS("startdate")));
+        mStartDate = simpledate::nextWorkDay(simpledate::parseDateStringDDMMYY(getSettingS("startdate")));
 
     std::string edate=getSettingS("enddate");
     if (sdate.length()==0 || iSame(sdate,"forever"))
-        mEndDate = itemdate::nextWorkday(boost::gregorian::date(mStartDate.year(),11,1));
+        mEndDate = simpledate::nextWorkDay(boost::gregorian::date(mStartDate.getGregorian().year(),12,1)); // dec same year. <shrug>
     else    
-        mEndDate = itemdate::parseDateStringDDMMYY(getSettingS("enddate"));
+        mEndDate = simpledate::nextWorkDay(simpledate::parseDateStringDDMMYY(getSettingS("enddate")));
 
     mPort = getSettingI("port");
 
@@ -112,16 +112,20 @@ double settings::getSettingD(std::string settingName) const
 }
 
 
-boost::gregorian::date settings::startDate() const 
+simpledate settings::startDate() const 
 {
     ASSERT(mLoaded);
     return mStartDate;
 }
 
-boost::gregorian::date settings::endDate() const
+simpledate settings::endDate() const
 {
     ASSERT(mLoaded);
     return mEndDate;
+}
+monthIndex settings::endMonth() const
+{
+    return monthIndex(endDate());
 }
 
 double settings::dailyDevCost() const

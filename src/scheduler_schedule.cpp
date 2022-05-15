@@ -183,8 +183,8 @@ namespace scheduler
         ASSERT(!z.mActualStart.isForever());
         while (totalDevCentiDaysRemaining > 0)
         { // loop over days (id)
-            unsigned int calDaysPast = (id - z.mActualStart).getAsDurationUInt();
-            unsigned int calDaysRemain = 0;
+            unsigned long calDaysPast = (id - z.mActualStart);
+            unsigned long calDaysRemain = 0;
             if (z.mMinCalendarDays > calDaysPast)
                 calDaysRemain = z.mMinCalendarDays - calDaysPast; // includes today.
 
@@ -204,11 +204,11 @@ namespace scheduler
             // now go through again and overallocate (above evenPace) anything left over if we can. Will bias towards first resouce but good enough.
             _dotask_v2_limitedassign(itemNdx, remainTeamToday, remainTeamToday, sumCentiDays, totalDevCentiDaysRemaining, id);
 
-            ++id;
+            id.increment();
         }
         z.mActualEnd = id;
 
-        double duration = (z.mActualEnd - z.mActualStart).getAsDurationDouble();
+        double duration = (z.mActualEnd - z.mActualStart);
         for (unsigned int pi = 0; pi < z.mResources.size(); ++pi)
             z.mResources[pi].mLoadingPercent = sumCentiDays[pi].getL() / duration;
     }
