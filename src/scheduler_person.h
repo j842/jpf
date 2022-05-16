@@ -30,14 +30,14 @@ namespace scheduler
         tCentiDay getMaxAvialability() const { return mMaxAvailability; }
         tCentiDay getAvailability(itemdate day) const;
 
-        void decrementAvailability(itemdate day, tCentiDay decrement, unsigned int itemNdx);
-        void registerHoliday(daterange dr);
+        void decrementAvailability(unsigned long uDay, tCentiDay decrement, unsigned int itemNdx);
+        void registerHoliday(leaverange dr);
 
         const std::vector<daychunk> &getChunks(unsigned int day) const;
         unsigned long numChunkDays() const;
 
     private:
-        void _decrementAvailability(itemdate day, tCentiDay decrement); // does not assign workchunk.
+        void _decrementAvailability(unsigned long uDay, tCentiDay decrement); // does not assign workchunk.
 
     private:
         tCentiDay mMaxAvailability;
@@ -54,14 +54,14 @@ namespace scheduler
         itemdate getEarliestStart(itemdate fromstart);
         tCentiDay getMaxAvialability() const;
         tCentiDay getAvailability(itemdate day) const;
-        void decrementAvailability(itemdate day, tCentiDay decrement, unsigned int itemNdx);
+        void decrementAvailability(unsigned long uDay, tCentiDay decrement, unsigned int itemNdx);
 
         const std::vector<daychunk> &getChunks(unsigned int day) const;
         unsigned long numChunkDays() const;
 
     private:
         void _registerHolidayString(std::string s);
-        void _registerHoliday(daterange dr);
+        void _registerHoliday(leaverange dr);
 
     private:
         intervals mIntervals;

@@ -161,29 +161,24 @@ class itemdate_test : public CPPUNIT_NS::TestFixture
 };
 
 
-typedef enum
-{
-    kHalfOpenInterval,
-    kClosedInterval
-
-} tIntervalTypes;
-
-class daterange
+// simple class to store a range of leave dates (not workdays!) - closed interval
+class leaverange
 {
     public:
-        daterange(std::string s, tIntervalTypes t); 
+        leaverange(std::string s); // closed interval.
+        bool isEmpty() const;
+        void setEmpty();
 
-        itemdate getStart() const;
-        itemdate getEnd() const;    // half open interval (end is not in the interval)
+        unsigned long getStartasIndex() const;
+        unsigned long getEndasIndex() const; // Half Open interval!!
+        
+        std::string getString() const;
 
-        std::string getRangeAsString() const;
-
-        void setStart(itemdate start);
-        void setEnd(itemdate end, tIntervalTypes t);
+        void advance(itemdate newStart);
 
         private:
-            itemdate mStart;
-            itemdate mEnd; // half open interval!
+            simpledate mStart;      // closed interval.
+            simpledate mEnd;        // closed interval.
 };
 
 

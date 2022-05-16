@@ -246,6 +246,12 @@ void itemdate::increment()
     mD=*di;
 }
 
+unsigned long itemdate::getDayAsIndex() const
+{
+    return countWorkDays(gSettings().startDate(), *this);
+}
+
+
 // -----------------------------------------------------------
 
 monthIndex::monthIndex(simpledate d)
@@ -306,62 +312,66 @@ unsigned long monthIndex::workingDaysInMonth() const
 
 // ------------------------------------------------------------------------------
 
-unsigned long itemdate::getDayAsIndex() const
+
+// ------------------------------------------------------------------------------
+
+// closed interval
+leaverange::leaverange(std::string s)
 {
-    return countWorkDays(gSettings().startDate(), *this);
-}
-
-daterange::daterange(std::string s, tIntervalTypes t)
-{ // parse date range string. Could be date, or date-date (inclusive).
-
-    std::vector<std::string> strs;
-    boost::split(strs, s, boost::is_any_of("-"));
-    if (strs.size() == 1)
+    if (s.length()==0)
+        setEmpty();
+    else
     {
-        strs.push_back(strs[0]);
-        t = kClosedInterval; // treat as closed.
+        std::vector<std::string> strs;
+        boost::split(strs, s, boost::is_any_of("-"));
+        if (strs.size() == 1)
+            strs.push_back(strs[0]);
+        ASSERT(strs.size() == 2);
+        mStart = simpledate::parseDateStringDDMMYY(strs[0]);
+        mEnd = simpledate::parseDateStringDDMMYY(strs[1]);
     }
-    ASSERT(strs.size() == 2);
-    mStart.setclip(strs[0]);
-    mEnd.setclip(strs[1]);
-
-    if (t == kClosedInterval) // convert to half open.
-        mEnd.increment();
 }
-itemdate daterange::getStart() const
+
+bool leaverange::isEmpty() const
 {
-    return mStart;
+    return (mStart.isForever() || mEnd.isForever());
 }
-
-itemdate daterange::getEnd() const
+void leaverange::setEmpty()
 {
-    return mEnd;
+    mStart.setForever();
+    mEnd.setForever();
 }
 
-void daterange::setStart(itemdate start)
+
+unsigned long leaverange::getStartasIndex() const
 {
-    mStart = start;
+    unsigned long ndx = itemdate(mStart).getDayAsIndex(); // advance to first work day.
+    return ndx;
 }
-void daterange::setEnd(itemdate end, tIntervalTypes t)
+unsigned long leaverange::getEndasIndex() const // Half Open interval! 
 {
-    mEnd = end;
-    if (t == kClosedInterval)
-        mEnd.increment();
+    if (isWeekend(mEnd.getGregorian()))
+        return itemdate(mEnd).getDayAsIndex(); // advance to first work day. 
 
-    ASSERT((mEnd.getGregorian()-mStart.getGregorian()).days()>0); // non-empty interval.
+    return itemdate(mEnd).getDayAsIndex() + 1; // already on work day. map closed to open interval.
 }
 
-std::string daterange::getRangeAsString() const
+std::string leaverange::getString() const
 {
-    boost::gregorian::date_duration dd = mEnd.getGregorian()-mStart.getGregorian();
-    if (dd.days() <= 1)
-        return mStart.getStr(); // empty set.
-
-    std::ostringstream oss;
-    oss << mStart.getStr() << "-" << mEnd.getStr();
-    return oss.str();
+    return S() << mStart.getStr() << "-"<< mEnd.getStr();
 }
 
+void leaverange::advance(itemdate newStart)
+{
+    if (isEmpty())
+        return;
+    boost::gregorian::date ns = newStart.getGregorian();
+    if (mEnd<ns)
+        setEmpty();
+    else
+        if (mStart<ns)
+            mStart=ns;
+}
 
 // ---------------
 

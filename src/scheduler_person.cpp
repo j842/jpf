@@ -46,10 +46,8 @@ namespace scheduler
         return mMaxAvailability;
     }
 
-    void intervals::_decrementAvailability(itemdate day, tCentiDay decrement) // does not assign workchunk.
+    void intervals::_decrementAvailability(unsigned long uDay, tCentiDay decrement) // does not assign workchunk.
     {
-        unsigned int uDay = day.getDayAsIndex();
-
         if (uDay >= mRemainingAvailability.size())
             mRemainingAvailability.resize(uDay + 20, mMaxAvailability);
 
@@ -57,11 +55,10 @@ namespace scheduler
         mRemainingAvailability[uDay] = mRemainingAvailability[uDay] - decrement;
     }
 
-    void intervals::decrementAvailability(itemdate day, tCentiDay decrement, unsigned int itemNdx)
+    void intervals::decrementAvailability(unsigned long uDay, tCentiDay decrement, unsigned int itemNdx)
     {
-        _decrementAvailability(day, decrement);
+        _decrementAvailability(uDay, decrement);
 
-        unsigned int uDay = day.getDayAsIndex();
         if (uDay >= mWorkChunks.size())
             mWorkChunks.resize(uDay + 20);
 
@@ -69,10 +66,11 @@ namespace scheduler
         mWorkChunks[uDay].push_back(dc);
     }
 
-    void intervals::registerHoliday(daterange dr)
+    void intervals::registerHoliday(leaverange dr)
     { // dr is half open interval, so we don't include the end.
-        for (itemdate i = dr.getStart(); i < dr.getEnd(); i.increment())
-            _decrementAvailability(i, getAvailability(i));
+        if (!dr.isEmpty())
+            for (unsigned long i = dr.getStartasIndex(); i < dr.getEndasIndex(); ++i) // half open.
+                _decrementAvailability(i, getAvailability(i));
     }
 
     const std::vector<daychunk> &intervals::getChunks(unsigned int day) const
@@ -109,8 +107,9 @@ namespace scheduler
 
             for (auto &x : items)
             { // parse leave string. Could be date, or date-date (inclusive). Closed interval.
-                daterange dr(x, kClosedInterval);
-                _registerHoliday(dr);
+                leaverange dr(x);
+                if (!dr.isEmpty())
+                    _registerHoliday(dr);
             }
         }
     }
@@ -120,7 +119,7 @@ namespace scheduler
         return mIntervals.getEarliestStart(fromstart);
     }
 
-    void person::_registerHoliday(daterange dr)
+    void person::_registerHoliday(leaverange dr)
     { // end is open interval.
         mIntervals.registerHoliday(dr);
     }
@@ -135,9 +134,9 @@ namespace scheduler
         return mIntervals.getAvailability(day);
     }
 
-    void person::decrementAvailability(itemdate day, tCentiDay decrement, unsigned int itemNdx)
+    void person::decrementAvailability(unsigned long uDay, tCentiDay decrement, unsigned int itemNdx)
     {
-        mIntervals.decrementAvailability(day, decrement, itemNdx);
+        mIntervals.decrementAvailability(uDay, decrement, itemNdx);
     }
 
     const std::vector<daychunk> &person::getChunks(unsigned int day) const

@@ -202,7 +202,7 @@ namespace scheduler
             if (d > 0)
             {
                 ASSERT(remainTeamToday>=d);
-                p.decrementAvailability(id, d, itemNdx);
+                p.decrementAvailability(id.getDayAsIndex(), d, itemNdx);
                 totalDevCentiDaysRemaining -= d;
                 remainTeamToday -= d;
                 sumCentiDays[pi] += d;
