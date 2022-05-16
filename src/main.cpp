@@ -194,7 +194,7 @@ int cMain::run_advance(std::string s)
 { // s of format -a=dd/mm/yy
     s.erase(s.begin(), s.begin() + 3);
     itemdate newStart(s);
-    std::cout << " Advancing start date " << wdduration(gSettings().startDate(),newStart) << " workdays --> " << newStart.getStr_nice_short() << std::endl;
+    std::cout << " Advancing start date " << itemdate::countWorkDays(gSettings().startDate(),newStart) << " workdays --> " << newStart.getStr_nice_short() << std::endl;
 
     try
     {

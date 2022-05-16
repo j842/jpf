@@ -32,6 +32,7 @@ bool isWeekend(const boost::gregorian::date & d);
 
 class monthIndex;
 
+// can represent any date (including weekend days)
 class simpledate
 {
     public:
@@ -57,12 +58,6 @@ class simpledate
     public:
         static simpledate parseDateStringDDMMYY(std::string datestr);
 
-        static simpledate snapWorkDay_forward(simpledate d);
-        static unsigned long countWorkDays(simpledate dA, simpledate dB); // half open interval.
-
-        static simpledate WorkDays2Date(unsigned long ndays);
-        static unsigned long Date2WorkDays(simpledate d0);
-
     public:
         friend bool operator==(const simpledate& lhs, const simpledate & rhs) { return (lhs.getGregorian()==rhs.getGregorian()); }
         friend bool operator!=(const simpledate& lhs, const simpledate & rhs) { return !(lhs==rhs); }
@@ -77,9 +72,6 @@ class simpledate
     protected:
         boost::gregorian::date mD;
 };
-
-unsigned long wdduration(const simpledate& istart, const simpledate& iend); // difference in work days
-
 
 class simpledate_test : public CPPUNIT_NS::TestFixture
 {
@@ -133,11 +125,16 @@ class itemdate : public simpledate
         itemdate(unsigned long dayIndex);
 
         bool setclip(std::string datestr);  // set to the next workday after start from a dd/mm/yy string. 
-        bool set(const boost::gregorian::date & d);  // set to the next workday from a gregorian date.
         void decrementWorkDay();
         void incrementWorkDay();
         unsigned long getDayAsIndex() const;
 
+
+        static simpledate snapWorkDay_forward(simpledate d);
+        static unsigned long countWorkDays(simpledate dA, simpledate dB); // half open interval.
+
+        static simpledate WorkDays2Date(unsigned long ndays);
+        static unsigned long Date2WorkDays(simpledate d0);
 
     public:
         friend itemdate operator+(const itemdate& lhs, unsigned long rhs); // advance x work days.

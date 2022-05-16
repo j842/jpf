@@ -44,15 +44,15 @@ void settings::load_settings()
 
     std::string sdate=getSettingS("startdate");
     if (sdate.length()==0 || iSame(sdate,"today"))
-        mStartDate = simpledate::snapWorkDay_forward(boost::gregorian::day_clock::local_day());
+        mStartDate = itemdate::snapWorkDay_forward(boost::gregorian::day_clock::local_day());
     else
-        mStartDate = simpledate::snapWorkDay_forward(simpledate::parseDateStringDDMMYY(getSettingS("startdate")));
+        mStartDate = itemdate::snapWorkDay_forward(simpledate::parseDateStringDDMMYY(getSettingS("startdate")));
 
     std::string edate=getSettingS("enddate");
     if (sdate.length()==0 || iSame(sdate,"forever"))
-        mEndDate = simpledate::snapWorkDay_forward(boost::gregorian::date(mStartDate.getGregorian().year(),12,1)); // dec same year. <shrug>
+        mEndDate = itemdate::snapWorkDay_forward(boost::gregorian::date(mStartDate.getGregorian().year(),12,1)); // dec same year. <shrug>
     else    
-        mEndDate = simpledate::snapWorkDay_forward(simpledate::parseDateStringDDMMYY(getSettingS("enddate")));
+        mEndDate = itemdate::snapWorkDay_forward(simpledate::parseDateStringDDMMYY(getSettingS("enddate")));
 
     mPort = getSettingI("port");
 

@@ -43,7 +43,7 @@ namespace scheduler
         {
             for (unsigned int dayndx = 0; dayndx < maxday; ++dayndx)
             {
-                simpledate d(simpledate::WorkDays2Date(dayndx));
+                simpledate d(itemdate::WorkDays2Date(dayndx));
                 monthIndex mI(d);
                 for (const auto &zc : zp.getChunks(dayndx))
                     DevDaysTally[mItems[zc.mItemIndex].mProject][mI] += ((double)zc.mEffort) / 100.0;
@@ -62,7 +62,7 @@ namespace scheduler
 
             double workingdaysinmonth = monthIndex(m).workingDaysInMonth();
             if (m==0)
-                workingdaysinmonth = wdduration( gSettings().startDate(), monthIndex(1).getFirstMonthDay());
+                workingdaysinmonth = itemdate::countWorkDays( gSettings().startDate(), monthIndex(1).getFirstMonthDay());
 
             for (auto &worker : mPeople)
             {

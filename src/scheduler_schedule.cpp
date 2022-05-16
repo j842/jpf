@@ -227,7 +227,7 @@ namespace scheduler
         { // loop over days (id)
             tCentiDay remainTeamToday = totalDevCentiDaysRemaining; // each team member capped at 100 centidays/day.
 
-            unsigned long calDaysPast = wdduration(z.mActualStart,id);
+            unsigned long calDaysPast = itemdate::countWorkDays(z.mActualStart,id);
             if (z.mMinCalendarDays > calDaysPast)
             {
                 unsigned long calDaysRemain = z.mMinCalendarDays - calDaysPast; // includes today.

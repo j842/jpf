@@ -28,7 +28,7 @@ namespace scheduler
 
     unsigned long scheduleditem::getDurationDays() const 
     { 
-        return wdduration(mActualStart,mActualEnd);
+        return itemdate::countWorkDays(mActualStart,mActualEnd);
     }
 
     scheduledproject::scheduledproject(const inputfiles::project &prj) : inputfiles::project(prj), mTotalDevCentiDays(0)

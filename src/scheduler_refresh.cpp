@@ -97,7 +97,7 @@ namespace scheduler
 
                 if (mItems[itemndx].mActualStart < newStart)
                 {
-                    unsigned long delta = wdduration(mItems[itemndx].mActualStart, newStart);
+                    unsigned long delta = itemdate::countWorkDays(mItems[itemndx].mActualStart, newStart);
                     if (delta >= mItems[itemndx].mMinCalendarDays)
                         bli.mMinCalendarDays=0;
                     else
