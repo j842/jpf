@@ -239,7 +239,7 @@ namespace scheduler
             _dotask_v2_limitedassign(itemNdx, remainTeamToday, sumCentiDays, maxCentiDays, totalDevCentiDaysRemaining, id);
 
             z.mClosedEnd=id;
-            id.increment();
+            id.incrementWorkDay();
         }
         z.mActualEnd = id;
 

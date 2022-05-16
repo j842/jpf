@@ -114,7 +114,7 @@ bool simpledate::isForever() const
     return (mD.is_infinity());
 }
 
-simpledate simpledate::nextWorkDay(simpledate d)
+simpledate simpledate::snapWorkDay_forward(simpledate d)
 {
     boost::gregorian::date d0 = d.getGregorian();
     if (d0.day_of_week() == boost::date_time::Saturday)
@@ -169,7 +169,7 @@ simpledate simpledate::WorkDays2Date(unsigned long ndays)
 
     //    std::cout << getToday() << " " << ndays << " " << nwkends << " " << d0 << std::endl;
 
-    ASSERT(d0 == nextWorkDay(d0).getGregorian());
+    ASSERT(d0 == snapWorkDay_forward(d0).getGregorian());
     return d0;
 }
 
@@ -202,7 +202,7 @@ itemdate::itemdate(simpledate s) : simpledate(s)
     ASSERT(mD >= gSettings().startDate().getGregorian());    
 }
 
-itemdate::itemdate(std::string datestr) : simpledate(nextWorkDay(parseDateStringDDMMYY(datestr)))
+itemdate::itemdate(std::string datestr) : simpledate(snapWorkDay_forward(parseDateStringDDMMYY(datestr)))
 {
     ASSERT(mD >= gSettings().startDate().getGregorian());
 }
@@ -218,7 +218,7 @@ itemdate::itemdate(unsigned long dayIndex) : simpledate()
     ASSERT(mD >= gSettings().startDate().getGregorian());
 }
 
-itemdate::itemdate(const boost::gregorian::date &d) : simpledate(nextWorkDay(d))
+itemdate::itemdate(const boost::gregorian::date &d) : simpledate(snapWorkDay_forward(d))
 {
     ASSERT(mD >= gSettings().startDate().getGregorian());
 }
@@ -228,11 +228,11 @@ bool itemdate::setclip(std::string datestr) // set the date based on a dd/mm/yy 
     if (datestr.length() == 0 || parseDateStringDDMMYY(datestr) < gSettings().startDate())
         mD = gSettings().startDate().getGregorian();
     else
-        mD = nextWorkDay(parseDateStringDDMMYY(datestr)).getGregorian();
+        mD = snapWorkDay_forward(parseDateStringDDMMYY(datestr)).getGregorian();
     return true;
 }
 
-void itemdate::decrement()
+void itemdate::decrementWorkDay()
 {
     unsigned long mDay = getDayAsIndex();
     --mDay;
@@ -244,7 +244,7 @@ bool isWeekend(const boost::gregorian::date & d)
     return (d.day_of_week()== boost::date_time::Saturday || d.day_of_week()== boost::date_time::Sunday);
 }
 
-void itemdate::increment()
+void itemdate::incrementWorkDay()
 {
     boost::gregorian::day_iterator di(mD);
     ++di;
@@ -390,7 +390,7 @@ void simpledate_test::simpledate_test0()
     simpledate d1("15/5/22"); //sunday
     simpledate d2("16/5/22"); //monday
     simpledate d2b("17/5/22");
-    CPPUNIT_ASSERT_MESSAGE( "Workday calc wrong", simpledate::nextWorkDay(d1)==d2 );
+    CPPUNIT_ASSERT_MESSAGE( "Workday calc wrong", simpledate::snapWorkDay_forward(d1)==d2 );
     CPPUNIT_ASSERT_MESSAGE( "duration calc wrong", simpledate::countWorkDays(d1,d2)==0);
     CPPUNIT_ASSERT_MESSAGE( "duration calc wrong", simpledate::countWorkDays(d1,d1)==0);
     CPPUNIT_ASSERT_MESSAGE( "duration calc wrong", simpledate::countWorkDays(d1,d2b)==1);
@@ -460,7 +460,7 @@ void itemdate_test::itemdate_test1()
 
     CPPUNIT_ASSERT( s.getDayAsIndex() == 0);
 
-    s.increment();
+    s.incrementWorkDay();
     CPPUNIT_ASSERT( s.getDayAsIndex() == 1);
 
     auto g = gSettings().startDate().getGregorian();

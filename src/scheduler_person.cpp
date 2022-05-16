@@ -33,7 +33,7 @@ namespace scheduler
             es.setForever();
         else
             while (getAvailability(es) == 0)
-                es.increment();
+                es.incrementWorkDay();
                 
         return es;
     }

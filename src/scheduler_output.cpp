@@ -55,7 +55,7 @@ namespace scheduler
 
             itemdate fin = x.mActualEnd;
             if (fin > x.mActualStart)
-                fin.decrement();             // gantt project is closed interval.
+                fin.decrementWorkDay();             // gantt project is closed interval.
             ofs << fin.getStrGantt() << ","; // end date
 
             // gantt project has duration 1 for same day completion.

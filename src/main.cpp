@@ -206,6 +206,7 @@ int cMain::run_advance(std::string s)
             inputfiles::inputset iset(p, t, h, b);
             // advance and throw away scheduler.
             scheduler::scheduler s(iset);
+            s.schedule();
             s.advance(newStart, iset); // advances the iset members.
             gSettings().advance(newStart);
 

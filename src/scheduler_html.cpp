@@ -572,7 +572,7 @@ namespace scheduler
             // google can't handle milestones.
             itemdate tend = z.mActualEnd;
             if (tend == z.mActualStart)
-                tend.increment();
+                tend.incrementWorkDay();
 
             oss << "['" << __protect(z.mId) << "', '" << __protect(z.getFullName()) << "', '" << __protect(mProjects[z.mProject].getId()) << "', "
                 << z.mActualStart.getAsGoogleNewDate() << ", "

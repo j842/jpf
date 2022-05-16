@@ -63,14 +63,13 @@ namespace scheduler
         }
     }
 
-    void scheduler::advance(itemdate newStart, inputfiles::inputset &iset)
+    void scheduler::advance(itemdate newStart, inputfiles::inputset &iset) const
     {
         itemdate oldStart;
         oldStart.setToStart();
 
         // The main event: update the backlog items in the team files.
-        ASSERT(!mScheduled); // assume we've not scheduled.
-        schedule();
+        ASSERT(mScheduled); // assume we've not scheduled.
 
         // advance mTeamItems devdays and calendardays.
         {

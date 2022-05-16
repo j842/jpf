@@ -57,7 +57,7 @@ class simpledate
     public:
         static simpledate parseDateStringDDMMYY(std::string datestr);
 
-        static simpledate nextWorkDay(simpledate d);
+        static simpledate snapWorkDay_forward(simpledate d);
         static unsigned long countWorkDays(simpledate dA, simpledate dB); // half open interval.
 
         static simpledate WorkDays2Date(unsigned long ndays);
@@ -134,8 +134,8 @@ class itemdate : public simpledate
 
         bool setclip(std::string datestr);  // set to the next workday after start from a dd/mm/yy string. 
         bool set(const boost::gregorian::date & d);  // set to the next workday from a gregorian date.
-        void decrement();
-        void increment();
+        void decrementWorkDay();
+        void incrementWorkDay();
         unsigned long getDayAsIndex() const;
 
 
