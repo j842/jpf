@@ -254,49 +254,43 @@ std::string makelower(const std::string & s)
 
 unsigned long str2L(std::string s)
 {
+    unsigned long r=0;
     if (s.length()==0)
         return 0;
-    unsigned long r;
     try
     {
         r = stol(s);
     }
     catch (const std::invalid_argument & e)
     {
-        return 0;
     }
     catch (const std::out_of_range & e)
     {
-        return 0;
     }
-
-    return (unsigned int)r;
+    return r;
 }
 double str2positivedouble(std::string s)
 {
     if (s.length()==0)
         return 0;
-    int r;
+    double r = 0.0;
     try
     {
         r = stod(s);
     }
     catch (const std::invalid_argument & e)
     {
-        return 0;
     }
     catch (const std::out_of_range & e)
     {
-        return 0;
     }
 
-    if (r<0)
+    if (r<0.0)
     {
         std::cerr << "String has negative number!" << std::endl;
-        return 0;
+        return 0.0;
     }
-
-    return (unsigned int)r;    
+    return r;    
 }
 
 void advanceLeaveString(std::string & leaveStr, itemdate newStart)

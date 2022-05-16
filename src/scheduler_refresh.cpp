@@ -103,6 +103,9 @@ namespace scheduler
                         bli.mMinCalendarDays=0;
                     else
                         bli.mMinCalendarDays -= delta;
+
+                    for (auto & p : bli.mResources)
+                        p.mBlocking = false; // item has started, so nobody is blocking now.
                 }
 
                 if (bli.mEarliestStart < newStart)
