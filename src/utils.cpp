@@ -293,26 +293,26 @@ double str2positivedouble(std::string s)
     return r;    
 }
 
-void advanceLeaveString(std::string & leaveStr, itemdate newStart)
-{
-    std::vector<std::string> newLeave;
-    std::vector<std::string> items;
-    simplecsv::splitcsv(leaveStr, items);
+// void advanceLeaveString(std::string & leaveStr, itemdate newStart)
+// {
+//     std::vector<std::string> newLeave;
+//     std::vector<std::string> items;
+//     simplecsv::splitcsv(leaveStr, items);
 
-    for (auto &d : items)
-    {
-        daterange dr(d, kClosedInterval); // map from closed to half open.
-        if (dr.getStart() < newStart)
-            dr.setStart(newStart);
-        if (dr.getEnd() > newStart) // if still valid
-            newLeave.push_back(dr.getRangeAsString());
+//     for (auto &d : items)
+//     {
+//         daterange dr(d, kClosedInterval); // map from closed to half open.
+//         if (dr.getStart() < newStart)
+//             dr.setStart(newStart);
+//         if (dr.getEnd() > newStart) // if still valid
+//             newLeave.push_back(dr.getRangeAsString());
 
-        leaveStr.erase();
-        for (auto &newl : newLeave)
-        {
-            if (leaveStr.length() > 0)
-                leaveStr += ",";
-            leaveStr += newl;
-        }
-    }
-}
+//         leaveStr.erase();
+//         for (auto &newl : newLeave)
+//         {
+//             if (leaveStr.length() > 0)
+//                 leaveStr += ",";
+//             leaveStr += newl;
+//         }
+//     }
+// }

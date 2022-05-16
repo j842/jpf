@@ -148,9 +148,9 @@ namespace scheduler
         row.push_back("Item");
         row.push_back("Person");
         row.push_back("DCD Chunk");  
-        row.push_back("DCD ItemSoFar");  
+        row.push_back("DCD ItemRemaining");  
         row.push_back("DCD ItemTotal");  
-        row.push_back("DCD Person DaySoFar");  
+        row.push_back("DCD Person Remaining");  
         simplecsv::output(ofs,row);
         ofs << std::endl;
 
@@ -163,9 +163,9 @@ namespace scheduler
                 row.push_back(mItems[c.itemNdx].mDescription);
                 row.push_back(mPeople[c.personNdx].mName);
                 row.push_back(S() << c.chunkEffort);
-                row.push_back(S() << c.itemSoFar);
+                row.push_back(S() << c.itemRemaining);
                 row.push_back(S() << mItems[c.itemNdx].mDevCentiDays);
-                row.push_back(S() << c.personDaySoFar);
+                row.push_back(S() << c.personDayRemaining);
                 simplecsv::output(ofs,row);
                 ofs << std::endl;
             }

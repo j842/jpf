@@ -12,13 +12,13 @@ namespace scheduler
     {
         public:
             worklogitem() {}
-            worklogitem( simpledate d, tNdx i,tNdx p, tCentiDay ce, tCentiDay isf, tCentiDay pdsf ) :
+            worklogitem( simpledate d, tNdx i,tNdx p, tCentiDay ce, tCentiDay irem, tCentiDay pdrem ) :
                 day(d),
                 itemNdx(i),
                 personNdx(p),
                 chunkEffort(ce),
-                itemSoFar(isf),
-                personDaySoFar(pdsf)
+                itemRemaining(irem),
+                personDayRemaining(pdrem)
                 {
                 }
 
@@ -27,8 +27,8 @@ namespace scheduler
             tNdx itemNdx; // index in mItems
             tNdx personNdx;
             tCentiDay chunkEffort;
-            tCentiDay itemSoFar;
-            tCentiDay personDaySoFar;
+            tCentiDay itemRemaining;
+            tCentiDay personDayRemaining;
     };
 
 

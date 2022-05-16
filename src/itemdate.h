@@ -15,12 +15,15 @@ class tCentiDay
         tCentiDay(unsigned long x) : mD(x) {}
         unsigned long getL() const {return mD;}
         unsigned long getRoundUpDays() const { return (unsigned long)((99.0 + mD)/100.0); }
+        void setInf() {mD=ULONG_MAX;}
+        bool isInf() const {return mD==ULONG_MAX;}
 
         explicit operator double() const { return mD; }
         operator unsigned long() const { return mD; }
 
         tCentiDay& operator+=(const tCentiDay& rhs) { mD+=rhs.getL(); return *this;}
         tCentiDay& operator-=(const tCentiDay& rhs) { ASSERT(rhs.getL()<=mD); mD-=rhs.getL(); return *this;}
+
     private:
         unsigned long mD;
 };

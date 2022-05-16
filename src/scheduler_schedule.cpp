@@ -153,24 +153,61 @@ namespace scheduler
         }
     }
 
-    void scheduler::_dotask_v2_limitedassign(unsigned int itemNdx, const tCentiDay maxAllocation, tCentiDay &remainTeamToday, std::vector<tCentiDay> &sumCentiDays, tCentiDay &totalDevCentiDaysRemaining, const itemdate id)
+    tCentiDay sumVec( const std::vector<tCentiDay> & x )
+    {
+        tCentiDay rval;
+        for (auto i : x)
+            rval+=i;
+        return rval;
+    }
+    unsigned long maxNdx(const std::vector<tCentiDay> & x )
+    {
+        tCentiDay max=0;
+        unsigned long maxndx=0;
+        for (unsigned long i=0;i<x.size();++i)      
+            if (x[i]>max)
+            {
+                max=x[i];
+                maxndx=i;
+            }
+        return maxndx;
+    }
+
+    void scheduler::_dotask_v2_limitedassign(unsigned int itemNdx, tCentiDay &remainTeamToday, std::vector<tCentiDay> &sumCentiDays, tCentiDay &totalDevCentiDaysRemaining, const itemdate id)
     {
         scheduleditem &z = mItems[itemNdx];
-        ASSERT(maxAllocation <= remainTeamToday);
         ASSERT(remainTeamToday <= totalDevCentiDaysRemaining);
+        ASSERT( z.mResources.size()>0 );
+
+        std::vector<tCentiDay> decrements(z.mResources.size(),0);
+        std::vector<tCentiDay> availibility(z.mResources.size(),0);
+
+        for (unsigned int pi = 0; pi < z.mResources.size(); ++pi)
+        {
+            person & p = getPersonByName(z.mResources[pi].mName);
+            availibility[pi] = p.getAvailability(id);
+            decrements[pi] = availibility[pi];
+        }
+
+        while (sumVec(decrements) > remainTeamToday)
+        { // can't go max speed!
+            decrements[ maxNdx(decrements) ] -= 1;
+        }
+        
         for (unsigned int pi = 0; pi < z.mResources.size(); ++pi)
         {
             tNdx personNdx = getPersonIndexFromName(z.mResources[pi].mName);
             person &p = mPeople[personNdx];
-            tCentiDay d = std::min(std::min(p.getAvailability(id), maxAllocation), remainTeamToday);
+            tCentiDay d = decrements[pi];
             if (d > 0)
             {
+                ASSERT(remainTeamToday>=d);
                 p.decrementAvailability(id, d, itemNdx);
                 totalDevCentiDaysRemaining -= d;
                 remainTeamToday -= d;
                 sumCentiDays[pi] += d;
 
-                mWorkLog.push_back(worklogitem(id.getGregorian(),itemNdx,personNdx,d,z.mDevCentiDays-totalDevCentiDaysRemaining,p.mEFTProject - p.getAvailability(id)));
+                mWorkLog.push_back(worklogitem(id.getGregorian(),itemNdx,personNdx,d,totalDevCentiDaysRemaining,p.getAvailability(id)));
             }
         }
     }
@@ -186,26 +223,18 @@ namespace scheduler
         ASSERT(!z.mActualStart.isForever());
         while (totalDevCentiDaysRemaining > 0)
         { // loop over days (id)
+            tCentiDay remainTeamToday = totalDevCentiDaysRemaining; // each team member capped at 100 centidays/day.
+
             unsigned long calDaysPast = wdduration(z.mActualStart,id);
-            unsigned long calDaysRemain = 0;
             if (z.mMinCalendarDays > calDaysPast)
-                calDaysRemain = z.mMinCalendarDays - calDaysPast; // includes today.
-
-            tCentiDay maxTeamToday = std::min(totalDevCentiDaysRemaining, (tCentiDay)(100 * z.mResources.size())); // each team member capped at 100 centidays/day.
-            if (calDaysRemain > 0)
-            { // check if we're going too fast to finish in the calendar days remaining.
-                tCentiDay maxSpeedRemain = (tCentiDay)((double)totalDevCentiDaysRemaining / (double)calDaysRemain);
-                maxTeamToday = std::min(maxTeamToday, maxSpeedRemain);
+            {
+                unsigned long calDaysRemain = z.mMinCalendarDays - calDaysPast; // includes today.
+                tCentiDay maxPaceToday = (tCentiDay)(0.5 + (double)totalDevCentiDaysRemaining / (double)calDaysRemain);
+                remainTeamToday = std::min(remainTeamToday, maxPaceToday);
             }
-            tCentiDay remainTeamToday = maxTeamToday;
 
-            // no we need to see if we can allocate maxTeamToday centidays amongst the resources...
-            tCentiDay evenPace = maxTeamToday.getL() / (z.mResources.size()); // if everyone could go as fast as we like, this is how fast we'd go.
-
-            // go through once limiting to an even pace.
-            _dotask_v2_limitedassign(itemNdx, evenPace, remainTeamToday, sumCentiDays, totalDevCentiDaysRemaining, id);
-            // now go through again and overallocate (above evenPace) anything left over if we can. Will bias towards first resouce but good enough.
-            _dotask_v2_limitedassign(itemNdx, remainTeamToday, remainTeamToday, sumCentiDays, totalDevCentiDaysRemaining, id);
+            // assign what we can today.
+            _dotask_v2_limitedassign(itemNdx, remainTeamToday, sumCentiDays, totalDevCentiDaysRemaining, id);
 
             id.increment();
         }
