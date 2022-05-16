@@ -55,8 +55,8 @@ class simpledate
         monthIndex getMonthIndex() const;
         simpledate getEndofMonth() const;
         
-    public:
-        static simpledate parseDateStringDDMMYY(std::string datestr);
+    private:
+        simpledate parseDateStringDDMMYY(std::string datestr) const;
 
     public:
         friend bool operator==(const simpledate& lhs, const simpledate & rhs) { return (lhs.getGregorian()==rhs.getGregorian()); }

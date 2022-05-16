@@ -46,8 +46,8 @@ class settings
         std::string getDescription(std::string set) const;
 
         bool mLoaded;
-        simpledate mStartDate;
-        simpledate mEndDate;
+        itemdate mStartDate;
+        itemdate mEndDate;
         std::string mRootDir;
         int mPort;
 

@@ -52,7 +52,7 @@ std::string simpledate::getStr_nice_short() const
     return oss.str();
 }
 
-simpledate simpledate::parseDateStringDDMMYY(std::string datestr)
+simpledate simpledate::parseDateStringDDMMYY(std::string datestr) const
 {
     removewhitespace(datestr);
 
@@ -132,38 +132,43 @@ itemdate::itemdate() : simpledate(gSettings().startDate())
 {
 }
 
-itemdate::itemdate(simpledate s) : simpledate(s)
+itemdate::itemdate(simpledate s) : simpledate(snapWorkDay_forward(s.getGregorian()))
 {
     ASSERT(mD >= gSettings().startDate().getGregorian());    
+    ASSERT(!isWeekend(mD));
 }
 
-itemdate::itemdate(std::string datestr) : simpledate(snapWorkDay_forward(parseDateStringDDMMYY(datestr)))
+itemdate::itemdate(std::string datestr) : simpledate(snapWorkDay_forward(simpledate(datestr)))
 {
     ASSERT(mD >= gSettings().startDate().getGregorian());
+    ASSERT(!isWeekend(mD));
 }
 
 itemdate::itemdate(const itemdate &obj) : simpledate(obj.getGregorian())
 {
     ASSERT(mD >= gSettings().startDate().getGregorian());
+    ASSERT(!isWeekend(mD));
 }
 
 itemdate::itemdate(unsigned long dayIndex) : simpledate()
 {
     mD = WorkDays2Date(dayIndex).getGregorian();
     ASSERT(mD >= gSettings().startDate().getGregorian());
+    ASSERT(!isWeekend(mD));
 }
 
 itemdate::itemdate(const boost::gregorian::date &d) : simpledate(snapWorkDay_forward(d))
 {
     ASSERT(mD >= gSettings().startDate().getGregorian());
+    ASSERT(!isWeekend(mD));
 }
 
 bool itemdate::setclip(std::string datestr) // set the date based on a dd/mm/yy string. If < start, det to start.
 {
-    if (datestr.length() == 0 || parseDateStringDDMMYY(datestr) < gSettings().startDate())
+    if (datestr.length() == 0 || simpledate(datestr) < gSettings().startDate())
         mD = gSettings().startDate().getGregorian();
     else
-        mD = snapWorkDay_forward(parseDateStringDDMMYY(datestr)).getGregorian();
+        mD = snapWorkDay_forward(simpledate(datestr)).getGregorian();
     return true;
 }
 
@@ -328,8 +333,8 @@ leaverange::leaverange(std::string s)
         if (strs.size() == 1)
             strs.push_back(strs[0]);
         ASSERT(strs.size() == 2);
-        mStart = simpledate::parseDateStringDDMMYY(strs[0]);
-        mEnd = simpledate::parseDateStringDDMMYY(strs[1]);
+        mStart = simpledate(strs[0]);
+        mEnd = simpledate(strs[1]);
     }
 }
 
