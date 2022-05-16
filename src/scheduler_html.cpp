@@ -38,12 +38,12 @@ namespace scheduler
         for (auto &p : DevDaysTally)
             p.resize(maxmonth, 0.0);
 
-        unsigned int maxday = itemdate(monthIndex(maxmonth).getLastMonthDay()).getDayAsIndex();
+        unsigned int maxday = workdate(monthIndex(maxmonth).getLastMonthDay()).getDayAsIndex();
         for (auto &zp : mPeople)
         {
             for (unsigned int dayndx = 0; dayndx < maxday; ++dayndx)
             {
-                simpledate d(itemdate::WorkDays2Date(dayndx));
+                simpledate d(workdate::WorkDays2Date(dayndx));
                 monthIndex mI(d);
                 for (const auto &zc : zp.getChunks(dayndx))
                     DevDaysTally[mItems[zc.mItemIndex].mProject][mI] += ((double)zc.mEffort) / 100.0;
@@ -62,7 +62,7 @@ namespace scheduler
 
             double workingdaysinmonth = monthIndex(m).workingDaysInMonth();
             if (m==0)
-                workingdaysinmonth = itemdate::countWorkDays( gSettings().startDate(), monthIndex(1).getFirstMonthDay());
+                workingdaysinmonth = workdate::countWorkDays( gSettings().startDate(), monthIndex(1).getFirstMonthDay());
 
             for (auto &worker : mPeople)
             {
@@ -570,7 +570,7 @@ namespace scheduler
             first = false;
 
             // google can't handle milestones.
-            itemdate tend = z.mActualEnd;
+            workdate tend = z.mActualEnd;
             if (tend == z.mActualStart)
                 tend.incrementWorkDay();
 

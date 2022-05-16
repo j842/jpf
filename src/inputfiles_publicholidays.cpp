@@ -44,7 +44,7 @@ namespace inputfiles
             os << simplecsv::makesafe(d) << std::endl;
     }
 
-    void publicholidays::advance(itemdate newStart)
+    void publicholidays::advance(workdate newStart)
     {
         advanceLeaveString(mPublicHolidaysString, newStart);
     }

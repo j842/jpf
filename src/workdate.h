@@ -28,8 +28,6 @@ class tCentiDay
         unsigned long mD;
 };
 
-bool isWeekend(const boost::gregorian::date & d);
-
 class monthIndex;
 
 // can represent any date (including weekend days)
@@ -54,6 +52,9 @@ class simpledate
         boost::gregorian::date getGregorian() const;
         monthIndex getMonthIndex() const;
         simpledate getEndofMonth() const;
+
+    public:
+        static bool isWeekend(const simpledate d);
         
     private:
         simpledate parseDateStringDDMMYY(std::string datestr) const;
@@ -114,15 +115,15 @@ class monthIndex
 
 // simple class for coordinate transformation from calendar date (local timezone) to number of working days from today.
 // can only hold dates that are workdays (not weekends).
-class itemdate : public simpledate
+class workdate : public simpledate
 {
     public:
-        itemdate();                     // set the date as today.
-        itemdate(simpledate s);
-        itemdate(std::string datestr);  // set the date based on a dd/mm/yy string.
-        itemdate(const itemdate &obj);  // copy ctor
-        itemdate(const boost::gregorian::date & d);
-        itemdate(unsigned long dayIndex);
+        workdate();                     // set the date as today.
+        workdate(simpledate s);
+        workdate(std::string datestr);  // set the date based on a dd/mm/yy string.
+        workdate(const workdate &obj);  // copy ctor
+        workdate(const boost::gregorian::date & d);
+        workdate(unsigned long dayIndex);
 
         bool setclip(std::string datestr);  // set to the next workday after start from a dd/mm/yy string. 
         void decrementWorkDay();
@@ -137,7 +138,7 @@ class itemdate : public simpledate
         static unsigned long Date2WorkDays(simpledate d0);
 
     public:
-        friend itemdate operator+(const itemdate& lhs, unsigned long rhs); // advance x work days.
+        friend workdate operator+(const workdate& lhs, unsigned long rhs); // advance x work days.
 };
 
 
@@ -173,7 +174,7 @@ class leaverange
         
         std::string getString() const;
 
-        void advance(itemdate newStart);
+        void advance(workdate newStart);
 
         private:
             simpledate mStart;      // closed interval.

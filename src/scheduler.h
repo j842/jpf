@@ -9,7 +9,7 @@
 #include "inputfiles_teambacklogs.h"
 #include "inputfiles_projects.h"
 #include "inputfiles_inputset.h"
-#include "itemdate.h"
+#include "workdate.h"
 #include "utils.h"
 
 
@@ -26,9 +26,9 @@ namespace scheduler
         // set while scheduling the task.
         unsigned int mProject;
         unsigned int mPriority;
-        itemdate mActualStart;
-        itemdate mActualEnd;
-        itemdate mClosedEnd;
+        workdate mActualStart;
+        workdate mActualEnd;
+        workdate mClosedEnd;
         std::string mBlockedBy;
         unsigned int mItemIndexInTeamBacklog;
 
@@ -42,8 +42,8 @@ namespace scheduler
             scheduledproject(const inputfiles::project &prj);
 
             // set when project scheduled.
-            itemdate mActualStart;
-            itemdate mActualEnd;
+            workdate mActualStart;
+            workdate mActualEnd;
             tCentiDay mTotalDevCentiDays; // proportional to cost.
     };
 
@@ -82,7 +82,7 @@ namespace scheduler
 
         void schedule();
         void refresh(inputfiles::inputset & iset); 
-        void advance(itemdate newStart, inputfiles::inputset & iset) const;
+        void advance(workdate newStart, inputfiles::inputset & iset) const;
 
         void createAllOutputFiles() const;
         void displayprojects(std::ostream &ofs) const;
@@ -116,7 +116,7 @@ namespace scheduler
         void _topological_visit(int node, std::vector<bool> &tempMarks, std::vector<bool> &permMarks, std::vector<unsigned int> &scheduledList);
         void _determinestart_and_dotask(unsigned int backlogitemNdx);
         void _dotask_v2(unsigned int itemNdx);
-        void _dotask_v2_limitedassign(unsigned int itemNdx, tCentiDay &remainTeamToday, std::vector<tCentiDay> &sumCentiDays, std::vector<tCentiDay> &maxCentiDays, tCentiDay &totalDevCentiDaysRemaining, const itemdate id);
+        void _dotask_v2_limitedassign(unsigned int itemNdx, tCentiDay &remainTeamToday, std::vector<tCentiDay> &sumCentiDays, std::vector<tCentiDay> &maxCentiDays, tCentiDay &totalDevCentiDaysRemaining, const workdate id);
         void _calc_project_summary();
 
         void _displaytable(std::ostream &ofs, std::vector<std::vector<std::string>> &vvs, std::string sepChar, bool consoleColour) const;

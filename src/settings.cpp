@@ -7,7 +7,7 @@
 #include "settings.h"
 #include "simplecsv.h"
 #include "utils.h"
-#include "itemdate.h"
+#include "workdate.h"
 #include "version.h"
 
 settings::settings() : mLoaded(false), mRootDir(),
@@ -42,17 +42,21 @@ void settings::load_settings()
 
     mLoaded=true;
 
+    // can't use itemdate yet, as mStartDate not set.
     std::string sdate=getSettingS("startdate");
     if (sdate.length()==0 || iSame(sdate,"today"))
-        mStartDate = itemdate(boost::gregorian::day_clock::local_day());
+        mStartDate = workdate::snapWorkDay_forward(boost::gregorian::day_clock::local_day());
     else
-        mStartDate = itemdate(simpledate(getSettingS("startdate")));
+        mStartDate = workdate::snapWorkDay_forward(simpledate(getSettingS("startdate")));
 
     std::string edate=getSettingS("enddate");
     if (sdate.length()==0 || iSame(sdate,"forever"))
-        mEndDate = itemdate(boost::gregorian::date(mStartDate.getGregorian().year(),12,1)); // dec same year. <shrug>
+        mEndDate = workdate(boost::gregorian::date(mStartDate.getGregorian().year(),12,1)); // dec same year. <shrug>
     else    
-        mEndDate = itemdate(simpledate(getSettingS("enddate")));
+        mEndDate = workdate(simpledate(getSettingS("enddate")));
+
+    ASSERT(!simpledate::isWeekend(mStartDate));
+    ASSERT(!simpledate::isWeekend(mEndDate));
 
     mPort = getSettingI("port");
 
@@ -231,7 +235,7 @@ int settings::getPort() const
     return mPort;
 }
 
-void settings::advance(itemdate newStart)
+void settings::advance(workdate newStart)
 {
     mStartDate = newStart.getGregorian();
     mSettings["startdate"]=mStartDate.getStr();

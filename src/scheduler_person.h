@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 
-#include "itemdate.h"
+#include "workdate.h"
 #include "inputfiles_teams.h"
 #include "inputfiles_publicholidays.h"
 
@@ -26,9 +26,9 @@ namespace scheduler
         intervals(tCentiDay max_aviailability);
         intervals(const intervals &other);
 
-        itemdate getEarliestStart(itemdate fromstart) const;
+        workdate getEarliestStart(workdate fromstart) const;
         tCentiDay getMaxAvialability() const { return mMaxAvailability; }
-        tCentiDay getAvailability(itemdate day) const;
+        tCentiDay getAvailability(workdate day) const;
 
         void decrementAvailability(unsigned long uDay, tCentiDay decrement, unsigned int itemNdx);
         void registerHoliday(leaverange dr);
@@ -51,9 +51,9 @@ namespace scheduler
     public:
         person(const inputfiles::teammember &m, const inputfiles::publicholidays &pubh);
 
-        itemdate getEarliestStart(itemdate fromstart);
+        workdate getEarliestStart(workdate fromstart);
         tCentiDay getMaxAvialability() const;
-        tCentiDay getAvailability(itemdate day) const;
+        tCentiDay getAvailability(workdate day) const;
         void decrementAvailability(unsigned long uDay, tCentiDay decrement, unsigned int itemNdx);
 
         const std::vector<daychunk> &getChunks(unsigned int day) const;

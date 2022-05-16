@@ -1,7 +1,7 @@
 #ifndef __SCHEDULER_WORKLOG__H
 #define __SCHEDULER_WORKLOG__H
 
-#include "itemdate.h"
+#include "workdate.h"
 
 namespace scheduler
 {

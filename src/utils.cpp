@@ -293,11 +293,11 @@ double str2positivedouble(std::string s)
     return r;    
 }
 
-void advanceLeaveString(std::string & leaveStr, itemdate newStart)
+void advanceLeaveString(std::string & leaveStr, workdate newStart)
 {
     std::vector<std::string> newLeave;
     std::vector<std::string> items;
-    
+
     simplecsv::splitcsv(leaveStr, items);
 
     for (auto &d : items)

@@ -5,7 +5,7 @@
 #include <vector>
 
 #include "utils.h"
-#include "itemdate.h"
+#include "workdate.h"
 
 namespace inputfiles
 {
@@ -26,7 +26,7 @@ class teammember
         const tCentiDay mEFTProject, mEFTBAU, mEFTOverhead;
 
         const std::string getLeave() const;
-        void advance(itemdate newStart);
+        void advance(workdate newStart);
 
     private:
         std::string mLeave;
@@ -49,7 +49,7 @@ class teams : public std::vector<team>
 
         void debug_displayTeams() const;
         unsigned int getMaxTeamNameWidth() const;
-        void advance(itemdate newStart);
+        void advance(workdate newStart);
 
         const unsigned int eNotFound;
     private:

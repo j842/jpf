@@ -6,7 +6,7 @@
 #include "scheduler_person.h"
 #include "utils.h"
 #include "simplecsv.h"
-#include "itemdate.h"
+#include "workdate.h"
 
 namespace scheduler
 {
@@ -25,9 +25,9 @@ namespace scheduler
     {
     }
 
-    itemdate intervals::getEarliestStart(itemdate fromstart) const
+    workdate intervals::getEarliestStart(workdate fromstart) const
     {
-        itemdate es(fromstart);
+        workdate es(fromstart);
 
         if (mMaxAvailability == 0)
             es.setForever();
@@ -38,7 +38,7 @@ namespace scheduler
         return es;
     }
 
-    tCentiDay intervals::getAvailability(itemdate day) const
+    tCentiDay intervals::getAvailability(workdate day) const
     {
         unsigned int uDay = day.getDayAsIndex();
         if (uDay < mRemainingAvailability.size())
@@ -114,7 +114,7 @@ namespace scheduler
         }
     }
 
-    itemdate person::getEarliestStart(itemdate fromstart)
+    workdate person::getEarliestStart(workdate fromstart)
     {
         return mIntervals.getEarliestStart(fromstart);
     }
@@ -129,7 +129,7 @@ namespace scheduler
         return mIntervals.getMaxAvialability();
     }
 
-    tCentiDay person::getAvailability(itemdate day) const
+    tCentiDay person::getAvailability(workdate day) const
     {
         return mIntervals.getAvailability(day);
     }

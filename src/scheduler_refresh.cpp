@@ -63,9 +63,9 @@ namespace scheduler
         }
     }
 
-    void scheduler::advance(itemdate newStart, inputfiles::inputset &iset) const
+    void scheduler::advance(workdate newStart, inputfiles::inputset &iset) const
     {
-        itemdate oldStart;
+        workdate oldStart;
         oldStart.setToStart();
 
         // The main event: update the backlog items in the team files.
@@ -97,7 +97,7 @@ namespace scheduler
 
                 if (mItems[itemndx].mActualStart < newStart)
                 {
-                    unsigned long delta = itemdate::countWorkDays(mItems[itemndx].mActualStart, newStart);
+                    unsigned long delta = workdate::countWorkDays(mItems[itemndx].mActualStart, newStart);
                     if (delta >= mItems[itemndx].mMinCalendarDays)
                         bli.mMinCalendarDays=0;
                     else

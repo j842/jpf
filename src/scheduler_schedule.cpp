@@ -1,7 +1,7 @@
 #include "scheduler.h"
 #include "simplecsv.h"
 #include "inputfiles_projects.h"
-#include "itemdate.h"
+#include "workdate.h"
 
 namespace scheduler
 
@@ -135,7 +135,7 @@ namespace scheduler
                 if (z.mResources[pi].mBlocking)
                 {
                     person &p = getPersonByName(z.mResources[pi].mName);
-                    itemdate pstart = p.getEarliestStart(z.mActualStart);
+                    workdate pstart = p.getEarliestStart(z.mActualStart);
 
                     if (pstart.isForever())
                         TERMINATE(p.mName + " is blocking but can never start task " + z.getFullName());
@@ -173,7 +173,7 @@ namespace scheduler
         return maxndx;
     }
 
-    void scheduler::_dotask_v2_limitedassign(unsigned int itemNdx, tCentiDay &remainTeamToday, std::vector<tCentiDay> &sumCentiDays, std::vector<tCentiDay> &maxCentiDays, tCentiDay &totalDevCentiDaysRemaining, const itemdate id)
+    void scheduler::_dotask_v2_limitedassign(unsigned int itemNdx, tCentiDay &remainTeamToday, std::vector<tCentiDay> &sumCentiDays, std::vector<tCentiDay> &maxCentiDays, tCentiDay &totalDevCentiDaysRemaining, const workdate id)
     {
         scheduleditem &z = mItems[itemNdx];
         ASSERT(remainTeamToday <= totalDevCentiDaysRemaining);
@@ -221,13 +221,13 @@ namespace scheduler
         std::vector<tCentiDay> sumCentiDays(z.mResources.size(), 0);
         std::vector<tCentiDay> maxCentiDays(z.mResources.size(), 0);
         tCentiDay totalDevCentiDaysRemaining = z.mDevCentiDays;
-        itemdate id = z.mActualStart;
+        workdate id = z.mActualStart;
         ASSERT(!z.mActualStart.isForever());
         while (totalDevCentiDaysRemaining > 0)
         { // loop over days (id)
             tCentiDay remainTeamToday = totalDevCentiDaysRemaining; // each team member capped at 100 centidays/day.
 
-            unsigned long calDaysPast = itemdate::countWorkDays(z.mActualStart,id);
+            unsigned long calDaysPast = workdate::countWorkDays(z.mActualStart,id);
             if (z.mMinCalendarDays > calDaysPast)
             {
                 unsigned long calDaysRemain = z.mMinCalendarDays - calDaysPast; // includes today.

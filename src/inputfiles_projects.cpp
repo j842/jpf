@@ -81,7 +81,7 @@ namespace inputfiles
         return mMaxProjectNameWidth;
     }
 
-    void projects::advance(itemdate newStart)
+    void projects::advance(workdate newStart)
     {
         // nothing to change in the projects file.
     }

@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 
-#include "itemdate.h"
+#include "workdate.h"
 
 namespace inputfiles
 {
@@ -38,7 +38,7 @@ class projects : public std::vector<project>
 
         unsigned int getIndexByID(std::string id) const; // returns eNotFound if index isn't there.
     
-        void advance(itemdate newStart);
+        void advance(workdate newStart);
 
     private:
         unsigned int mMaxProjectNameWidth;

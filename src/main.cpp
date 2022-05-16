@@ -193,8 +193,8 @@ bool cMain::runtests()
 int cMain::run_advance(std::string s)
 { // s of format -a=dd/mm/yy
     s.erase(s.begin(), s.begin() + 3);
-    itemdate newStart(s);
-    std::cout << " Advancing start date " << itemdate::countWorkDays(gSettings().startDate(),newStart) << " workdays --> " << newStart.getStr_nice_short() << std::endl;
+    workdate newStart(s);
+    std::cout << " Advancing start date " << workdate::countWorkDays(gSettings().startDate(),newStart) << " workdays --> " << newStart.getStr_nice_short() << std::endl;
 
     try
     {

@@ -2,7 +2,7 @@
 #define __PUBLIC_HOLIDAYS_H
 
 #include <string>
-#include "itemdate.h"
+#include "workdate.h"
 
 namespace inputfiles
 {
@@ -16,7 +16,7 @@ namespace inputfiles
 
         void save_public_holidays_CSV(std::ostream &os) const;
 
-        void advance(itemdate newStart);
+        void advance(workdate newStart);
 
     private:
         std::string load_public_holidays() const;

@@ -48,7 +48,7 @@ namespace inputfiles
         mDevCentiDays = (int)(0.5 + str2positivedouble(csvitems[4])*100.0);
 
         // 5 - Earliest Start Date
-        mEarliestStart = itemdate(csvitems[5]);
+        mEarliestStart = workdate(csvitems[5]);
 
         // 6 - blocking resources
         std::vector<std::string> names;

@@ -5,7 +5,7 @@
 #include <string>
 #include <ostream>
 
-#include "itemdate.h"
+#include "workdate.h"
 
 namespace inputfiles
 {
@@ -47,7 +47,7 @@ namespace inputfiles
         std::string mProjectName;
         unsigned long mMinCalendarDays;
         tCentiDay mDevCentiDays;
-        itemdate mEarliestStart;
+        workdate mEarliestStart;
         std::vector<resource> mResources;
         std::vector<std::string> mDependencies;
         std::string mComments;

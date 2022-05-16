@@ -5,7 +5,7 @@
 #include <map>
 #include <boost/date_time.hpp>
 
-#include "itemdate.h"
+#include "workdate.h"
 
 class settings
 {
@@ -15,7 +15,7 @@ class settings
         void load_settings();
         void save_settings_CSV(std::ostream & os) const;
 
-        void advance(itemdate newStart);
+        void advance(workdate newStart);
 
         simpledate startDate() const;
         simpledate endDate() const;
@@ -46,8 +46,8 @@ class settings
         std::string getDescription(std::string set) const;
 
         bool mLoaded;
-        itemdate mStartDate;
-        itemdate mEndDate;
+        simpledate mStartDate;
+        simpledate mEndDate;
         std::string mRootDir;
         int mPort;
 

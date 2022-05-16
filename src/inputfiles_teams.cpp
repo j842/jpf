@@ -14,7 +14,7 @@ const std::string teammember::getLeave() const
     return mLeave;
 }
 
-void teammember::advance(itemdate newStart)
+void teammember::advance(workdate newStart)
 {
     advanceLeaveString(mLeave,newStart);
 }
@@ -135,7 +135,7 @@ unsigned int teams::getMaxTeamNameWidth() const
     return mMaxNameWidth;
 }
 
-void teams::advance(itemdate newStart)
+void teams::advance(workdate newStart)
 {
     for (auto &m : *this)
         for (auto &j : m.mMembers)

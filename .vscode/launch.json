@@ -10,7 +10,7 @@
        "args": [
 //            "${workspaceFolder}"
 //          "-t"
-            "-a=15/5/22",
+//            "-a=15/5/22",
             "~/code/tracmap/pf0/"
         ],
         "stopAtEntry": false,

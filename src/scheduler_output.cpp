@@ -53,13 +53,13 @@ namespace scheduler
 
             ofs << x.mActualStart.getStrGantt() << ","; // being date
 
-            itemdate fin = x.mActualEnd;
+            workdate fin = x.mActualEnd;
             if (fin > x.mActualStart)
                 fin.decrementWorkDay();             // gantt project is closed interval.
             ofs << fin.getStrGantt() << ","; // end date
 
             // gantt project has duration 1 for same day completion.
-            ofs << itemdate::countWorkDays(x.mActualStart,x.mActualEnd) << ",";
+            ofs << workdate::countWorkDays(x.mActualStart,x.mActualEnd) << ",";
 
             ofs << "0.0"
                 << ",";
