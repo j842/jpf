@@ -80,8 +80,8 @@ namespace scheduler
 
             {
                 listoutput lo(ofs, "", ";", "");
-                for (auto &y : x.mResources)
-                    lo.write(S() << getPersonIndexFromName(y.mName) + 1 << ":" << (int)(0.5 + y.mLoadingPercent));
+                for (unsigned long ri=0;ri<x.mResources.size();++ri)
+                    lo.write(S() << getPersonIndexFromName(x.mResources[ri].mName) + 1 << ":" << (x.mLoadingPercent[ri]));
             }
 
             ofs << ","; // assignments
@@ -215,12 +215,14 @@ namespace scheduler
             ofs << std::string(z.mName.size() + 13, '-') << std::endl;
 
             for (auto &j : mItems)
-                for (auto &p : j.mResources)
+                for (unsigned long pi = 0; pi<j.mResources.size();++pi)
+                {
+                    auto &p = j.mResources[pi];
                     if (iSame(p.mName, z.mName))
                     {
-                        int utilisation = 100;
+                        tCentiDay utilisation = 100;
                         if (z.getMaxAvialability() > 0)
-                            utilisation = 0.5 + (double)(p.mLoadingPercent);
+                            utilisation = j.mLoadingPercent[pi];
 
                         std::ostringstream oss;
 
@@ -230,6 +232,7 @@ namespace scheduler
 
                         ofs << oss.str() << j.getFullName() << std::endl;
                     }
+                }
         }
     }
 

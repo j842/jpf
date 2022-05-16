@@ -20,7 +20,9 @@ namespace scheduler
 
 
     scheduleditem::scheduleditem(const inputfiles::backlogitem &bli, unsigned int priority,  unsigned int projectndx, unsigned int itemIndexInTeamBacklog) : 
-        inputfiles::backlogitem(bli), mProject(projectndx), mPriority(priority),mItemIndexInTeamBacklog(itemIndexInTeamBacklog)
+        inputfiles::backlogitem(bli), mProject(projectndx), mPriority(priority),mItemIndexInTeamBacklog(itemIndexInTeamBacklog), 
+        mLoadingPercent(bli.mResources.size(),0),
+        mTotalContribution(bli.mResources.size(),0)
     {
     }
 
@@ -190,8 +192,8 @@ namespace scheduler
             if (task.mDependencies.size() == 0)
                 p.mTotalDevCentiDays += task.mDevCentiDays;
             else
-                for (auto &x : task.mResources)
-                    p.mTotalDevCentiDays += (tCentiDay)(0.5 + task.getDurationDays() * x.mLoadingPercent);
+                for (auto &x : task.mTotalContribution)
+                    p.mTotalDevCentiDays += x;
         }
 
         for (auto &proj : mProjects)

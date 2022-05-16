@@ -61,6 +61,8 @@ namespace scheduler
             double monthoverhead = 0.0;
 
             double workingdaysinmonth = monthIndex(m).workingDaysInMonth();
+            if (m==0)
+                workingdaysinmonth = wdduration( gSettings().startDate(), monthIndex(1).getFirstMonthDay());
 
             for (auto &worker : mPeople)
             {

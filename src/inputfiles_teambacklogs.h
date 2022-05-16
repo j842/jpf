@@ -17,13 +17,12 @@ namespace inputfiles
     class resource
     {
     public:
-        resource() : mBlocking(false), mLoadingPercent(0.0) {}
-        resource(const resource &o) : mName(o.mName), mBlocking(o.mBlocking), mLoadingPercent(0.0) {}
-        resource(std::string n, bool b) : mName(n), mBlocking(b), mLoadingPercent(0.0) {}
+        resource() : mBlocking(false) {}
+        resource(const resource &o) : mName(o.mName), mBlocking(o.mBlocking) {}
+        resource(std::string n, bool b) : mName(n), mBlocking(b) {}
 
         std::string mName;
         bool mBlocking;
-        double mLoadingPercent;
     };
 
     // task - an item in the backlog.

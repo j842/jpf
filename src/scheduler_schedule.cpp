@@ -173,7 +173,7 @@ namespace scheduler
         return maxndx;
     }
 
-    void scheduler::_dotask_v2_limitedassign(unsigned int itemNdx, tCentiDay &remainTeamToday, std::vector<tCentiDay> &sumCentiDays, tCentiDay &totalDevCentiDaysRemaining, const itemdate id)
+    void scheduler::_dotask_v2_limitedassign(unsigned int itemNdx, tCentiDay &remainTeamToday, std::vector<tCentiDay> &sumCentiDays, std::vector<tCentiDay> &maxCentiDays, tCentiDay &totalDevCentiDaysRemaining, const itemdate id)
     {
         scheduleditem &z = mItems[itemNdx];
         ASSERT(remainTeamToday <= totalDevCentiDaysRemaining);
@@ -190,7 +190,7 @@ namespace scheduler
         }
 
         while (sumVec(decrements) > remainTeamToday)
-        { // can't go max speed!
+        { // can't go max speed! Decrease the biggest contribution to even it out.
             decrements[ maxNdx(decrements) ] -= 1;
         }
         
@@ -206,6 +206,7 @@ namespace scheduler
                 totalDevCentiDaysRemaining -= d;
                 remainTeamToday -= d;
                 sumCentiDays[pi] += d;
+                maxCentiDays[pi] = std::max( maxCentiDays[pi], d);
 
                 mWorkLog.push_back(worklogitem(id.getGregorian(),itemNdx,personNdx,d,totalDevCentiDaysRemaining,p.getAvailability(id)));
             }
@@ -218,6 +219,7 @@ namespace scheduler
         //    until we have reached the desired devdays.
         scheduleditem &z = mItems[itemNdx];
         std::vector<tCentiDay> sumCentiDays(z.mResources.size(), 0);
+        std::vector<tCentiDay> maxCentiDays(z.mResources.size(), 0);
         tCentiDay totalDevCentiDaysRemaining = z.mDevCentiDays;
         itemdate id = z.mActualStart;
         ASSERT(!z.mActualStart.isForever());
@@ -234,15 +236,19 @@ namespace scheduler
             }
 
             // assign what we can today.
-            _dotask_v2_limitedassign(itemNdx, remainTeamToday, sumCentiDays, totalDevCentiDaysRemaining, id);
+            _dotask_v2_limitedassign(itemNdx, remainTeamToday, sumCentiDays, maxCentiDays, totalDevCentiDaysRemaining, id);
 
+            z.mClosedEnd=id;
             id.increment();
         }
         z.mActualEnd = id;
 
-        double duration = z.getDurationDays();
-        for (unsigned int pi = 0; pi < z.mResources.size(); ++pi)
-            z.mResources[pi].mLoadingPercent = sumCentiDays[pi].getL() / duration;
+        //double duration = z.getDurationDays();
+        for (unsigned int pi = 0; pi < z.mLoadingPercent.size(); ++pi)
+        {
+            z.mLoadingPercent[pi] = maxCentiDays[pi]; //sumCentiDays[pi].getL() / duration;
+            z.mTotalContribution[pi]=sumCentiDays[pi];
+        }
     }
 
     // ---------------------------------------------------------------------------------------------------------------------------------------

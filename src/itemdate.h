@@ -52,6 +52,7 @@ class simpledate
 
         boost::gregorian::date getGregorian() const;
         monthIndex getMonthIndex() const;
+        simpledate getEndofMonth() const;
         
     public:
         static simpledate parseDateStringDDMMYY(std::string datestr);
@@ -105,14 +106,15 @@ class monthIndex
         monthIndex(unsigned long n) : mN(n) {}
         monthIndex(simpledate d); 
 
-        boost::gregorian::date getFirstMonthDay() const;
-        boost::gregorian::date getLastMonthDay() const;
-
         operator unsigned long() const {return mN;}
 
         std::string getString() const;
 
         unsigned long workingDaysInMonth() const;
+
+    public:
+        boost::gregorian::date getFirstMonthDay() const; 
+        boost::gregorian::date getLastMonthDay() const;
 
     private:
         unsigned long mN;

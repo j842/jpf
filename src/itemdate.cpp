@@ -183,6 +183,12 @@ unsigned long wdduration(const simpledate& istart, const simpledate& iend) // di
     return simpledate::countWorkDays(istart,iend);
 }
 
+simpledate simpledate::getEndofMonth() const
+{
+    return getGregorian().end_of_month();
+}
+
+
 
 // --------------------------------------------------------------------------------------------
 // --------------------------------------------------------------------------------------------
