@@ -35,6 +35,8 @@ namespace scheduler
             if (z.mActualEnd.getMonthIndex() >= maxmonth)
                 maxmonth = z.mActualEnd.getMonthIndex() + 1;
 
+        maxmonth = std::min(maxmonth, gSettings().endMonth() + 1);
+
         for (auto &p : DevDaysTally)
             p.resize(maxmonth, 0.0);
 
@@ -112,6 +114,11 @@ namespace scheduler
 
         ofs << R"(
         <h2>Projected Total Salary Cost Remaining</h2>
+        <h3>)";
+
+        ofs << gSettings().startDate().getStr_nice_long() << " - "<< gSettings().endDate().getStr_nice_long();
+
+        ofs << R"(</h3>
         <div id="totalprojectcostpie" style="width:auto;height:800;"></div>    
         <script>
         )";
@@ -120,7 +127,6 @@ namespace scheduler
         for (unsigned int i = 0; i < Labels.size(); ++i)
             for (double j : DevDaysTally[i])
                 vProjectCostRemaining[i] += j;
-
         {
             ofs << "var colorlist = [";
             bool firstcolor = true;
@@ -192,8 +198,7 @@ namespace scheduler
         CalculateDevDaysTally(DevDaysTally, Labels, Colours, BAU);
         if (DevDaysTally.size() == 0)
             return; // no data.
-        unsigned long devdaysmonths = DevDaysTally[0].size();
-        unsigned int maxmonth = std::min(devdaysmonths, gSettings().endMonth() + 1);
+        unsigned long maxmonth = DevDaysTally[0].size();
 
         ofs << R"(
         <h2>Projected Salary Costs by Month</h2>
@@ -277,8 +282,7 @@ namespace scheduler
         CalculateDevDaysTally(DevDaysTally, Labels, Colours, BAU);
         if (DevDaysTally.size() == 0)
             return; // no data.
-        unsigned long devdaysmonths = DevDaysTally[0].size();
-        unsigned long maxmonth = std::min(devdaysmonths, gSettings().endMonth() + 1);
+        unsigned long maxmonth = DevDaysTally[0].size();
 
         std::vector<std::vector<double>> DDT; // [BAU/New][month]
         DDT.resize(3);
