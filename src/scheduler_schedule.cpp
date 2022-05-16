@@ -59,7 +59,7 @@ namespace scheduler
 
     void scheduler::_prioritiseAndMergeTeams()
     {
-        mItems.clear();
+        ASSERT(mItems.size()==0);
 
         // copy to mItems in order respecting team and project priority.
         std::vector<unsigned int> positions(mI.mB.mTeamItems.size(), 0);
@@ -160,7 +160,8 @@ namespace scheduler
         ASSERT(remainTeamToday <= totalDevCentiDaysRemaining);
         for (unsigned int pi = 0; pi < z.mResources.size(); ++pi)
         {
-            person &p = getPersonByName(z.mResources[pi].mName);
+            tNdx personNdx = getPersonIndexFromName(z.mResources[pi].mName);
+            person &p = mPeople[personNdx];
             tCentiDay d = std::min(std::min(p.getAvailability(id), maxAllocation), remainTeamToday);
             if (d > 0)
             {
@@ -168,6 +169,8 @@ namespace scheduler
                 totalDevCentiDaysRemaining -= d;
                 remainTeamToday -= d;
                 sumCentiDays[pi] += d;
+
+                mWorkLog.push_back(worklogitem(id.getGregorian(),itemNdx,personNdx,d,z.mDevCentiDays-totalDevCentiDaysRemaining,p.mEFTProject - p.getAvailability(id)));
             }
         }
     }
@@ -242,6 +245,7 @@ namespace scheduler
         mPeople.clear();
         mItems.clear();
         mProjects.clear();
+        mWorkLog.clear();
     }
 
 

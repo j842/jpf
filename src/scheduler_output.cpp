@@ -139,6 +139,38 @@ namespace scheduler
         }
     }
 
+    // CSV file.
+    void scheduler::displayworkchunks(std::ostream & ofs) const
+    {
+        std::vector<std::string> row;
+        row.push_back("Day");
+        row.push_back("Project");
+        row.push_back("Item");
+        row.push_back("Person");
+        row.push_back("DCD Chunk");  
+        row.push_back("DCD ItemSoFar");  
+        row.push_back("DCD ItemTotal");  
+        row.push_back("DCD Person DaySoFar");  
+        simplecsv::output(ofs,row);
+        ofs << std::endl;
+
+        std::vector<tCentiDay> itemDevCentiDone(mItems.size(), 0);
+        for (auto & c : mWorkLog)
+            {
+                row.clear();
+                row.push_back(c.day.getStr());
+                row.push_back(mItems[c.itemNdx].mProjectName);
+                row.push_back(mItems[c.itemNdx].mDescription);
+                row.push_back(mPeople[c.personNdx].mName);
+                row.push_back(S() << c.chunkEffort);
+                row.push_back(S() << c.itemSoFar);
+                row.push_back(S() << mItems[c.itemNdx].mDevCentiDays);
+                row.push_back(S() << c.personDaySoFar);
+                simplecsv::output(ofs,row);
+                ofs << std::endl;
+            }
+    }
+
     void scheduler::displaybacklog(std::ostream &ofs) const
     {
         std::vector<int> v_sorted;

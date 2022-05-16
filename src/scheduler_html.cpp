@@ -436,7 +436,7 @@ namespace scheduler
     <a href="costdashboard.html">Cost Dashboard</a>&nbsp;&nbsp;
     <a href="highlevelgantt.html">High-Level Gantt</a>&nbsp;&nbsp;
     <a href="detailedgantt.html">Detailed Gantt</a>&nbsp;&nbsp;
-    <a href="rawbacklog.html">Debug: Raw Backlog</a>&nbsp;&nbsp;
+    <a href="raw_backlog.html">Debug: Raw Backlog</a>&nbsp;&nbsp;
     </br>
  )";
     }

@@ -142,7 +142,7 @@ int cMain::run_watch()
         }
         catch (TerminateRunException &pEx)
         {
-            std::vector<std::string> htmlfiles = {"index.html", "people.html", "costdashboard.html", "highlevelgantt.html", "detailedgantt.html", "rawbacklog.html"};
+            std::vector<std::string> htmlfiles = {"index.html", "people.html", "costdashboard.html", "highlevelgantt.html", "detailedgantt.html", "raw_backlog.html"};
             for (auto &x : htmlfiles)
                 scheduler::scheduler::outputHTMLError(getOutputPath_Html() + x, pEx.what());
             std::cerr << pEx.what() << std::endl;

@@ -5,6 +5,7 @@
 #include <vector>
 
 #include "scheduler_person.h"
+#include "scheduler_worklog.h"
 #include "inputfiles_teambacklogs.h"
 #include "inputfiles_projects.h"
 #include "inputfiles_inputset.h"
@@ -93,6 +94,7 @@ namespace scheduler
         void displaypeople(std::ostream &ofs) const;
         void displaymilestones(std::ostream &ofs) const;
         void displaybacklog_raw(std::ostream &ofs) const;
+        void displayworkchunks(std::ostream &ofs) const;
         void save_gantt_project_file(std::ostream &ofs) const;
 
         void outputHTML_Index(std::ostream &ofs) const;
@@ -152,8 +154,9 @@ namespace scheduler
     private:
         bool mScheduled;
         people mPeople; // taken from teammembers, but with added fields.
-        std::vector<scheduleditem> mItems; // copied from mI.mB.mTeamItems.
-        std::vector<scheduledproject> mProjects; // copied from mI.mP.
+        std::vector<scheduleditem> mItems; // copied from mI.mB.mTeamItems, merged, and scheduled.
+        std::vector<scheduledproject> mProjects; // copied from mI.mP, but with start, end dates etc.
+        std::vector<worklogitem> mWorkLog; // record of the work done to complete the items (person-day chunks)
 
         void resetSchedule();
 

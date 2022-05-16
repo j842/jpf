@@ -83,6 +83,12 @@ namespace scheduler
         return mWorkChunks[day];
     }
 
+    unsigned long intervals::numChunkDays() const
+    {
+        return mWorkChunks.size();
+    }
+
+
     // ------------------------------------------------------------------------------------------------------------
 
     person::person(const teammember &m, const inputfiles::publicholidays &pubh) : teammember(m.mName, m.mEFTProject, m.mEFTBAU, m.mEFTOverhead, m.getLeave()),
@@ -137,6 +143,10 @@ namespace scheduler
     const std::vector<daychunk> &person::getChunks(unsigned int day) const
     {
         return mIntervals.getChunks(day);
+    }
+    unsigned long person::numChunkDays() const
+    {
+        return mIntervals.numChunkDays();
     }
 
     // ------------------------------------------------------------------------------------------------------------

@@ -76,7 +76,7 @@ namespace inputfiles
         csvitems.push_back(mId);
         csvitems.push_back(mDescription);
         csvitems.push_back(S() << mMinCalendarDays);
-        csvitems.push_back(S() << std::setprecision(2) << std::fixed << ((double)mDevCentiDays)/100.0);
+        csvitems.push_back(S() << std::fixed  << std::setprecision(2) << ((double)mDevCentiDays)/100.0);
 
         if (mEarliestStart == gSettings().startDate())
             csvitems.push_back("");

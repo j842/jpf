@@ -45,6 +45,7 @@ namespace scheduler
             outputfilewriter("backlog.txt", kFile_Text, &scheduler::displaybacklog),
             outputfilewriter("people.txt", kFile_Text, &scheduler::displaypeople),
             outputfilewriter("gantt.csv", kFile_CSV, &scheduler::save_gantt_project_file),
+            outputfilewriter("workchunks.csv", kFile_CSV, &scheduler::displayworkchunks),
             outputfilewriter("milestones.txt", kFile_Text, &scheduler::displaymilestones),
             outputfilewriter("raw_backlog.txt", kFile_Text, &scheduler::displaybacklog_raw),
             outputfilewriter("projects.txt", kFile_Text, &scheduler::displayprojects),
@@ -53,7 +54,7 @@ namespace scheduler
             outputfilewriter("costdashboard.html", kFile_HTML, &scheduler::outputHTML_Dashboard),
             outputfilewriter("highlevelgantt.html", kFile_HTML, &scheduler::outputHTML_High_Level_Gantt),
             outputfilewriter("detailedgantt.html", kFile_HTML, &scheduler::outputHTML_Detailed_Gantt),
-            outputfilewriter("rawbacklog.html", kFile_HTML, &scheduler::outputHTML_RawBacklog)};
+            outputfilewriter("raw_backlog.html", kFile_HTML, &scheduler::outputHTML_RawBacklog)};
     }
 
     void scheduler::createAllOutputFiles() const

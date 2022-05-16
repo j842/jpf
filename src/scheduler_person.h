@@ -34,6 +34,7 @@ namespace scheduler
         void registerHoliday(daterange dr);
 
         const std::vector<daychunk> &getChunks(unsigned int day) const;
+        unsigned long numChunkDays() const;
 
     private:
         void _decrementAvailability(itemdate day, tCentiDay decrement); // does not assign workchunk.
@@ -56,6 +57,7 @@ namespace scheduler
         void decrementAvailability(itemdate day, tCentiDay decrement, unsigned int itemNdx);
 
         const std::vector<daychunk> &getChunks(unsigned int day) const;
+        unsigned long numChunkDays() const;
 
     private:
         void _registerHolidayString(std::string s);
