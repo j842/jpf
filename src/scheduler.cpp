@@ -56,7 +56,8 @@ namespace scheduler
             outputfilewriter("costdashboard.html", kFile_HTML, &scheduler::outputHTML_Dashboard),
             outputfilewriter("highlevelgantt.html", kFile_HTML, &scheduler::outputHTML_High_Level_Gantt),
             outputfilewriter("detailedgantt.html", kFile_HTML, &scheduler::outputHTML_Detailed_Gantt),
-            outputfilewriter("raw_backlog.html", kFile_HTML, &scheduler::outputHTML_RawBacklog)};
+            outputfilewriter("raw_backlog.html", kFile_HTML, &scheduler::outputHTML_RawBacklog),
+            outputfilewriter("peopleeffort.html", kFile_HTML, &scheduler::outputHTML_PeopleEffort)};
     }
 
     void scheduler::createAllOutputFiles() const

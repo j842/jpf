@@ -172,6 +172,8 @@ class leaverange
         unsigned long getStartasIndex() const;
         unsigned long getEndasIndex() const; // Half Open interval!!
         
+        unsigned long holidayDaysInMonth(unsigned long month) const; // number of work days in the month that are holidays.
+
         std::string getString() const;
 
         void advance(workdate newStart);

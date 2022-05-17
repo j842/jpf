@@ -379,6 +379,24 @@ void leaverange::advance(workdate newStart)
             mStart=ns;
 }
 
+unsigned long leaverange::holidayDaysInMonth(unsigned long month) const // number of work days in the month that are holidays.
+{
+    unsigned long tally=0;
+    if (monthIndex(mStart)>month || monthIndex(mEnd)<month)
+        return 0;
+    workdate wd(mStart);
+    while (wd<mEnd)
+    {
+        unsigned long wdm = wd.getMonthIndex();
+        if (wdm==month)
+            ++tally;
+        if (wdm>month)
+            break;
+        wd.incrementWorkDay();
+    }
+    return tally;
+}
+
 // ---------------
 
 

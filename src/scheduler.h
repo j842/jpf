@@ -73,6 +73,8 @@ namespace scheduler
         kBAU = 0,
         kNew = 1,
         kUna = 2, // unassigned
+        kHol = 3,
+        kNumItemTypes,
     } tItemTypes;
 
     class scheduler
@@ -106,6 +108,7 @@ namespace scheduler
         void outputHTML_High_Level_Gantt(std::ostream &ofs) const;
         void outputHTML_Detailed_Gantt(std::ostream &ofs) const;
         void outputHTML_People(std::ostream &ofs) const;
+        void outputHTML_PeopleEffort(std::ostream & ofs) const;
         void outputHTML_RawBacklog(std::ostream &ofs) const;
 
     private:
@@ -139,10 +142,13 @@ namespace scheduler
             std::vector<std::vector<double>> &DevDaysTally, // [project][month in future]
             std::vector<std::string> &ProjectLabels,        // [project]
             std::vector<rgbcolour> &Colours,                // [project]
-            std::vector<tItemTypes> &BAU                    // [project]
+            std::vector<tItemTypes> &BAU,                   // [project]
+            tNdx personNdx = ULONG_MAX
         ) const;
+        
 
         void Graph_Project_Cost(std::ostream &ofs) const;
+        void Graph_Person_Project_Cost(std::ostream &ofs, tNdx personNdx) const;
         void Graph_Total_Project_Cost(std::ostream &ofs) const;
         void Graph_BAU(std::ostream &ofs) const;
 

@@ -109,7 +109,10 @@ namespace scheduler
             { // parse leave string. Could be date, or date-date (inclusive). Closed interval.
                 leaverange dr(x);
                 if (!dr.isEmpty())
+                {
                     _registerHoliday(dr);
+                    mHolidays.push_back(dr);
+                }
             }
         }
     }
@@ -147,6 +150,15 @@ namespace scheduler
     {
         return mIntervals.numChunkDays();
     }
+
+    unsigned long scheduledperson::holidaysInMonth(unsigned long month) const
+    {
+        unsigned long tally=0;
+        for (auto & dr : mHolidays)
+            tally += dr.holidayDaysInMonth(month);
+        return tally;
+    }
+
 
     // ------------------------------------------------------------------------------------------------------------
 
