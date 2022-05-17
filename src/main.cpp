@@ -17,6 +17,7 @@
 #include "settings.h"
 #include "main.h"
 #include "simplecsv.h"
+#include "colours.h"
 
 // --------------------------------------------------------------------
 
@@ -142,7 +143,7 @@ int cMain::run_watch()
         }
         catch (TerminateRunException &pEx)
         {
-            std::vector<std::string> htmlfiles = {"index.html", "people.html", "costdashboard.html", "highlevelgantt.html", "detailedgantt.html", "raw_backlog.html"};
+            std::vector<std::string> htmlfiles = {"index.html", "people.html", "peopleeffort.html", "costdashboard.html", "highlevelgantt.html", "detailedgantt.html", "raw_backlog.html"};
             for (auto &x : htmlfiles)
                 scheduler::scheduler::outputHTMLError(getOutputPath_Html() + x, pEx.what());
             std::cerr << pEx.what() << std::endl;
@@ -235,7 +236,7 @@ int cMain::run_advance(std::string s)
 int cMain::showhelp()
 {
     std::cout << std::endl;
-    std::cout << "jpf " << gSettings().getJPFVersionStr() << "-" << gSettings().getJPFReleaseStr() << " is a simple auto-balancing forecasting tool for projects across multiple teams.";
+    std::cout << "jpf " << gSettings().getJPFFullVersionStr() << " is a simple auto-balancing forecasting tool for projects across multiple teams.";
 
     std::cout << R"(
 
@@ -292,7 +293,14 @@ int cMain::go(int argc, char **argv)
     {
         // handle options which do not require a directory.
         if (argc>=2 && strlen(argv[1])>1 && argv[1][0]=='-' && tolower(argv[1][1])=='t')
-            return runtests() ? 0 : 1;        
+            return runtests() ? 0 : 1;     
+
+        // no directory specified.
+        if (argv[argc-1][0]=='-')
+        {
+            std::cerr <<std::endl<< colours::cWarningRed << "You need to specify a directory." <<colours::cNoColour <<std::endl<<std::endl;
+            return showhelp();   
+        }
 
         // set directory.
         std::string directory = argv[argc - 1];

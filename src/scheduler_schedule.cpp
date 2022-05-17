@@ -82,6 +82,8 @@ namespace scheduler
                     auto &tt = t.at(positions[x]);
 
                     unsigned int projNdx = projects().getIndexByID(tt.mProjectName);
+                    if (projNdx==eNotFound)
+                        TERMINATE(S()<<"Could not find a project with id "<<(tt.mProjectName));
                     if ((topt == NULL || projNdx < bestProjNdx))
                     {
                         topt = &tt;
@@ -134,7 +136,7 @@ namespace scheduler
             for (int pi = 0; pi < (int)z.mResources.size(); ++pi)
                 if (z.mResources[pi].mBlocking)
                 {
-                    person &p = getPersonByName(z.mResources[pi].mName);
+                    scheduledperson &p = getPersonByName(z.mResources[pi].mName);
                     workdate pstart = p.getEarliestStart(z.mActualStart);
 
                     if (pstart.isForever())
@@ -184,7 +186,7 @@ namespace scheduler
 
         for (unsigned int pi = 0; pi < z.mResources.size(); ++pi)
         {
-            person & p = getPersonByName(z.mResources[pi].mName);
+            scheduledperson & p = getPersonByName(z.mResources[pi].mName);
             availibility[pi] = p.getAvailability(id);
             decrements[pi] = availibility[pi];
         }
@@ -197,7 +199,7 @@ namespace scheduler
         for (unsigned int pi = 0; pi < z.mResources.size(); ++pi)
         {
             tNdx personNdx = getPersonIndexFromName(z.mResources[pi].mName);
-            person &p = mPeople[personNdx];
+            scheduledperson &p = mPeople[personNdx];
             tCentiDay d = decrements[pi];
             if (d > 0)
             {
@@ -289,7 +291,7 @@ namespace scheduler
         // copy people name/maxtime from the teams list into our people list.
         for (const auto &x : mI.mT)
             for (const auto &y : x.mMembers)
-                mPeople.push_back(person(y, mI.mH));
+                mPeople.push_back(scheduledperson(y, mI.mH));
 
         // copy projects
         for (const auto &p : mI.mP)

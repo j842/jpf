@@ -9,7 +9,7 @@
 namespace inputfiles
 {
 
-    project::project(std::string id, std::string desc, bool BAU, std::string comments) : mId(id), mDescription(desc), mBAU(BAU), mComments(comments)
+    project::project(std::string id, std::string name, std::string desc, bool BAU, std::string comments) : mId(id), mName(name), mDescription(desc), mBAU(BAU), mComments(comments)
     {
     }
 
@@ -37,9 +37,9 @@ namespace inputfiles
             TERMINATE("Could not open projects.csv!");
 
         std::vector<std::string> row;
-        while (c.getline(row, 4))
+        while (c.getline(row, 5))
         {
-            project p(row[0], row[1], isBAU(row[2]), row[3]);
+            project p(row[0], row[1], row[2], isBAU(row[3]), row[4]);
             mMaxProjectNameWidth = std::max(mMaxProjectNameWidth, (unsigned int)p.getId().length());
             this->push_back(p);
         }
@@ -52,6 +52,7 @@ namespace inputfiles
         {
             std::vector<std::string> row = {
                 i.getId(),
+                i.getName(),
                 i.getDesc(),
                 i.getBAU() ? "BAU" : "New",
                 i.getmComments()};
@@ -63,7 +64,7 @@ namespace inputfiles
     unsigned int projects::getIndexByID(std::string id) const // returns eNotFound if index isn't there.
     {
         for (unsigned int i = 0; i < this->size(); ++i)
-            if (iSame(this->at(i).getId(), id))
+            if (iSame(this->at(i).getId(), id) || iSame(this->at(i).getName(),id))
                 return i;
         return eNotFound;
     }

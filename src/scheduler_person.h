@@ -35,7 +35,7 @@ namespace scheduler
 
         const std::vector<daychunk> &getChunks(unsigned int day) const;
         unsigned long numChunkDays() const;
-
+        
     private:
         void _decrementAvailability(unsigned long uDay, tCentiDay decrement); // does not assign workchunk.
 
@@ -46,10 +46,10 @@ namespace scheduler
         std::vector<daychunk> mEmptyChunk;
     };
 
-    class person : public inputfiles::teammember
+    class scheduledperson : public inputfiles::teammember
     {
     public:
-        person(const inputfiles::teammember &m, const inputfiles::publicholidays &pubh);
+        scheduledperson(const inputfiles::teammember &m, const inputfiles::publicholidays &pubh);
 
         workdate getEarliestStart(workdate fromstart);
         tCentiDay getMaxAvialability() const;
@@ -59,19 +59,22 @@ namespace scheduler
         const std::vector<daychunk> &getChunks(unsigned int day) const;
         unsigned long numChunkDays() const;
 
+        unsigned long holidaysInMonth(unsigned long month) const;
+
     private:
         void _registerHolidayString(std::string s);
         void _registerHoliday(leaverange dr);
 
     private:
         intervals mIntervals;
+        std::vector<leaverange> mHolidays;
     };
 
-    typedef std::vector<person> tPersonVec;
-    class people : public tPersonVec
+    typedef std::vector<scheduledperson> tPersonVec;
+    class scheduledpeople : public tPersonVec
     {
     public:
-        people();
+        scheduledpeople();
 
         unsigned int getMaxNameWidth() const;
     };

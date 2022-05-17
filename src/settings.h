@@ -31,6 +31,7 @@ class settings
         static std::string getInputVersionStr();
         static std::string getJPFVersionStr();
         static std::string getJPFReleaseStr();
+        static std::string getJPFFullVersionStr();
 
         std::string getTitle() const;
         int getPort() const;

@@ -89,14 +89,14 @@ namespace scheduler
 
     // ------------------------------------------------------------------------------------------------------------
 
-    person::person(const teammember &m, const inputfiles::publicholidays &pubh) : teammember(m.mName, m.mEFTProject, m.mEFTBAU, m.mEFTOverhead, m.getLeave()),
+    scheduledperson::scheduledperson(const teammember &m, const inputfiles::publicholidays &pubh) : teammember(m.mName, m.mEFTProject, m.mEFTBAU, m.mEFTOverhead, m.getLeave()),
                                                                       mIntervals(m.mEFTProject)
     {
         _registerHolidayString(getLeave());
         _registerHolidayString(pubh.getStr());
     }
 
-    void person::_registerHolidayString(std::string s)
+    void scheduledperson::_registerHolidayString(std::string s)
     {
         if (s.length() > 0)
         {
@@ -109,52 +109,64 @@ namespace scheduler
             { // parse leave string. Could be date, or date-date (inclusive). Closed interval.
                 leaverange dr(x);
                 if (!dr.isEmpty())
+                {
                     _registerHoliday(dr);
+                    mHolidays.push_back(dr);
+                }
             }
         }
     }
 
-    workdate person::getEarliestStart(workdate fromstart)
+    workdate scheduledperson::getEarliestStart(workdate fromstart)
     {
         return mIntervals.getEarliestStart(fromstart);
     }
 
-    void person::_registerHoliday(leaverange dr)
+    void scheduledperson::_registerHoliday(leaverange dr)
     { // end is open interval.
         mIntervals.registerHoliday(dr);
     }
 
-    tCentiDay person::getMaxAvialability() const
+    tCentiDay scheduledperson::getMaxAvialability() const
     {
         return mIntervals.getMaxAvialability();
     }
 
-    tCentiDay person::getAvailability(workdate day) const
+    tCentiDay scheduledperson::getAvailability(workdate day) const
     {
         return mIntervals.getAvailability(day);
     }
 
-    void person::decrementAvailability(unsigned long uDay, tCentiDay decrement, unsigned int itemNdx)
+    void scheduledperson::decrementAvailability(unsigned long uDay, tCentiDay decrement, unsigned int itemNdx)
     {
         mIntervals.decrementAvailability(uDay, decrement, itemNdx);
     }
 
-    const std::vector<daychunk> &person::getChunks(unsigned int day) const
+    const std::vector<daychunk> &scheduledperson::getChunks(unsigned int day) const
     {
         return mIntervals.getChunks(day);
     }
-    unsigned long person::numChunkDays() const
+    unsigned long scheduledperson::numChunkDays() const
     {
         return mIntervals.numChunkDays();
     }
 
+    unsigned long scheduledperson::holidaysInMonth(unsigned long month) const
+    {
+        unsigned long tally=0;
+        for (auto & dr : mHolidays)
+            tally += dr.holidayDaysInMonth(month);
+        return tally;
+    }
+
+
     // ------------------------------------------------------------------------------------------------------------
 
-    people::people() : tPersonVec()
+    scheduledpeople::scheduledpeople() : tPersonVec()
     {
     }
 
-    unsigned int people::getMaxNameWidth() const
+    unsigned int scheduledpeople::getMaxNameWidth() const
     {
         unsigned int lpn = 0;
         for (auto &i : *this)

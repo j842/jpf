@@ -187,7 +187,7 @@ namespace scheduler
 
             if (z.mProject != prevproj)
             {
-                std::string pname = mProjects[z.mProject].getId();
+                std::string pname = mProjects[z.mProject].getName();
 
                 ofs << std::endl
                     << std::endl
