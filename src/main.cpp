@@ -17,6 +17,7 @@
 #include "settings.h"
 #include "main.h"
 #include "simplecsv.h"
+#include "colours.h"
 
 // --------------------------------------------------------------------
 
@@ -292,7 +293,14 @@ int cMain::go(int argc, char **argv)
     {
         // handle options which do not require a directory.
         if (argc>=2 && strlen(argv[1])>1 && argv[1][0]=='-' && tolower(argv[1][1])=='t')
-            return runtests() ? 0 : 1;        
+            return runtests() ? 0 : 1;     
+
+        // no directory specified.
+        if (argv[argc-1][0]=='-')
+        {
+            std::cerr <<std::endl<< colours::cWarningRed << "You need to specify a directory." <<colours::cNoColour <<std::endl<<std::endl;
+            return showhelp();   
+        }
 
         // set directory.
         std::string directory = argv[argc - 1];

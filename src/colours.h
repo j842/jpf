@@ -36,6 +36,7 @@ public:
 const std::string cLightOrange = "\e[38;5;179m";
 const std::string cBlue =  "\e[38;5;69m";
 const std::string cLime = "\e[38;5;150m";
+const std::string cWarningRed = "\e[38;5;196m";
 const std::string cNoColour = "\033[m";
 }
 
