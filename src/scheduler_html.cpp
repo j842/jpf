@@ -17,22 +17,29 @@ namespace scheduler
 
     void scheduler::CalculateDevDaysTally(
         std::vector<std::vector<double>> &DevDaysTally, // [project][month in future]
-        std::vector<std::string> &ProjectLabels,        // [project]
-        std::vector<rgbcolour> &Colours,                // [project]
-        std::vector<tItemTypes> &BAU,                   // [project]
+        std::vector<tProjectInfo>        &ProjectInfo,
         tNdx personNdx
     ) const
     {
-        DevDaysTally.resize(mProjects.size() + 4);
+        DevDaysTally.resize(mProjects.size() + kNumItemTypes);
+        ProjectInfo.resize(mProjects.size() + kNumItemTypes);
 
         // set up project labels.
         {
-            for (auto &proj : mProjects)
-                ProjectLabels.push_back(proj.getId());
-            ProjectLabels.push_back("Holidays");
-            ProjectLabels.push_back("Unscheduled Time");
-            ProjectLabels.push_back("Other BAU");
-            ProjectLabels.push_back("Project Overhead");
+            unsigned long x = 0;
+            for (x=0;x<mProjects.size();++x)
+            {
+                ProjectInfo[x].mId = mProjects[x].getId();
+                ProjectInfo[x].mName = mProjects[x].getName();
+            }
+            ProjectInfo[x+0].mId="Holidays";
+            ProjectInfo[x+0].mName="Holidays";
+            ProjectInfo[x+1].mId="Unscheduled";
+            ProjectInfo[x+1].mName="Unscheduled Time";
+            ProjectInfo[x+2].mId="Other BAU";
+            ProjectInfo[x+2].mName="Non-project BAU work";
+            ProjectInfo[x+3].mId="Overhead";
+            ProjectInfo[x+3].mName="New Project Overhead";
         }
 
         // determine the maximum month to consider.
@@ -110,31 +117,30 @@ namespace scheduler
 
         // tidy up BAU 
         {
-            BAU.resize(mProjects.size(), kBAU);
-            for (unsigned int pi = 0; pi < mProjects.size(); ++pi)
-                BAU[pi] = mProjects[pi].getBAU() ? kBAU : kNew;
-            BAU.push_back(kHol); // holidays 
-            BAU.push_back(kUna); // slack - assume new projects.
-            BAU.push_back(kBAU); // BAU.
-            BAU.push_back(kNew); // overhead.
+            unsigned int pi = 0;
+            for (pi=0; pi < mProjects.size(); ++pi)
+                ProjectInfo[pi].mType = mProjects[pi].getBAU() ? kBAU : kNew;
+            ProjectInfo[pi+0].mType=kHol; // holidays 
+            ProjectInfo[pi+1].mType=kUna; // slack - assume new projects.
+            ProjectInfo[pi+2].mType=kBAU; // BAU.
+            ProjectInfo[pi+3].mType=kNew; // overhead.
         }
 
         // and Colours
         {
-            Colours.resize(mProjects.size(), rgbcolour{.r = 0, .g = 200, .b = 100});
-
             colours::ColorGradient heatMapGradient;
-            for (unsigned int ci = 0; ci < Colours.size(); ++ci)
+            unsigned int ci = 0;
+            for (ci=0; ci < mProjects.size(); ++ci)
             {
                 float r, g, b;
-                float v = (float)ci / (float)(Colours.size() - 4);
+                float v = (float)ci / (float)(mProjects.size() - 4);
                 heatMapGradient.getColorAtValue(v, r, g, b);
-                Colours[ci] = rgbcolour{.r = (int)(r * 255.0 + 0.5), .g = (int)(g * 255.0 + 0.5), .b = (int)(b * 255.0 + 0.5)};
+                ProjectInfo[ci].mColour = rgbcolour{.r = (int)(r * 255.0 + 0.5), .g = (int)(g * 255.0 + 0.5), .b = (int)(b * 255.0 + 0.5)};
             }
-            Colours.push_back(rgbcolour{.r = 176, .g = 82 , .b = 205}); // Holidays
-            Colours.push_back(rgbcolour{.r = 210, .g = 180, .b = 140}); // slack
-            Colours.push_back(rgbcolour{.r = 100, .g = 100, .b = 100}); // BAU
-            Colours.push_back(rgbcolour{.r = 200, .g = 200, .b = 200}); // overhead
+            ProjectInfo[ci+0].mColour = rgbcolour{.r = 176, .g = 82 , .b = 205}; // Holidays
+            ProjectInfo[ci+1].mColour = rgbcolour{.r = 210, .g = 180, .b = 140}; // slack
+            ProjectInfo[ci+2].mColour = rgbcolour{.r = 100, .g = 100, .b = 100}; // BAU
+            ProjectInfo[ci+3].mColour = rgbcolour{.r = 200, .g = 200, .b = 200}; // overhead
         }
 
         // now drop empty projects
@@ -147,9 +153,7 @@ namespace scheduler
             if (tally<0.01)
                 {
                     DevDaysTally.erase(DevDaysTally.begin()+pi);
-                    ProjectLabels.erase(ProjectLabels.begin()+pi);
-                    BAU.erase(BAU.begin()+pi);
-                    Colours.erase(Colours.begin()+pi);
+                    ProjectInfo.erase(ProjectInfo.begin()+pi);
                 }
         }
     }
@@ -157,10 +161,8 @@ namespace scheduler
     void scheduler::Graph_Total_Project_Cost(std::ostream &ofs) const
     {
         std::vector<std::vector<double>> DevDaysTally;
-        std::vector<std::string> Labels;
-        std::vector<rgbcolour> Colours;
-        std::vector<tItemTypes> BAU;
-        CalculateDevDaysTally(DevDaysTally, Labels, Colours, BAU);
+        std::vector<tProjectInfo> ProjectInfo;
+        CalculateDevDaysTally(DevDaysTally, ProjectInfo);
         if (DevDaysTally.size() == 0)
             return; // no data.
 
@@ -175,19 +177,19 @@ namespace scheduler
         <script>
         )";
 
-        std::vector<double> vProjectCostRemaining(Labels.size(), 0.0);
-        for (unsigned int i = 0; i < Labels.size(); ++i)
+        std::vector<double> vProjectCostRemaining(DevDaysTally.size(), 0.0);
+        for (unsigned int i = 0; i < DevDaysTally.size(); ++i)
             for (double j : DevDaysTally[i])
                 vProjectCostRemaining[i] += j;
         {
             ofs << "var colorlist = [";
             bool firstcolor = true;
-            for (auto &c : Colours)
+            for (auto &c : ProjectInfo)
             {
                 if (!firstcolor)
                     ofs << ", ";
                 firstcolor = false;
-                ofs << "'rgb(" << c.r << "," << c.g << "," << c.b << ")'";
+                ofs << "'rgb(" << c.mColour.r << "," << c.mColour.g << "," << c.mColour.b << ")'";
             }
             ofs << "];" << std::endl;
         }
@@ -202,8 +204,8 @@ namespace scheduler
         ofs << "," << std::endl;
         {
             listoutput lo(ofs, "labels: [", ", ", "]");
-            for (auto &i : Labels)
-                lo.writehq(i);
+            for (auto &i : ProjectInfo)
+                lo.writehq(i.mName);
         }
 
         double totalProjectCostRemaining = 0.0;
@@ -213,9 +215,9 @@ namespace scheduler
         ofs << "," << std::endl;
         {
             listoutput lo(ofs, "text: [", ", ", "]");
-            for (unsigned int i = 0; i < Labels.size(); ++i)
+            for (unsigned int i = 0; i < ProjectInfo.size(); ++i)
                 if (vProjectCostRemaining[i] > 0.01 * totalProjectCostRemaining)
-                    lo.writehq(S() << Labels[i] << "   " << getDollars(gSettings().dailyDevCost() * vProjectCostRemaining[i]));
+                    lo.writehq(S() << ProjectInfo[i].mId << "   " << getDollars(gSettings().dailyDevCost() * vProjectCostRemaining[i]));
                 else
                     lo.writehq("");
         }
@@ -244,10 +246,8 @@ namespace scheduler
     void scheduler::Graph_Project_Cost(std::ostream &ofs) const
     {
         std::vector<std::vector<double>> DevDaysTally;
-        std::vector<std::string> Labels;
-        std::vector<rgbcolour> Colours;
-        std::vector<tItemTypes> BAU;
-        CalculateDevDaysTally(DevDaysTally, Labels, Colours, BAU);
+        std::vector<tProjectInfo> ProjectInfo;
+        CalculateDevDaysTally(DevDaysTally, ProjectInfo);
         ASSERT(DevDaysTally.size()>0);
         if (DevDaysTally.size() == 0)
             return; // no data.
@@ -259,7 +259,7 @@ namespace scheduler
         <script>
         )";
 
-        for (unsigned int i = 0; i < Labels.size(); ++i)
+        for (unsigned int i = 0; i < DevDaysTally.size(); ++i)
         {
             ofs << "var trace" << i << " ={" << std::endl;
             {
@@ -275,9 +275,9 @@ namespace scheduler
                     lo.write(S() << std::setprecision(3) << gSettings().dailyDevCost() * DevDaysTally[i][m]);
             }
             ofs << std::endl
-                << "name: '" << Labels[i] << "'," << std::endl;
+                << "name: '" << ProjectInfo[i].mName << "'," << std::endl;
 
-            auto &c = Colours[i];
+            auto &c = ProjectInfo[i].mColour;
             ofs << "marker: { color: 'rgb(" << c.r << ", " << c.g << ", " << c.b << ")' }," << std::endl;
 
             ofs << "type: 'bar'," << std::endl
@@ -287,7 +287,7 @@ namespace scheduler
 
         {
             listoutput lo(ofs, "var data = [", ", ", "];");
-            for (auto it = Labels.size(); it > 0; --it)
+            for (auto it = ProjectInfo.size(); it > 0; --it)
                 lo.write(S() << "trace" << it - 1);
         }
         ofs << std::endl;
@@ -321,10 +321,8 @@ namespace scheduler
     void scheduler::Graph_Person_Project_Cost(std::ostream &ofs, tNdx personNdx) const
     {
         std::vector<std::vector<double>> DevDaysTally;
-        std::vector<std::string> Labels;
-        std::vector<rgbcolour> Colours;
-        std::vector<tItemTypes> BAU;
-        CalculateDevDaysTally(DevDaysTally, Labels, Colours, BAU, personNdx);
+        std::vector<tProjectInfo> ProjectInfo;
+        CalculateDevDaysTally(DevDaysTally, ProjectInfo, personNdx);
         if (DevDaysTally.size() == 0)
             return; // no data.
 
@@ -336,7 +334,7 @@ namespace scheduler
         "<h2 id=\"" << pCode <<"\">" <<  mPeople[personNdx].mName << " : Projected Percent Effort by Month</h2>" << std::endl
         << "<div id=\"stackedbardevdays_"<<pCode<<"\" style=\"width:auto;height:600;\"></div><script>"<<std::endl;    
 
-        for (unsigned int i = 0; i < Labels.size(); ++i)
+        for (unsigned int i = 0; i < ProjectInfo.size(); ++i)
         {
             ofs << "var trace_"<<pCode<<"_" << i << " ={" << std::endl;
             {
@@ -352,10 +350,16 @@ namespace scheduler
                     lo.write(S() << std::setprecision(3) << DevDaysTally[i][m]);
             }
             ofs << std::endl
-                << "name: '" << Labels[i] << "'," << std::endl;
+                << "name: '" << ProjectInfo[i].mName << "'," << std::endl;
 
-            auto &c = Colours[i];
+            auto &c = ProjectInfo[i].mColour;
             ofs << "marker: { color: 'rgb(" << c.r << ", " << c.g << ", " << c.b << ")' }," << std::endl;
+
+            {
+                listoutput lo(ofs, "text: [", ", ", "], ");
+                for (unsigned int m = 0; m < maxmonth; ++m)
+                    lo.write(S() << "'" << ProjectInfo[i].mId << "'");
+            }
 
             ofs << "type: 'bar'," << std::endl
                 << "};" << std::endl
@@ -364,7 +368,7 @@ namespace scheduler
 
         {
             listoutput lo(ofs, S()<<"var data_"<<pCode<<" = [", ", ", "];");
-            for (auto it = Labels.size(); it > 0; --it)
+            for (auto it = ProjectInfo.size(); it > 0; --it)
                 lo.write(S() << "trace" << "_" << pCode<<"_"<< it - 1);
         }
         ofs << std::endl;
@@ -416,10 +420,8 @@ namespace scheduler
     void scheduler::Graph_BAU(std::ostream &ofs) const
     {
         std::vector<std::vector<double>> DevDaysTally; // [project][month]
-        std::vector<std::string> Labels;
-        std::vector<rgbcolour> Colours;
-        std::vector<tItemTypes> BAU;
-        CalculateDevDaysTally(DevDaysTally, Labels, Colours, BAU);
+        std::vector<tProjectInfo> ProjectInfo;
+        CalculateDevDaysTally(DevDaysTally, ProjectInfo);
         if (DevDaysTally.size() == 0)
             return; // no data.
         unsigned long maxmonth = DevDaysTally[0].size();
@@ -433,7 +435,7 @@ namespace scheduler
 
         for (unsigned int pi = 0; pi < DevDaysTally.size(); ++pi)
             for (unsigned int m = 0; m < maxmonth; ++m)
-                DDT[BAU[pi]][m] += DevDaysTally[pi][m];
+                DDT[ProjectInfo[pi].mType][m] += DevDaysTally[pi][m];
 
         for (unsigned int m = 0; m < maxmonth; ++m)
         { // make percentages.
@@ -474,9 +476,9 @@ namespace scheduler
             if (i == kNew)
                 c = {30, 190, 30};
             if (i == kUna)
-                c = Colours[Colours.size() - 3];
+                c = ProjectInfo[ProjectInfo.size() - 3].mColour;
             if (i==kHol)
-                c = Colours[Colours.size() - 4];
+                c = ProjectInfo[ProjectInfo.size() - 4].mColour;
             ofs << "marker: { color: 'rgb(" << c.r << ", " << c.g << ", " << c.b << ")' }," << std::endl;
 
             {
@@ -675,7 +677,7 @@ namespace scheduler
             if (!first)
                 oss << ", " << std::endl;
             first = false;
-            oss << "['" << __protect(p.getId()) << "', '" << __protect(p.getId()) << "', '" << __protect(p.getId()) << "', "
+            oss << "['" << __protect(p.getName()) << "', '" << __protect(p.getName()) << "', '" << __protect(p.getId()) << "', "
                 << p.mActualStart.getAsGoogleNewDate() << ", "
                 << p.mActualEnd.getAsGoogleNewDate() << ", "
                 << "null, 0, null ]";

@@ -12,15 +12,17 @@ namespace inputfiles
 class project
 {
     public: 
-        project(std::string id, std::string desc, bool BAU, std::string comments);
+        project(std::string id, std::string name, std::string desc, bool BAU, std::string comments);
 
         const std::string & getId() const {return mId;}
+        const std::string & getName() const {return mName;}
         const std::string & getDesc() const {return mDescription;}
         bool getBAU() const {return mBAU;}
         const std::string & getmComments() const {return mComments;}
 
     private:
         const std::string mId;
+        const std::string mName;
         const std::string mDescription;
         const bool mBAU;
         const std::string mComments;

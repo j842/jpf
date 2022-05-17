@@ -82,6 +82,8 @@ namespace scheduler
                     auto &tt = t.at(positions[x]);
 
                     unsigned int projNdx = projects().getIndexByID(tt.mProjectName);
+                    if (projNdx==eNotFound)
+                        TERMINATE(S()<<"Could not find a project with id "<<(tt.mProjectName));
                     if ((topt == NULL || projNdx < bestProjNdx))
                     {
                         topt = &tt;

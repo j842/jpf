@@ -138,15 +138,20 @@ namespace scheduler
         };
         // rgbcolour heatmap(float minimum, float maximum, float value) const;
 
+        typedef struct
+        {
+            std::string mId;
+            std::string mName;
+            rgbcolour mColour;
+            tItemTypes mType;
+        } tProjectInfo;
+
         void CalculateDevDaysTally(
             std::vector<std::vector<double>> &DevDaysTally, // [project][month in future]
-            std::vector<std::string> &ProjectLabels,        // [project]
-            std::vector<rgbcolour> &Colours,                // [project]
-            std::vector<tItemTypes> &BAU,                   // [project]
+            std::vector<tProjectInfo>        &ProjectInfo,
             tNdx personNdx = ULONG_MAX
         ) const;
         
-
         void Graph_Project_Cost(std::ostream &ofs) const;
         void Graph_Person_Project_Cost(std::ostream &ofs, tNdx personNdx) const;
         void Graph_Total_Project_Cost(std::ostream &ofs) const;
