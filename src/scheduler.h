@@ -123,7 +123,7 @@ namespace scheduler
 
         void prioritySortArray(std::vector<int> &v) const;
 
-        person &getPersonByName(const std::string name); // creates if not present, but checks against teams.
+        scheduledperson &getPersonByName(const std::string name); // creates if not present, but checks against teams.
         unsigned int getItemIndexFromId(const std::string id) const;
         unsigned int getPersonIndexFromName(const std::string name) const;
 
@@ -151,13 +151,11 @@ namespace scheduler
         static void HTMLheaders(std::ostream &ofs, std::string inHead);
 
         static void writelist(std::ostream &oss, const std::vector<std::string> &v);
-        //static void writeresourcenames(std::ostream &oss, const std::vector<inputfiles::resource> &v);
         std::string ItemType2String(tItemTypes i) const;
-
 
     private:
         bool mScheduled;
-        people mPeople; // taken from teammembers, but with added fields.
+        scheduledpeople mPeople; // taken from teammembers, but with added fields.
         std::vector<scheduleditem> mItems; // copied from mI.mB.mTeamItems, merged, and scheduled.
         std::vector<scheduledproject> mProjects; // copied from mI.mP, but with start, end dates etc.
         std::vector<worklogitem> mWorkLog; // record of the work done to complete the items (person-day chunks)

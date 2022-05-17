@@ -133,7 +133,7 @@ namespace scheduler
         return eNotFound;
     }
 
-    person &scheduler::getPersonByName(const std::string name)
+    scheduledperson &scheduler::getPersonByName(const std::string name)
     {
         for (auto &p : mPeople)
             if (iSame(name, p.mName))
