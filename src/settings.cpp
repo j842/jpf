@@ -183,6 +183,12 @@ std::string settings::getJPFReleaseStr()
     return __JPF_RELEASE ;
 }
 
+std::string settings::getJPFFullVersionStr()
+{
+    return S()<< getJPFVersionStr()<<"-"<<getJPFReleaseStr();
+}
+
+
 void settings::setRoot(std::string path)
 {
     if (path.length()==0)

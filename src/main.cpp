@@ -236,7 +236,7 @@ int cMain::run_advance(std::string s)
 int cMain::showhelp()
 {
     std::cout << std::endl;
-    std::cout << "jpf " << gSettings().getJPFVersionStr() << "-" << gSettings().getJPFReleaseStr() << " is a simple auto-balancing forecasting tool for projects across multiple teams.";
+    std::cout << "jpf " << gSettings().getJPFFullVersionStr() << " is a simple auto-balancing forecasting tool for projects across multiple teams.";
 
     std::cout << R"(
 
