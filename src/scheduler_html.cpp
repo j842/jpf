@@ -333,7 +333,7 @@ namespace scheduler
         unsigned long maxmonth = DevDaysTally[0].size();
 
         ofs << std::endl <<
-        "<h2>" <<  mPeople[personNdx].mName << " : Projected Percent Effort by Month</h2>" << std::endl
+        "<h2 id=\"" << pCode <<"\">" <<  mPeople[personNdx].mName << " : Projected Percent Effort by Month</h2>" << std::endl
         << "<div id=\"stackedbardevdays_"<<pCode<<"\" style=\"width:auto;height:600;\"></div><script>"<<std::endl;    
 
         for (unsigned int i = 0; i < Labels.size(); ++i)
@@ -548,8 +548,23 @@ namespace scheduler
     void scheduler::outputHTML_PeopleEffort(std::ostream & ofs) const
     {
         HTMLheaders_Plotly(ofs);
+        
+        std::ostringstream oss;
+        oss<<"<br/><hr/><br/>";
+        for (auto & p : mPeople)
+        {
+            std::string pCode = p.mName;
+            removewhitespace(pCode);
+            oss << "<a href=\"#" << pCode << "\">"<<p.mName<<"</a>" <<std::endl;
+        }
+        oss<<"<br/><hr/><br/>";
+        oss <<std::endl<<std::endl;
+
         for (tNdx i=0; i<mPeople.size();++i)
+        {
             Graph_Person_Project_Cost(ofs,i);
+            ofs << oss.str();
+        }
         HTMLfooters(ofs);
     }
 
