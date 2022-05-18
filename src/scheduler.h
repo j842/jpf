@@ -106,6 +106,7 @@ namespace scheduler
         void outputHTML_Index(std::ostream &ofs) const;
         void outputHTML_Dashboard(std::ostream &ofs) const;
         void outputHTML_High_Level_Gantt(std::ostream &ofs) const;
+        void outputHTML_High_Level_Gantt2(std::ostream &ofs) const;
         void outputHTML_Detailed_Gantt(std::ostream &ofs) const;
         void outputHTML_People(std::ostream &ofs) const;
         void outputHTML_PeopleEffort(std::ostream & ofs) const;
@@ -160,7 +161,7 @@ namespace scheduler
         void HTMLheaders_Plotly(std::ostream &ofs) const;
         static void HTMLfooters(std::ostream &ofs);
         static void HTMLheaders(std::ostream &ofs, std::string inHead);
-
+        static std::string __protect(std::string s); // remove half quotes.
         static void writelist(std::ostream &oss, const std::vector<std::string> &v);
         std::string ItemType2String(tItemTypes i) const;
 
