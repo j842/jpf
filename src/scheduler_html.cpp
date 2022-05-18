@@ -331,7 +331,7 @@ namespace scheduler
         unsigned long maxmonth = DevDaysTally[0].size();
 
         ofs << std::endl <<
-        "<h2 id=\"" << pCode <<"\">" <<  mPeople[personNdx].mName << " : Projected Percent Effort by Month</h2>" << std::endl
+        "<h2 id=\"" << pCode <<"\">" <<  mPeople[personNdx].mName << " : Projected Effort by Month</h2>" << std::endl
         << "<div id=\"stackedbardevdays_"<<pCode<<"\" style=\"width:auto;height:600;\"></div><script>"<<std::endl;    
 
         for (unsigned int i = 0; i < ProjectInfo.size(); ++i)
