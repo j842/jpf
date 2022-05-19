@@ -36,7 +36,7 @@ POSTCOMPILE = mv -f $(DEP_DIR)/$*.Td $(DEP_DIR)/$*.d
 COMPILE.cc = $(CXX) $(DEPFLAGS) $(CXXFLAGS) -c -o $@
 LINK.o = $(LD) $(LDFLAGS) -o $@
 
-.PHONY: all clean check deploy
+.PHONY: all clean check deploy setup
 
 all: $(JPF_EXE)
 
@@ -82,5 +82,14 @@ check: $(JPF_EXE)
 deploy:
 	@gh auth login --with-token < ~/.github_token
 	@gh workflow run deploy_package.yml
+
+
+setup:
+	sudo mkdir -p /var/log/jpf && sudo chown ${USER} /var/log/jpf
+	sudo rm -rf /opt/jpf
+	sudo mkdir -p /opt/jpf && sudo chown ${USER} /opt/jpf
+	cp -r $(ROOT_DIR)/input /opt/jpf
+	cp -r $(ROOT_DIR)/deploy/contrib /opt/jpf
+
 
 # ------------------------------------------------

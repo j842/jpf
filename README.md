@@ -89,11 +89,15 @@ cd jpf
 sudo cp webfsd-jpf/webfsd-jpf /usr/bin
 ```
 
-Then compile:
+Set up relevant folders and build the podman images:
 ```
-make images
+make setup
+make -C deploy images
+```
+
+Then compile jpf itself:
+```
 make
-make deb
 ```
 And test:
 

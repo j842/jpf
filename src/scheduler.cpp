@@ -90,10 +90,10 @@ namespace scheduler
         if (!std::filesystem::exists(getOptContribPath()))
             fatal("Expected contrib files are not installed in " + getOptContribPath()+".");
 
-        std::string gantt = getOutputPath_Html();
-        std::filesystem::copy(getOptContribPath()+"/gantt/", gantt, std::filesystem::copy_options::recursive);
-        if (!std::filesystem::exists(gantt+"/gantt"))
-            fatal("HTML contribution directory was not successfully created: " + gantt+"/gantt");
+        std::string html = getOutputPath_Html();
+        std::filesystem::copy(getOptContribPath(), html, std::filesystem::copy_options::recursive);
+        if (!std::filesystem::exists(html+"gantt"))
+            fatal("HTML contribution directory was not successfully created: " + html+"gantt");
     }
 
     void scheduler::create_output_directories() const

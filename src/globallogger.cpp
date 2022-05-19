@@ -174,7 +174,7 @@ std::string getheader(eLogLevel level)
     //  if (strlen(date_time)>0)
     //      date_time[strlen(date_time)-1]=0;
 
-    ost << "|" << levelname(level) << "|" << date_time << "| ";
+    ost << "|" << levelname(level) << "|" << date_time << "|  ";
     return ost.str();
 }
 

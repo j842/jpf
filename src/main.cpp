@@ -106,6 +106,8 @@ int cMain::run_console()
         std::cout << std::endl
                   << std::endl;
         s.displayprojects_Console();
+        std::cout << std::endl
+                  << std::endl;
         s.createAllOutputFiles();
     }
     catch (TerminateRunException &pEx)
@@ -160,6 +162,7 @@ int cMain::run_watch()
 
 int cMain::run_create_directories()
 {
+    gSettings().setRoot(".");
     std::string pr = gSettings().getRoot();
     std::string pi = pr + "/input/";
 
@@ -170,11 +173,14 @@ int cMain::run_create_directories()
 
     if (!std::filesystem::exists(pi))
     {
-        std::filesystem::copy(getOptInputPath(), gSettings().getRoot(), std::filesystem::copy_options::recursive);
+        std::filesystem::copy(getOptInputPath(), pi, std::filesystem::copy_options::recursive);
         if (!std::filesystem::exists(pi))
             fatal("Input directory was not successfully created: " + pi);
+        loginfo("Created "+pi);
     }
-    
+    else
+        loginfo(pi+" already exists.");
+
     return 0;
 }
 
@@ -249,8 +255,8 @@ Mode:
                     The corresponding webpages will auto-update as inputs change.
                     The port can be configured in settings.csv.
 
-    -c, -create     Create a skeleton working tree in DIRECTORY, which includes input and 
-                    output directories, with example input files. 
+    -c, -create     Create a skeleton working tree in the current directory, 
+                    with example input files. 
 
     -t, -test       Run unit tests.
 
@@ -297,6 +303,9 @@ int cMain::go(int argc, char **argv)
         if (argc>=2 && strlen(argv[1])>1 && argv[1][0]=='-' && tolower(argv[1][1])=='t')
             return runtests() ? 0 : 1;     
 
+        if (argc>=2 && strlen(argv[1])>1 && argv[1][0]=='-' && tolower(argv[1][1])=='c')
+            return run_create_directories();
+
         // no directory specified.
         if (argv[argc-1][0]=='-')
         {
@@ -307,9 +316,14 @@ int cMain::go(int argc, char **argv)
         // set directory.
         std::string directory = argv[argc - 1];
         gSettings().setRoot(directory);
-        gSettings().load_settings();
         if (!gSettings().RootExists())
             TERMINATE("Root directory " + gSettings().getRoot() + " does not exist.");
+
+        if (!std::filesystem::exists( getInputPath()+"settings.csv" ))
+            fatal("The settings.csv file does not exist:\n  "+getInputPath()+"settings.csv\n\nRun with -c flag to create input directories.");
+        gSettings().load_settings();
+
+
 
         std::cout << std::endl;
         std::cout << "John's Project Forecaster " << gSettings().getJPFVersionStr() << "-" << gSettings().getJPFReleaseStr() << " - An auto-balancing forecasting tool." << std::endl
@@ -335,8 +349,6 @@ int cMain::go(int argc, char **argv)
         }
         case 'a':
             return run_advance(s);
-        case 'c':
-            return run_create_directories();
         case 'r':
             return run_refresh();
         default:

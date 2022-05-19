@@ -39,8 +39,8 @@ const std::string cBlue =  "\e[38;5;69m";
 const std::string cLime = "\e[38;5;150m";
 const std::string cNoColour = "\033[m";
 
-const std::string cInfo = "\e[38;5;253m";
-const std::string cDebug = "\e[38;5;150m";
+const std::string cInfo = "\e[38;5;111m";
+const std::string cDebug = "\e[38;5;244m";
 const std::string cWarning = "\e[38;5;179m";
 const std::string cError = "\e[38;5;9m";
 const std::string cDefault = "\e[38;5;118m";

@@ -30,7 +30,7 @@ bool iSame(const std::string &s1, const std::string &s2)
 void _terminate(const std::string &s,const std::string &func, const std::string &file, int line)
 {
     logdebug(
-        S() << "Terminating due to error (" << func << ",  "<<file<<",  line "<<line<< ")"
+        S() << "Terminating due to error:\n" << "   " << func << "\n   "<<file<<",  line "<<line
     );
 
     fatal( s );
@@ -228,7 +228,7 @@ void checkcreatedirectory(std::string d)
     {
         if (!std::filesystem::create_directory(d))
             TERMINATE("Could not create directory: "+d);
-        std::cout<<"Created directory: "<<d<<std::endl;
+        logdebug(S()<<"Created directory: "<<d);
     }    
 }
 
