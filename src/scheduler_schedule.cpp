@@ -2,6 +2,7 @@
 #include "simplecsv.h"
 #include "inputfiles_projects.h"
 #include "workdate.h"
+#include "globallogger.h"
 
 namespace scheduler
 
@@ -102,7 +103,7 @@ namespace scheduler
         // then sort by priorty.
         std::sort(mItems.begin(), mItems.end(), comparePriority);
 
-        std::cout << "Priortised and Merged " << numItems << " items." << std::endl;
+        logdebug(S()<<"Priortised and Merged " << numItems << " items.");
     }
 
     void scheduler::_determinestart_and_dotask(unsigned int backlogitemNdx)
@@ -311,14 +312,15 @@ namespace scheduler
         ASSERT(mItems.size() == 0);
         ASSERT(mProjects.size() == 0);
 
-        std::cout << "Scheduling backlog items..." << std::endl;
+        loginfo(S() << "Scheduling "<<mI.mB.getTotalNumItems()<<" backlog items across "<< mI.mT.size()<<" teams.");
         timer t;
 
         _prepare_to_schedule();
         _schedule();
         _calc_project_summary();
 
-        std::cout << "Scheduling done in " << std::setprecision(3) << t.stop() << " ms." << std::endl;
+        logdebug(S()<<"Time taken: " << std::setprecision(3) << t.stop() << " ms.");
+        logdebug("Scheduling complete.");
     }
 
 

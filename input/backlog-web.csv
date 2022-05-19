@@ -1,5 +1,5 @@
 Project,ID,Description,Min Calendar WorkDays,Remaining DevDays Total,Earliest Start,Blocking,Contributing,Depends On,Comments
-Webserver,W010,Logins,0,10,,Stu,Mark,,
-Webserver,,Security,0,5,,Sarah,,W010,
-Webserver,W020,Home page,0,15,,Mark,,W010,
-Webserver,,Management Component,0,5,,Sarah,Stu,"W010, W020",Depends on both logins and home page.
+Webserver,We.01,Logins,0,10.00,,Stu,Mark,,
+Webserver,,Security,0,5.00,,Sarah,,We.01,
+Webserver,We.02,Home page,0,15.00,,Mark,,We.01,
+Webserver,,Management Component,0,5.00,,Sarah,Stu,"We.01, We.02",Depends on both logins and home page.

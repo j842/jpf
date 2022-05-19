@@ -72,9 +72,10 @@ int cMain::run_refresh()
             s.refresh(iset);
         }
         replace_all_input_CSV_files(iset);
+        replace_settings_CSV();
 
         {
-            std::cout << std::endl << "Rescheduling..." << std::endl;
+            loginfo("Rescheduling...");
             scheduler::scheduler s(iset);
             s.schedule();
             s.createAllOutputFiles();
@@ -116,8 +117,7 @@ int cMain::run_console()
         return 1;
     }
 
-    std::cout << std::endl
-              << "Completed in " << std::setprecision(3) << tmr.stop() << "ms." << std::endl;
+    loginfo(S() <<"Completed in " << std::setprecision(3) << tmr.stop() << "ms.");
     return 0;
 }
 
@@ -141,7 +141,7 @@ int cMain::run_watch()
 
             timer tmr;
             s.createAllOutputFiles();
-            std::cout << "File output done in " << std::setprecision(3) << tmr.stop() << "ms." << std::endl;
+            logdebug(S() << "File output done in " << std::setprecision(3) << tmr.stop() << "ms.");
         }
         catch (TerminateRunException &pEx)
         {
@@ -151,10 +151,9 @@ int cMain::run_watch()
             std::cerr << pEx.what() << std::endl;
         }
 
-        std::cout << std::endl
-                  << "Watching for changes. Ctrl-c to exit." << std::endl;
+        loginfo("Watching for changes. Ctrl-c to exit.");
         w.waitforchange();
-        std::cout << "Files updated...recalculating!" << std::endl;
+        loginfo("Files updated...recalculating!");
     }
     return 0;
 }
@@ -200,7 +199,7 @@ int cMain::run_advance(std::string s)
 { // s of format -a=dd/mm/yy
     s.erase(s.begin(), s.begin() + 3);
     workdate newStart(s);
-    std::cout << " Advancing start date " << workdate::countWorkDays(gSettings().startDate(),newStart) << " workdays --> " << newStart.getStr_nice_short() << std::endl;
+    loginfo(S()<<" Advancing start date " << workdate::countWorkDays(gSettings().startDate(),newStart) << " workdays --> " << newStart.getStr_nice_short());
 
     try
     {
@@ -221,7 +220,7 @@ int cMain::run_advance(std::string s)
             replace_all_input_CSV_files(iset);
             replace_settings_CSV();
 
-            std::cout << "Replaced input and output files."<< std::endl;
+            loginfo("Replaced input and output files.");
         }
     }
     catch (TerminateRunException &pEx)
@@ -241,29 +240,29 @@ int cMain::run_advance(std::string s)
 int cMain::showhelp()
 {
     std::cout << std::endl;
-    std::cout << "jpf " << gSettings().getJPFFullVersionStr() << " is a simple auto-balancing forecasting tool for projects across multiple teams.";
+    std::cout << "  jpf " << gSettings().getJPFFullVersionStr() << " is a simple auto-balancing forecasting tool for projects across multiple teams.";
 
     std::cout << R"(
 
-The directory used needs to contain an input folder, with appropriate csv files in it.
+  The directory used needs to contain an input folder, with appropriate csv files in it.
 
-usage: jpf [ mode ] DIRECTORY
+  usage: jpf [ mode ] DIRECTORY
 
-Mode:
-    -w, -watch      Watch the folder for changes, and update all output files as needed.
-                    Also starts a webserver, displaying the HTML output files.
-                    The corresponding webpages will auto-update as inputs change.
-                    The port can be configured in settings.csv.
+  Mode:
+      -w, -watch      Watch the folder for changes, and update all output files as needed.
+                      Also starts a webserver, displaying the HTML output files.
+                      The corresponding webpages will auto-update as inputs change.
+                      The port can be configured in settings.csv.
 
-    -c, -create     Create a skeleton working tree in the current directory, 
-                    with example input files. 
+      -c, -create     Create a skeleton working tree in the current directory, 
+                      with example input files. 
 
-    -t, -test       Run unit tests.
+      -t, -test       Run unit tests.
 
-    -r, -refresh    Refresh the input files (read, tidy, write).
+      -r, -refresh    Refresh the input files (read, tidy, write).
 
-    -a=dd/mm/yy     Advance start to date, decrementing work expected to be completed and
-                    removing no longer relevant dates.
+      -a=dd/mm/yy     Advance start to date, decrementing work expected to be completed and
+                      removing no longer relevant dates.
                 
 )";
     return 0;
@@ -299,6 +298,7 @@ int cMain::go(int argc, char **argv)
         if (!std::filesystem::exists("/var/log/jpf"))
             fatal("Please create the directory /var/log/jpf and ensure this user can write to it.");
 
+
         // handle options which do not require a directory.
         if (argc>=2 && strlen(argv[1])>1 && argv[1][0]=='-' && tolower(argv[1][1])=='t')
             return runtests() ? 0 : 1;     
@@ -324,11 +324,19 @@ int cMain::go(int argc, char **argv)
         gSettings().load_settings();
 
 
+        // ----------------------------------------------------------------------------------------------
+        // Settings loaded. Let's go!
 
-        std::cout << std::endl;
-        std::cout << "John's Project Forecaster " << gSettings().getJPFVersionStr() << "-" << gSettings().getJPFReleaseStr() << " - An auto-balancing forecasting tool." << std::endl
-                  << std::endl;
-        std::cout << "Root directory: " << gSettings().getRoot() << std::endl;
+
+        logdebug(S()<<"\n"+std::string(79,'-')<<"\n");
+        std::string aaa;
+        for (int i=0;i<argc;++i)
+            aaa+=S()<<argv[i]<<" ";
+        logdebug(aaa);
+
+        loginfo(S()<<"John's Project Forecaster " << gSettings().getJPFVersionStr() << "-" << gSettings().getJPFReleaseStr() << " - An auto-balancing forecasting tool.");
+        logdebug(S()<<"Root directory: " << gSettings().getRoot());
+        logdebug(S() << "Input file version is "<<gSettings().getInputVersion());
 
         if (argc == 2)
             return run_console();

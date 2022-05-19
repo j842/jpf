@@ -68,7 +68,7 @@ void teams::load_teams()
             this->at(ndx).mMembers.push_back(teammember(personname, EFTProject, EFTBAU, EFTOverhead, leave));
         }
 
-    // fix up reference codes...
+    // auto generate reference codes for the teams...
     unsigned int n=0;
     bool clean=false;
 

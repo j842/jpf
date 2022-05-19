@@ -87,13 +87,25 @@ namespace scheduler
             ofs.close();
         }
 
+        // also copy across all contrib files into the HTML directory.
+
         if (!std::filesystem::exists(getOptContribPath()))
             fatal("Expected contrib files are not installed in " + getOptContribPath()+".");
 
+
         std::string html = getOutputPath_Html();
-        std::filesystem::copy(getOptContribPath(), html, std::filesystem::copy_options::recursive);
-        if (!std::filesystem::exists(html+"gantt"))
-            fatal("HTML contribution directory was not successfully created: " + html+"gantt");
+        std::vector<std::string> contribdirs={"gantt"};
+        for (auto & cd : contribdirs)
+            if (std::filesystem::exists(html+cd))
+                /* std::uintmax_t n = */ std::filesystem::remove_all(html+cd);
+
+        for (auto & cd : contribdirs)
+        {
+            std::filesystem::copy(getOptContribPath()+cd, html+cd, std::filesystem::copy_options::recursive);
+
+            if (!std::filesystem::exists(html+cd))
+                fatal("HTML contribution directory was not successfully created: " + html+cd);
+        }
     }
 
     void scheduler::create_output_directories() const

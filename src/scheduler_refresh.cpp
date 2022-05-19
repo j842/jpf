@@ -31,9 +31,9 @@ namespace scheduler
                     ++removedRefs;
                 }
             if (removedRefs > 0)
-                std::cout << "Removed " << removedRefs << " unneeded reference" << (removedRefs > 1 ? "s." : ".") << std::endl;
+                loginfo(S()<< "Removed " << removedRefs << " unneeded reference" << (removedRefs > 1 ? "s." : "."));
             else
-                std::cout << "References are clean." << std::endl;
+                loginfo("References are clean.");
         }
 
         { // 2. Renumber remaining Refs.

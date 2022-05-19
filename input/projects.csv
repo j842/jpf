@@ -1,4 +1,4 @@
-Project ID,Project Name,Description,BAU or New,Comments
+Project ID,Description,BAU or New,Comments
 Webserver,Webserver,Create a new webserver,BAU,
 Android App,Android App,Android App to manage accounts,BAU,
 iPhone App,iPhone App,iPhone port of the Android app,New,

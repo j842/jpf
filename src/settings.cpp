@@ -67,9 +67,9 @@ void settings::load_settings()
             mMinLogLevel = static_cast<eLogLevel>(ll);
 
 
-    if (getInputVersion()<getRequiredInputVersion())
-        { TERMINATE("The input files being used require a newer version of jpf."); }
-    else if (getInputVersion() > getRequiredInputVersion())
+    if (getInputVersion() < getRequiredInputVersion())
+        TERMINATE("The input files being used require a newer version of jpf.");
+    if (getInputVersion() > getRequiredInputVersion())
         TERMINATE(S()<<"The input files need to be updated to support the current version of jpf."
         <<"\nUpdate inputversion in settings.csv to "<<getInputVersion()<<" when done.");
 }

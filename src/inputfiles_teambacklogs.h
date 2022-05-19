@@ -65,7 +65,12 @@ namespace inputfiles
         bool exists(std::string id) const;
         const backlogitem & getItemFromId(std::string id) const;
 
+        unsigned int getTotalNumItems() const;
+
         std::vector<std::deque<backlogitem>> mTeamItems; // first index is team, second is backlog of items for that team.
+
+    private:
+        unsigned int mTotalNumItems;
     };
 
 } // namespace

@@ -130,7 +130,7 @@ namespace inputfiles
         oss << ",";
     }
 
-    teambacklogs::teambacklogs(const teams & tms)
+    teambacklogs::teambacklogs(const teams & tms) : mTotalNumItems(0)
     {
         // Create mTeamsItems
         mTeamItems.resize(tms.size());
@@ -152,17 +152,19 @@ namespace inputfiles
                                           << getItemFromId(b.mId).getFullName());
                     }
                     mTeamItems[b.mTeamNdx].push_back(b);
+                    ++mTotalNumItems;
                     ++j;
                 }
             }
             else
-                std::cout << "Unable to open team csv: " << filename << std::endl;
+                logwarning(S()<<"Unable to open team csv: " << filename);
         }
     }
 
-    teambacklogs::teambacklogs(const teambacklogs & other)
+    teambacklogs::teambacklogs(const teambacklogs & other) : mTotalNumItems(0)
     {
         mTeamItems = other.mTeamItems; // deep copy since we're POD.
+        mTotalNumItems = other.getTotalNumItems();
     }
 
 
@@ -195,5 +197,11 @@ namespace inputfiles
         TERMINATE("Failed to find backlog item with id "+id);
         return mTeamItems[0][0]; // code never gets here.
     }
+
+    unsigned int teambacklogs::getTotalNumItems() const
+    {
+        return mTotalNumItems;
+    }
+
 
 } // namespace
