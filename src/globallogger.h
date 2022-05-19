@@ -15,9 +15,10 @@ enum eLogLevel
 void logmsg(eLogLevel level, std::string s);
 void logverbatim(eLogLevel level, std::string s);
 
-void logdbg(std::string s);
-void logdbg_trim(std::string s);
+void logdebug(std::string s);
 void logerror(std::string s);
+void loginfo(std::string s);
+void logwarning(std::string s);
 void fatal(std::string s);
 
 #endif

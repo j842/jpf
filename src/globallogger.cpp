@@ -187,29 +187,15 @@ void logmsg(eLogLevel level, std::string s)
     logverbatim(level, info + s2 + "\n");
 }
 
-void logdbg(std::string s)
-{
-    logmsg(kLDEBUG, s);
-}
-
-void logdbg_trim(std::string s)
-{
-    trim(s);
-    if (s.length() > 0)
-        logdbg(s);
-}
-
-void logerror(std::string s)
-{
-    logmsg(kLERROR,s);
-}
-
-
-
 void fatal(std::string s)
 {
     logmsg(kLERROR, s);
     throw eExit();
 }
+
+void logdebug(std::string s) {logmsg(kLDEBUG, s);}
+void logerror(std::string s) {logmsg(kLERROR,s);}
+void loginfo(std::string s) {logmsg(kLINFO, s);}
+void logwarning(std::string s) {logmsg(kLWARN, s);}
 
 // ----------------------------------------------------------------------------------------------------

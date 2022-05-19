@@ -29,18 +29,11 @@ bool iSame(const std::string &s1, const std::string &s2)
 
 void _terminate(const std::string &s,const std::string &func, const std::string &file, int line)
 {
-    std::string ss;
-    {
-        std::ostringstream oss;
+    logdebug(
+        S() << "Terminating due to error (" << func << ",  "<<file<<",  line "<<line<< ")"
+    );
 
-        oss << std::endl << std::endl;
-        oss << "Terminating due to error (" << func << ",  "<<file<<",  line "<<line<< ") : "<<std::endl<<std::endl;
-        oss << s << std::endl << std::endl;
-
-        ss = oss.str();
-    }
-
-    throw TerminateRunException(ss);
+    fatal( s );
 }
 
 void _terminate(const std::stringstream &s,const std::string &func, const std::string &file, int line)
@@ -151,11 +144,10 @@ webserver::webserver(int port)
     } 
     else if (mChildPid == 0) 
     {
-        std::cout <<std::endl<< "Starting webserver for "<<getOutputPath_Html()<<", listening to port "<<port<<"." << std::endl<<std::endl;
+        loginfo( S() << "Starting webserver for "<<getOutputPath_Html()<<", listening to port "<<port<<".");
         execlp(webfsd.c_str(), webfsd.c_str(), "-p",portstr.str().c_str(),"-r",getOutputPath_Html().c_str(),"-f","index.html","-n","localhost","-F", NULL);
         // if we are here execl has failed 
-        std::cerr << starbox("Unable to start webserver. Please check webfsd is installed and not already running.") << std::endl;
-        exit(1);
+        fatal(starbox("Unable to start webserver. Please check webfsd is installed and not already running."));
     }
     else
         TERMINATE("Could not create child process.");
