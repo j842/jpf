@@ -61,24 +61,35 @@ int cMain::run_refresh()
 {
     try
     {
-        inputfiles::projects p;
-        inputfiles::teams t;
-        inputfiles::publicholidays h;
-        inputfiles::teambacklogs b(t);
-        inputfiles::inputset iset(p,t,h,b);
-
-        {
+        { // load and refresh
+            inputfiles::projects p;
+            inputfiles::teams t;
+            inputfiles::publicholidays h;
+            inputfiles::teambacklogs b(t);
+            inputfiles::inputset iset(p,t,h,b);
             scheduler::scheduler s(iset);
             s.refresh(iset);
-        }
-        replace_all_input_CSV_files(iset);
-        replace_settings_CSV();
 
-        {
+            replace_all_input_CSV_files(iset);
+            replace_settings_CSV();
+        }
+
+
+        { // reload from disk and schedule.
             loginfo("Rescheduling...");
+            inputfiles::projects p;
+            inputfiles::teams t;
+            inputfiles::publicholidays h;
+            inputfiles::teambacklogs b(t);
+            inputfiles::inputset iset(p,t,h,b);
             scheduler::scheduler s(iset);
+
             s.schedule();
             s.createAllOutputFiles();
+
+            std::cout << std::endl << std::endl;
+            s.displayprojects_Console();
+            std::cout << std::endl << std::endl;
         }
     }
     catch (TerminateRunException &pEx)

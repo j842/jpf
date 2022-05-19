@@ -1,8 +1,8 @@
 Setting Name,Value,Description
-startdate,2/5/22,Start of scheduled period
+inputversion,12,Input file format version
+startdate,02/05/22,Start of scheduled period
 enddate,30/12/22,Last month to display in monthly graphs
-inputversion,12,Input file format version required
 costperdevday,500,Cost per developer per day (including overheads)
 title,Demo Project Forecast,Title for reports
 port,5000,Port to use when webserver run
-loglevel,debug,"Logging level (Debug, Info, Warning, or Error)"
+loglevel,DEBUG,"Logging level (Debug, Info, Warning, or Error)"
