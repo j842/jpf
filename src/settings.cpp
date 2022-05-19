@@ -88,13 +88,13 @@ void settings::save_settings_CSV(std::ostream & os) const
     std::vector<std::string> row;
 
     // mValidSettings({"startdate","enddate","inputversion","costperdevday","title","port","loglevel"})
-    simplecsv::output(os, {"inputversion", S()<<mRequiredInputVersion , "Input file format version"});
-    simplecsv::output(os, {"startdate", mStartDate.getStr(), "Start of scheduled period"});
-    simplecsv::output(os, {"enddate", mEndDate.getStr(), "Last month to display in monthly graphs"});
-    simplecsv::output(os, {"costperdevday", S()<<mDailyDevCost, "Cost per developer per day (including overheads)"});
-    simplecsv::output(os, {"title", mTitle, "Title for reports"});
-    simplecsv::output(os, {"port", S()<<mPort, "Port to use when webserver run"});
-    simplecsv::output(os, {"loglevel", levelname(mMinLogLevel), "Logging level (Debug, Info, Warning, or Error)"});
+    simplecsv::outputr(os, {"inputversion", S()<<mRequiredInputVersion , "Input file format version"});
+    simplecsv::outputr(os, {"startdate", mStartDate.getStr(), "Start of scheduled period"});
+    simplecsv::outputr(os, {"enddate", mEndDate.getStr(), "Last month to display in monthly graphs"});
+    simplecsv::outputr(os, {"costperdevday", S()<<mDailyDevCost, "Cost per developer per day (including overheads)"});
+    simplecsv::outputr(os, {"title", mTitle, "Title for reports"});
+    simplecsv::outputr(os, {"port", S()<<mPort, "Port to use when webserver run"});
+    simplecsv::outputr(os, {"loglevel", levelname(mMinLogLevel), "Logging level (Debug, Info, Warning, or Error)"});
 }
 
 std::string settings::getTitle() const

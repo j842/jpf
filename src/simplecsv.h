@@ -40,6 +40,7 @@ class simplecsv
         static bool splitcsv(const std::string s, std::vector<std::string> & items);
 
         static void output(std::ostream & os, const std::vector<std::string> csvitems);
+        static void outputr(std::ostream & os, const std::vector<std::string> csvitems);
         static std::string makesafe(std::string s);
         static std::string trimCSVentry(const std::string str);
         static std::string filename2path(const std::string filename);

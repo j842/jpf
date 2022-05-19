@@ -188,6 +188,13 @@ void simplecsv::output(std::ostream & os, const std::vector<std::string> csvitem
             os << makesafe(csvitems[i]);
 }
 
+void simplecsv::outputr(std::ostream & os, const std::vector<std::string> csvitems)
+{
+    output(os,csvitems);
+    os << std::endl;
+}
+
+
 
 // -------------------------------------------------------------------------------
 // -------------------------------------------------------------------------------
