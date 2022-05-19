@@ -13,7 +13,7 @@ jobs:
     - name: install prereqs
       run: sudo apt install build-essential libboost-date-time-dev libcppunit-dev webfs podman
     - name: create log directory
-      run: sudo mkdir /var/log/jpf && chmod a+rwx /var/log/jpf
+      run: sudo mkdir /var/log/jpf && sudo chmod a+rwx /var/log/jpf
     - name: make
       run: make
     - name: make check
