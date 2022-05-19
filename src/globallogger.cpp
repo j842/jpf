@@ -119,10 +119,10 @@ std::string levelname(eLogLevel level)
 
 void logverbatim(eLogLevel level, std::string s)
 {
+    FileRotationLogSink(s);
+
     if (level < getMinLevel())
         return;
-
-    FileRotationLogSink(s);
 
     // we use stdout for normal messages, stderr for warn and error.
     switch (level)

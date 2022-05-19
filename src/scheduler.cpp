@@ -87,11 +87,13 @@ namespace scheduler
             ofs.close();
         }
 
-    std::string gantt = gSettings().getRoot() + "/output/html/";
-    std::filesystem::copy("/opt/jpf/contrib/gantt", gantt, std::filesystem::copy_options::recursive);
-    if (!std::filesystem::exists(gantt+"gantt"))
-        fatal("Input directory was not successfully created: " + gantt+"gantt");
+        if (!std::filesystem::exists(getOptContribPath()))
+            fatal("Expected contrib files are not installed in " + getOptContribPath()+".");
 
+        std::string gantt = getOutputPath_Html();
+        std::filesystem::copy(getOptContribPath()+"/gantt/", gantt, std::filesystem::copy_options::recursive);
+        if (!std::filesystem::exists(gantt+"/gantt"))
+            fatal("HTML contribution directory was not successfully created: " + gantt+"/gantt");
     }
 
     void scheduler::create_output_directories() const

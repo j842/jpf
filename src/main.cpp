@@ -162,17 +162,16 @@ int cMain::run_create_directories()
 {
     std::string pr = gSettings().getRoot();
     std::string pi = pr + "/input/";
-    std::string ex = "/opt/jpf/input/";
 
     if (std::filesystem::exists(pi))
         fatal("Can't create directories - input dir already exists: " + pi);
 
     checkcreatedirectory(pr);
 
-    if (!std::filesystem::exists(ex))
-        fatal("Expected example files were not installed in /opt/jpf/input.");
+    if (!std::filesystem::exists(getOptInputPath()))
+        fatal("Expected example files are not installed in /opt/jpf/input.");
 
-    copy("/opt/jpf/input/", pr, std::filesystem::copy_options::recursive);
+    std::filesystem::copy(getOptInputPath(), pr, std::filesystem::copy_options::recursive);
     if (!std::filesystem::exists(pi))
         fatal("Input directory was not successfully created: " + pi);
 

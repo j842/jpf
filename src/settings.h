@@ -66,5 +66,7 @@ const std::string getInputPath();
 const std::string getOutputPath_Txt();
 const std::string getOutputPath_Html();
 const std::string getOutputPath_Csv();
+const std::string getOptContribPath();
+const std::string getOptInputPath();
 
 #endif
