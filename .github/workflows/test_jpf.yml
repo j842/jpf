@@ -13,7 +13,12 @@ jobs:
       run: sudo apt install build-essential libboost-date-time-dev libcppunit-dev
     - name: create log directory
       run: sudo mkdir /var/log/jpf && sudo chmod a+rwx /var/log/jpf
+    - name: make setup
+      run: make setup
     - name: make
       run: make
     - name: make check
       run: make check
+    - name: run on input files.
+      run: bin/jpf .
+
