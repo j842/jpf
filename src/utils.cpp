@@ -144,7 +144,8 @@ webserver::webserver(int port)
     } 
     else if (mChildPid == 0) 
     {
-        loginfo( S() << "Starting webserver for "<<getOutputPath_Html()<<", listening to port "<<port<<".");
+        loginfo( S() << "Starting webserver for "<<getOutputPath_Html()<<",");
+        loginfo( S() << "  listening to port "<<port<<".");
         execlp(webfsd.c_str(), webfsd.c_str(), "-p",portstr.str().c_str(),"-r",getOutputPath_Html().c_str(),"-f","index.html","-n","localhost","-F", NULL);
         // if we are here execl has failed 
         fatal(starbox("Unable to start webserver. Please check webfsd is installed and not already running."));
@@ -161,11 +162,11 @@ webserver::~webserver()
     int ret = kill(mChildPid, SIGKILL);
     int wstatus;
     if (ret == -1) {
-        std::cerr<< "Unable to kill webserver." << std::endl;
+        logerror("Unable to kill webserver.");
     }
 
     if (waitpid(mChildPid, &wstatus, WUNTRACED | WCONTINUED) == -1) {
-        std::cerr<< "Waiting for webserver to exit failed." << std::endl;
+        logerror("Waiting for webserver to exit failed.");
     }
 }
 

@@ -26,6 +26,7 @@ void settings::setSettings( simpledate startDate, simpledate endDate, int port  
 
 void settings::load_settings()
 {
+    std::map<std::string,std::string> settings;
     simplecsv c("settings.csv");
 
     if (!c.openedOkay())
@@ -35,7 +36,7 @@ void settings::load_settings()
     while (c.getline(row,3))
     {
         if (isValid(row[0]))
-            mSettings[row[0]]=row[1];
+            settings[row[0]]=row[1];
         else
             TERMINATE("Unrecognised setting in settings.csv:  "+row[0]);
     }
@@ -43,28 +44,35 @@ void settings::load_settings()
     mLoaded=true;
 
     // can't use itemdate yet, as mStartDate not set.
-    std::string sdate=getSettingS("startdate");
+    std::string sdate=getSettingS("startdate",settings);
     if (sdate.length()==0 || iSame(sdate,"today"))
         mStartDate = workdate::snapWorkDay_forward(boost::gregorian::day_clock::local_day());
     else
-        mStartDate = workdate::snapWorkDay_forward(simpledate(getSettingS("startdate")));
+        mStartDate = workdate::snapWorkDay_forward(simpledate(getSettingS("startdate",settings)));
 
-    std::string edate=getSettingS("enddate");
+    std::string edate=getSettingS("enddate",settings);
     if (sdate.length()==0 || iSame(sdate,"forever"))
         mEndDate = workdate(boost::gregorian::date(mStartDate.getGregorian().year(),12,1)); // dec same year. <shrug>
     else    
-        mEndDate = workdate(simpledate(getSettingS("enddate")));
+        mEndDate = workdate(simpledate(getSettingS("enddate",settings)));
 
     ASSERT(!simpledate::isWeekend(mStartDate));
     ASSERT(!simpledate::isWeekend(mEndDate));
 
-    mPort = getSettingI("port");
+    mPort = getSettingI("port",settings);
 
     mMinLogLevel = kLINFO;
     std::vector<std::string> loglevels={"debug","info","warning","error"};
     for (unsigned int ll=0;ll<loglevels.size();++ll)
-        if (iSame(getSettingS("loglevel"),loglevels[ll]))
+        if (iSame(getSettingS("loglevel",settings),loglevels[ll]))
             mMinLogLevel = static_cast<eLogLevel>(ll);
+
+    mRequiredInputVersion = getSettingI("inputversion",settings);
+    mDailyDevCost = getSettingD("costperdevday",settings);
+
+    mTitle = getSettingS("title",settings);
+    if (mTitle.length()==0)
+        mTitle="John's Project Forecaster";
 
 
     if (getInputVersion() < getRequiredInputVersion())
@@ -77,59 +85,44 @@ void settings::load_settings()
 void settings::save_settings_CSV(std::ostream & os) const
 {
     os << "Setting Name,Value,Description" << std::endl;
-    for (const auto & i : mValidSettings)
-        {
-            std::vector<std::string> vs = { i , getSettingS(i), getDescription(i) };
-            simplecsv::output(os,vs);
-            os << std::endl;
-        }
-}
+    std::vector<std::string> row;
 
-std::string settings::getDescription(std::string set) const
-{
-    if (iSame(set,"startdate")) return "Start of scheduled period";
-    if (iSame(set,"enddate")) return "Last month to display in monthly graphs";
-    if (iSame(set,"inputversion")) return "Input file format version required";
-    if (iSame(set,"costperdevday")) return "Cost per developer per day (including overheads)";
-    if (iSame(set,"title")) return "Title for reports";
-    if (iSame(set,"port")) return "Port to use when webserver run";
-    if (iSame(set,"loglevel")) return "Logging level (Debug, Info, Warning, or Error)";
- 
-    TERMINATE(S()<<"Unknown setting "<<set);
-    return "";
+    // mValidSettings({"startdate","enddate","inputversion","costperdevday","title","port","loglevel"})
+    simplecsv::output(os, {"inputversion", S()<<mRequiredInputVersion , "Input file format version"});
+    simplecsv::output(os, {"startdate", mStartDate.getStr(), "Start of scheduled period"});
+    simplecsv::output(os, {"enddate", mEndDate.getStr(), "Last month to display in monthly graphs"});
+    simplecsv::output(os, {"costperdevday", S()<<mDailyDevCost, "Cost per developer per day (including overheads)"});
+    simplecsv::output(os, {"title", mTitle, "Title for reports"});
+    simplecsv::output(os, {"port", S()<<mPort, "Port to use when webserver run"});
+    simplecsv::output(os, {"loglevel", levelname(mMinLogLevel), "Logging level (Debug, Info, Warning, or Error)"});
 }
-
 
 std::string settings::getTitle() const
 {
-    std::string title = getSettingS("title");
-    if (title.length()==0)
-        title="John's Project Forecaster";
-
-    return title;
+    return mTitle;
 }
 
 
-std::string settings::getSettingS(std::string settingName) const
+std::string settings::getSettingS(std::string settingName, const std::map<std::string,std::string> & settings) const
 {
     ASSERT(mLoaded);
-    auto pos = mSettings.find(settingName);
-    if (pos == mSettings.end()) {
+    auto pos = settings.find(settingName);
+    if (pos == settings.end()) {
         TERMINATE(S() << "Setting \"" << settingName << "\" is not defined in settings.csv.");
     }  
     return pos->second;
 }
 
-int settings::getSettingI(std::string settingName) const
+int settings::getSettingI(std::string settingName, const std::map<std::string,std::string> & settings) const
 {
     ASSERT(mLoaded);
-    return atoi(getSettingS(settingName).c_str());
+    return atoi(getSettingS(settingName,settings).c_str());
 }
 
-double settings::getSettingD(std::string settingName) const
+double settings::getSettingD(std::string settingName, const std::map<std::string,std::string> & settings) const
 {
     ASSERT(mLoaded);
-    return strtod(getSettingS(settingName).c_str(),NULL);
+    return strtod(getSettingS(settingName,settings).c_str(),NULL);
 }
 
 
@@ -146,13 +139,14 @@ simpledate settings::endDate() const
 }
 monthIndex settings::endMonth() const
 {
+    ASSERT(mLoaded);
     return monthIndex(endDate());
 }
 
 double settings::dailyDevCost() const
 {
     ASSERT(mLoaded);
-    return getSettingD("costperdevday");
+    return mDailyDevCost;
 }
 
 settings & gSettings() {
@@ -178,7 +172,7 @@ std::string settings::getInputVersionStr()
 int settings::getRequiredInputVersion() const
 {
     ASSERT(mLoaded);
-    return getSettingI("inputversion");
+    return mRequiredInputVersion;
 }
 
 std::string settings::getJPFVersionStr() 
@@ -200,6 +194,11 @@ std::string settings::getJPFFullVersionStr()
  {
      return mMinLogLevel;
  }
+
+void settings::setMinLogLevel(eLogLevel l)
+{
+    mMinLogLevel = l;
+}
 
 void settings::setRoot(std::string path)
 {
@@ -256,13 +255,9 @@ int settings::getPort() const
 void settings::advance(workdate newStart)
 {
     mStartDate = newStart.getGregorian();
-    mSettings["startdate"]=mStartDate.getStr();
 
     if (mEndDate<=mStartDate)
-    {
         mEndDate = boost::gregorian::date(mStartDate.getGregorian().year()+1,1,1);
-        mSettings["enddate"]=mEndDate.getStr();
-    }
 }
 
 const std::string getInputPath() { return gSettings().getRoot()+"/input/"; }

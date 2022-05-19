@@ -104,11 +104,9 @@ int cMain::run_console()
         scheduler::scheduler s(iset);
         s.schedule();
 
-        std::cout << std::endl
-                  << std::endl;
+        std::cout << std::endl << std::endl;
         s.displayprojects_Console();
-        std::cout << std::endl
-                  << std::endl;
+        std::cout << std::endl << std::endl;
         s.createAllOutputFiles();
     }
     catch (TerminateRunException &pEx)
@@ -185,13 +183,21 @@ int cMain::run_create_directories()
 
 bool cMain::runtests()
 {
+    gSettings().setMinLogLevel(kLDEBUG);
+    loginfo("Running unit tests...");
+
+    timer t;
     CPPUNIT_NS::Test *suite = CPPUNIT_NS::TestFactoryRegistry::getRegistry().makeTest();
     CppUnit::TextUi::TestRunner runner;
     runner.addTest(suite);
     bool wasSucessful = runner.run();
 
-    std::cout << (wasSucessful ? "Success!!" : "Fail!!") << std::endl;
+    if (wasSucessful)
+        loginfo("All tests passed!");
+    else
+        logerror("FAIL!");
 
+    loginfo(S()<<"Time taken: " << t.stop()/1000.0 << " s.");
     return wasSucessful;
 }
 

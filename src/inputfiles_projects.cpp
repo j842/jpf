@@ -17,7 +17,7 @@ namespace inputfiles
     {
         if (s.length() == 0)
         {
-            std::cout << "ERROR - empty string passed to isBAU." << std::endl;
+            logwarning("Empty string passed to isBAU.");
             return true;
         }
         return (tolower(s[0]) == 'b');
@@ -71,10 +71,9 @@ namespace inputfiles
 
     void projects::debug_displayProjects() const
     {
-        std::cout << std::endl;
-        std::cout << "Loaded " << this->size() << " projects:" << std::endl;
+        loginfo(S()<<"Loaded " << this->size() << " projects:");
         for (unsigned int i = 0; i < this->size(); ++i)
-            std::cout << "   " << i + 1 << "  " << this->at(i).getId() << std::endl;
+            loginfo(S() << "   " << i + 1 << "  " << this->at(i).getId() );
     }
 
     unsigned int projects::getMaxProjectNameWidth() const

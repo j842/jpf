@@ -5,6 +5,7 @@
 #include "simplecsv.h"
 #include "inputfiles_teams.h"
 #include "utils.h"
+#include "globallogger.h"
 
 namespace inputfiles
 {
@@ -119,14 +120,12 @@ unsigned int teams::get_index_by_name(std::string n)
 
 void teams::debug_displayTeams() const
 {
-    std::cout << std::endl;
-    std::cout << "Loaded " << this->size() << " teams:" << std::endl;
+    loginfo(S()<< "Loaded " << this->size() << " teams:" );
     for (auto &c : *this)
     {
-        std::cout << "  " << std::setw(15) << c.mId << " -- members: ";
+        loginfo( S() << "  " << std::setw(15) << c.mId << " -- members: ");
         for (auto &c2 : c.mMembers)
-            std::cout << " { " << c2.mName << ", " << c2.mEFTProject << " } ";
-        std::cout << std::endl;
+            loginfo(S() << " { " << c2.mName << ", " << c2.mEFTProject << " } ");
     }
 }
 

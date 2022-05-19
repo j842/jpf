@@ -12,6 +12,8 @@ enum eLogLevel
    kLERROR=3
 };
 
+std::string levelname(eLogLevel level);
+
 void logmsg(eLogLevel level, std::string s);
 void logverbatim(eLogLevel level, std::string s);
 

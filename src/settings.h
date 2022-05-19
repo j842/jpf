@@ -41,23 +41,28 @@ class settings
 
     public:
         void setSettings( simpledate startDate, simpledate endDate, int port  ); // for testing.
+        void setMinLogLevel(eLogLevel l);
 
     private:
-        std::string getSettingS(std::string settingName) const;
-        int getSettingI(std::string settingName) const;     
-        double getSettingD(std::string settingName) const;     
-        bool isValid(std::string key) const;
         std::string getDescription(std::string set) const;
 
+        std::string getSettingS(std::string settingName, const std::map<std::string,std::string> & settings) const;
+        int getSettingI(std::string settingName, const std::map<std::string,std::string> & settings) const;     
+        double getSettingD(std::string settingName,  const std::map<std::string,std::string> & settings) const;     
+        bool isValid(std::string key) const;
+
+    private:
         bool mLoaded;
+        std::string mRootDir;
         simpledate mStartDate;
         simpledate mEndDate;
-        std::string mRootDir;
         int mPort;
         eLogLevel mMinLogLevel;
+        int mRequiredInputVersion;
+        double mDailyDevCost;
+        std::string mTitle;
 
-        std::map<std::string,std::string> mSettings;   
-        const std::vector<std::string> mValidSettings;
+        std::vector<std::string> mValidSettings;
 };
 
 settings & gSettings();
