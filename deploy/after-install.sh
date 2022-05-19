@@ -10,10 +10,6 @@ then
 	echo "/var/log/jpf already exists."
 else
 	echo "Creating /var/log/jpf/"
-	mkdir -f "/var/log/jpf"
+	mkdir "/var/log/jpf"
 	chmod a+rwx "/var/log/jpf"
 fi
-
-
-
-

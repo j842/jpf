@@ -4,6 +4,7 @@
 #include <iomanip>
 #include <sstream>
 #include <numeric>
+#include <filesystem>
 
 #include "scheduler.h"
 #include "simplecsv.h"
@@ -85,6 +86,12 @@ namespace scheduler
             (this->*f.mFuncPtr)(ofs);
             ofs.close();
         }
+
+    std::string gantt = gSettings().getRoot() + "/output/html/";
+    std::filesystem::copy("/opt/jpf/contrib/gantt", gantt, std::filesystem::copy_options::recursive);
+    if (!std::filesystem::exists(gantt+"gantt"))
+        fatal("Input directory was not successfully created: " + gantt+"gantt");
+
     }
 
     void scheduler::create_output_directories() const

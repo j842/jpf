@@ -165,16 +165,16 @@ int cMain::run_create_directories()
     std::string ex = "/opt/jpf/input/";
 
     if (std::filesystem::exists(pi))
-        TERMINATE("Can't create directories - input dir already exists: " + pi);
+        fatal("Can't create directories - input dir already exists: " + pi);
 
     checkcreatedirectory(pr);
 
     if (!std::filesystem::exists(ex))
-        TERMINATE("Expected example files were not installed in /opt/jpf/input.");
+        fatal("Expected example files were not installed in /opt/jpf/input.");
 
     copy("/opt/jpf/input/", pr, std::filesystem::copy_options::recursive);
     if (!std::filesystem::exists(pi))
-        TERMINATE("Input directory was not successfully created: " + pi);
+        fatal("Input directory was not successfully created: " + pi);
 
     return 0;
 }
@@ -291,6 +291,9 @@ int cMain::go(int argc, char **argv)
 
     try
     {
+        if (!std::filesystem::exists("/var/log/jpf"))
+            fatal("Please create the directory /var/log/jpf and ensure this user can write to it.");
+
         // handle options which do not require a directory.
         if (argc>=2 && strlen(argv[1])>1 && argv[1][0]=='-' && tolower(argv[1][1])=='t')
             return runtests() ? 0 : 1;     
