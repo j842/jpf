@@ -12,8 +12,6 @@ jobs:
       run: cat <<< "{\"url\":\"https://packagecloud.io\", \"token\":\"${{ secrets.PACKAGE_CLOUD_TOKEN }}\"}" > ~/.packagecloud
     - name: install prereqs
       run: sudo apt install build-essential libboost-date-time-dev libcppunit-dev webfs podman
-    - name: create log directory
-      run: sudo mkdir /var/log/jpf && sudo chmod a+rwx /var/log/jpf
     - name: make setup
       run: make setup
     - name: make

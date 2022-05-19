@@ -38,13 +38,10 @@ namespace scheduler
     }
 
 
-//-----------------------------------------------------------------------------------------
-
-
-    scheduler::scheduler(inputfiles::constinputset ifiles) : mScheduled(false), mI(ifiles)
-    {
-        // load output types.
-        mOutputWriters = {
+/*static*/ void scheduler::getOutputWriters(std::vector<outputfilewriter> & writers)
+{
+    writers.clear();
+    writers = {
             outputfilewriter("backlog.txt", kFile_Text, &scheduler::displaybacklog),
             outputfilewriter("people.txt", kFile_Text, &scheduler::displaypeople),
             outputfilewriter("gantt.csv", kFile_CSV, &scheduler::save_gantt_project_file),
@@ -59,13 +56,23 @@ namespace scheduler
             outputfilewriter("detailedgantt.html", kFile_HTML, &scheduler::outputHTML_Detailed_Gantt),
             outputfilewriter("raw_backlog.html", kFile_HTML, &scheduler::outputHTML_RawBacklog),
             outputfilewriter("peopleeffort.html", kFile_HTML, &scheduler::outputHTML_PeopleEffort)};
+}
+
+
+//-----------------------------------------------------------------------------------------
+
+
+    scheduler::scheduler(inputfiles::constinputset ifiles) : mScheduled(false), mI(ifiles)
+    {
     }
 
     void scheduler::createAllOutputFiles() const
     {
         create_output_directories();
 
-        for (auto &f : mOutputWriters)
+        std::vector<outputfilewriter> writers;
+        getOutputWriters(writers);
+        for (auto &f : writers)
         {
             std::string p;
             switch (f.mOutputType)

@@ -78,7 +78,6 @@ void watcher::waitforchange() // create, modify, delete
 
 void my_handler(int s){
     throw(ctrlcException("Exiting due to ctrl-c."));
-    exit(1); 
 }
 
 void catch_ctrl_c()

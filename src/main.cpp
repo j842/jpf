@@ -154,10 +154,12 @@ int cMain::run_watch()
         }
         catch (TerminateRunException &pEx)
         {
-            std::vector<std::string> htmlfiles = {"index.html", "people.html", "peopleeffort.html", "costdashboard.html", "highlevelgantt.html", "detailedgantt.html", "raw_backlog.html"};
-            for (auto &x : htmlfiles)
-                scheduler::scheduler::outputHTMLError(getOutputPath_Html() + x, pEx.what());
-            std::cerr << pEx.what() << std::endl;
+            std::vector<scheduler::outputfilewriter> writers;
+            scheduler::scheduler::getOutputWriters(writers);
+            for (auto &x : writers)
+                if (x.mOutputType == scheduler::kFile_HTML)
+                    scheduler::scheduler::outputHTMLError(getOutputPath_Html() + x.mFileName, pEx.what());
+            logerror(pEx.what());
         }
 
         loginfo("Watching for changes. Ctrl-c to exit.");
@@ -383,19 +385,13 @@ int cMain::go(int argc, char **argv)
 
     catch (const ctrlcException &e)
     {
-        std::cerr << "\n\n"
-                  << e.what() << '\n';
+        loginfo(e.what());
         return 1;
     }
     catch (const TerminateRunException &e)
     {
-        std::cerr << "\n\n"
-                  << e.what() << '\n';
+        logerror(e.what());
         return 1;
-    }
-    catch (const eExit &e)
-    {
-        return e.exitCode();   
     }
 
     return 0;

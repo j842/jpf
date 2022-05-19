@@ -84,7 +84,7 @@ namespace scheduler
 
                     unsigned int projNdx = projects().getIndexByID(tt.mProjectName);
                     if (projNdx==eNotFound)
-                        TERMINATE(S()<<"Could not find a project with id "<<(tt.mProjectName));
+                        TERMINATE(S()<<"No project \""<<(tt.mProjectName)<<"\"! ... referred to by \""<<tt.mDescription<<"\"");
                     if ((topt == NULL || projNdx < bestProjNdx))
                     {
                         topt = &tt;

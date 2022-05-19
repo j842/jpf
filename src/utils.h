@@ -61,17 +61,6 @@ struct ctrlcException : public std::exception
    const char* what() const throw() { return s.c_str(); }
 };
 
-class eExit: public std::exception
-{
-   public:
-      eExit(int exitCode = 1) : mExitCode(exitCode) {}
-      int exitCode() const throw() {return mExitCode;} // we guarentee not to throw an exception.
-
-   private:
-      int mExitCode;
-};
-
-
 // class to inline ostringstream, which allows embedded end of line.
 class S
 {

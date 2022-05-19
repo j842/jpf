@@ -96,7 +96,6 @@ void FileRotationLogSink(std::string s)
                       << mainlogfile << std::endl
                       << "to" << std::endl
                       << archive << std::endl;
-            exit(1);
         }
 
         // open new logfile
@@ -206,8 +205,7 @@ void logmsg(eLogLevel level, std::string s)
 
 void fatal(std::string s)
 {
-    logmsg(kLERROR, s);
-    throw eExit();
+    throw TerminateRunException(s);
 }
 
 void logdebug(std::string s) { logmsg(kLDEBUG, s); }

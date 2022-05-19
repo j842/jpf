@@ -91,8 +91,9 @@ namespace scheduler
         void displayprojects_Console() const;
         static void outputHTMLError(std::string filename, std::string errormsg);
 
+        static void getOutputWriters( std::vector<outputfilewriter> & writers);
+
     private:
-        std::vector<outputfilewriter> mOutputWriters;
 
         void create_output_directories() const;
 
