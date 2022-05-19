@@ -22,6 +22,8 @@ jobs:
       run: make check
     - name: run on input files.
       run: bin/jpf .
+    - name: Try refresh
+      run: bin/jpf -r .
     - name: make images
       run: cd deploy ; make images
     - name: make deb
