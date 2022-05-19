@@ -12,7 +12,8 @@
 //          "-t"
 //            "-a=15/5/22",
 //            "~/code/tracmap/pf0/"
-            "~/code/tracmap/project_forecasting/"
+//            "~/code/tracmap/project_forecasting/"
+          "-"
 ],
         "stopAtEntry": false,
         "cwd": "${workspaceFolder}/src",

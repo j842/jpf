@@ -6,6 +6,7 @@
 #include <boost/date_time.hpp>
 
 #include "workdate.h"
+#include "globallogger.h"
 
 class settings
 {
@@ -23,6 +24,8 @@ class settings
         double dailyDevCost() const;
 
         int getRequiredInputVersion() const;
+
+        eLogLevel getMinLogLevel() const;
 
         std::string getRoot() const;
         bool RootExists() const;
@@ -51,6 +54,7 @@ class settings
         simpledate mEndDate;
         std::string mRootDir;
         int mPort;
+        eLogLevel mMinLogLevel;
 
         std::map<std::string,std::string> mSettings;   
         const std::vector<std::string> mValidSettings;

@@ -298,7 +298,7 @@ int cMain::go(int argc, char **argv)
         // no directory specified.
         if (argv[argc-1][0]=='-')
         {
-            std::cerr <<std::endl<< colours::cWarningRed << "You need to specify a directory." <<colours::cNoColour <<std::endl<<std::endl;
+            fatal("You need to specify a directory.");
             return showhelp();   
         }
 
@@ -353,6 +353,10 @@ int cMain::go(int argc, char **argv)
         std::cerr << "\n\n"
                   << e.what() << '\n';
         return 1;
+    }
+    catch (const eExit &e)
+    {
+        return e.exitCode();   
     }
 
     return 0;

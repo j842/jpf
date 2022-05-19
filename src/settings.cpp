@@ -11,7 +11,7 @@
 #include "version.h"
 
 settings::settings() : mLoaded(false), mRootDir(),
-    mValidSettings({"startdate","enddate","inputversion","costperdevday","title","port"})
+    mValidSettings({"startdate","enddate","inputversion","costperdevday","title","port","loglevel"})
 {
 }
 
@@ -60,6 +60,13 @@ void settings::load_settings()
 
     mPort = getSettingI("port");
 
+    mMinLogLevel = kLINFO;
+    std::vector<std::string> loglevels={"debug","info","warning","error"};
+    for (unsigned int ll=0;ll<loglevels.size();++ll)
+        if (iSame(getSettingS("loglevel"),loglevels[ll]))
+            mMinLogLevel = static_cast<eLogLevel>(ll);
+
+
     if (getInputVersion()<getRequiredInputVersion())
         { TERMINATE("The input files being used require a newer version of jpf."); }
     else if (getInputVersion() > getRequiredInputVersion())
@@ -86,7 +93,8 @@ std::string settings::getDescription(std::string set) const
     if (iSame(set,"costperdevday")) return "Cost per developer per day (including overheads)";
     if (iSame(set,"title")) return "Title for reports";
     if (iSame(set,"port")) return "Port to use when webserver run";
-
+    if (iSame(set,"loglevel")) return "Logging level (Debug, Info, Warning, or Error)";
+ 
     TERMINATE(S()<<"Unknown setting "<<set);
     return "";
 }
@@ -188,6 +196,10 @@ std::string settings::getJPFFullVersionStr()
     return S()<< getJPFVersionStr()<<"-"<<getJPFReleaseStr();
 }
 
+ eLogLevel settings::getMinLogLevel() const
+ {
+     return mMinLogLevel;
+ }
 
 void settings::setRoot(std::string path)
 {

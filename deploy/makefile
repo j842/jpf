@@ -31,6 +31,7 @@ $(JPF_SCRIPT_PATH) = \
 		--description \"John's Project Forecaster\" \
 		--url \"https://github.com/j842/jpf\" \
 		--maintainer \"John Enlow\" \
+		--after-install /opt/deploy/after-install.sh \
 		/opt/$(BIN_NAME)/$(JPF_NAME)=/usr/bin/$(JPF_NAME) \
 		/opt/$(INP_NAME)=/opt/jpf/input/ \
 #
@@ -43,6 +44,7 @@ $(JPF_SCRIPT_PATH): makefile
 $(JPF_DEB_PATH): $(JPF_EXE) $(JPF_SCRIPT_PATH)
 	$(RM) $(BIN_DIR)/$(JPF_NAME)*.deb
 	podman run -it --rm -v $(ROOT_DIR):/opt/ jpf /bin/bash -c "/opt/$(BIN_NAME)/$(JPF_SCRIPT_NAME)"
+	rm -f $(JPF_SCRIPT_PATH)
 
 deb: $(JPF_DEB_PATH)
 

@@ -5,19 +5,16 @@
 #include <algorithm>
 #include "settings.h"
 #include "globallogger.h"
+#include "colours.h"
+#include "utils.h"
 
 class FileStreamer
 {
 public:
     FileStreamer() : mLogFailedMsgSent(false)
     {
-        mMainlogFile = gSettings().getRoot() + "/output/log.txt";
     }
     ~FileStreamer()
-    {
-    }
-
-    void Log(std::string s)
     {
     }
 
@@ -60,7 +57,6 @@ public:
     }
 
 private:
-    std::string mMainlogFile;
     std::ofstream mCurrentStream;
     bool mLogFailedMsgSent;
     const size_t mLimit = 1024 * 1024 * 5;
@@ -70,7 +66,7 @@ FileStreamer g_FileStreamer;
 
 void FileRotationLogSink(std::string s)
 {
-    std::string mainlogfile = gSettings().getRoot() + "/output/log.txt";
+    std::string mainlogfile = "/var/log/jpf/jpf.log";
 
     if (!g_FileStreamer.CheckLogFileOpen(mainlogfile))
         return; // can't log to file.
@@ -80,7 +76,7 @@ void FileRotationLogSink(std::string s)
         g_FileStreamer.Close();
 
         boost::gregorian::date current_date(boost::gregorian::day_clock::local_day());
-        std::string archive = gSettings().getRoot()+"/output/"+simpledate(current_date).getStr() + "_log.txt";
+        std::string archive = "/var/log/jpf/jpf_"+simpledate(current_date).getStr() + ".log";
 
         if (0 != std::rename(mainlogfile.c_str(), archive.c_str()))
         {
@@ -101,7 +97,7 @@ void FileRotationLogSink(std::string s)
 
 eLogLevel getMinLevel()
 {
-    return kLDEBUG;
+    return gSettings().getMinLogLevel();
 }
 
 std::string levelname(eLogLevel level)
@@ -132,37 +128,22 @@ void logverbatim(eLogLevel level, std::string s)
     switch (level)
     {
     case kLDEBUG:
-        std::cout << termcolor::cyan << s << termcolor::reset;
+        std::cout << colours::cDebug << s << colours::cNoColour;
         break;
     case kLINFO:
-        std::cout << termcolor::blue << s << termcolor::reset;
+        std::cout << colours::cInfo << s << colours::cNoColour;
         break;
 
-#ifdef _WIN32
     case kLWARN:
-        std::cerr << termcolor::red << s << termcolor::reset;
+        std::cerr << colours::cWarning << s << colours::cNoColour;
         break;
-#else
-    case kLWARN:
-        std::cerr << termcolor::yellow << s << termcolor::reset;
-        break;
-#endif
 
     case kLERROR:
-        std::cerr << termcolor::red << s << termcolor::reset;
-
-#ifdef _DEBUG
-#ifdef _WIN32
-        __debugbreak();
-#else
-        __builtin_trap();
-#endif
-#endif
-
-        throw eExit();
+        std::cerr << colours::cError << s << colours::cNoColour;
         break;
+
     default:
-        std::cerr << termcolor::green << s << termcolor::reset;
+        std::cerr << colours::cDefault << s << colours::cNoColour;
         break;
     }
 }
@@ -170,9 +151,29 @@ void logverbatim(eLogLevel level, std::string s)
 std::string getheader(eLogLevel level)
 {
     std::ostringstream ost;
-    ost << "|" << levelname(level) << "|" << timeutils::getLogTimeStamp() << "| ";
+    time_t now = time(0);
+    char* date_time = ctime(&now);
+    if (strlen(date_time)>0)
+        date_time[strlen(date_time)-1]=0;
+
+    ost << "|" << levelname(level) << "|" << date_time << "| ";
     return ost.str();
 }
+
+   std::string replacestring(std::string subject, const std::string& search,
+        const std::string& replace)
+   {
+      size_t pos = 0;
+      if (search.empty() || subject.empty())
+         return "";
+      while((pos = subject.find(search, pos)) != std::string::npos)
+      {
+         subject.replace(pos, search.length(), replace);
+         pos += replace.length();
+      }
+      return subject;
+   }
+
 
 void logmsg(eLogLevel level, std::string s)
 {
@@ -180,9 +181,8 @@ void logmsg(eLogLevel level, std::string s)
         return;
 
     std::string info = getheader(level);
-    std::string s2 = utils::replacestring(s, "\n", "\n" + info);
-    // boost::erase_all(s2, "\r");
-    s2.erase(std::remove(s2.begin(), s2.end(), '\r'), s2.end());
+    std::string s2 = replacestring(s, "\n", "\n" + info);
+    //s2.erase(std::remove(s2.begin(), s2.end(), '\r'), s2.end());
 
     logverbatim(level, info + s2 + "\n");
 }
@@ -194,14 +194,22 @@ void logdbg(std::string s)
 
 void logdbg_trim(std::string s)
 {
-    Poco::trimInPlace(s);
+    trim(s);
     if (s.length() > 0)
         logdbg(s);
 }
 
+void logerror(std::string s)
+{
+    logmsg(kLERROR,s);
+}
+
+
+
 void fatal(std::string s)
 {
     logmsg(kLERROR, s);
+    throw eExit();
 }
 
 // ----------------------------------------------------------------------------------------------------

@@ -8,5 +8,3 @@ cp ${HOME}/.packagecloud ${JPFPATH}
 podman build ${JPFPATH} -t jpf
 rm ${JPFPATH}/.packagecloud
 
-#podman build ${JBUILD} -t jbuild
-
