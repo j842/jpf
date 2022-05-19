@@ -33,8 +33,8 @@ $(JPF_SCRIPT_PATH) = \
 		--maintainer \"John Enlow\" \
 		--after-install /opt/deploy/after-install.sh \
 		/opt/$(BIN_NAME)/$(JPF_NAME)=/usr/bin/$(JPF_NAME) \
-		/opt/$(INP_NAME)=/opt/jpf/input/ \
-		/opt/deploy/contrib=/opt/jpf/contrib/ \
+		/opt/$(INP_NAME)=/opt/jpf/ \
+		/opt/deploy/contrib=/opt/jpf/ \
 #
 $(JPF_SCRIPT_PATH): makefile
 	@echo "$($(@))" | sed -e 's/^[ ]//' >$(@)

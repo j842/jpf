@@ -3,6 +3,8 @@
 #include <sstream>
 #include <fstream>
 #include <algorithm>
+#include <filesystem>
+
 #include "settings.h"
 #include "globallogger.h"
 #include "colours.h"
@@ -76,14 +78,24 @@ void FileRotationLogSink(std::string s)
         g_FileStreamer.Close();
 
         boost::gregorian::date current_date(boost::gregorian::day_clock::local_day());
-        std::string archive = "/var/log/jpf/jpf_"+simpledate(current_date).getStr() + ".log";
+        std::string archive_base = "/var/log/jpf/jpf_" + simpledate(current_date).getStr();
+
+        unsigned int i = 1;
+        std::string archive;
+        while (true)
+        {
+            archive = S() << archive_base << "-" << i << ".log";
+            if (std::filesystem::exists(archive))
+                break;
+            ++i;
+        }
 
         if (0 != std::rename(mainlogfile.c_str(), archive.c_str()))
         {
             std::cerr << "Could not archive log file from" << std::endl
-                        << mainlogfile << std::endl
-                        << "to" << std::endl
-                        << archive << std::endl;
+                      << mainlogfile << std::endl
+                      << "to" << std::endl
+                      << archive << std::endl;
             exit(1);
         }
 
@@ -152,34 +164,33 @@ std::string getheader(eLogLevel level)
 {
     std::ostringstream ost;
     time_t now = time(0);
-    struct tm * timeinfo;
+    struct tm *timeinfo;
     char date_time[80];
-    timeinfo = localtime (&now);
+    timeinfo = localtime(&now);
 
-    strftime(date_time,80,"%x %R",timeinfo);
+    strftime(date_time, 80, "%x %R", timeinfo);
 
-    //char* date_time = ctime(&now);
-    // if (strlen(date_time)>0)
-    //     date_time[strlen(date_time)-1]=0;
+    // char* date_time = ctime(&now);
+    //  if (strlen(date_time)>0)
+    //      date_time[strlen(date_time)-1]=0;
 
     ost << "|" << levelname(level) << "|" << date_time << "| ";
     return ost.str();
 }
 
-   std::string replacestring(std::string subject, const std::string& search,
-        const std::string& replace)
-   {
-      size_t pos = 0;
-      if (search.empty() || subject.empty())
-         return "";
-      while((pos = subject.find(search, pos)) != std::string::npos)
-      {
-         subject.replace(pos, search.length(), replace);
-         pos += replace.length();
-      }
-      return subject;
-   }
-
+std::string replacestring(std::string subject, const std::string &search,
+                          const std::string &replace)
+{
+    size_t pos = 0;
+    if (search.empty() || subject.empty())
+        return "";
+    while ((pos = subject.find(search, pos)) != std::string::npos)
+    {
+        subject.replace(pos, search.length(), replace);
+        pos += replace.length();
+    }
+    return subject;
+}
 
 void logmsg(eLogLevel level, std::string s)
 {
@@ -188,7 +199,7 @@ void logmsg(eLogLevel level, std::string s)
 
     std::string info = getheader(level);
     std::string s2 = replacestring(s, "\n", "\n" + info);
-    //s2.erase(std::remove(s2.begin(), s2.end(), '\r'), s2.end());
+    // s2.erase(std::remove(s2.begin(), s2.end(), '\r'), s2.end());
 
     logverbatim(level, info + s2 + "\n");
 }
@@ -199,9 +210,9 @@ void fatal(std::string s)
     throw eExit();
 }
 
-void logdebug(std::string s) {logmsg(kLDEBUG, s);}
-void logerror(std::string s) {logmsg(kLERROR,s);}
-void loginfo(std::string s) {logmsg(kLINFO, s);}
-void logwarning(std::string s) {logmsg(kLWARN, s);}
+void logdebug(std::string s) { logmsg(kLDEBUG, s); }
+void logerror(std::string s) { logmsg(kLERROR, s); }
+void loginfo(std::string s) { logmsg(kLINFO, s); }
+void logwarning(std::string s) { logmsg(kLWARN, s); }
 
 // ----------------------------------------------------------------------------------------------------
