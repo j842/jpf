@@ -152,9 +152,15 @@ std::string getheader(eLogLevel level)
 {
     std::ostringstream ost;
     time_t now = time(0);
-    char* date_time = ctime(&now);
-    if (strlen(date_time)>0)
-        date_time[strlen(date_time)-1]=0;
+    struct tm * timeinfo;
+    char date_time[80];
+    timeinfo = localtime (&now);
+
+    strftime(date_time,80,"%x %R",timeinfo);
+
+    //char* date_time = ctime(&now);
+    // if (strlen(date_time)>0)
+    //     date_time[strlen(date_time)-1]=0;
 
     ost << "|" << levelname(level) << "|" << date_time << "| ";
     return ost.str();
