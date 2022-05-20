@@ -82,11 +82,10 @@ On either Ubuntu 20.04 or Debian 11 (including via WSL2 under Windows):
 sudo apt install build-essential libboost-date-time-dev libcppunit-dev podman gh sharutils
 ```
 
-Install webfsd-jpf:
+Clone:
 ```
 git clone https://github.com/j842/jpf.git
 cd jpf
-sudo cp webfsd-jpf/webfsd-jpf /usr/bin
 ```
 
 Set up relevant folders and build the podman images:

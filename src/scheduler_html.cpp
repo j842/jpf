@@ -672,24 +672,24 @@ namespace scheduler
 
     void scheduler::outputHTML_testfile(std::ostream &ofs) const
     {
-        std::map<std::string,std::string> rules;
-        loadStandardRules(rules);
-        streamReplace(getOptTemplatesPath()+"testfile.html",ofs,rules);
+        // std::map<std::string,std::string> rules;
+        // loadStandardRules(rules);
+        // streamReplace(getOptTemplatesPath()+"testfile.html",ofs,rules);
 
     }
 
     void scheduler::outputHTML_header(std::ostream &ofs) const
     {
-        std::map<std::string,std::string> rules;
-        loadStandardRules(rules);
-        streamReplace(getOptTemplatesPath()+"header.html",ofs,rules);
+        // std::map<std::string,std::string> rules;
+        // loadStandardRules(rules);
+        // streamReplace(getOptTemplatesPath()+"header.html",ofs,rules);
     }
 
     void scheduler::outputHTML_footer(std::ostream &ofs) const
     {
-        std::map<std::string,std::string> rules;
-        loadStandardRules(rules);
-        streamReplace(getOptTemplatesPath()+"footer.html",ofs,rules);
+        // std::map<std::string,std::string> rules;
+        // loadStandardRules(rules);
+        // streamReplace(getOptTemplatesPath()+"footer.html",ofs,rules);
     }
 
 } // namespace

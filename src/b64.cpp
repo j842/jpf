@@ -83,10 +83,10 @@ std::vector<BYTE> Base64::decode(std::string encoded_string)
     {
         // Get values for each group of four base 64 characters
         BYTE b4[4];
-        b4[0] = (encoded_string[i+0] <= 'z') ? from_base64[encoded_string[i+0]] : 0xff;
-        b4[1] = (encoded_string[i+1] <= 'z') ? from_base64[encoded_string[i+1]] : 0xff;
-        b4[2] = (encoded_string[i+2] <= 'z') ? from_base64[encoded_string[i+2]] : 0xff;
-        b4[3] = (encoded_string[i+3] <= 'z') ? from_base64[encoded_string[i+3]] : 0xff;
+        b4[0] = (encoded_string[i+0] <= 'z') ? from_base64[static_cast<size_t>(encoded_string[i+0])] : 0xff;
+        b4[1] = (encoded_string[i+1] <= 'z') ? from_base64[static_cast<size_t>(encoded_string[i+1])] : 0xff;
+        b4[2] = (encoded_string[i+2] <= 'z') ? from_base64[static_cast<size_t>(encoded_string[i+2])] : 0xff;
+        b4[3] = (encoded_string[i+3] <= 'z') ? from_base64[static_cast<size_t>(encoded_string[i+3])] : 0xff;
 
         // Transform into a group of three bytes
         BYTE b3[3];

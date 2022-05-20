@@ -266,4 +266,4 @@ const std::string getOutputPath_Html() { return gSettings().getRoot()+"/output/h
 const std::string getOutputPath_Csv() { return gSettings().getRoot()+"/output/csv/"; }
 const std::string getOptSupportFilesPath() { return "/opt/jpf/support_files/"; }
 const std::string getOptInputPath() { return "/opt/jpf/input/"; }
-const std::string getOptTemplatesPath() { return getOptSupportFilesPath()+"/templates/";}
+const std::string getOptTemplatesPath() { return getOptSupportFilesPath()+"templates/";}

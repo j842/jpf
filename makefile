@@ -85,11 +85,11 @@ deploy:
 
 
 setup:
+	sudo cp $(ROOT_DIR)/other/webfsd-jpf/webfsd-jpf /usr/bin
 	sudo mkdir -p /var/log/jpf && sudo chown ${USER} /var/log/jpf
 	sudo rm -rf /opt/jpf
 	sudo mkdir -p /opt/jpf && sudo chown ${USER} /opt/jpf
 	cp -r $(ROOT_DIR)/input /opt/jpf
 	cp -r $(ROOT_DIR)/support_files /opt/jpf
-
 
 # ------------------------------------------------

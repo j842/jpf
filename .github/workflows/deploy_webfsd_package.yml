@@ -13,4 +13,4 @@ jobs:
     - name: install prereqs
       run: sudo apt install build-essential libboost-date-time-dev libcppunit-dev podman
     - name: make webfsd-jpf
-      run: make -C other/webfsd-jpf
+      run: make -C other/webfsd-jpf upload
