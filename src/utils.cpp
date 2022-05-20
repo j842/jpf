@@ -279,7 +279,7 @@ double str2positivedouble(std::string s)
 
     if (r<0.0)
     {
-        std::cerr << "String has negative number!" << std::endl;
+        logerror("String has negative number, but required to be positive by str2positivedouble.");
         return 0.0;
     }
     return r;    

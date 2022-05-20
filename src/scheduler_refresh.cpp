@@ -81,10 +81,7 @@ namespace scheduler
                 {
                     const std::vector<daychunk> &chunks = p.getChunks(d);
                     for (auto &c : chunks)
-                    {
                         itemDevCentiDone[c.mItemIndex] += c.mEffort;
-                        //std::cout << mItems[c.mItemIndex].mDescription << " + " << p.mName <<" : " << c.mEffort << "   ->  " << itemDevCentiDone[c.mItemIndex] << " / " << mItems[c.mItemIndex].mDevCentiDays << std::endl;
-                    }
                 }
             }
             for (unsigned int itemndx = 0; itemndx < mItems.size(); ++itemndx)
@@ -93,7 +90,6 @@ namespace scheduler
                 unsigned int teamitemndx = mItems[itemndx].mItemIndexInTeamBacklog;
                 auto & bli = iset.mB.mTeamItems[teamndx][teamitemndx];
                 bli.mDevCentiDays -= itemDevCentiDone[itemndx];
-                //std::cout<<bli.getFullName() <<" -> "<<bli.mDevCentiDays << " remaining." << std::endl;
 
                 if (mItems[itemndx].mActualStart < newStart)
                 {

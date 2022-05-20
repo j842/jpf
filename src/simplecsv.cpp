@@ -70,8 +70,7 @@ bool simplecsv::splitcsv(const std::string s, // copy
 
     if (inquotes)
     {
-        std::cout << "Unmatched quotes in csv row: " << std::endl
-                  << s << std::endl;
+        logerror( S() << "Unmatched quotes in csv row: \n" << s);
         return false;
     }
 

@@ -1,5 +1,6 @@
 #include "inputfiles_publicholidays.h"
 #include "simplecsv.h"
+#include "globallogger.h"
 
 namespace inputfiles
 {
@@ -20,7 +21,7 @@ namespace inputfiles
 
         if (!ph.openedOkay())
         {
-            std::cerr << "Could not read the public holidays from publicholidays.csv" << std::endl;
+            logerror("Could not read the public holidays from publicholidays.csv");
             return "";
         }
 

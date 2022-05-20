@@ -251,8 +251,6 @@ simpledate workdate::WorkDays2Date(unsigned long ndays)
 
     d0 += boost::gregorian::days(ndays + nwkends);
 
-    //    std::cout << getToday() << " " << ndays << " " << nwkends << " " << d0 << std::endl;
-
     ASSERT(d0 == snapWorkDay_forward(d0).getGregorian());
     return d0;
 }

@@ -87,9 +87,7 @@ int cMain::run_refresh()
             s.schedule();
             s.createAllOutputFiles();
 
-            std::cout << std::endl << std::endl;
             s.displayprojects_Console();
-            std::cout << std::endl << std::endl;
         }
     }
     catch (TerminateRunException &pEx)
@@ -115,9 +113,7 @@ int cMain::run_console()
         scheduler::scheduler s(iset);
         s.schedule();
 
-        std::cout << std::endl << std::endl;
         s.displayprojects_Console();
-        std::cout << std::endl << std::endl;
         s.createAllOutputFiles();
     }
     catch (TerminateRunException &pEx)
@@ -258,10 +254,11 @@ int cMain::run_advance(std::string s)
 
 int cMain::showhelp()
 {
-    std::cout << std::endl;
-    std::cout << "  jpf " << gSettings().getJPFFullVersionStr() << " is a simple auto-balancing forecasting tool for projects across multiple teams.";
+    std::ostream & oss = std::cout;
+    oss << std::endl;
+    oss << "  jpf " << gSettings().getJPFFullVersionStr() << " is a simple auto-balancing forecasting tool for projects across multiple teams.";
 
-    std::cout << R"(
+    oss << R"(
 
   The directory used needs to contain an input folder, with appropriate csv files in it.
 

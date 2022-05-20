@@ -207,12 +207,13 @@ namespace scheduler
 
     void scheduler::displayprojects_Console() const
     {
+        std::ostream & ofs = std::cout;
+        ofs << std::endl << std::endl;
+
         std::vector<std::vector<std::string>> table;
 
         table.push_back({"Project Id", "Start Date", "End Date", "Remaining Cost"});
 
-//        std::cout << "\033[0;36m"; -- light blue
-//        std::cout << "\033[0;32m"; -- green
         for (auto p : mProjects)
         {
             table.push_back({p.getId(),
@@ -220,7 +221,9 @@ namespace scheduler
                              p.mActualEnd.getStr(),
                              (S() << getDollars( 0.01 * p.mTotalDevCentiDays.getL() * gSettings().dailyDevCost()))});
         }
-        _displaytable(std::cout, table, " | ",true);
+        _displaytable(ofs, table, " | ",true);
+
+        ofs << std::endl << std::endl;
     }
 
 
@@ -273,7 +276,7 @@ namespace scheduler
         }
 
         if (consoleColour)
-                std::cout << cNoColour;
+            ofs << cNoColour;
     }
 
 } // namespace
