@@ -177,19 +177,6 @@ std::string getheader(eLogLevel level)
     return ost.str();
 }
 
-std::string replacestring(std::string subject, const std::string &search,
-                          const std::string &replace)
-{
-    size_t pos = 0;
-    if (search.empty() || subject.empty())
-        return "";
-    while ((pos = subject.find(search, pos)) != std::string::npos)
-    {
-        subject.replace(pos, search.length(), replace);
-        pos += replace.length();
-    }
-    return subject;
-}
 
 void logmsg(eLogLevel level, std::string s)
 {

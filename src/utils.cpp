@@ -309,3 +309,57 @@ void advanceLeaveString(std::string & leaveStr, workdate newStart)
         leaveStr += newl;
     }
 }
+
+
+void streamReplace(std::string ifile, std::ostream &ofs, const std::map<std::string,std::string> & replacerules)
+{
+    std::ifstream ifs(ifile);
+    if (!ifs.is_open())
+        fatal("Could not open file "+ifile);
+
+    std::string s;
+    while (std::getline(ifs, s))
+    {
+        replace(s,replacerules);
+        ofs.write(s.c_str(),s.length());
+        ofs<<std::endl;
+    }
+    ifs.close();
+
+}
+
+
+void streamReplace(std::string ifile, std::string ofile, const std::map<std::string,std::string> & replacerules)
+{
+    if (std::filesystem::exists(ofile))
+        std::filesystem::remove(ofile);
+
+    std::ofstream ofs(ofile);
+    if (!ofs.is_open())
+        fatal("Could not write to file "+ofile);
+
+    streamReplace(ifile,ofs,replacerules);
+
+    ofs.close();
+}
+
+void replace(std::string & s,  const std::map<std::string,std::string> & replacerules)
+{
+    for (auto iter = replacerules.begin(); iter != replacerules.end(); ++iter)
+        s = replacestring(s,iter->first,iter->second); 
+}
+
+
+std::string replacestring(std::string subject, const std::string &search,
+                          const std::string &replace)
+{
+    size_t pos = 0;
+    if (search.empty() || subject.empty())
+        return "";
+    while ((pos = subject.find(search, pos)) != std::string::npos)
+    {
+        subject.replace(pos, search.length(), replace);
+        pos += replace.length();
+    }
+    return subject;
+}

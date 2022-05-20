@@ -89,7 +89,6 @@ setup:
 	sudo rm -rf /opt/jpf
 	sudo mkdir -p /opt/jpf && sudo chown ${USER} /opt/jpf
 	cp -r $(ROOT_DIR)/input /opt/jpf
-	cp -r $(ROOT_DIR)/deploy/contrib /opt/jpf
-
+	cp -r $(ROOT_DIR)/support_files /opt/jpf
 
 # ------------------------------------------------

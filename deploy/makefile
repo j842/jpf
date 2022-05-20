@@ -34,7 +34,7 @@ $(JPF_SCRIPT_PATH) = \
 		--after-install /opt/deploy/after-install.sh \
 		/opt/$(BIN_NAME)/$(JPF_NAME)=/usr/bin/$(JPF_NAME) \
 		/opt/$(INP_NAME)=/opt/jpf/ \
-		/opt/deploy/contrib=/opt/jpf/ \
+		/opt/support_files=/opt/jpf/ \
 #
 $(JPF_SCRIPT_PATH): makefile
 	@echo "$($(@))" | sed -e 's/^[ ]//' >$(@)

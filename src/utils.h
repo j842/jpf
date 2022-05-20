@@ -8,6 +8,7 @@
 #include <sys/types.h>
 #include <sys/inotify.h>
 #include <chrono>
+#include <map>
 
 #include <cppunit/extensions/TestFactoryRegistry.h>
 #include <cppunit/ui/text/TestRunner.h>
@@ -147,5 +148,11 @@ class listoutput
         mutable bool mFirstItem;
         bool mEnded;
 };
+
+void streamReplace(std::string ifile, std::string ofile, const std::map<std::string,std::string> & replacerules);
+void streamReplace(std::string ifile, std::ostream &ofs, const std::map<std::string,std::string> & replacerules);
+void replace(std::string & s,  const std::map<std::string,std::string> & replacerules);
+std::string replacestring(std::string subject, const std::string &search, const std::string &replace);
+
 
 #endif

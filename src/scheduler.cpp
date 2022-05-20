@@ -50,12 +50,15 @@ namespace scheduler
             outputfilewriter("raw_backlog.txt", kFile_Text, &scheduler::displaybacklog_raw),
             outputfilewriter("projects.txt", kFile_Text, &scheduler::displayprojects),
             outputfilewriter("index.html", kFile_HTML, &scheduler::outputHTML_Index),
+            outputfilewriter("header.html", kFile_HTML, &scheduler::outputHTML_header),
+            outputfilewriter("footer.html", kFile_HTML, &scheduler::outputHTML_footer),
             outputfilewriter("people.html", kFile_HTML, &scheduler::outputHTML_People),
             outputfilewriter("costdashboard.html", kFile_HTML, &scheduler::outputHTML_Dashboard),
             outputfilewriter("highlevelgantt.html", kFile_HTML, &scheduler::outputHTML_High_Level_Gantt),
             outputfilewriter("detailedgantt.html", kFile_HTML, &scheduler::outputHTML_Detailed_Gantt),
             outputfilewriter("raw_backlog.html", kFile_HTML, &scheduler::outputHTML_RawBacklog),
-            outputfilewriter("peopleeffort.html", kFile_HTML, &scheduler::outputHTML_PeopleEffort)};
+            outputfilewriter("peopleeffort.html", kFile_HTML, &scheduler::outputHTML_PeopleEffort),
+            outputfilewriter("testfile.html", kFile_HTML, &scheduler::outputHTML_testfile)};
 }
 
 
@@ -94,21 +97,20 @@ namespace scheduler
             ofs.close();
         }
 
-        // also copy across all contrib files into the HTML directory.
-
-        if (!std::filesystem::exists(getOptContribPath()))
-            fatal("Expected contrib files are not installed in " + getOptContribPath()+".");
+        // also copy across all support_files into the HTML directory.
+        if (!std::filesystem::exists(getOptSupportFilesPath()))
+            fatal("Expected support_files are not installed in " + getOptSupportFilesPath()+".");
 
 
         std::string html = getOutputPath_Html();
-        std::vector<std::string> contribdirs={"gantt"};
-        for (auto & cd : contribdirs)
+        std::vector<std::string> htmlsupportdirs={"gantt"};
+        for (auto & cd : htmlsupportdirs)
             if (std::filesystem::exists(html+cd))
                 /* std::uintmax_t n = */ std::filesystem::remove_all(html+cd);
 
-        for (auto & cd : contribdirs)
+        for (auto & cd : htmlsupportdirs)
         {
-            std::filesystem::copy(getOptContribPath()+cd, html+cd, std::filesystem::copy_options::recursive);
+            std::filesystem::copy(getOptSupportFilesPath()+cd, html+cd, std::filesystem::copy_options::recursive);
 
             if (!std::filesystem::exists(html+cd))
                 fatal("HTML contribution directory was not successfully created: " + html+cd);

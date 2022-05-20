@@ -656,4 +656,40 @@ namespace scheduler
         ofs.close();
     }
 
+    void scheduler::loadStandardRules(std::map<std::string,std::string> & rules) const
+    {
+        time_t now = time(0);
+        char* date_time = ctime(&now);
+
+        rules["^title^"] = gSettings().getTitle();
+        rules["^version^"] = gSettings().getJPFFullVersionStr();
+        rules["^timedate^"] = date_time;
+
+        // https://github.com/LexmarkWeb/csi.js
+        rules["^head^"] = R"(<script>window.onload=function(){function a(a,b){var c=/^(?:file):/,d=new XMLHttpRequest,e=0;d.onreadystatechange=function(){4==d.readyState&&(e=d.status),c.test(location.href)&&d.responseText&&(e=200),4==d.readyState&&200==e&&(a.outerHTML=d.responseText)};try{d.open("GET",b,!0),d.send()}catch(f){}}var b,c=document.getElementsByTagName("*");for(b in c)c[b].hasAttribute&&c[b].hasAttribute("data-include")&&a(c[b],c[b].getAttribute("data-include"))}; </script>)";
+    }
+
+
+    void scheduler::outputHTML_testfile(std::ostream &ofs) const
+    {
+        std::map<std::string,std::string> rules;
+        loadStandardRules(rules);
+        streamReplace(getOptTemplatesPath()+"testfile.html",ofs,rules);
+
+    }
+
+    void scheduler::outputHTML_header(std::ostream &ofs) const
+    {
+        std::map<std::string,std::string> rules;
+        loadStandardRules(rules);
+        streamReplace(getOptTemplatesPath()+"header.html",ofs,rules);
+    }
+
+    void scheduler::outputHTML_footer(std::ostream &ofs) const
+    {
+        std::map<std::string,std::string> rules;
+        loadStandardRules(rules);
+        streamReplace(getOptTemplatesPath()+"footer.html",ofs,rules);
+    }
+
 } // namespace
