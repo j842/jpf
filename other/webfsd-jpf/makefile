@@ -1,6 +1,6 @@
 #---------------------------------
 
-WEBJPF_VERSION := 0.0.2
+WEBJPF_VERSION := 0.0.3
 
 #---------------------------------
 
@@ -53,9 +53,9 @@ $(WEBJPF_SCRIPT): makefile $(BIN_DIR)
 $(WEBJPF_DEB): $(WEBJPF_SCRIPT) 
 	@$(RM) $(BIN_DIR)/$(WEBJPF_NAME)*.deb
 	podman run -it --rm -v $(ROOT_DIR):/opt/ jpf /bin/bash -c "/opt/$(WEBJPF_SCRIPT)"
+	rm -f $(WEBJPF_SCRIPT)
 
 webupload: $(WEBJPF_DEB)
 	podman run -it --rm -v $(ROOT_DIR):/opt \
-		-e PACKAGECLOUD_TOKEN=${PACKAGECLOUD_TOKEN} \
 		jpf package_cloud push j842/main/any/any /opt/$(WEBJPF_DEB) 
 

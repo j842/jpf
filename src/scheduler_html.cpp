@@ -661,8 +661,8 @@ namespace scheduler
         time_t now = time(0);
         char* date_time = ctime(&now);
 
-        rules["^title^"] = gSettings().getTitle();
-        rules["^version^"] = gSettings().getJPFFullVersionStr();
+        rules["^title^"] = __protect(gSettings().getTitle());
+        rules["^version^"] = __protect(gSettings().getJPFFullVersionStr());
         rules["^timedate^"] = date_time;
 
         // https://github.com/LexmarkWeb/csi.js

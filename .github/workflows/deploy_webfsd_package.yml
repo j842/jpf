@@ -12,19 +12,5 @@ jobs:
       run: cat <<< "{\"url\":\"https://packagecloud.io\", \"token\":\"${{ secrets.PACKAGE_CLOUD_TOKEN }}\"}" > ~/.packagecloud
     - name: install prereqs
       run: sudo apt install build-essential libboost-date-time-dev libcppunit-dev podman
-    - name: make setup
-      run: make setup
-    - name: make
-      run: make
-    - name: make check
-      run: make check
-    - name: run on input files.
-      run: bin/jpf .
-    - name: Try refresh
-      run: bin/jpf -r .
-    - name: make images
-      run: cd deploy ; make images
-    - name: make deb
-      run: cd deploy ; make deb
-    - name: make upload
-      run: cd deploy ; make upload
+    - name: make webfsd-jpf
+      run: make -C other/webfsd-jpf
