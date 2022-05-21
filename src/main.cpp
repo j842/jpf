@@ -11,6 +11,7 @@
 #include "inputfiles_publicholidays.h"
 #include "inputfiles_teambacklogs.h"
 #include "inputfiles_inputset.h"
+#include "generate_input.h"
 
 #include "scheduler.h"
 #include "utils.h"
@@ -174,12 +175,11 @@ int cMain::run_create_directories()
 
     checkcreatedirectory(pr);
 
-    if (!std::filesystem::exists(getOptInputPath()))
-        fatal("Expected example files are not installed in /opt/jpf/input.");
-
     if (!std::filesystem::exists(pi))
     {
-        std::filesystem::copy(getOptInputPath(), pi, std::filesystem::copy_options::recursive);
+        generate_input gi;
+        checkcreatedirectory(pi);
+        gi.output(pi);
         if (!std::filesystem::exists(pi))
             fatal("Input directory was not successfully created: " + pi);
         loginfo("Created "+pi);

@@ -1,4 +1,4 @@
-MAKEFLAGS+="-j -l $(shell grep -c ^processor /proc/cpuinfo) "
+MAKEFLAGS+="-j -l $(shell grep -c ^processor /proc/cpuinfo)"
 
 ROOT_DIR:=$(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 
@@ -9,6 +9,12 @@ COM_COLOR   := \033[0;34m
 LIN_COLOR   := \033[0;33m
 OBJ_COLOR   := \033[0;36m
 NO_COLOR    := \033[m
+
+define uniq =
+  $(eval seen :=)
+  $(foreach _,$1,$(if $(filter $_,${seen}),,$(eval seen += $_)))
+  ${seen}
+endef
 
 BUILD_DIR := build
 SRC_DIRS := src
@@ -27,18 +33,19 @@ TMPLSRC:=$(TMPL:templates/%=src/templates/%.cpp)
 
 SUP_DIR:=support_files
 SUPFILES:=$(wildcard $(SUP_DIR)/*)
-SUPSRC:=$(SUPFILES:support_files/%=src/support_files/%.cpp)
+SUPSRC:=$(SUPFILES:support_files/%=src/support_files/generate_%.cpp)
 
 # Find all the C and C++ files we want to compile
 # Note the single quotes around the * expressions. Make will incorrectly expand these otherwise.
-SRCS := $(shell find $(SRC_DIRS) -name '*.cpp' -or -name '*.c' -or -name '*.s') 
+SRCS :=  $(TMPLSRC) $(SUPSRC) $(shell find $(SRC_DIRS) -name '*.cpp' -or -name '*.c' -or -name '*.s')
 # combine and remove duplicates.
-SRCS := $(sort $(SRCS) $(TMPLSRC) $(SUPSRC))
+#SRCS := $(sort $(SRCS) $(TMPLSRC) $(SUPSRC))
+SRCS := $(call uniq,${SRCS})
 
 # String substitution for every C/C++ file.
 # As an example, hello.cpp turns into ./build/hello.cpp.o
 OBJS := $(SRCS:%=$(BUILD_DIR)/%.o)
-OBJS := $(sort $(OBJS))
+#OBJS := $(sort $(OBJS))
 
 # String substitution (suffix version without %).
 # As an example, ./build/hello.cpp.o turns into ./build/hello.cpp.d
@@ -66,19 +73,20 @@ $(BUILD_DIR)/%.cpp.o: %.cpp
 	@$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $< -o $@
 
 # make template files
-.PRECIOUS: src/templates/%.cpp
+.PRECIOUS:  src/templates/%.cpp
 src/templates/%.cpp: $(TMPL_DIR)/% $(ROOT_DIR)/deps/file2cpp
 	@printf "%b" "$(COM_COLOR)Creating  $(OBJ_COLOR)$(@)$(NO_COLOR)\n";
 	@mkdir -p $(dir $@)
 	@$(ROOT_DIR)/deps/file2cpp "$<" "$(basename $@)"
+src/templates/%.h: src/templates/%.cpp
 
 # make support_files files
-.PRECIOUS: src/support_files/%.cpp
-src/support_files/%.cpp: $(SUP_DIR)/% $(ROOT_DIR)/deps/dir2cpp
+.PRECIOUS: src/support_files/generate_%.cpp
+src/support_files/generate_%.cpp: $(SUP_DIR)/% $(ROOT_DIR)/deps/dir2cpp
 	@printf "%b" "$(COM_COLOR)Creating  $(OBJ_COLOR)$(@)$(NO_COLOR)\n";
 	@mkdir -p $(dir $@)
 	@$(ROOT_DIR)/deps/dir2cpp "$<" "$(basename $@)"
-
+src/support_files/generate_%.h: src/support_files/generate_%.cpp
 
 .PHONY: clean
 clean:

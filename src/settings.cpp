@@ -262,10 +262,7 @@ void settings::advance(workdate newStart)
 
 const std::string getInputPath() { return gSettings().getRoot()+"/input/"; }
 const std::string getOutputPath_Base() { return gSettings().getRoot()+"/output/"; }
-const std::string getOutputPath_Txt() { return gSettings().getRoot()+"/output/txt"; }
+const std::string getOutputPath_Txt() { return gSettings().getRoot()+"/output/txt/"; }
 const std::string getOutputPath_Html() { return gSettings().getRoot()+"/output/html/"; }
 const std::string getOutputPath_Csv() { return gSettings().getRoot()+"/output/csv/"; }
 const std::string getOutputPath_Log() { return gSettings().getRoot()+"/output/log/"; }
-const std::string getOptSupportFilesPath() { return "/opt/jpf/support_files/"; }
-const std::string getOptInputPath() { return "/opt/jpf/input/"; }
-const std::string getOptTemplatesPath() { return getOptSupportFilesPath()+"templates/";}
