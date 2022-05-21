@@ -9,14 +9,14 @@ namespace inputfiles
     {
     }
 
-    std::wstring publicholidays::getStr() const
+    std::string publicholidays::getStr() const
     {
         return mPublicHolidaysString;
     }
 
-    std::wstring publicholidays::load_public_holidays() const
+    std::string publicholidays::load_public_holidays() const
     {
-        std::wstring phs;
+        std::string phs;
         simplecsv ph("publicholidays.csv");
 
         if (!ph.openedOkay())
@@ -25,7 +25,7 @@ namespace inputfiles
             return "";
         }
 
-        std::vector<std::wstring> row;
+        std::vector<std::string> row;
         while (ph.getline(row, 1))
         {
             if (phs.length() > 0)
@@ -39,7 +39,7 @@ namespace inputfiles
     {
         os << "Public Holdiay (Date or Range)" << std::endl;
 
-        std::vector<std::wstring> vd;
+        std::vector<std::string> vd;
         simplecsv::splitcsv(mPublicHolidaysString, vd);
         for (auto d : vd)
             os << simplecsv::makesafe(d) << std::endl;

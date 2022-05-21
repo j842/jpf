@@ -130,7 +130,7 @@ cat <<EOF >>${DST}.cpp
     if (path.length()==0) return false;
     if (path[path.length()-1]!='/')
         path.push_back('/');
-   std::wofstream os(path+std::string("${basename}"));
+   std::ofstream os(path+std::string("${basename}"));
    if (!os.is_open())
       return false;
 

@@ -17,25 +17,25 @@ class workdate; // forward declaration to avoid circular dependency.
 
 
 // string manipulation etc.
-void removewhitespace(std::wstring & s);
+void removewhitespace(std::string & s);
 void checkcreatedirectory(std::string d);
-std::wstring makelower(const std::wstring & s);
-bool iSame(const std::wstring &s1, const std::wstring &s2);
-void trim(std::wstring & str);
-unsigned long str2L(std::wstring s);
-double str2positivedouble(std::wstring s);
-void advanceLeaveString(std::wstring & leaveStr, workdate newStart);
-std::wstring getDollars(double x);
+std::string makelower(const std::string & s);
+bool iSame(const std::string &s1, const std::string &s2);
+void trim(std::string & str);
+unsigned long str2L(std::string s);
+double str2positivedouble(std::string s);
+void advanceLeaveString(std::string & leaveStr, workdate newStart);
+std::string getDollars(double x);
 
 // a few globals
 const unsigned int eNotFound = UINT_MAX;
 
 
 // termiantion routines.
-void _terminate(const std::wstring &s, const std::string &func, const std::string &file, int line);
-void _terminate(const std::wstringstream &s, const std::wstring &func, const std::string &file, int line);
+void _terminate(const std::string &s, const std::string &func, const std::string &file, int line);
+void _terminate(const std::stringstream &s, const std::string &func, const std::string &file, int line);
 #define STR(x) #x
-#define ASSERT(x) if (!(x)) {  _terminate(S()<<L"Assertation failed: "<<STR(x), __PRETTY_FUNCTION__, __FILE__, __LINE__); }
+#define ASSERT(x) if (!(x)) {  _terminate(S()<<"Assertation failed: "<<STR(x), __PRETTY_FUNCTION__, __FILE__, __LINE__); }
 #define TERMINATE(x) { _terminate(x, __PRETTY_FUNCTION__, __FILE__, __LINE__); }
 
 #define HALFWIDTHPADLEFT(n1,maxw)   (n1<maxw ? (int)(0.5 + 0.5*(maxw+n1)) : 0)
@@ -48,18 +48,18 @@ void _terminate(const std::wstringstream &s, const std::wstring &func, const std
 // terminate current calculation
 struct TerminateRunException : public std::exception
 {
-   std::wstring s;
-   TerminateRunException(std::wstring ss) : s(ss) {}
+   std::string s;
+   TerminateRunException(std::string ss) : s(ss) {}
    ~TerminateRunException() throw () {} // Updated
-   const wchar_t* wwhat() const throw() { return s.c_str(); }
+   const char* what() const throw() { return s.c_str(); }
 };
 //exit entire application
 struct ctrlcException : public std::exception
 {
-   std::wstring s;
-   ctrlcException(std::wstring ss) : s(ss) {}
+   std::string s;
+   ctrlcException(std::string ss) : s(ss) {}
    ~ctrlcException() throw () {} // Updated
-   const wchar_t* wwhat() const throw() { return s.c_str(); }
+   const char* what() const throw() { return s.c_str(); }
 };
 
 
@@ -68,26 +68,24 @@ struct ctrlcException : public std::exception
 class S
 {
 private:
-    std::wostringstream os_stream;
-    std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
+    std::ostringstream os_stream;
 
 public:
     S() {}
-    S(const wchar_t *s) : os_stream(s) {}
-    S(const char *s) : os_stream(converter.from_bytes(s)) {}
-    S(const std::wstring &s) : os_stream(s) {}
+    S(const char *s) : os_stream(s) {}
+    S(const std::string &s) : os_stream(s) {}
     template <class T>
     S &operator<<(const T &t)
     {
         os_stream << t;
         return *this;
     }
-    S &operator<<(std::wostream &(*f)(std::wostream &))
+    S &operator<<(std::ostream &(*f)(std::ostream &))
     {
         os_stream << f;
         return *this;
     }
-    operator std::wstring() const
+    operator std::string() const
     {
         return os_stream.str();
     }
@@ -139,24 +137,24 @@ class timer
 class listoutput
 {
     public:
-        listoutput(std::wostream & ofs,std::wstring sstart, std::wstring seperator, std::wstring send);
+        listoutput(std::ostream & ofs,std::string sstart, std::string seperator, std::string send);
         ~listoutput();
-        void write(std::wstring item) const;
-        void writehq(std::wstring item) const; // add halfquotes.
+        void write(std::string item) const;
+        void writehq(std::string item) const; // add halfquotes.
         void end();
 
     private:
-        std::wostream & mOfs;
-        std::wstring mSeperator;
-        std::wstring mSEnd;
+        std::ostream & mOfs;
+        std::string mSeperator;
+        std::string mSEnd;
         mutable bool mFirstItem;
         bool mEnded;
 };
 
-void streamReplace(std::string ifile, std::string ofile, const std::map<std::wstring,std::wstring> & replacerules);
-void streamReplace(std::string ifile, std::wostream &ofs, const std::map<std::wstring,std::wstring> & replacerules);
-void replace(std::wstring & s,  const std::map<std::wstring,std::wstring> & replacerules);
-std::wstring replacestring(std::wstring subject, const std::wstring &search, const std::wstring &replace);
+void streamReplace(std::string ifile, std::string ofile, const std::map<std::string,std::string> & replacerules);
+void streamReplace(std::string ifile, std::ostream &ofs, const std::map<std::string,std::string> & replacerules);
+void replace(std::string & s,  const std::map<std::string,std::string> & replacerules);
+std::string replacestring(std::string subject, const std::string &search, const std::string &replace);
 
 
 #endif

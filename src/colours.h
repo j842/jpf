@@ -33,17 +33,17 @@ public:
 // float r,g,b;
 // heatMapGradient.getColorAtValue(yourGradientValue, r,g,b);
 
-const std::wstring cWhite = "\e[38;5;253m";
-const std::wstring cLightOrange = "\e[38;5;179m";
-const std::wstring cBlue =  "\e[38;5;69m";
-const std::wstring cLime = "\e[38;5;150m";
-const std::wstring cNoColour = "\033[m";
+const std::string cWhite = "\e[38;5;253m";
+const std::string cLightOrange = "\e[38;5;179m";
+const std::string cBlue =  "\e[38;5;69m";
+const std::string cLime = "\e[38;5;150m";
+const std::string cNoColour = "\033[m";
 
-const std::wstring cInfo = "\e[38;5;111m";
-const std::wstring cDebug = "\e[38;5;239m";
-const std::wstring cWarning = "\e[38;5;179m";
-const std::wstring cError = "\e[38;5;9m";
-const std::wstring cDefault = "\e[38;5;118m";
+const std::string cInfo = "\e[38;5;111m";
+const std::string cDebug = "\e[38;5;239m";
+const std::string cWarning = "\e[38;5;179m";
+const std::string cError = "\e[38;5;9m";
+const std::string cDefault = "\e[38;5;118m";
 }
 
 #endif

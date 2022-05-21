@@ -12,20 +12,20 @@ namespace inputfiles
 class project
 {
     public: 
-        project(std::wstring id, std::wstring name, std::wstring desc, bool BAU, std::wstring comments);
+        project(std::string id, std::string name, std::string desc, bool BAU, std::string comments);
 
-        const std::wstring & getId() const {return mId;}
-        const std::wstring & getName() const {return mName;}
-        const std::wstring & getDesc() const {return mDescription;}
+        const std::string & getId() const {return mId;}
+        const std::string & getName() const {return mName;}
+        const std::string & getDesc() const {return mDescription;}
         bool getBAU() const {return mBAU;}
-        const std::wstring & getmComments() const {return mComments;}
+        const std::string & getmComments() const {return mComments;}
 
     private:
-        const std::wstring mId;
-        const std::wstring mName;
-        const std::wstring mDescription;
+        const std::string mId;
+        const std::string mName;
+        const std::string mDescription;
         const bool mBAU;
-        const std::wstring mComments;
+        const std::string mComments;
 };
 
 class projects : public std::vector<project>
@@ -33,12 +33,12 @@ class projects : public std::vector<project>
     public:
         projects();
         void load_projects();
-        void save_projects_CSV(std::wostream & os) const;
+        void save_projects_CSV(std::ostream & os) const;
 
         unsigned int getMaxProjectNameWidth() const;
         void debug_displayProjects() const;
 
-        unsigned int getIndexByID(std::wstring id) const; // returns eNotFound if index isn't there.
+        unsigned int getIndexByID(std::string id) const; // returns eNotFound if index isn't there.
     
         void advance(workdate newStart);
 

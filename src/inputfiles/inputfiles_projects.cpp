@@ -9,11 +9,11 @@
 namespace inputfiles
 {
 
-    project::project(std::wstring id, std::wstring name, std::wstring desc, bool BAU, std::wstring comments) : mId(id), mName(name), mDescription(desc), mBAU(BAU), mComments(comments)
+    project::project(std::string id, std::string name, std::string desc, bool BAU, std::string comments) : mId(id), mName(name), mDescription(desc), mBAU(BAU), mComments(comments)
     {
     }
 
-    bool isBAU(std::wstring s)
+    bool isBAU(std::string s)
     {
         if (s.length() == 0)
         {
@@ -36,7 +36,7 @@ namespace inputfiles
         if (!c.openedOkay())
             TERMINATE("Could not open projects.csv!");
 
-        std::vector<std::wstring> row;
+        std::vector<std::string> row;
         while (c.getline(row, 5))
         {
             project p(row[0], row[1], row[2], isBAU(row[3]), row[4]);
@@ -50,7 +50,7 @@ namespace inputfiles
 
         for (const auto &i : *this)
         {
-            std::vector<std::wstring> row = {
+            std::vector<std::string> row = {
                 i.getId(),
                 i.getName(),
                 i.getDesc(),
@@ -61,7 +61,7 @@ namespace inputfiles
         }
     }
 
-    unsigned int projects::getIndexByID(std::wstring id) const // returns eNotFound if index isn't there.
+    unsigned int projects::getIndexByID(std::string id) const // returns eNotFound if index isn't there.
     {
         for (unsigned int i = 0; i < this->size(); ++i)
             if (iSame(this->at(i).getId(), id) || iSame(this->at(i).getName(),id))

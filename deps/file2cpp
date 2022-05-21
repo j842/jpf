@@ -61,40 +61,40 @@ function main {
 #include <fstream>
 #include "${CNM}.h"
 
-void ${happyname}::replacestring(std::wstring & subject, const std::wstring &search, const std::wstring &replace)
+void ${happyname}::replacestring(std::string & subject, const std::string &search, const std::string &replace)
 {
     size_t pos = 0;
     if (search.empty() || subject.empty()) return;
-    while ((pos = subject.find(search, pos)) != std::wstring::npos)
+    while ((pos = subject.find(search, pos)) != std::string::npos)
     {
         subject.replace(pos, search.length(), replace);
         pos += replace.length();
     }
 }
 
-/*static*/ bool ${happyname}::output(std::wstring path, const std::map<std::wstring,std::wstring> * replacerules)
+/*static*/ bool ${happyname}::output(std::string path, const std::map<std::string,std::string> * replacerules)
 {
    if (path.length()==0) return false;
    if (path[path.length()-1]!='/')
       path.push_back('/');
-   std::wofstream os(path+getName());
+   std::ofstream os(path+getName());
    if (!os.is_open())
       return false;
    os << getStr(replacerules);
    os.close();
 }
 
-/*static*/ std::wstring ${happyname}::getName()
+/*static*/ std::string ${happyname}::getName()
 {
    return "${SNM}";
 }
 
-/*static*/ std::wstring ${happyname}::getStr(const std::map<std::wstring,std::wstring> * replacerules)
+/*static*/ std::string ${happyname}::getStr(const std::map<std::string,std::string> * replacerules)
 {
-   std::wstring s= 
+   std::string s= 
 EOF
 
-echo -n "LR\"LITERAL(">>${DST}.cpp
+echo -n "R\"LITERAL(">>${DST}.cpp
 cat ${SRC}>>${DST}.cpp
 echo ")LITERAL\";">>${DST}.cpp
 cat <<EOF >>${DST}.cpp
@@ -119,12 +119,12 @@ cat <<EOF >${DST}.h
 class ${happyname}
 {
    public:
-      static bool output(std::wstring path, const std::map<std::wstring,std::wstring> * replacerules = NULL); // recreate output file. 
-      static std::wstring getStr(const std::map<std::wstring,std::wstring> * replacerules = NULL);  // contents of output file, with replacements as per rules.
-      static std::wstring getName(); // output file name.
+      static bool output(std::string path, const std::map<std::string,std::string> * replacerules = NULL); // recreate output file. 
+      static std::string getStr(const std::map<std::string,std::string> * replacerules = NULL);  // contents of output file, with replacements as per rules.
+      static std::string getName(); // output file name.
 
    private:
-      static void replacestring(std::wstring & subject, const std::wstring &search, const std::wstring &replace);
+      static void replacestring(std::string & subject, const std::string &search, const std::string &replace);
 };
 
 #endif

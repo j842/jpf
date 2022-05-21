@@ -15,14 +15,14 @@ static const char to_base64[] =
              "0123456789+/";
 
 
-std::wstring Base64::encode(const std::vector<BYTE>& buf)
+std::string Base64::encode(const std::vector<BYTE>& buf)
 {
     if (buf.empty())
         return ""; // Avoid dereferencing buf if it's empty
     return encode(&buf[0], (unsigned int)buf.size());
 }
 
-std::wstring Base64::encode(const BYTE* buf, unsigned int bufLen)
+std::string Base64::encode(const BYTE* buf, unsigned int bufLen)
 {
     // Calculate how many bytes that needs to be added to get a multiple of 3
     size_t missing = 0;
@@ -36,7 +36,7 @@ std::wstring Base64::encode(const BYTE* buf, unsigned int bufLen)
     // Expand the return string size to a multiple of 4
     ret_size = 4*ret_size/3;
 
-    std::wstring ret;
+    std::string ret;
     ret.reserve(ret_size);
 
     for (unsigned int i=0; i<ret_size/4; ++i)
@@ -69,7 +69,7 @@ std::wstring Base64::encode(const BYTE* buf, unsigned int bufLen)
     return ret;
 }
 
-std::vector<BYTE> Base64::decode(std::wstring encoded_string)
+std::vector<BYTE> Base64::decode(std::string encoded_string)
 {
     // Make sure string length is a multiple of 4
     while ((encoded_string.size() % 4) != 0)
@@ -103,15 +103,15 @@ std::vector<BYTE> Base64::decode(std::wstring encoded_string)
     return ret;
 }
 
-/*static*/ std::wstring Base64::encodeT(const std::wstring & buf)
+/*static*/ std::string Base64::encodeT(const std::string & buf)
 {
     if (buf.empty())
         return ""; // Avoid dereferencing buf if it's empty
     return encode( reinterpret_cast<const BYTE *>(&buf[0]), (unsigned int)buf.size());
 }
-/*static*/ std::wstring Base64::decodeT(std::wstring encoded_string)
+/*static*/ std::string Base64::decodeT(std::string encoded_string)
 {
     std::vector<BYTE> r = decode(encoded_string);
-    std::wstring rstr{ r.begin(), r.end() };
+    std::string rstr{ r.begin(), r.end() };
     return rstr;
 }

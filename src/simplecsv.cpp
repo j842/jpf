@@ -7,7 +7,7 @@
 CPPUNIT_TEST_SUITE_REGISTRATION( simplecsv_test );
 
 
-simplecsv::simplecsv(std::wstring filename, bool hasHeaderRow, unsigned int requiredcols) :  
+simplecsv::simplecsv(std::string filename, bool hasHeaderRow, unsigned int requiredcols) :  
     mFileName(filename), mFile(filename2path(filename)), mOpenedOkay(false)
 {
     mOpenedOkay = mFile.is_open();
@@ -28,8 +28,8 @@ std::string simplecsv::filename2path(const std::string filename)
 }
 
 
-bool simplecsv::splitcsv(const std::wstring s, // copy
-                         std::vector<std::wstring> &items)
+bool simplecsv::splitcsv(const std::string s, // copy
+                         std::vector<std::string> &items)
 {
     items.clear();
     if (s.length() == 0 || s[0] == '\r' || s[0] == '\n')
@@ -54,12 +54,12 @@ bool simplecsv::splitcsv(const std::wstring s, // copy
                 if (i > startpos)
                     items.push_back( trimCSVentry( s.substr(startpos, i - startpos) ));
                 else
-                    items.push_back(L"");
+                    items.push_back("");
                 startpos = i + 1;
 
                 if (startpos >= s.length())
                 { // string ends on a comma
-                    items.push_back(L"");
+                    items.push_back("");
                     return true; // done!
                 }
             }
@@ -80,9 +80,9 @@ bool simplecsv::splitcsv(const std::wstring s, // copy
 }
 
 
-std::wstring simplecsv::trimCSVentry(const std::wstring str)
+std::string simplecsv::trimCSVentry(const std::string str)
 {
-    std::wstring s(str);
+    std::string s(str);
 
     // now remove whitespace
     trim(s);
@@ -110,14 +110,14 @@ std::wstring simplecsv::trimCSVentry(const std::wstring str)
     return s;
 }
 
-bool simplecsv::getline(std::vector<std::wstring> & line, unsigned int requiredcols)
+bool simplecsv::getline(std::vector<std::string> & line, unsigned int requiredcols)
 {
     line.clear();
 
     if (!mFile.is_open())
         return false;
 
-    std::wstring row;
+    std::string row;
     while (row.length()==0) // skip empty rows.
     {
         if (!std::getline(mFile, row))
@@ -148,9 +148,9 @@ bool simplecsv::getline(std::vector<std::wstring> & line, unsigned int requiredc
     return true;
 }
 
-std::wstring simplecsv::makesafe(std::wstring s)
+std::string simplecsv::makesafe(std::string s)
 {
-    std::wstring ss;
+    std::string ss;
     bool needsquotes=false;
     for (unsigned int i=0;i<s.length();++i)
     {
@@ -178,7 +178,7 @@ std::wstring simplecsv::makesafe(std::wstring s)
 }
 
 
-void simplecsv::output(std::wostream & os, const std::vector<std::wstring> csvitems)
+void simplecsv::output(std::ostream & os, const std::vector<std::string> csvitems)
 {
     for (unsigned int i=0;i<csvitems.size();++i)
         if (i>0)
@@ -187,7 +187,7 @@ void simplecsv::output(std::wostream & os, const std::vector<std::wstring> csvit
             os << makesafe(csvitems[i]);
 }
 
-void simplecsv::outputr(std::wostream & os, const std::vector<std::wstring> csvitems)
+void simplecsv::outputr(std::ostream & os, const std::vector<std::string> csvitems)
 {
     output(os,csvitems);
     os << std::endl;
@@ -202,26 +202,26 @@ void simplecsv::outputr(std::wostream & os, const std::vector<std::wstring> csvi
 
 void simplecsv_test::splitcsv_test4()
 {
-    std::wstring s( R"literal(Stu,"""W1,W3""","hello "" hello")literal" );
-    std::vector<std::wstring> items;
+    std::string s( R"literal(Stu,"""W1,W3""","hello "" hello")literal" );
+    std::vector<std::string> items;
     simplecsv::splitcsv(s,items);
     CPPUNIT_ASSERT(items.size()==3);
-    CPPUNIT_ASSERT_MESSAGE(S() << " Different:  "<<items[1]<< "   \"W1,W3\"",iSame(items[1],L"\"W1,W3\""));
-    CPPUNIT_ASSERT_MESSAGE(S() << " Different:  "<<items[2]<< "   hello \" hello",iSame(items[2],L"hello \" hello"));
+    CPPUNIT_ASSERT_MESSAGE(S() << " Different:  "<<items[1]<< "   \"W1,W3\"",iSame(items[1],"\"W1,W3\""));
+    CPPUNIT_ASSERT_MESSAGE(S() << " Different:  "<<items[2]<< "   hello \" hello",iSame(items[2],"hello \" hello"));
 }
 
 void simplecsv_test::splitcsv_test3()
 {
-    std::wstring s( R"literal(Stu,"W1,W3",)literal" );
-    std::vector<std::wstring> items;
+    std::string s( R"literal(Stu,"W1,W3",)literal" );
+    std::vector<std::string> items;
     simplecsv::splitcsv(s,items);
     CPPUNIT_ASSERT(items.size()==3);
-    CPPUNIT_ASSERT_MESSAGE(S() << " Different:  "<<items[1]<< "   W1,W3",iSame(items[1],L"W1,W3"));
+    CPPUNIT_ASSERT_MESSAGE(S() << " Different:  "<<items[1]<< "   W1,W3",iSame(items[1],"W1,W3"));
 }
 void simplecsv_test::splitcsv_test2( )
 {
-    std::wstring s( R"literal(   a  ,,b,,"\\c,,,,,","" )literal" );
-    std::vector<std::wstring> items;
+    std::string s( R"literal(   a  ,,b,,"\\c,,,,,","" )literal" );
+    std::vector<std::string> items;
 
     simplecsv::splitcsv(s,items);
 
@@ -235,36 +235,36 @@ void simplecsv_test::splitcsv_test2( )
 }
 void simplecsv_test::splitcsv_test1( )
 {
-    std::wstring s("a,b,c,d,");
-    std::vector<std::wstring> items;
+    std::string s("a,b,c,d,");
+    std::vector<std::string> items;
 
     simplecsv::splitcsv(s,items);
 
     CPPUNIT_ASSERT(items.size()==5);
-    CPPUNIT_ASSERT(items[0].compare(L"a")==0);
-    CPPUNIT_ASSERT(items[1].compare(L"b")==0);
-    CPPUNIT_ASSERT(items[2].compare(L"c")==0);
-    CPPUNIT_ASSERT(items[3].compare(L"d")==0);
-    CPPUNIT_ASSERT(items[4].compare(L"")==0);
+    CPPUNIT_ASSERT(items[0].compare("a")==0);
+    CPPUNIT_ASSERT(items[1].compare("b")==0);
+    CPPUNIT_ASSERT(items[2].compare("c")==0);
+    CPPUNIT_ASSERT(items[3].compare("d")==0);
+    CPPUNIT_ASSERT(items[4].compare("")==0);
 }
 void simplecsv_test::splitcsv_test0( )
 {
-    std::wstring s( R"literal("\\c,\,\,"\,\ )literal" );
-    std::vector<std::wstring> items;
+    std::string s( R"literal("\\c,\,\,"\,\ )literal" );
+    std::vector<std::string> items;
 
     simplecsv::splitcsv(s,items);
 
     CPPUNIT_ASSERT(items.size()==1);
-    CPPUNIT_ASSERT_MESSAGE(S()<<items[0]<< L"   is not   \\c,,,,", strcmp(items[0].c_str(),L"\\c,,,,")==0);
+    CPPUNIT_ASSERT_MESSAGE(S()<<items[0]<< "   is not   \\c,,,,", strcmp(items[0].c_str(),"\\c,,,,")==0);
 }
 
 void simplecsv_test::roundtrip_test1( )
 {
-    std::wstring s( LR"literal(a,12,3.721,dog dog dog,"""heroes"" never die",,,"a,""b"",c")literal" );
-    std::vector<std::wstring> items;
+    std::string s( R"literal(a,12,3.721,dog dog dog,"""heroes"" never die",,,"a,""b"",c")literal" );
+    std::vector<std::string> items;
     simplecsv::splitcsv(s,items);
     std::ostringstream oss;
     simplecsv::output(oss, items);
-    CPPUNIT_ASSERT_MESSAGE(S()<<std::endl<<L"["<<s<<L"]"<<std::endl<<L" is not "<<std::endl<<L"["<<oss.str()<<L"]"<<std::endl,
+    CPPUNIT_ASSERT_MESSAGE(S()<<std::endl<<"["<<s<<"]"<<std::endl<<" is not "<<std::endl<<"["<<oss.str()<<"]"<<std::endl,
         strcmp(s.c_str(),oss.str().c_str())==0);
 }

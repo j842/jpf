@@ -6,7 +6,7 @@
         "type": "cppdbg",
         "request": "launch",
 //        "program": "${fileDirname}/jpf_debug",
-        "program": "${fileDirname}/../bin/jpf",
+        "program": "${fileDirname}/../build/jpf",
        "args": [
 //            "${workspaceFolder}"
 //          "-t"
