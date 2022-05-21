@@ -12,6 +12,8 @@ jpf_debug
 /webfsd-jpf/bin
 
 version.h
+/src/templates
+/src/support_files
 
 
 # Prerequisites
