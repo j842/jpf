@@ -22,13 +22,13 @@ function die {
 function showhelp {
 cat <<EOF >&2
 NAME
-   file2cpp
+   dir2cpp
        
 SYNOPSIS
-   ${CODE_S}file2cpp help${CODE_E}
+   ${CODE_S}dir2cpp help${CODE_E}
       This help.
    
-   ${CODE_S}file2cpp SOURCE DESTINATION${CODE_E}
+   ${CODE_S}dir2cpp SOURCE DESTINATION${CODE_E}
       Create a cpp file at DESTINATION.cpp, which outputs SOURCE's contents.
    
 DESCRIPTION
@@ -46,11 +46,19 @@ function main {
    CNM=${DST##*/}
    SNM=${SRC##*/}
 
-   [[ -f $SRC ]] || die "Source file does not exist: ${SRC}";
+   [[ -d $SRC ]] || die "Source directory does not exist: ${SRC}";
    [[ ! -f "${DST}.cpp" ]] || rm "${DST}.cpp"
    [[ ! -f "${DST}.h" ]] || rm "${DST}.h"
    
    echo "$SRC -> ${CNM}.cpp and ${CNM}.h"
+
+   for filename in Data/*.txt; do
+    [ -e "$filename" ] || continue
+    # ... rest of the loop body
+    echo "$filename"
+    done
+
+    exit 0;
 
    cat <<EOF >${DST}.cpp
 // auto-generated cpp file.
