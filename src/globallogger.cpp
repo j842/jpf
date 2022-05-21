@@ -68,7 +68,27 @@ FileStreamer g_FileStreamer;
 
 void FileRotationLogSink(std::string s)
 {
-    std::string mainlogfile = "/var/log/jpf/jpf.log";
+    static bool initialised=false;
+    static std::string savedLog;
+    if (gSettings().getRoot().length()==0)
+    {
+        savedLog+=s;
+        return; // can't log to file until loaded.
+    }
+    if (!initialised)
+    {
+        checkcreatedirectory(getOutputPath_Base()); // create path to log to.
+        checkcreatedirectory(getOutputPath_Log()); // create path to log to.
+        initialised=true;
+    }
+    if (savedLog.length()>0)
+    {
+        std::string sl=savedLog;
+        savedLog.clear();
+        FileRotationLogSink(savedLog);
+    }
+
+    std::string mainlogfile = getOutputPath_Log()+"jpf.log"; //"/var/log/jpf/jpf.log";
 
     if (!g_FileStreamer.CheckLogFileOpen(mainlogfile))
         return; // can't log to file.
@@ -78,7 +98,7 @@ void FileRotationLogSink(std::string s)
         g_FileStreamer.Close();
 
         boost::gregorian::date current_date(boost::gregorian::day_clock::local_day());
-        std::string archive_base = "/var/log/jpf/jpf_" + simpledate(current_date).getStr();
+        std::string archive_base =  getOutputPath_Log()+"jpf_" + simpledate(current_date).getStr_FileName();
 
         unsigned int i = 1;
         std::string archive;

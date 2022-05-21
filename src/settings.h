@@ -15,6 +15,7 @@ class settings
         void setRoot(std::string path);
         void load_settings();
         void save_settings_CSV(std::ostream & os) const;
+        bool loaded() const {return mLoaded;}
 
         void advance(workdate newStart);
 
@@ -68,9 +69,11 @@ class settings
 settings & gSettings();
 
 const std::string getInputPath();
+const std::string getOutputPath_Base();
 const std::string getOutputPath_Txt();
 const std::string getOutputPath_Html();
 const std::string getOutputPath_Csv();
+const std::string getOutputPath_Log();
 const std::string getOptSupportFilesPath();
 const std::string getOptInputPath();
 const std::string getOptTemplatesPath();

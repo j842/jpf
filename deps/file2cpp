@@ -51,7 +51,7 @@ function main {
    [[ ! -f "${DST}.cpp" ]] || rm "${DST}.cpp"
    [[ ! -f "${DST}.h" ]] || rm "${DST}.h"
    
-   echo "fil2cpp, part of jpf's build system."
+#   echo "fil2cpp, part of jpf's build system."
    echo "$SRC -> ${CNM}.cpp and ${CNM}.h"
 
    cat <<EOF >${DST}.cpp

@@ -19,11 +19,15 @@ TMPL_DIR:=templates
 TMPL:=$(wildcard $(TMPL_DIR)/*)
 TMPLSRC:=$(TMPL:templates/%=src/templates/%.cpp)
 
+SUP_DIR:=support_files
+SUPFILES:=$(wildcard $(SUP_DIR)/*)
+SUPSRC:=$(SUPFILES:support_files/%=src/support_files/%.cpp)
+
 # Find all the C and C++ files we want to compile
 # Note the single quotes around the * expressions. Make will incorrectly expand these otherwise.
 SRCS := $(shell find $(SRC_DIRS) -name '*.cpp' -or -name '*.c' -or -name '*.s') 
 # combine and remove duplicates.
-SRCS := $(sort $(SRCS) $(TMPLSRC))
+SRCS := $(sort $(SRCS) $(TMPLSRC) $(SUPSRC))
 
 # String substitution for every C/C++ file.
 # As an example, hello.cpp turns into ./build/hello.cpp.o
@@ -35,6 +39,7 @@ DEPS := $(OBJS:.o=.d)
 
 # Every folder in ./src will need to be passed to GCC so that it can find header files
 INC_DIRS := $(shell find $(SRC_DIRS) -type d)
+INC_DIRS := $(sort $(INC_DIRS) src/support_files src/templates)
 # Add a prefix to INC_DIRS. So moduleA would become -ImoduleA. GCC understands this -I flag
 INC_FLAGS := $(addprefix -I,$(INC_DIRS))
 
@@ -48,19 +53,28 @@ $(BUILD_DIR)/$(JPF_NAME): $(OBJS)
 
 # Build step for C++ source
 $(BUILD_DIR)/%.cpp.o: %.cpp
-	mkdir -p $(dir $@)
+	@mkdir -p $(dir $@)
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $< -o $@
 
 # make template files
 .PRECIOUS: src/templates/%.cpp
 src/templates/%.cpp: $(TMPL_DIR)/% $(ROOT_DIR)/deps/file2cpp
-	mkdir -p $(dir $@)
-	@echo "Generating $@ from $<"
+	@mkdir -p $(dir $@)
 	$(ROOT_DIR)/deps/file2cpp "$<" "$(basename $@)"
+
+# make support_files files
+.PRECIOUS: src/support_files/%.cpp
+src/support_files/%.cpp: $(SUP_DIR)/% $(ROOT_DIR)/deps/dir2cpp
+	@mkdir -p $(dir $@)
+	$(ROOT_DIR)/deps/dir2cpp "$<" "$(basename $@)"
+
 
 .PHONY: clean
 clean:
-	rm -r $(BUILD_DIR)
+	rm -rf $(BUILD_DIR)
+	rm -rf $(ROOT_DIR)/output
+	rm -rf src/templates
+	rm -rf src/support_files
 
 # Include the .d makefiles. The - at the front suppresses the errors of missing
 # Makefiles. Initially, all the .d files will be missing, and we don't want those
@@ -69,6 +83,9 @@ clean:
 
 check: $(JPF_EXE)
 	$(JPF_EXE) -t
+	$(JPF_EXE) .
+	$(JPF_EXE) -r .
+	rm -rf output
 
 deploy:
 	@gh auth login --with-token < ~/.github_token

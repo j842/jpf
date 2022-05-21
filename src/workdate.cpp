@@ -17,6 +17,13 @@ std::string simpledate::getStr() const
                           new boost::gregorian::date_facet("%d/%m/%y"));
     return _getstr(fmt);
 }
+std::string simpledate::getStr_FileName() const
+{
+    // https://www.boost.org/doc/libs/1_79_0/doc/html/date_time/date_time_io.html
+    const std::locale fmt(std::locale::classic(),
+                          new boost::gregorian::date_facet("%d_%m_%y"));
+    return _getstr(fmt);
+}
 
 std::string simpledate::getStr_short() const
 {
