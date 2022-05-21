@@ -19,8 +19,8 @@ jobs:
     - name: make check
       run: make check
     - name: make images
-      run: cd deploy ; make images
+      run: make images
     - name: make deb
-      run: cd deploy ; make deb
+      run: make deb
     - name: make upload
-      run: cd deploy ; make upload
+      run: make -C deps -f deploy.makefile upload
