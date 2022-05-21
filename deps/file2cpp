@@ -82,6 +82,13 @@ void ${happyname}::replacestring(std::string & subject, const std::string &searc
       return false;
    os << getStr(replacerules);
    os.close();
+   return true;
+}
+
+/*static*/ bool ${happyname}::output(std::ostream &ofs, const std::map<std::string,std::string> * replacerules)
+{
+   ofs << getStr(replacerules);
+   return true;
 }
 
 /*static*/ std::string ${happyname}::getName()
@@ -120,6 +127,7 @@ class ${happyname}
 {
    public:
       static bool output(std::string path, const std::map<std::string,std::string> * replacerules = NULL); // recreate output file. 
+      static bool output(std::ostream &ofs, const std::map<std::string,std::string> * replacerules = NULL);
       static std::string getStr(const std::map<std::string,std::string> * replacerules = NULL);  // contents of output file, with replacements as per rules.
       static std::string getName(); // output file name.
 
