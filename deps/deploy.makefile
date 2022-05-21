@@ -1,7 +1,7 @@
 ROOT_DIR:=$(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 ROOT_DIR := $(abspath $(ROOT_DIR)/../)
 
-include $(ROOT_DIR)/deploy/versions.makefile
+include $(ROOT_DIR)/deps/versions.makefile
 
 JPF_DEB_NAME 	:= $(JPF_NAME)-$(JPF_VERSION)-$(JPF_RELEASE)-any.deb
 JPF_DEB_PATH    := $(BIN_DIR)/$(JPF_DEB_NAME)
@@ -13,7 +13,7 @@ JPF_SCRIPT_PATH := $(BIN_DIR)/$(JPF_SCRIPT_NAME)
 all: $(JPF_EXE) images deb
 
 images: 
-	$(ROOT_DIR)/deploy/podman/build.sh
+	$(ROOT_DIR)/deps/podman/build.sh
 
 $(JPF_SCRIPT_PATH) = \
 \#!/bin/sh\n\
@@ -32,8 +32,9 @@ $(JPF_SCRIPT_PATH) = \
 		--url \"https://github.com/j842/jpf\" \
 		--maintainer \"John Enlow\" \
 		/opt/$(BIN_NAME)/$(JPF_NAME)=/usr/bin/$(JPF_NAME) \
+		/opt/includes/dpkg_include/=/ \
 #
-$(JPF_SCRIPT_PATH): makefile
+$(JPF_SCRIPT_PATH): deploy.makefile
 	@echo "$($(@))" | sed -e 's/^[ ]//' >$(@)
 	chmod a+x $(JPF_SCRIPT_PATH)
 

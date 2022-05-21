@@ -2,7 +2,7 @@ MAKEFLAGS+="-j -l $(shell grep -c ^processor /proc/cpuinfo)"
 
 ROOT_DIR:=$(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 
-include $(ROOT_DIR)/deploy/versions.makefile
+include $(ROOT_DIR)/deps/versions.makefile
 
 
 COM_COLOR   := \033[0;34m
@@ -27,13 +27,13 @@ CXXFLAGS := -g -Wall -std=c++17
 LDFLAGS  := -g
 LDLIBS   := -l:libboost_date_time.a -l:libcppunit.a
 #DEPFLAGS = -MT $@ -MD -MP -MF $(DEP_DIR)/$*.Td
-TMPL_DIR:=templates
+TMPL_DIR:=includes/templates
 TMPL:=$(wildcard $(TMPL_DIR)/*)
-TMPLSRC:=$(TMPL:templates/%=src/templates/%.cpp)
+TMPLSRC:=$(TMPL:includes/templates/%=src/templates/%.cpp)
 
-SUP_DIR:=support_files
+SUP_DIR:=includes/verbatim
 SUPFILES:=$(wildcard $(SUP_DIR)/*)
-SUPSRC:=$(SUPFILES:support_files/%=src/support_files/generate_%.cpp)
+SUPSRC:=$(SUPFILES:includes/verbatim/%=src/support_files/generate_%.cpp)
 
 # Find all the C and C++ files we want to compile
 # Note the single quotes around the * expressions. Make will incorrectly expand these otherwise.
@@ -74,18 +74,18 @@ $(BUILD_DIR)/%.cpp.o: %.cpp
 
 # make template files
 .PRECIOUS:  src/templates/%.cpp
-src/templates/%.cpp: $(TMPL_DIR)/% $(ROOT_DIR)/deps/file2cpp
+src/templates/%.cpp: $(TMPL_DIR)/% $(ROOT_DIR)/deps/scripts/file2cpp
 	@printf "%b" "$(COM_COLOR)Creating  $(OBJ_COLOR)$(@)$(NO_COLOR)\n";
 	@mkdir -p $(dir $@)
-	@$(ROOT_DIR)/deps/file2cpp "$<" "$(basename $@)"
+	@$(ROOT_DIR)/deps/scripts/file2cpp "$<" "$(basename $@)"
 src/templates/%.h: src/templates/%.cpp
 
 # make support_files files
 .PRECIOUS: src/support_files/generate_%.cpp
-src/support_files/generate_%.cpp: $(SUP_DIR)/% $(ROOT_DIR)/deps/dir2cpp
+src/support_files/generate_%.cpp: $(SUP_DIR)/% $(ROOT_DIR)/deps/scripts/dir2cpp
 	@printf "%b" "$(COM_COLOR)Creating  $(OBJ_COLOR)$(@)$(NO_COLOR)\n";
 	@mkdir -p $(dir $@)
-	@$(ROOT_DIR)/deps/dir2cpp "$<" "$(basename $@)"
+	@$(ROOT_DIR)/deps/scripts/dir2cpp "$<" "$(basename $@)"
 src/support_files/generate_%.h: src/support_files/generate_%.cpp
 
 .PHONY: clean
@@ -110,20 +110,16 @@ deploy:
 	@gh auth login --with-token < ~/.github_token
 	@gh workflow run deploy_package.yml
 
-
 setup:
 	sudo cp $(ROOT_DIR)/deps/webfsd-jpf/webfsd-jpf /usr/bin
-	sudo mkdir -p /var/log/jpf && sudo chown ${USER} /var/log/jpf
 	sudo rm -rf /opt/jpf
-	sudo mkdir -p /opt/jpf && sudo chown ${USER} /opt/jpf
-	cp -r $(ROOT_DIR)/input /opt/jpf
-	cp -r $(ROOT_DIR)/support_files /opt/jpf
+	sudo cp -r $(ROOT_DIR)/includes/dpkg_include/* /
 
 images:
-	make -C deploy images
+	make -C deps/podman
 
-deb: $(JPF_EXE)
-	make -C deploy deb
+deb: $(BUILD_DIR)/$(JPF_NAME)
+	make -C deps -f deploy.makefile deb
 
 upload:
-	make -C deploy upload
+	make -C deps -f deploy.makefile upload

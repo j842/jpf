@@ -265,3 +265,4 @@ const std::string getOutputPath_Txt() { return gSettings().getRoot()+"/output/tx
 const std::string getOutputPath_Html() { return gSettings().getRoot()+"/output/html/"; }
 const std::string getOutputPath_Csv() { return gSettings().getRoot()+"/output/csv/"; }
 const std::string getOutputPath_Log() { return gSettings().getRoot()+"/output/log/"; }
+const std::string getOptHTMLPath() { return "/opt/jpf/html/";}
