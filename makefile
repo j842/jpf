@@ -4,23 +4,11 @@ ROOT_DIR:=$(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 
 include $(ROOT_DIR)/deploy/versions.makefile
 
-SRC := $(wildcard $(SRC_DIR)/*.cpp)
-#HDR := $(wildcard $(SRC_DIR)/*.h)
-OBJ := $(SRC:$(SRC_DIR)/%.cpp=$(OBJ_DIR)/%.o)
-DEP := $(SRC:$(SRC_DIR)/%.cpp=$(DEP_DIR)/%.d)
+TARGET_EXEC := jpf
 
-VER_HEADER := $(SRC_DIR)/version.h
+BUILD_DIR := build
+SRC_DIRS := src
 
-COM_COLOR   = \033[0;34m
-LIN_COLOR   = \033[0;33m
-OBJ_COLOR   = \033[0;36m
-NO_COLOR    = \033[m
-COM_STRING   = "Compiling"
-LIN_STRING   = "Linking"
-
-#---------------------------------
-
-# sudo apt-get install libboost-date-time-dev libcppunit-dev
 CXX=g++
 #CXX=podman/podrun.sh g++
 
@@ -28,68 +16,55 @@ LD=$(CXX)
 CXXFLAGS := -g -Wall -std=c++17 
 LDFLAGS  := -g
 LDLIBS   := -l:libboost_date_time.a -l:libcppunit.a
-DEPFLAGS = -MT $@ -MD -MP -MF $(DEP_DIR)/$*.Td
+#DEPFLAGS = -MT $@ -MD -MP -MF $(DEP_DIR)/$*.Td
+TMPL_DIR:=templates
+TMPL:=$(wildcard $(TMPL_DIR)/*)
+TMPLSRC:=$(TMPL:templates/%=src/templates/%.cpp)
 
-PRECOMPILE =
-POSTCOMPILE = mv -f $(DEP_DIR)/$*.Td $(DEP_DIR)/$*.d
+# Find all the C and C++ files we want to compile
+# Note the single quotes around the * expressions. Make will incorrectly expand these otherwise.
+SRCS := $(shell find $(SRC_DIRS) -name '*.cpp' -or -name '*.c' -or -name '*.s') 
+# combine and remove duplicates.
+SRCS := $(sort $(SRCS) $(TMPLSRC))
 
-COMPILE.cc = $(CXX) $(DEPFLAGS) $(CXXFLAGS) -c -o $@
-LINK.o = $(LD) $(LDFLAGS) -o $@
+# String substitution for every C/C++ file.
+# As an example, hello.cpp turns into ./build/hello.cpp.o
+OBJS := $(SRCS:%=$(BUILD_DIR)/%.o)
 
-.PHONY: all clean check deploy setup
+# String substitution (suffix version without %).
+# As an example, ./build/hello.cpp.o turns into ./build/hello.cpp.d
+DEPS := $(OBJS:.o=.d)
 
-all: $(JPF_EXE)
+# Every folder in ./src will need to be passed to GCC so that it can find header files
+INC_DIRS := $(shell find $(SRC_DIRS) -type d)
+# Add a prefix to INC_DIRS. So moduleA would become -ImoduleA. GCC understands this -I flag
+INC_FLAGS := $(addprefix -I,$(INC_DIRS))
 
-$(VER_HEADER): deploy/versions.makefile
-	@echo "Generating $@"
-	@echo "#define __JPF_VERSION \"${JPF_VERSION}\"" > $@
-	@echo "#define __JPF_RELEASE \"${JPF_RELEASE}\"" >> $@
-	@echo "#define __INPUT_VERSION (${INPUT_VERSION})" >> $@
+# The -MMD and -MP flags together generate Makefiles for us!
+# These files will have .d instead of .o as the output.
+CPPFLAGS := $(INC_FLAGS) -MMD -MP
 
-$(JPF_EXE): $(VER_HEADER) $(OBJ) | $(BIN_DIR) $(OBJ_DIR) $(DEP_DIR) 
-	@printf "%b" "$(LIN_COLOR)$(LIN_STRING) $(OBJ_COLOR)$(@)$(NO_COLOR)\n";
-	@$(LINK.o) $^ $(LDLIBS)
+# The final build step.
+$(BUILD_DIR)/$(TARGET_EXEC): $(OBJS)
+	$(CXX) $(OBJS) -o $@ $(LDFLAGS) $(LDLIBS)
 
-$(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp $(DEP_DIR)/%.d | $(OBJ_DIR) $(DEP_DIR)
-	@printf "%b" "$(COM_COLOR)$(COM_STRING) $(OBJ_COLOR)$(@)$(NO_COLOR)\n";
-	@$(PRECOMPILE)
-	@$(COMPILE.cc) $< 
-	@$(POSTCOMPILE)
+# Build step for C++ source
+$(BUILD_DIR)/%.cpp.o: %.cpp
+	mkdir -p $(dir $@)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $< -o $@
 
-$(OBJ_DIR):
-	@mkdir -p $@
+# make template files
+.PRECIOUS: src/templates/%.cpp
+src/templates/%.cpp: $(TMPL_DIR)/% $(ROOT_DIR)/deps/file2cpp
+	mkdir -p $(dir $@)
+	@echo "Generating $@ from $<"
+	$(ROOT_DIR)/deps/file2cpp "$<" "$(basename $@)"
 
-$(DEP_DIR):
-	@mkdir -p $@
-
-$(BIN_DIR):
-	@mkdir -p $@
-
+.PHONY: clean
 clean:
-	@$(RM) -rv $(OBJ_DIR)
-	@$(RM) -rv $(BIN_DIR)
-	@$(RM) -rv $(DEP_DIR)	
-	@$(RM) $(VER_HEADER)
+	rm -r $(BUILD_DIR)
 
-.PRECIOUS: $(DEP_DIR)/%.d
-$(DEP_DIR)/%.d: ;
-
--include $(DEP)
-
-check: $(JPF_EXE)
-	$(JPF_EXE) -t
-
-deploy:
-	@gh auth login --with-token < ~/.github_token
-	@gh workflow run deploy_package.yml
-
-
-setup:
-	sudo cp $(ROOT_DIR)/deps/webfsd-jpf/webfsd-jpf /usr/bin
-	sudo mkdir -p /var/log/jpf && sudo chown ${USER} /var/log/jpf
-	sudo rm -rf /opt/jpf
-	sudo mkdir -p /opt/jpf && sudo chown ${USER} /opt/jpf
-	cp -r $(ROOT_DIR)/input /opt/jpf
-	cp -r $(ROOT_DIR)/support_files /opt/jpf
-
-# ------------------------------------------------
+# Include the .d makefiles. The - at the front suppresses the errors of missing
+# Makefiles. Initially, all the .d files will be missing, and we don't want those
+# errors to show up.
+-include $(DEPS)

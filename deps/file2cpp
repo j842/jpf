@@ -45,26 +45,34 @@ function main {
    DST=${args[1]}
    CNM=${DST##*/}
    SNM=${SRC##*/}
+   happyname=${CNM//[^[:alnum:]]/_}
 
    [[ -f $SRC ]] || die "Source file does not exist: ${SRC}";
    [[ ! -f "${DST}.cpp" ]] || rm "${DST}.cpp"
    [[ ! -f "${DST}.h" ]] || rm "${DST}.h"
    
+   echo "fil2cpp, part of jpf's build system."
    echo "$SRC -> ${CNM}.cpp and ${CNM}.h"
 
    cat <<EOF >${DST}.cpp
 // auto-generated cpp file.
 // created from ${SRC}.
 
+#include <fstream>
 #include "${CNM}.h"
 
-void replace(std::wstring & s,  const std::map<std::wstring,std::wstring> & replacerules)
+void ${happyname}::replacestring(std::wstring & subject, const std::wstring &search, const std::wstring &replace)
 {
-    for (auto iter = replacerules.begin(); iter != replacerules.end(); ++iter)
-        s = replacestring(s,iter->first,iter->second); 
+    size_t pos = 0;
+    if (search.empty() || subject.empty()) return;
+    while ((pos = subject.find(search, pos)) != std::wstring::npos)
+    {
+        subject.replace(pos, search.length(), replace);
+        pos += replace.length();
+    }
 }
 
-/*static*/ bool ${CNM}::output(std::wstring path, const std::map<std::wstring,std::wstring> * replacerules)
+/*static*/ bool ${happyname}::output(std::string path, const std::map<std::wstring,std::wstring> * replacerules)
 {
    if (path.length()==0) return false;
    if (path[path.length()-1]!='/')
@@ -76,22 +84,25 @@ void replace(std::wstring & s,  const std::map<std::wstring,std::wstring> & repl
    os.close();
 }
 
-/*static*/ std::wstring ${CNM}::getName()
+/*static*/ std::string ${happyname}::getName()
 {
    return "${SNM}";
 }
 
-/*static*/ std::wstring getStr(const std::map<std::string,std::string> * replacerules)
+/*static*/ std::wstring ${happyname}::getStr(const std::map<std::wstring,std::wstring> * replacerules)
 {
    std::wstring s= 
 EOF
 
-echo -n "R(LITERAL\"">>${DST}.cpp
+echo -n "LR\"LITERAL(">>${DST}.cpp
 cat ${SRC}>>${DST}.cpp
-echo "\"LITERAL);">>${DST}.cpp
+echo ")LITERAL\";">>${DST}.cpp
 cat <<EOF >>${DST}.cpp
    if (replacerules!=NULL)
-      replace(s,*replacerules);
+      {
+         for (auto iter = replacerules->begin(); iter != replacerules->end(); ++iter)
+            replacestring(s,iter->first,iter->second); 
+      }
    return s;
 }
 
@@ -99,17 +110,21 @@ cat <<EOF >>${DST}.cpp
 EOF
 
 cat <<EOF >${DST}.h
-#ifndef __${CNM}__H
-#define __${CNM}__H
+#ifndef __${happyname}__H
+#define __${happyname}__H
 
 #include <string>
+#include <map>
 
-class ${CNM}
+class ${happyname}
 {
    public:
-      static bool output(std::wstring path, const std::map<std::wstring,std::wstring> * replacerules = NULL); // recreate output file. 
+      static bool output(std::string path, const std::map<std::wstring,std::wstring> * replacerules = NULL); // recreate output file. 
       static std::wstring getStr(const std::map<std::wstring,std::wstring> * replacerules = NULL);  // contents of output file, with replacements as per rules.
-      static std::wstring getName(); // output file name.
+      static std::string getName(); // output file name.
+
+   private:
+      static void replacestring(std::wstring & subject, const std::wstring &search, const std::wstring &replace);
 };
 
 #endif
