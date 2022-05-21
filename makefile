@@ -4,6 +4,12 @@ ROOT_DIR:=$(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 
 include $(ROOT_DIR)/deploy/versions.makefile
 
+
+COM_COLOR   := \033[0;34m
+LIN_COLOR   := \033[0;33m
+OBJ_COLOR   := \033[0;36m
+NO_COLOR    := \033[m
+
 BUILD_DIR := build
 SRC_DIRS := src
 
@@ -32,6 +38,7 @@ SRCS := $(sort $(SRCS) $(TMPLSRC) $(SUPSRC))
 # String substitution for every C/C++ file.
 # As an example, hello.cpp turns into ./build/hello.cpp.o
 OBJS := $(SRCS:%=$(BUILD_DIR)/%.o)
+OBJS := $(sort $(OBJS))
 
 # String substitution (suffix version without %).
 # As an example, ./build/hello.cpp.o turns into ./build/hello.cpp.d
@@ -49,24 +56,28 @@ CPPFLAGS := $(INC_FLAGS) -MMD -MP
 
 # The final build step.
 $(BUILD_DIR)/$(JPF_NAME): $(OBJS)
-	$(CXX) $(OBJS) -o $@ $(LDFLAGS) $(LDLIBS)
+	@printf "%b" "$(LIN_COLOR)Linking   $(OBJ_COLOR)$(@)$(NO_COLOR)\n";
+	@$(CXX) $(OBJS) -o $@ $(LDFLAGS) $(LDLIBS)
 
 # Build step for C++ source
 $(BUILD_DIR)/%.cpp.o: %.cpp
+	@printf "%b" "$(COM_COLOR)Compiling $(OBJ_COLOR)$(@)$(NO_COLOR)\n";
 	@mkdir -p $(dir $@)
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $< -o $@
+	@$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $< -o $@
 
 # make template files
 .PRECIOUS: src/templates/%.cpp
 src/templates/%.cpp: $(TMPL_DIR)/% $(ROOT_DIR)/deps/file2cpp
+	@printf "%b" "$(COM_COLOR)Creating  $(OBJ_COLOR)$(@)$(NO_COLOR)\n";
 	@mkdir -p $(dir $@)
-	$(ROOT_DIR)/deps/file2cpp "$<" "$(basename $@)"
+	@$(ROOT_DIR)/deps/file2cpp "$<" "$(basename $@)"
 
 # make support_files files
 .PRECIOUS: src/support_files/%.cpp
 src/support_files/%.cpp: $(SUP_DIR)/% $(ROOT_DIR)/deps/dir2cpp
+	@printf "%b" "$(COM_COLOR)Creating  $(OBJ_COLOR)$(@)$(NO_COLOR)\n";
 	@mkdir -p $(dir $@)
-	$(ROOT_DIR)/deps/dir2cpp "$<" "$(basename $@)"
+	@$(ROOT_DIR)/deps/dir2cpp "$<" "$(basename $@)"
 
 
 .PHONY: clean

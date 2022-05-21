@@ -52,7 +52,7 @@ function main {
    [[ ! -f "${DST}.cpp" ]] || rm "${DST}.cpp"
    [[ ! -f "${DST}.h" ]] || rm "${DST}.h"
    
-   echo "$SRC -> ${CNM}.cpp and ${CNM}.h"
+   #echo "$SRC -> ${CNM}.cpp and ${CNM}.h"
 
    #-------------------------------------------------------------------------
 
