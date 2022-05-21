@@ -91,6 +91,7 @@ src/support_files/generate_%.cpp: $(SUP_DIR)/% $(ROOT_DIR)/deps/scripts/dir2cpp
 	@$(ROOT_DIR)/deps/scripts/dir2cpp "$<" "$(basename $@)"
 src/support_files/generate_%.h: src/support_files/generate_%.cpp
 
+# make version header file.
 .PRECIOUS: $(VER_HEADER)
 $(VER_HEADER): deps/versions.makefile
 	@printf "%b" "$(CRE_COLOR)Creating  $(OBJ_COLOR)$(@)$(NO_COLOR)\n";
@@ -98,6 +99,7 @@ $(VER_HEADER): deps/versions.makefile
 	@echo "#define __JPF_RELEASE \"${JPF_RELEASE}\"" >> $@
 	@echo "#define __INPUT_VERSION (${INPUT_VERSION})" >> $@
 
+# clean up any temp/build files.
 .PHONY: clean
 clean:
 	rm -rf $(BUILD_DIR)
@@ -110,27 +112,29 @@ clean:
 # errors to show up.
 -include $(DEPS)
 
+# run tests
 check: $(JPF_EXE)
 	$(JPF_EXE) -t
 	$(JPF_EXE) .
 	$(JPF_EXE) -r .
 	rm -rf output
 
+# use a GitHub Action to build and upload the debian package to packagecloud on Ubuntu 20.04 (i.e. release to the world!)
 deploy:
 	@gh auth login --with-token < ~/.github_token
 	@gh workflow run deploy_package.yml
 
+# initial setup for dev environment.
 setup:
 	sudo cp $(ROOT_DIR)/deps/webfsd-jpf/webfsd-jpf /usr/bin
 	sudo rm -rf /opt/jpf
 	sudo mkdir -p /opt/jpf
 	sudo cp -r $(ROOT_DIR)/includes/dpkg_include/* /
 
+# create the podman (docker) images for building the debian package.
 images:
 	make -C deps/podman
 
+# build the debian package.
 deb: $(BUILD_DIR)/$(JPF_NAME)
 	make -C deps -f deploy.makefile deb
-
-upload:
-	make -C deps -f deploy.makefile upload

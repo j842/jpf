@@ -48,6 +48,8 @@ $(JPF_DEB_PATH): $(JPF_EXE) $(JPF_SCRIPT_PATH)
 deb: $(JPF_DEB_PATH)
 
 upload: deb
+	@echo "WARNING: This should only be done from Ubuntu 20.04 for compatibilty reasons!"
+	@echo "WARNING: Best run via a GitHub action, not on a local machine."
 	podman run -it --rm -v $(ROOT_DIR):/opt \
 		jpf package_cloud push j842/main/any/any /opt/$(BIN_NAME)/$(JPF_DEB_NAME) 
 

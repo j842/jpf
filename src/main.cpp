@@ -311,8 +311,8 @@ int cMain::go(int argc, char **argv)
 
     try
     {
-        if (!std::filesystem::exists("/var/log/jpf"))
-            fatal("Please create the directory /var/log/jpf and ensure this user can write to it.");
+        if (!std::filesystem::exists("/opt/jpf"))
+            fatal("jpf has not been correctly installed on this system. If it's dev environment, run make setup.");
 
 
         // handle options which do not require a directory.
