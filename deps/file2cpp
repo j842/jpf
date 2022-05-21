@@ -1,0 +1,90 @@
+#!/bin/bash
+
+# bail if we try and use an unset var
+set -o nounset
+
+
+SCRIPTDIR=$( dirname "$(readlink -f "$0")" )
+SCRIPTDIR="$(unset CDPATH && cd "$SCRIPTDIR" && pwd)"
+
+# Formatting for comamnds - standardised.
+[ -v ECODE ] || readonly ECODE=$(printf "\e")
+[ -v CODE_S ] || readonly CODE_S="$ECODE[32m"
+[ -v CODE_E ] || readonly CODE_E="$ECODE[0m"
+#------------------------------------------------------------------------------------
+# die MSG [EXITCODE] - show the message (red) and exit exitcode.
+function die {
+   echo " ">&2 ; echo -e "\e[31m\e[1m${1}\e[0m">&2  ; echo " ">&2
+   EXITCODE=${2:-1}
+   exit "$EXITCODE"
+}
+
+function showhelp {
+cat <<EOF >&2
+NAME
+   file2header
+       
+SYNOPSIS
+   ${CODE_S}file2cpp help${CODE_E}
+      This help.
+   
+   ${CODE_S}file2header SOURCE DESTINATION${CODE_E}
+      Create a cpp file at DESTINATION.cpp, which outputs SOURCE's contents.
+   
+DESCRIPTION
+   Helper script for jpf.   
+EOF
+}
+
+
+function main {
+   [ "$#" -eq 2 ] || (showhelp && exit 1)
+   args=("$@")
+
+   SRC=${args[0]}
+   DST=${args[1]}
+   CNM=${DST##*/}
+
+   if [[ ${SRC} == "help" || ${SRC} == "h" ]]; then
+      help
+      exit 1
+   fi
+
+   [[ -f $SRC ]] || die "Source file does not exist: ${SRC}";
+   [[ ! -f "${DST}.cpp" ]] || rm "${DST}.cpp"
+   [[ ! -f "${DST}.h" ]] || rm "{DST}.h"
+   
+   echo "$SRC -> ${CNM}.cpp and ${CNM}.h"
+
+   cat <<EOF >${DST}.cpp
+// auto-generated cpp file.
+#include "${CNM}.h"
+
+${CNM)::output(std::string path)
+{
+   std::ostream os(path);
+   if
+}
+
+EOF
+
+cat ${SRC}>>${DST}.cpp
+
+cat <<EOF >${DST}.h
+#ifndef __${CNM}__H
+#define __${CNM}__H
+
+#include <string>
+
+class ${CNM}
+{
+   public:
+      output(std::string path)
+
+};
+
+#endif
+EOF
+} # main
+
+main "$@"
