@@ -6,6 +6,7 @@ include $(ROOT_DIR)/deps/versions.makefile
 
 
 COM_COLOR   := \033[0;34m
+CRE_COLOR   := \033[0;35m
 LIN_COLOR   := \033[0;33m
 OBJ_COLOR   := \033[0;36m
 NO_COLOR    := \033[m
@@ -35,6 +36,8 @@ SUP_DIR:=includes/verbatim
 SUPFILES:=$(wildcard $(SUP_DIR)/*)
 SUPSRC:=$(SUPFILES:includes/verbatim/%=src/support_files/generate_%.cpp)
 
+VER_HEADER=src/version.h
+
 # Find all the C and C++ files we want to compile
 # Note the single quotes around the * expressions. Make will incorrectly expand these otherwise.
 SRCS :=  $(TMPLSRC) $(SUPSRC) $(shell find $(SRC_DIRS) -name '*.cpp' -or -name '*.c' -or -name '*.s')
@@ -62,7 +65,7 @@ INC_FLAGS := $(addprefix -I,$(INC_DIRS))
 CPPFLAGS := $(INC_FLAGS) -MMD -MP
 
 # The final build step.
-$(BUILD_DIR)/$(JPF_NAME): $(OBJS)
+$(BUILD_DIR)/$(JPF_NAME): $(VER_HEADER) $(OBJS)
 	@printf "%b" "$(LIN_COLOR)Linking   $(OBJ_COLOR)$(@)$(NO_COLOR)\n";
 	@$(CXX) $(OBJS) -o $@ $(LDFLAGS) $(LDLIBS)
 
@@ -75,7 +78,7 @@ $(BUILD_DIR)/%.cpp.o: %.cpp
 # make template files
 .PRECIOUS:  src/templates/%.cpp
 src/templates/%.cpp: $(TMPL_DIR)/% $(ROOT_DIR)/deps/scripts/file2cpp
-	@printf "%b" "$(COM_COLOR)Creating  $(OBJ_COLOR)$(@)$(NO_COLOR)\n";
+	@printf "%b" "$(CRE_COLOR)Creating  $(OBJ_COLOR)$(@)$(NO_COLOR)\n";
 	@mkdir -p $(dir $@)
 	@$(ROOT_DIR)/deps/scripts/file2cpp "$<" "$(basename $@)"
 src/templates/%.h: src/templates/%.cpp
@@ -83,17 +86,24 @@ src/templates/%.h: src/templates/%.cpp
 # make support_files files
 .PRECIOUS: src/support_files/generate_%.cpp
 src/support_files/generate_%.cpp: $(SUP_DIR)/% $(ROOT_DIR)/deps/scripts/dir2cpp
-	@printf "%b" "$(COM_COLOR)Creating  $(OBJ_COLOR)$(@)$(NO_COLOR)\n";
+	@printf "%b" "$(CRE_COLOR)Creating  $(OBJ_COLOR)$(@)$(NO_COLOR)\n";
 	@mkdir -p $(dir $@)
 	@$(ROOT_DIR)/deps/scripts/dir2cpp "$<" "$(basename $@)"
 src/support_files/generate_%.h: src/support_files/generate_%.cpp
 
+.PRECIOUS: $(VER_HEADER)
+$(VER_HEADER): deps/versions.makefile
+	@printf "%b" "$(CRE_COLOR)Creating  $(OBJ_COLOR)$(@)$(NO_COLOR)\n";
+	@echo "#define __JPF_VERSION \"${JPF_VERSION}\"" > $@
+	@echo "#define __JPF_RELEASE \"${JPF_RELEASE}\"" >> $@
+	@echo "#define __INPUT_VERSION (${INPUT_VERSION})" >> $@
+
 .PHONY: clean
 clean:
 	rm -rf $(BUILD_DIR)
-	rm -rf $(ROOT_DIR)/output
 	rm -rf src/templates
 	rm -rf src/support_files
+	rm $(VER_HEADER)
 
 # Include the .d makefiles. The - at the front suppresses the errors of missing
 # Makefiles. Initially, all the .d files will be missing, and we don't want those
