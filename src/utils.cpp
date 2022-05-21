@@ -15,7 +15,7 @@
 #include "settings.h"
 #include "simplecsv.h"
 
-bool iSame(const std::string &s1, const std::string &s2)
+bool iSame(const std::wstring &s1, const std::wstring &s2)
 {
     if (s1.size()!=s2.size())
         return false;
@@ -27,7 +27,7 @@ bool iSame(const std::string &s1, const std::string &s2)
 }
 
 
-void _terminate(const std::string &s,const std::string &func, const std::string &file, int line)
+void _terminate(const std::wstring &s,const std::string &func, const std::string &file, int line)
 {
     logdebug(
         S() << "Terminating due to error:\n" << "   " << func << "\n   "<<file<<",  line "<<line
@@ -36,19 +36,19 @@ void _terminate(const std::string &s,const std::string &func, const std::string 
     fatal( s );
 }
 
-void _terminate(const std::stringstream &s,const std::string &func, const std::string &file, int line)
+void _terminate(const std::wstringstream &s,const std::string &func, const std::string &file, int line)
 {
     _terminate(s.str(),func,file,line);
 }
 
-void removewhitespace(std::string & s)
+void removewhitespace(std::wstring & s)
 {
     s.erase( std::remove(s.begin(), s.end(), ' '), s.end());
 }
 
-void trim(std::string &str)
+void trim(std::wstring &str)
 {
-    const char *typeOfWhitespaces = " \t\n\r\f\v";
+    const wchar_t *typeOfWhitespaces = L" \t\n\r\f\v";
     str.erase(str.find_last_not_of(typeOfWhitespaces) + 1);
     str.erase(0, str.find_first_not_of(typeOfWhitespaces));
 }
@@ -60,7 +60,7 @@ watcher::watcher(std::string path)
     //https://developer.ibm.com/tutorials/l-ubuntu-inotify/
     fd = inotify_init();
     if ( fd < 0 ) 
-        TERMINATE( "inotify_init" );
+        TERMINATE( L"inotify_init" );
     wd = inotify_add_watch( fd, path.c_str(), IN_CLOSE_WRITE  | IN_CREATE | IN_DELETE ); // IN_MODIFY gets called 2x...
 }
 watcher::~watcher()
@@ -77,7 +77,7 @@ void watcher::waitforchange() // create, modify, delete
 
 
 void my_handler(int s){
-    throw(ctrlcException("Exiting due to ctrl-c."));
+    throw(ctrlcException(L"Exiting due to ctrl-c."));
 }
 
 void catch_ctrl_c()
@@ -96,7 +96,7 @@ std::string customexec(const char* cmd) {
     std::string result;
     std::unique_ptr<FILE, decltype(&pclose)> pipe(popen(cmd, "r"), pclose);
     if (!pipe) {
-        TERMINATE("Couldn't open pipe to external command.");
+        TERMINATE(L"Couldn't open pipe to external command.");
     }
     while (fgets(buffer.data(), buffer.size(), pipe.get()) != nullptr) {
         result += buffer.data();
@@ -104,27 +104,27 @@ std::string customexec(const char* cmd) {
     return result;
 }
 
-std::string starbox(std::string s)
+std::wstring starbox(std::wstring s)
 {
-    std::string ss(s.length()+4,'*');
+    std::wstring ss(s.length()+4,'*');
     return S() << ss << std::endl << "* "+s+" *" <<std::endl << ss;
 }
 
-std::string getDollars(double x)
+std::wstring getDollars(double x)
 {    
     long int kilodollarz = (int)(0.5 + x/1000.0);
-    std::ostringstream oss;
+    std::wostringstream oss;
     oss << kilodollarz*1000;
 
-    std::string s = oss.str();
+    std::wstring s = oss.str();
     unsigned int n = s.length();
     for (unsigned int i=n-1;i>0;i--)
     {
         unsigned int j = n-i;
         if (j%3==0)
-            s.insert(s.begin()+i,',');
+            s.insert(s.begin()+i,L',');
     }
-    s.insert(s.begin(),'$');
+    s.insert(s.begin(),L'$');
     return s;
 }
 
@@ -147,10 +147,10 @@ webserver::webserver(int port)
         loginfo( S() << "  listening to port "<<port<<".");
         execlp(webfsd.c_str(), webfsd.c_str(), "-p",portstr.str().c_str(),"-r",getOutputPath_Html().c_str(),"-f","index.html","-n","localhost","-F", NULL);
         // if we are here execl has failed 
-        fatal(starbox("Unable to start webserver. Please check webfsd is installed and not already running."));
+        fatal(starbox(L"Unable to start webserver. Please check webfsd is installed and not already running."));
     }
     else
-        TERMINATE("Could not create child process.");
+        TERMINATE(L"Could not create child process.");
 }
 
 webserver::~webserver()
@@ -161,11 +161,11 @@ webserver::~webserver()
     int ret = kill(mChildPid, SIGKILL);
     int wstatus;
     if (ret == -1) {
-        logerror("Unable to kill webserver.");
+        logerror(L"Unable to kill webserver.");
     }
 
     if (waitpid(mChildPid, &wstatus, WUNTRACED | WCONTINUED) == -1) {
-        logerror("Waiting for webserver to exit failed.");
+        logerror(L"Waiting for webserver to exit failed.");
     }
 }
 
@@ -189,7 +189,7 @@ double timer::getms()
 
 
 
-listoutput::listoutput(std::ostream & ofs,std::string sstart, std::string seperator, std::string send) : 
+listoutput::listoutput(std::wostream & ofs,std::wstring sstart, std::wstring seperator, std::wstring send) : 
     mOfs(ofs), mSeperator(seperator),mSEnd(send),mFirstItem(true),mEnded(false)
 {
     mOfs << sstart;
@@ -198,7 +198,7 @@ listoutput::~listoutput()
 {
     end(); 
 }
-void listoutput::write(std::string item) const
+void listoutput::write(std::wstring item) const
 {
     if (!mFirstItem)
         mOfs << mSeperator;
@@ -207,7 +207,7 @@ void listoutput::write(std::string item) const
     mFirstItem = false;
 }
 
-void listoutput::writehq(std::string item) const // add halfquotes.
+void listoutput::writehq(std::wstring item) const // add halfquotes.
 {
     listoutput::write(S() << "'" << item <<"'" );
 }
@@ -227,16 +227,16 @@ void checkcreatedirectory(std::string d)
     if (!std::filesystem::exists(d))
     {
         if (!std::filesystem::create_directory(d))
-            TERMINATE("Could not create directory: "+d);
+            TERMINATE(S()<<"Could not create directory: "<<d);
         logdebug(S()<<"Created directory: "<<d);
     }    
 }
 
 
 
-std::string makelower(const std::string & s)
+std::wstring makelower(const std::wstring & s)
 {
-    std::string slower(s);
+    std::wstring slower(s);
     std::transform(slower.begin(), slower.end(), slower.begin(),
         [](unsigned char c){ return std::tolower(c); });
 
@@ -244,7 +244,7 @@ std::string makelower(const std::string & s)
 }
 
 
-unsigned long str2L(std::string s)
+unsigned long str2L(std::wstring s)
 {
     unsigned long r=0;
     if (s.length()==0)
@@ -261,7 +261,7 @@ unsigned long str2L(std::string s)
     }
     return r;
 }
-double str2positivedouble(std::string s)
+double str2positivedouble(std::wstring s)
 {
     if (s.length()==0)
         return 0;
@@ -279,16 +279,16 @@ double str2positivedouble(std::string s)
 
     if (r<0.0)
     {
-        logerror("String has negative number, but required to be positive by str2positivedouble.");
+        logerror(L"String has negative number, but required to be positive by str2positivedouble.");
         return 0.0;
     }
     return r;    
 }
 
-void advanceLeaveString(std::string & leaveStr, workdate newStart)
+void advanceLeaveString(std::wstring & leaveStr, workdate newStart)
 {
-    std::vector<std::string> newLeave;
-    std::vector<std::string> items;
+    std::vector<std::wstring> newLeave;
+    std::vector<std::wstring> items;
 
     simplecsv::splitcsv(leaveStr, items);
 
@@ -305,19 +305,19 @@ void advanceLeaveString(std::string & leaveStr, workdate newStart)
     for (auto &newl : newLeave)
     {
         if (leaveStr.length() > 0)
-            leaveStr += ",";
+            leaveStr += L",";
         leaveStr += newl;
     }
 }
 
 
-void streamReplace(std::string ifile, std::ostream &ofs, const std::map<std::string,std::string> & replacerules)
+void streamReplace(std::string ifile, std::wostream &ofs, const std::map<std::wstring,std::wstring> & replacerules)
 {
-    std::ifstream ifs(ifile);
+    std::wifstream ifs(ifile);
     if (!ifs.is_open())
         fatal("Could not open file "+ifile);
 
-    std::string s;
+    std::wstring s;
     while (std::getline(ifs, s))
     {
         replace(s,replacerules);
@@ -329,7 +329,7 @@ void streamReplace(std::string ifile, std::ostream &ofs, const std::map<std::str
 }
 
 
-void streamReplace(std::string ifile, std::string ofile, const std::map<std::string,std::string> & replacerules)
+void streamReplace(std::wstring ifile, std::wstring ofile, const std::map<std::wstring,std::wstring> & replacerules)
 {
     if (std::filesystem::exists(ofile))
         std::filesystem::remove(ofile);
@@ -343,20 +343,20 @@ void streamReplace(std::string ifile, std::string ofile, const std::map<std::str
     ofs.close();
 }
 
-void replace(std::string & s,  const std::map<std::string,std::string> & replacerules)
+void replace(std::wstring & s,  const std::map<std::wstring,std::wstring> & replacerules)
 {
     for (auto iter = replacerules.begin(); iter != replacerules.end(); ++iter)
         s = replacestring(s,iter->first,iter->second); 
 }
 
 
-std::string replacestring(std::string subject, const std::string &search,
-                          const std::string &replace)
+std::wstring replacestring(std::wstring subject, const std::wstring &search,
+                          const std::wstring &replace)
 {
     size_t pos = 0;
     if (search.empty() || subject.empty())
         return "";
-    while ((pos = subject.find(search, pos)) != std::string::npos)
+    while ((pos = subject.find(search, pos)) != std::wstring::npos)
     {
         subject.replace(pos, search.length(), replace);
         pos += replace.length();

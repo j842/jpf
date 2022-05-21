@@ -14,7 +14,7 @@ class settings
         settings();
         void setRoot(std::string path);
         void load_settings();
-        void save_settings_CSV(std::ostream & os) const;
+        void save_settings_CSV(std::wostream & os) const;
         bool loaded() const {return mLoaded;}
 
         void advance(workdate newStart);
@@ -28,16 +28,16 @@ class settings
 
         eLogLevel getMinLogLevel() const;
 
-        std::string getRoot() const;
+        std::wstring getRoot() const;
         bool RootExists() const;
 
         static int getInputVersion();
-        static std::string getInputVersionStr();
-        static std::string getJPFVersionStr();
-        static std::string getJPFReleaseStr();
-        static std::string getJPFFullVersionStr();
+        static std::wstring getInputVersionStr();
+        static std::wstring getJPFVersionStr();
+        static std::wstring getJPFReleaseStr();
+        static std::wstring getJPFFullVersionStr();
 
-        std::string getTitle() const;
+        std::wstring getTitle() const;
         int getPort() const;
 
     public:
@@ -45,12 +45,12 @@ class settings
         void setMinLogLevel(eLogLevel l);
 
     private:
-        std::string getDescription(std::string set) const;
+        std::wstring getDescription(std::wstring set) const;
 
-        std::string getSettingS(std::string settingName, const std::map<std::string,std::string> & settings) const;
-        int getSettingI(std::string settingName, const std::map<std::string,std::string> & settings) const;     
-        double getSettingD(std::string settingName,  const std::map<std::string,std::string> & settings) const;     
-        bool isValid(std::string key) const;
+        std::wstring getSettingS(std::wstring settingName, const std::map<std::wstring,std::wstring> & settings) const;
+        int getSettingI(std::wstring settingName, const std::map<std::wstring,std::wstring> & settings) const;     
+        double getSettingD(std::wstring settingName,  const std::map<std::wstring,std::wstring> & settings) const;     
+        bool isValid(std::wstring key) const;
 
     private:
         bool mLoaded;
@@ -61,9 +61,9 @@ class settings
         eLogLevel mMinLogLevel;
         int mRequiredInputVersion;
         double mDailyDevCost;
-        std::string mTitle;
+        std::wstring mTitle;
 
-        std::vector<std::string> mValidSettings;
+        std::vector<std::wstring> mValidSettings;
 };
 
 settings & gSettings();

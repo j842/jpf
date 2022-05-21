@@ -10,7 +10,7 @@
 namespace inputfiles
 {
 
-const std::string teammember::getLeave() const
+const std::wstring teammember::getLeave() const
 {
     return mLeave;
 }
@@ -34,7 +34,7 @@ void teams::load_teams()
         TERMINATE("Could not open teams.csv!");
 
     mMaxNameWidth = 0;
-    std::vector<std::string> row;
+    std::vector<std::wstring> row;
     while (c.getline(row, 6))
         if (row[0].length() > 0)
         {
@@ -49,7 +49,7 @@ void teams::load_teams()
 
             mMaxNameWidth = std::max((unsigned int)row[0].length(), mMaxNameWidth);
 
-            std::string personname = row[1];
+            std::wstring personname = row[1];
             tCentiDay EFTProject = str2L(row[2]);
             tCentiDay EFTBAU = str2L(row[3]);
             tCentiDay EFTOverhead = str2L(row[4]);
@@ -63,7 +63,7 @@ void teams::load_teams()
             if (EFTProject + EFTBAU + EFTOverhead > 100)
                 TERMINATE(S() << personname << " is assigned to work over 100\% of the time!");
 
-            std::string leave = row[5];
+            std::wstring leave = row[5];
             removewhitespace(leave);
 
             this->at(ndx).mMembers.push_back(teammember(personname, EFTProject, EFTBAU, EFTOverhead, leave));
@@ -75,13 +75,13 @@ void teams::load_teams()
 
     while (!clean)
     {
-        std::map<std::string,unsigned int> RefToTeam;
+        std::map<std::wstring,unsigned int> RefToTeam;
         ++n;
         clean = true;
         for (unsigned int i=0;i<this->size();++i)
             {
-                std::string &inp = this->at(i).mId;
-                std::string s = inp.substr(0,n);
+                std::wstring &inp = this->at(i).mId;
+                std::wstring s = inp.substr(0,n);
                 if (RefToTeam[s]>0)
                 {
                     clean=false;
@@ -103,14 +103,14 @@ void teams::save_teams_CSV(std::ostream &os) const
         auto &t = this->at(teamNdx);
         for (auto &m : this->at(teamNdx).mMembers)
         {
-            std::vector<std::string> row = {t.mId, m.mName, S() << m.mEFTProject, S() << m.mEFTBAU, S() << m.mEFTOverhead, m.getLeave()}; // don't include holidays.
+            std::vector<std::wstring> row = {t.mId, m.mName, S() << m.mEFTProject, S() << m.mEFTBAU, S() << m.mEFTOverhead, m.getLeave()}; // don't include holidays.
             simplecsv::output(os, row);
             os << std::endl;
         }
     }
 }
 
-unsigned int teams::get_index_by_name(std::string n)
+unsigned int teams::get_index_by_name(std::wstring n)
 {
     for (unsigned int i = 0; i < this->size(); ++i)
         if (iSame(this->at(i).mId, n))

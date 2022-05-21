@@ -43,9 +43,9 @@ public:
         return true;
     }
 
-    bool PastLimit(std::string s)
+    bool PastLimit(std::wstring s)
     {
-        return static_cast<std::string::size_type>(mCurrentStream.tellp()) + s.length() > mLimit;
+        return static_cast<std::wstring::size_type>(mCurrentStream.tellp()) + s.length() > mLimit;
     }
 
     void Close()
@@ -53,23 +53,23 @@ public:
         mCurrentStream.close();
     }
 
-    void Append(std::string s)
+    void Append(std::wstring s)
     {
         mCurrentStream << s;
     }
 
 private:
-    std::ofstream mCurrentStream;
+    std::wofstream mCurrentStream;
     bool mLogFailedMsgSent;
     const size_t mLimit = 1024 * 1024 * 5;
 };
 
 FileStreamer g_FileStreamer;
 
-void FileRotationLogSink(std::string s)
+void FileRotationLogSink(std::wstring s)
 {
     static bool initialised=false;
-    static std::string savedLog;
+    static std::wstring savedLog;
     if (gSettings().getRoot().length()==0)
     {
         savedLog+=s;
@@ -83,7 +83,7 @@ void FileRotationLogSink(std::string s)
     }
     if (savedLog.length()>0)
     {
-        std::string sl=savedLog;
+        std::wstring sl=savedLog;
         savedLog.clear();
         FileRotationLogSink(savedLog);
     }
@@ -104,7 +104,7 @@ void FileRotationLogSink(std::string s)
         std::string archive;
         while (true)
         {
-            archive = S() << archive_base << "-" << i << ".log";
+            archive = w2s(S() << archive_base << "-" << i << ".log");
             if (std::filesystem::exists(archive))
                 break;
             ++i;
@@ -131,24 +131,25 @@ eLogLevel getMinLevel()
     return gSettings().getMinLogLevel();
 }
 
-std::string levelname(eLogLevel level)
+std::wstring levelname(eLogLevel level)
 {
     switch (level)
     {
     case kLDEBUG:
-        return "DEBUG";
+        return L"DEBUG";
     case kLINFO:
-        return "INFO ";
+        return L"INFO ";
     case kLWARN:
-        return "WARN ";
+        return L"WARN ";
     case kLERROR:
-        return "ERROR";
+        return L"ERROR";
     default:
-        return " ??? ";
+        logerror("Undefined log level specified!");
+        return L" ??? ";
     }
 }
 
-void logverbatim(eLogLevel level, std::string s)
+void logverbatim(eLogLevel level, std::wstring s)
 {
     FileRotationLogSink(s);
 
@@ -159,29 +160,33 @@ void logverbatim(eLogLevel level, std::string s)
     switch (level)
     {
     case kLDEBUG:
-        std::cout << colours::cDebug << s << colours::cNoColour;
+        std::wcout << colours::cDebug << s << colours::cNoColour;
         break;
     case kLINFO:
-        std::cout << colours::cInfo << s << colours::cNoColour;
+        std::wcout << colours::cInfo << s << colours::cNoColour;
         break;
 
     case kLWARN:
-        std::cerr << colours::cWarning << s << colours::cNoColour;
+        std::wcerr << colours::cWarning << s << colours::cNoColour;
         break;
 
     case kLERROR:
-        std::cerr << colours::cError << s << colours::cNoColour;
+        std::wcerr << colours::cError << s << colours::cNoColour;
         break;
 
     default:
-        std::cerr << colours::cDefault << s << colours::cNoColour;
+        std::wcerr << colours::cDefault << s << colours::cNoColour;
         break;
     }
 }
-
-std::string getheader(eLogLevel level)
+void logverbatim(eLogLevel level, std::string s)
 {
-    std::ostringstream ost;
+    logverbatim(level,s2w(s));
+}
+
+std::wstring getheader(eLogLevel level)
+{
+    std::wostringstream ost;
     time_t now = time(0);
     struct tm *timeinfo;
     char date_time[80];
@@ -193,31 +198,55 @@ std::string getheader(eLogLevel level)
     //  if (strlen(date_time)>0)
     //      date_time[strlen(date_time)-1]=0;
 
-    ost << "|" << levelname(level) << "|" << date_time << "|  ";
+    ost << L"|" << levelname(level) << L"|" << date_time << L"|  ";
     return ost.str();
 }
 
 
-void logmsg(eLogLevel level, std::string s)
+void logmsg(eLogLevel level, std::wstring s)
 {
     if (level < getMinLevel())
         return;
 
-    std::string info = getheader(level);
-    std::string s2 = replacestring(s, "\n", "\n" + info);
+    std::wstring info = getheader(level);
+    std::wstring s2 = replacestring(s, L"\n", L"\n" + info);
     // s2.erase(std::remove(s2.begin(), s2.end(), '\r'), s2.end());
 
-    logverbatim(level, info + s2 + "\n");
+    logverbatim(level, info + s2 + L"\n");
+}
+void logmsg(eLogLevel level, std::string s)
+{
+    logmsg(level,s2w(s));
 }
 
-void fatal(std::string s)
+void fatal(std::wstring s)
 {
     throw TerminateRunException(s);
 }
+void fatal(std::string s)
+{
+    std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
+    throw TerminateRunException(converter.from_bytes(s));
+}
 
-void logdebug(std::string s) { logmsg(kLDEBUG, s); }
-void logerror(std::string s) { logmsg(kLERROR, s); }
-void loginfo(std::string s) { logmsg(kLINFO, s); }
-void logwarning(std::string s) { logmsg(kLWARN, s); }
+std::wstring s2w(std::string s)
+{
+    static std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
+    return converter.from_bytes(s);
+}
+std::string w2s(std::wstring s)
+{
+    static std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
+    return converter.to_bytes(s);
+}
+
+void logdebug(std::wstring s) { logmsg(kLDEBUG, (s)); }
+void logerror(std::wstring s) { logmsg(kLERROR, (s)); }
+void loginfo(std::wstring s) { logmsg(kLINFO, (s)); }
+void logwarning(std::wstring s) { logmsg(kLWARN, (s)); }
+void logdebug(std::string s) { logmsg(kLDEBUG, s2w(s)); }
+void logerror(std::string s) { logmsg(kLERROR, s2w(s)); }
+void loginfo(std::string s) { logmsg(kLINFO, s2w(s)); }
+void logwarning(std::string s) { logmsg(kLWARN, s2w(s)); }
 
 // ----------------------------------------------------------------------------------------------------

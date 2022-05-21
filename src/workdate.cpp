@@ -7,10 +7,10 @@
 #include "settings.h"
 
 simpledate::simpledate() : mD(boost::gregorian::day_clock::local_day()) {}
-simpledate::simpledate(std::string datestr) : mD(parseDateStringDDMMYY(datestr).getGregorian()) {}
+simpledate::simpledate(std::wstring datestr) : mD(parseDateStringDDMMYY(datestr).getGregorian()) {}
 simpledate::simpledate(const boost::gregorian::date &d) : mD(d) {}
 
-std::string simpledate::getStr() const
+std::wstring simpledate::getStr() const
 {
     // https://www.boost.org/doc/libs/1_79_0/doc/html/date_time/date_time_io.html
     const std::locale fmt(std::locale::classic(),
@@ -22,62 +22,64 @@ std::string simpledate::getStr_FileName() const
     // https://www.boost.org/doc/libs/1_79_0/doc/html/date_time/date_time_io.html
     const std::locale fmt(std::locale::classic(),
                           new boost::gregorian::date_facet("%d_%m_%y"));
-    return _getstr(fmt);
+    return w2s(_getstr(fmt));
 }
 
-std::string simpledate::getStr_short() const
+std::wstring simpledate::getStr_short() const
 {
     const std::locale fmt(std::locale::classic(),
                           new boost::gregorian::date_facet("%d %b"));
     return _getstr(fmt);
 }
 
-std::string simpledate::getStrGantt() const
+std::wstring simpledate::getStrGantt() const
 {
     const std::locale fmt(std::locale::classic(),
                           new boost::gregorian::date_facet("%e/%m/%y"));
-    std::string d = _getstr(fmt);
+    std::wstring d = _getstr(fmt);
     removewhitespace(d);
     return d;
 }
 
-std::string simpledate::getStr_nice_long() const
+std::wstring simpledate::getStr_nice_long() const
 {
     const std::locale fmt(std::locale::classic(),
                           new boost::gregorian::date_facet("%A %B %d, %Y"));
-    std::string d = _getstr(fmt);
+    std::wstring d = _getstr(fmt);
     return d;
 }
 
-std::string simpledate::getStr_nice_short() const
+std::wstring simpledate::getStr_nice_short() const
 {
     const std::locale fmt(std::locale::classic(),
                           new boost::gregorian::date_facet("%e %b %Y"));
-    std::ostringstream oss;
+    std::wostringstream oss;
     oss.imbue(fmt);
     oss << mD;
     return oss.str();
 }
 
-simpledate simpledate::parseDateStringDDMMYY(std::string datestr) const
+simpledate simpledate::parseDateStringDDMMYY(std::wstring datestr) const
 {
     removewhitespace(datestr);
 
     if (datestr.length()==0)
         return gSettings().startDate().getGregorian();
 
-    std::vector<int> v;
+    std::vector<long> v;
     int s = 0;
     for (unsigned int i = 0; i <= datestr.size(); ++i)
         if (i == datestr.size() || datestr[i] == '/')
         {
-            int datecomponent = atoi(datestr.substr(s, i - s).c_str());
+            wchar_t* endString;
+            long datecomponent = wcstol(datestr.substr(s, i - s).c_str(),&endString,10);
             ASSERT(datecomponent >= 0);
             v.push_back(datecomponent);
             s = i + 1;
         }
+        
     if (v.size() < 3)
-        TERMINATE("Malformed date string: " + datestr);
+        TERMINATE(L"Malformed date string: " + datestr);
     if (v[2] < 2000)
         v[2] += 2000;
 
@@ -86,19 +88,19 @@ simpledate simpledate::parseDateStringDDMMYY(std::string datestr) const
 }
 
 // private.
-std::string simpledate::_getstr(const std::locale &fmt) const
+std::wstring simpledate::_getstr(const std::locale &fmt) const
 {
     if (isForever())
-        return "forever";
+        return L"forever";
 
-    std::ostringstream oss;
+    std::wostringstream oss;
 
     oss.imbue(fmt);
     oss << mD;
     return oss.str();
 }
 
-std::string simpledate::getAsGoogleNewDate() const
+std::wstring simpledate::getAsGoogleNewDate() const
 {
     return S() << "new Date(" << mD.year() << ", " << mD.month() - 1 << ", " << mD.day() - 1 << ")";
 }
@@ -149,7 +151,7 @@ workdate::workdate(simpledate s) : simpledate(snapWorkDay_forward(s.getGregorian
     ASSERT(!isWeekend(mD));
 }
 
-workdate::workdate(std::string datestr) : simpledate(snapWorkDay_forward(simpledate(datestr)))
+workdate::workdate(std::wstring datestr) : simpledate(snapWorkDay_forward(simpledate(datestr)))
 {
     ASSERT(mD >= gSettings().startDate().getGregorian());
     ASSERT(!isWeekend(mD));
@@ -174,7 +176,7 @@ workdate::workdate(const boost::gregorian::date &d) : simpledate(snapWorkDay_for
     ASSERT(!isWeekend(mD));
 }
 
-bool workdate::setclip(std::string datestr) // set the date based on a dd/mm/yy string. If < start, det to start.
+bool workdate::setclip(std::wstring datestr) // set the date based on a dd/mm/yy string. If < start, det to start.
 {
     if (datestr.length() == 0 || simpledate(datestr) < gSettings().startDate())
         mD = gSettings().startDate().getGregorian();
@@ -293,12 +295,12 @@ boost::gregorian::date monthIndex::getLastMonthDay() const
     return d.end_of_month();
 }
 
-std::string monthIndex::getString() const
+std::wstring monthIndex::getString() const
 {
     const std::locale fmt(std::locale::classic(),
                           new boost::gregorian::date_facet("%b %y"));
 
-    std::ostringstream oss;
+    std::wostringstream oss;
     oss.imbue(fmt);
     oss << getFirstMonthDay();
     return oss.str();
@@ -327,13 +329,13 @@ unsigned long monthIndex::workingDaysInMonth() const
 // ------------------------------------------------------------------------------
 
 // closed interval
-leaverange::leaverange(std::string s)
+leaverange::leaverange(std::wstring s)
 {
     if (s.length()==0)
         setEmpty();
     else
     {
-        std::vector<std::string> strs;
+        std::vector<std::wstring> strs;
         boost::split(strs, s, boost::is_any_of("-"));
         if (strs.size() == 1)
             strs.push_back(strs[0]);
@@ -367,7 +369,7 @@ unsigned long leaverange::getEndasIndex() const // Half Open interval!
     return workdate(mEnd).getDayAsIndex() + 1; // already on work day. map closed to open interval.
 }
 
-std::string leaverange::getString() const
+std::wstring leaverange::getString() const
 {
     return S() << mStart.getStr() << "-"<< mEnd.getStr();
 }
@@ -410,9 +412,9 @@ CPPUNIT_TEST_SUITE_REGISTRATION( simpledate_test );
 
 void simpledate_test::simpledate_test0()
 {
-    simpledate d1("15/5/22"); //sunday
-    simpledate d2("16/5/22"); //monday
-    simpledate d2b("17/5/22");
+    simpledate d1(L"15/5/22"); //sunday
+    simpledate d2(L"16/5/22"); //monday
+    simpledate d2b(L"17/5/22");
     CPPUNIT_ASSERT_MESSAGE( "Workday calc wrong", workdate::snapWorkDay_forward(d1)==d2 );
     CPPUNIT_ASSERT_MESSAGE( "duration calc wrong", workdate::countWorkDays(d1,d2)==0);
     CPPUNIT_ASSERT_MESSAGE( "duration calc wrong", workdate::countWorkDays(d1,d1)==0);
@@ -422,28 +424,28 @@ void simpledate_test::simpledate_test0()
 
 void simpledate_test::simpledate_test1()
 {
-    simpledate d2("16/5/22"); //monday
-    simpledate d3("18/5/22"); //wednesday
+    simpledate d2(L"16/5/22"); //monday
+    simpledate d3(L"18/5/22"); //wednesday
     CPPUNIT_ASSERT(d2.isForever()==false);
     CPPUNIT_ASSERT(d2!=d3);
     CPPUNIT_ASSERT(d2==d2);
     CPPUNIT_ASSERT(workdate::countWorkDays(d2,d3) == 2);  
-    simpledate d4("21/5/22");
-    simpledate d5("22/5/22");
-    simpledate d6("23/5/22");
+    simpledate d4(L"21/5/22");
+    simpledate d5(L"22/5/22");
+    simpledate d6(L"23/5/22");
     CPPUNIT_ASSERT(workdate::countWorkDays(d2,d4)==5);
     CPPUNIT_ASSERT(workdate::countWorkDays(d2,d5)==5);
     CPPUNIT_ASSERT(workdate::countWorkDays(d2,d6)==5);
 }
 void simpledate_test::simpledate_test2()
 {
-    simpledate d2("16/5/22"); //monday
-    simpledate d7("30/5/22"); //
+    simpledate d2(L"16/5/22"); //monday
+    simpledate d7(L"30/5/22"); //
     CPPUNIT_ASSERT(workdate::countWorkDays(d2,d7)==10);
 }
 void simpledate_test::simpledate_test3()
 {
-    simpledate d0("16/5/22");
+    simpledate d0(L"16/5/22");
     boost::gregorian::day_iterator dayit(d0.getGregorian());
     //if (d0.day_of_week() == boost::date_time::Sunday)
     for (unsigned int i = 0; i < 400; ++i, ++dayit)
@@ -455,8 +457,8 @@ void simpledate_test::simpledate_test3()
         boost::gregorian::day_iterator day2it(d2.getGregorian());
         for (unsigned int j = 0; j < 400; ++j, ++day2it)
         {
-            CPPUNIT_ASSERT_MESSAGE( S()<< simpledate(*dayit).getStr() << " -> " << simpledate(*day2it).getStr() <<"  : " <<
-                "Count = "<<count<<"  Wknds = "<<wkndsbtw <<"   ...  countworkdays = "<< (int)workdate::countWorkDays(*dayit,*day2it),   (int)workdate::countWorkDays(*dayit,*day2it) == count-wkndsbtw) ;
+            CPPUNIT_ASSERT_MESSAGE( w2s(S()<< simpledate(*dayit).getStr() << " -> " << simpledate(*day2it).getStr() <<"  : " <<
+                "Count = "<<count<<"  Wknds = "<<wkndsbtw <<"   ...  countworkdays = "<< (int)workdate::countWorkDays(*dayit,*day2it)),   (int)workdate::countWorkDays(*dayit,*day2it) == count-wkndsbtw) ;
 
             if (day2it->day_of_week()== boost::date_time::Saturday || day2it->day_of_week() == boost::date_time::Sunday)
                 wkndsbtw++;

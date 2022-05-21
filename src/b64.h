@@ -8,13 +8,13 @@ typedef unsigned char BYTE;
 class Base64
 {
 public:
-    static std::string encode(const std::vector<BYTE>& buf);
-    static std::string encode(const BYTE* buf, unsigned int bufLen);
-    static std::vector<BYTE> decode(std::string encoded_string);
+    static std::wstring encode(const std::vector<BYTE>& buf);
+    static std::wstring encode(const BYTE* buf, unsigned int bufLen);
+    static std::vector<BYTE> decode(std::wstring encoded_string);
 
     // for text:
-    static std::string encodeT(const std::string & buf);
-    static std::string decodeT(std::string encoded_string);
+    static std::wstring encodeT(const std::wstring & buf);
+    static std::wstring decodeT(std::wstring encoded_string);
 };
 
 #endif

@@ -13,7 +13,7 @@ namespace inputfiles
 class teammember
 {
     public:
-        teammember(std::string n, tCentiDay project, tCentiDay bau, tCentiDay overhead, std::string l) : 
+        teammember(std::wstring n, tCentiDay project, tCentiDay bau, tCentiDay overhead, std::wstring l) : 
             mName(n), 
             mEFTProject(project), 
             mEFTBAU(bau),
@@ -22,22 +22,22 @@ class teammember
          {
          }
             
-        const std::string mName;
+        const std::wstring mName;
         const tCentiDay mEFTProject, mEFTBAU, mEFTOverhead;
 
-        const std::string getLeave() const;
+        const std::wstring getLeave() const;
         void advance(workdate newStart);
 
     private:
-        std::string mLeave;
+        std::wstring mLeave;
 };
 
 class team
 {
     public: 
-        team(std::string Id, std::string refCode="") : mId(Id), mRefCode(refCode) {}
-        std::string mId;
-        std::string mRefCode;
+        team(std::wstring Id, std::wstring refCode=L"") : mId(Id), mRefCode(refCode) {}
+        std::wstring mId;
+        std::wstring mRefCode;
         std::vector<teammember> mMembers;
 };
 
@@ -45,7 +45,7 @@ class teams : public std::vector<team>
 {
     public:
         teams();
-        void save_teams_CSV(std::ostream & os) const;
+        void save_teams_CSV(std::wostream & os) const;
 
         void debug_displayTeams() const;
         unsigned int getMaxTeamNameWidth() const;
@@ -55,7 +55,7 @@ class teams : public std::vector<team>
     private:
         void load_teams();
 
-        unsigned int get_index_by_name(std::string n);
+        unsigned int get_index_by_name(std::wstring n);
         unsigned int mMaxNameWidth;
 };
 

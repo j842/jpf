@@ -11,7 +11,7 @@
 #include "version.h"
 
 settings::settings() : mLoaded(false), mRootDir(),
-    mValidSettings({"startdate","enddate","inputversion","costperdevday","title","port","loglevel"})
+    mValidSettings({L"startdate",L"enddate",L"inputversion",L"costperdevday",L"title",L"port",L"loglevel"})
 {
 }
 
@@ -26,57 +26,57 @@ void settings::setSettings( simpledate startDate, simpledate endDate, int port  
 
 void settings::load_settings()
 {
-    std::map<std::string,std::string> settings;
-    simplecsv c("settings.csv");
+    std::map<std::wstring,std::wstring> settings;
+    simplecsv c(L"settings.csv");
 
     if (!c.openedOkay())
-        TERMINATE("Could not open "+getInputPath()+"settings.csv.");
+        TERMINATE(S()<<"Could not open "<<getInputPath()<<"settings.csv.");
 
-    std::vector<std::string> row;
+    std::vector<std::wstring> row;
     while (c.getline(row,3))
     {
         if (isValid(row[0]))
             settings[row[0]]=row[1];
         else
-            TERMINATE("Unrecognised setting in settings.csv:  "+row[0]);
+            TERMINATE(S()<<"Unrecognised setting in settings.csv:  "<<row[0]);
     }
 
     mLoaded=true;
 
     // can't use itemdate yet, as mStartDate not set.
-    std::string sdate=getSettingS("startdate",settings);
-    if (sdate.length()==0 || iSame(sdate,"today"))
+    std::wstring sdate=getSettingS(L"startdate",settings);
+    if (sdate.length()==0 || iSame(sdate,L"today"))
         mStartDate = workdate::snapWorkDay_forward(boost::gregorian::day_clock::local_day());
     else
-        mStartDate = workdate::snapWorkDay_forward(simpledate(getSettingS("startdate",settings)));
+        mStartDate = workdate::snapWorkDay_forward(simpledate(getSettingS(L"startdate",settings)));
 
-    std::string edate=getSettingS("enddate",settings);
-    if (sdate.length()==0 || iSame(sdate,"forever"))
+    std::wstring edate=getSettingS(L"enddate",settings);
+    if (sdate.length()==0 || iSame(sdate,L"forever"))
         mEndDate = workdate(boost::gregorian::date(mStartDate.getGregorian().year(),12,1)); // dec same year. <shrug>
     else    
-        mEndDate = workdate(simpledate(getSettingS("enddate",settings)));
+        mEndDate = workdate(simpledate(getSettingS(L"enddate",settings)));
 
     ASSERT(!simpledate::isWeekend(mStartDate));
     ASSERT(!simpledate::isWeekend(mEndDate));
 
-    mPort = getSettingI("port",settings);
+    mPort = getSettingI(L"port",settings);
 
     mMinLogLevel = kLINFO;
-    std::vector<std::string> loglevels={"debug","info","warning","error"};
+    std::vector<std::wstring> loglevels={L"debug",L"info",L"warning",L"error"};
     for (unsigned int ll=0;ll<loglevels.size();++ll)
-        if (iSame(getSettingS("loglevel",settings),loglevels[ll]))
+        if (iSame(getSettingS(L"loglevel",settings),loglevels[ll]))
             mMinLogLevel = static_cast<eLogLevel>(ll);
 
-    mRequiredInputVersion = getSettingI("inputversion",settings);
-    mDailyDevCost = getSettingD("costperdevday",settings);
+    mRequiredInputVersion = getSettingI(L"inputversion",settings);
+    mDailyDevCost = getSettingD(L"costperdevday",settings);
 
-    mTitle = getSettingS("title",settings);
+    mTitle = getSettingS(L"title",settings);
     if (mTitle.length()==0)
-        mTitle="John's Project Forecaster";
+        mTitle=L"John's Project Forecaster";
 
 
     if (getInputVersion() < getRequiredInputVersion())
-        TERMINATE("The input files being used require a newer version of jpf.");
+        TERMINATE(L"The input files being used require a newer version of jpf.");
     if (getInputVersion() > getRequiredInputVersion())
         TERMINATE(S()<<"The input files need to be updated to support the current version of jpf."
         <<"\nUpdate inputversion in settings.csv to "<<getInputVersion()<<" when done.");
@@ -85,25 +85,25 @@ void settings::load_settings()
 void settings::save_settings_CSV(std::ostream & os) const
 {
     os << "Setting Name,Value,Description" << std::endl;
-    std::vector<std::string> row;
+    std::vector<std::wstring> row;
 
     // mValidSettings({"startdate","enddate","inputversion","costperdevday","title","port","loglevel"})
-    simplecsv::outputr(os, {"inputversion", S()<<mRequiredInputVersion , "Input file format version"});
-    simplecsv::outputr(os, {"startdate", mStartDate.getStr(), "Start of scheduled period"});
-    simplecsv::outputr(os, {"enddate", mEndDate.getStr(), "Last month to display in monthly graphs"});
-    simplecsv::outputr(os, {"costperdevday", S()<<mDailyDevCost, "Cost per developer per day (including overheads)"});
-    simplecsv::outputr(os, {"title", mTitle, "Title for reports"});
-    simplecsv::outputr(os, {"port", S()<<mPort, "Port to use when webserver run"});
-    simplecsv::outputr(os, {"loglevel", levelname(mMinLogLevel), "Logging level (Debug, Info, Warning, or Error)"});
+    simplecsv::outputr(os, {L"inputversion", S()<<mRequiredInputVersion , L"Input file format version"});
+    simplecsv::outputr(os, {L"startdate", mStartDate.getStr(), L"Start of scheduled period"});
+    simplecsv::outputr(os, {L"enddate", mEndDate.getStr(), L"Last month to display in monthly graphs"});
+    simplecsv::outputr(os, {L"costperdevday", S()<<mDailyDevCost, L"Cost per developer per day (including overheads)"});
+    simplecsv::outputr(os, {L"title", mTitle, L"Title for reports"});
+    simplecsv::outputr(os, {L"port", S()<<mPort, L"Port to use when webserver run"});
+    simplecsv::outputr(os, {L"loglevel", levelname(mMinLogLevel), L"Logging level (Debug, Info, Warning, or Error)"});
 }
 
-std::string settings::getTitle() const
+std::wstring settings::getTitle() const
 {
     return mTitle;
 }
 
 
-std::string settings::getSettingS(std::string settingName, const std::map<std::string,std::string> & settings) const
+std::wstring settings::getSettingS(std::wstring settingName, const std::map<std::wstring,std::wstring> & settings) const
 {
     ASSERT(mLoaded);
     auto pos = settings.find(settingName);
@@ -113,13 +113,13 @@ std::string settings::getSettingS(std::string settingName, const std::map<std::s
     return pos->second;
 }
 
-int settings::getSettingI(std::string settingName, const std::map<std::string,std::string> & settings) const
+int settings::getSettingI(std::wstring settingName, const std::map<std::wstring,std::wstring> & settings) const
 {
     ASSERT(mLoaded);
     return atoi(getSettingS(settingName,settings).c_str());
 }
 
-double settings::getSettingD(std::string settingName, const std::map<std::string,std::string> & settings) const
+double settings::getSettingD(std::wstring settingName, const std::map<std::wstring,std::wstring> & settings) const
 {
     ASSERT(mLoaded);
     return strtod(getSettingS(settingName,settings).c_str(),NULL);
@@ -162,7 +162,7 @@ int settings::getInputVersion()
 }
 
 // static
-std::string settings::getInputVersionStr()
+std::wstring settings::getInputVersionStr()
 {
     std::ostringstream oss;
     oss << getInputVersion();
@@ -175,17 +175,17 @@ int settings::getRequiredInputVersion() const
     return mRequiredInputVersion;
 }
 
-std::string settings::getJPFVersionStr() 
+std::wstring settings::getJPFVersionStr() 
 {
     return __JPF_VERSION ;
 }
 
-std::string settings::getJPFReleaseStr() 
+std::wstring settings::getJPFReleaseStr() 
 {
     return __JPF_RELEASE ;
 }
 
-std::string settings::getJPFFullVersionStr()
+std::wstring settings::getJPFFullVersionStr()
 {
     return S()<< getJPFVersionStr()<<"-"<<getJPFReleaseStr();
 }
@@ -200,7 +200,7 @@ void settings::setMinLogLevel(eLogLevel l)
     mMinLogLevel = l;
 }
 
-void settings::setRoot(std::string path)
+void settings::setRoot(std::wstring path)
 {
     if (path.length()==0)
         TERMINATE("Empty path when trying to set root directory.");
@@ -213,7 +213,7 @@ void settings::setRoot(std::string path)
     {
         char result[PATH_MAX] = {};
         getcwd(result,PATH_MAX);
-        mRootDir = std::filesystem::canonical(std::string(result) + "/" + path); 
+        mRootDir = std::filesystem::canonical(std::wstring(result) + "/" + path); 
     }
 }
 
@@ -240,7 +240,7 @@ bool settings::RootExists() const
     }
 }
 
-bool settings::isValid(std::string key) const
+bool settings::isValid(std::wstring key) const
 {
     for (auto &i : mValidSettings)
         if (iSame(key,i)) return true;

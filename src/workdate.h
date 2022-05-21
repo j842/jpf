@@ -35,15 +35,15 @@ class simpledate
 {
     public:
         simpledate();
-        simpledate(std::string datestr);  // set the date based on a dd/mm/yy string.
+        simpledate(std::wstring datestr);  // set the date based on a dd/mm/yy string.
         simpledate(const boost::gregorian::date & d);
 
-        std::string getStr() const;     
-        std::string getStrGantt() const;
-        std::string getStr_short() const;     
-        std::string getStr_nice_long() const;
-        std::string getStr_nice_short() const;
-        std::string getAsGoogleNewDate() const;
+        std::wstring getStr() const;     
+        std::wstring getStrGantt() const;
+        std::wstring getStr_short() const;     
+        std::wstring getStr_nice_long() const;
+        std::wstring getStr_nice_short() const;
+        std::wstring getAsGoogleNewDate() const;
         std::string getStr_FileName() const;
 
         void setForever();
@@ -58,7 +58,7 @@ class simpledate
         static bool isWeekend(const simpledate d);
         
     private:
-        simpledate parseDateStringDDMMYY(std::string datestr) const;
+        simpledate parseDateStringDDMMYY(std::wstring datestr) const;
 
     public:
         friend bool operator==(const simpledate& lhs, const simpledate & rhs) { return (lhs.getGregorian()==rhs.getGregorian()); }
@@ -69,7 +69,7 @@ class simpledate
         friend bool operator<=(const simpledate& lhs, const simpledate & rhs) { return lhs.getGregorian()<=rhs.getGregorian(); }
 
     protected:
-        std::string _getstr(const std::locale & fmt) const;
+        std::wstring _getstr(const std::locale & fmt) const;
 
     protected:
         boost::gregorian::date mD;
@@ -102,7 +102,7 @@ class monthIndex
 
         operator unsigned long() const {return mN;}
 
-        std::string getString() const;
+        std::wstring getString() const;
 
         unsigned long workingDaysInMonth() const;
 
@@ -121,12 +121,12 @@ class workdate : public simpledate
     public:
         workdate();                     // set the date as today.
         workdate(simpledate s);
-        workdate(std::string datestr);  // set the date based on a dd/mm/yy string.
+        workdate(std::wstring datestr);  // set the date based on a dd/mm/yy string.
         workdate(const workdate &obj);  // copy ctor
         workdate(const boost::gregorian::date & d);
         workdate(unsigned long dayIndex);
 
-        bool setclip(std::string datestr);  // set to the next workday after start from a dd/mm/yy string. 
+        bool setclip(std::wstring datestr);  // set to the next workday after start from a dd/mm/yy string. 
         void decrementWorkDay();
         void incrementWorkDay();
         unsigned long getDayAsIndex() const;
@@ -166,7 +166,7 @@ class itemdate_test : public CPPUNIT_NS::TestFixture
 class leaverange
 {
     public:
-        leaverange(std::string s); // closed interval.
+        leaverange(std::wstring s); // closed interval.
         bool isEmpty() const;
         void setEmpty();
 
@@ -175,7 +175,7 @@ class leaverange
         
         unsigned long holidayDaysInMonth(unsigned long month) const; // number of work days in the month that are holidays.
 
-        std::string getString() const;
+        std::wstring getString() const;
 
         void advance(workdate newStart);
 

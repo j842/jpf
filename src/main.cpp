@@ -27,25 +27,25 @@ void cMain::replace_all_input_CSV_files(inputfiles::inputset iset)
 {
     for (unsigned int i = 0; i < iset.mB.mTeamItems.size(); ++i)
     { // output backlog-X
-        std::ofstream ofs(simplecsv::filename2path("backlog-" + makelower(iset.mT[i].mId) + ".csv"));
+        std::wofstream ofs(simplecsv::filename2path(w2s(S()<<L"backlog-" << makelower(iset.mT[i].mId) << L".csv")));
         iset.mB.save_team_CSV(ofs, i);
         ofs.close();
     }
 
     {
-        std::ofstream ofs(simplecsv::filename2path("publicholidays.csv"));
+        std::wofstream ofs(simplecsv::filename2path("publicholidays.csv"));
         iset.mH.save_public_holidays_CSV(ofs);
         ofs.close();
     }
 
     {
-        std::ofstream ofs(simplecsv::filename2path("teams.csv"));
+        std::wofstream ofs(simplecsv::filename2path("teams.csv"));
         iset.mT.save_teams_CSV(ofs);
         ofs.close();
     }
 
     {
-        std::ofstream ofs(simplecsv::filename2path("projects.csv"));
+        std::wofstream ofs(simplecsv::filename2path("projects.csv"));
         iset.mP.save_projects_CSV(ofs);
         ofs.close();
     }
@@ -53,7 +53,7 @@ void cMain::replace_all_input_CSV_files(inputfiles::inputset iset)
 
 void cMain::replace_settings_CSV()
 {
-    std::ofstream ofs(simplecsv::filename2path("settings.csv"));
+    std::wofstream ofs(simplecsv::filename2path("settings.csv"));
     gSettings().save_settings_CSV(ofs);
     ofs.close();
 }
@@ -93,7 +93,7 @@ int cMain::run_refresh()
     }
     catch (TerminateRunException &pEx)
     {
-        std::cerr << pEx.what() << std::endl;
+        std::cerr << pEx.wwhat() << std::endl;
         return 1;
     }
     return 0;
@@ -119,7 +119,7 @@ int cMain::run_console()
     }
     catch (TerminateRunException &pEx)
     {
-        std::cerr << pEx.what() << std::endl;
+        std::cerr << pEx.wwhat() << std::endl;
         return 1;
     }
 
@@ -155,13 +155,13 @@ int cMain::run_watch()
             scheduler::scheduler::getOutputWriters(writers);
             for (auto &x : writers)
                 if (x.mOutputType == scheduler::kFile_HTML)
-                    scheduler::scheduler::outputHTMLError(getOutputPath_Html() + x.mFileName, pEx.what());
-            logerror(pEx.what());
+                    scheduler::scheduler::outputHTMLError(S()<<getOutputPath_Html() << x.mFileName, pEx.wwhat());
+            logerror(pEx.wwhat());
         }
 
-        loginfo("Watching for changes. Ctrl-c to exit.");
+        loginfo(L"Watching for changes. Ctrl-c to exit.");
         w.waitforchange();
-        loginfo("Files updated...recalculating!");
+        loginfo(L"Files updated...recalculating!");
     }
     return 0;
 }
@@ -210,7 +210,7 @@ bool cMain::runtests()
     return wasSucessful;
 }
 
-int cMain::run_advance(std::string s)
+int cMain::run_advance(std::wstring s)
 { // s of format -a=dd/mm/yy
     s.erase(s.begin(), s.begin() + 3);
     workdate newStart(s);
@@ -240,7 +240,7 @@ int cMain::run_advance(std::string s)
     }
     catch (TerminateRunException &pEx)
     {
-        std::cerr << pEx.what() << std::endl;
+        std::cerr << pEx.wwhat() << std::endl;
         return 1;
     }
 
@@ -330,7 +330,7 @@ int cMain::go(int argc, char **argv)
         }
 
         // set directory.
-        std::string directory = argv[argc - 1];
+        std::wstring directory = argv[argc - 1];
         gSettings().setRoot(directory);
         if (!gSettings().RootExists())
             TERMINATE("Root directory " + gSettings().getRoot() + " does not exist.");
@@ -344,8 +344,8 @@ int cMain::go(int argc, char **argv)
         // Settings loaded. Let's go!
 
 
-        logdebug(S()<<"\n"+std::string(79,'-')<<"\n");
-        std::string aaa;
+        logdebug(S()<<"\n"+std::wstring(79,'-')<<"\n");
+        std::wstring aaa;
         for (int i=0;i<argc;++i)
             aaa+=S()<<argv[i]<<" ";
         logdebug(aaa);
@@ -357,7 +357,7 @@ int cMain::go(int argc, char **argv)
         if (argc == 2)
             return run_console();
 
-        std::string s = argv[1];
+        std::wstring s = argv[1];
         if (s.length() < 2)
             TERMINATE("Bad parameter: " + s);
         if (s[0] != '-')
@@ -382,12 +382,12 @@ int cMain::go(int argc, char **argv)
 
     catch (const ctrlcException &e)
     {
-        loginfo(e.what());
+        loginfo(e.wwhat());
         return 1;
     }
     catch (const TerminateRunException &e)
     {
-        logerror(e.what());
+        logerror(e.wwhat());
         return 1;
     }
 

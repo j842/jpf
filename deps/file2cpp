@@ -72,7 +72,7 @@ void ${happyname}::replacestring(std::wstring & subject, const std::wstring &sea
     }
 }
 
-/*static*/ bool ${happyname}::output(std::string path, const std::map<std::wstring,std::wstring> * replacerules)
+/*static*/ bool ${happyname}::output(std::wstring path, const std::map<std::wstring,std::wstring> * replacerules)
 {
    if (path.length()==0) return false;
    if (path[path.length()-1]!='/')
@@ -84,7 +84,7 @@ void ${happyname}::replacestring(std::wstring & subject, const std::wstring &sea
    os.close();
 }
 
-/*static*/ std::string ${happyname}::getName()
+/*static*/ std::wstring ${happyname}::getName()
 {
    return "${SNM}";
 }
@@ -119,9 +119,9 @@ cat <<EOF >${DST}.h
 class ${happyname}
 {
    public:
-      static bool output(std::string path, const std::map<std::wstring,std::wstring> * replacerules = NULL); // recreate output file. 
+      static bool output(std::wstring path, const std::map<std::wstring,std::wstring> * replacerules = NULL); // recreate output file. 
       static std::wstring getStr(const std::map<std::wstring,std::wstring> * replacerules = NULL);  // contents of output file, with replacements as per rules.
-      static std::string getName(); // output file name.
+      static std::wstring getName(); // output file name.
 
    private:
       static void replacestring(std::wstring & subject, const std::wstring &search, const std::wstring &replace);

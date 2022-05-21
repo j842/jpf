@@ -9,24 +9,24 @@
 namespace inputfiles
 {
 
-    backlogitem::backlogitem(const std::string s, const unsigned int teamndx)
+    backlogitem::backlogitem(const std::wstring s, const unsigned int teamndx)
     {
-        std::vector<std::string> csvitems;
+        std::vector<std::wstring> csvitems;
         if (!simplecsv::splitcsv(s, csvitems))
-            TERMINATE("unable to parse backlog item:" + s);
+            TERMINATE(S()<<L"unable to parse backlog item:" << s);
 
         if (csvitems.size() != 11)
-            TERMINATE("Unexpected number of columns in backlog item: " + s);
+            TERMINATE(S()<<L"Unexpected number of columns in backlog item: " << s);
 
         _set(csvitems, teamndx);
     }
 
-    backlogitem::backlogitem(const std::vector<std::string> csvitems, const unsigned int teamndx)
+    backlogitem::backlogitem(const std::vector<std::wstring> csvitems, const unsigned int teamndx)
     {
         _set(csvitems, teamndx);
     }
 
-    void backlogitem::_set(const std::vector<std::string> csvitems, const unsigned int teamndx)
+    void backlogitem::_set(const std::vector<std::wstring> csvitems, const unsigned int teamndx)
     {
         mTeamNdx = teamndx;
 
@@ -51,7 +51,7 @@ namespace inputfiles
         mEarliestStart = workdate(csvitems[5]);
 
         // 6 - blocking resources
-        std::vector<std::string> names;
+        std::vector<std::wstring> names;
         simplecsv::splitcsv(csvitems[6], names);
         for (auto &name : names)
             mResources.push_back(resource(name, true)); // blocking resources
@@ -69,9 +69,9 @@ namespace inputfiles
         mComments = csvitems[9];
     }
 
-    void backlogitem::output(std::ostream &os) const
+    void backlogitem::output(std::wostream &os) const
     {
-        std::vector<std::string> csvitems;
+        std::vector<std::wstring> csvitems;
         csvitems.push_back(mProjectName);
         csvitems.push_back(mId);
         csvitems.push_back(mDescription);
@@ -79,25 +79,25 @@ namespace inputfiles
         csvitems.push_back(S() << std::fixed  << std::setprecision(2) << ((double)mDevCentiDays)/100.0);
 
         if (mEarliestStart == gSettings().startDate())
-            csvitems.push_back("");
+            csvitems.push_back(L"");
         else
             csvitems.push_back(mEarliestStart.getStr());
 
-        std::string r;
+        std::wstring r;
         for (auto &i : mResources)
             if (i.mBlocking)
-                r += (r.length() > 0 ? std::string(", ") + i.mName : i.mName);
+                r += (r.length() > 0 ? std::wstring(L", ") + i.mName : i.mName);
         csvitems.push_back(r);
 
         r.clear();
         for (auto &i : mResources)
             if (!i.mBlocking)
-                r += (r.length() > 0 ? std::string(", ") + i.mName : i.mName);
+                r += (r.length() > 0 ? std::wstring(L", ") + i.mName : i.mName);
         csvitems.push_back(r);
 
         r.clear();
         for (auto &i : mDependencies)
-            r += (r.length() > 0 ? std::string(", ") + i : i);
+            r += (r.length() > 0 ? std::wstring(L", ") + i : i);
         csvitems.push_back(r);
 
         csvitems.push_back(mComments);
@@ -106,7 +106,7 @@ namespace inputfiles
         os << std::endl;
     }
 
-    bool backlogitem::hasDependency(std::string d)
+    bool backlogitem::hasDependency(std::wstring d)
     {
         for (auto &ch : mDependencies)
             if (iSame(ch, d))
@@ -115,15 +115,15 @@ namespace inputfiles
         return false;
     }
 
-    std::string backlogitem::getFullName() const
+    std::wstring backlogitem::getFullName() const
     {
-        return mProjectName + " - " + mDescription;
+        return mProjectName + L" - " + mDescription;
     }
 
-    void backlogitem::writeresourcenames(std::ostream &oss) const
+    void backlogitem::writeresourcenames(std::wostream &oss) const
     {
         { // tidied on dtor.
-            listoutput lo(oss, "", ";", "");
+            listoutput lo(oss, L"", L";", L"");
             for (auto &vv : mResources)
                 lo.write(vv.mName);
         }
@@ -137,11 +137,11 @@ namespace inputfiles
         for (unsigned int i = 0; i < tms.size(); ++i)
         {
             unsigned int j = 1;
-            std::string filename = "backlog-" + makelower(tms[i].mId) + ".csv";
+            std::string filename = "backlog-" + w2s(makelower(tms[i].mId)) + ".csv";
             simplecsv teambacklog(filename, true, 10);
             if (teambacklog.openedOkay())
             {
-                std::vector<std::string> items;
+                std::vector<std::wstring> items;
                 while (teambacklog.getline(items, 10))
                 {
                     backlogitem b(items, i);
@@ -169,7 +169,7 @@ namespace inputfiles
 
 
 
-    void teambacklogs::save_team_CSV(std::ostream &os, unsigned int teamNdx) const // output the backlog as a inputtable csv.
+    void teambacklogs::save_team_CSV(std::wostream &os, unsigned int teamNdx) const // output the backlog as a inputtable csv.
     {
         os << "Project,ID,Description,Min Calendar WorkDays,Remaining DevDays Total,Earliest Start,Blocking,Contributing,Depends On,Comments" << std::endl;
         for (auto &i : mTeamItems)
@@ -178,7 +178,7 @@ namespace inputfiles
                     j.output(os);
     }
 
-    bool teambacklogs::exists(std::string id) const
+    bool teambacklogs::exists(std::wstring id) const
     {
         for (const auto & i : mTeamItems)
             for (const auto & j : i)
@@ -187,14 +187,14 @@ namespace inputfiles
         return false;
     }
 
-    const backlogitem & teambacklogs::getItemFromId(std::string id) const
+    const backlogitem & teambacklogs::getItemFromId(std::wstring id) const
     {
         ASSERT(mTeamItems.size()>0);
         for (const auto & i : mTeamItems)
             for (const auto & j : i)
                 if (iSame(j.mId,id))
                     return j;
-        TERMINATE("Failed to find backlog item with id "+id);
+        TERMINATE(L"Failed to find backlog item with id "+id);
         return mTeamItems[0][0]; // code never gets here.
     }
 

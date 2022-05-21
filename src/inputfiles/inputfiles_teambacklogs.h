@@ -19,9 +19,9 @@ namespace inputfiles
     public:
         resource() : mBlocking(false) {}
         resource(const resource &o) : mName(o.mName), mBlocking(o.mBlocking) {}
-        resource(std::string n, bool b) : mName(n), mBlocking(b) {}
+        resource(std::wstring n, bool b) : mName(n), mBlocking(b) {}
 
-        std::string mName;
+        std::wstring mName;
         bool mBlocking;
     };
 
@@ -29,31 +29,31 @@ namespace inputfiles
     class backlogitem
     {
     public:
-        backlogitem(const std::string s, const unsigned int teamndx);
-        backlogitem(const std::vector<std::string> csvitems, const unsigned int teamndx);
-        void output(std::ostream &os) const;
-        void writeresourcenames(std::ostream & oss) const; // helps with html output.
+        backlogitem(const std::wstring s, const unsigned int teamndx);
+        backlogitem(const std::vector<std::wstring> csvitems, const unsigned int teamndx);
+        void output(std::wostream &os) const;
+        void writeresourcenames(std::wostream & oss) const; // helps with html output.
 
-        bool hasDependency(std::string d);
+        bool hasDependency(std::wstring d);
         unsigned long getDurationDays() const;
-        std::string getFullName() const;
+        std::wstring getFullName() const;
 
     public:
         // explicitly set from CSV file.
-        std::string mTeam;
+        std::wstring mTeam;
         unsigned int mTeamNdx;
-        std::string mId; // can be an empty string.
-        std::string mDescription;
-        std::string mProjectName;
+        std::wstring mId; // can be an empty string.
+        std::wstring mDescription;
+        std::wstring mProjectName;
         unsigned long mMinCalendarDays;
         tCentiDay mDevCentiDays;
         workdate mEarliestStart;
         std::vector<resource> mResources;
-        std::vector<std::string> mDependencies;
-        std::string mComments;
+        std::vector<std::wstring> mDependencies;
+        std::wstring mComments;
 
     private:
-        void _set(const std::vector<std::string> csvitems, const unsigned int teamndx);
+        void _set(const std::vector<std::wstring> csvitems, const unsigned int teamndx);
     };
 
     class teambacklogs
@@ -61,9 +61,9 @@ namespace inputfiles
     public:
         teambacklogs(const teams & tms);
         teambacklogs(const teambacklogs & other);
-        void save_team_CSV(std::ostream &os, unsigned int teamNdx) const; // output the backlog as a inputtable csv.
-        bool exists(std::string id) const;
-        const backlogitem & getItemFromId(std::string id) const;
+        void save_team_CSV(std::wostream &os, unsigned int teamNdx) const; // output the backlog as a inputtable csv.
+        bool exists(std::wstring id) const;
+        const backlogitem & getItemFromId(std::wstring id) const;
 
         unsigned int getTotalNumItems() const;
 

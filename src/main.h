@@ -10,7 +10,7 @@ class cMain
         int run_console();
         int run_watch();
         int run_refresh();
-        int run_advance(std::string s);
+        int run_advance(std::wstring s);
         int run_create_directories();
         int showhelp();
 
