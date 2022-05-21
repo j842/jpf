@@ -4,8 +4,6 @@ ROOT_DIR:=$(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 
 include $(ROOT_DIR)/deploy/versions.makefile
 
-TARGET_EXEC := jpf
-
 BUILD_DIR := build
 SRC_DIRS := src
 
@@ -45,7 +43,7 @@ INC_FLAGS := $(addprefix -I,$(INC_DIRS))
 CPPFLAGS := $(INC_FLAGS) -MMD -MP
 
 # The final build step.
-$(BUILD_DIR)/$(TARGET_EXEC): $(OBJS)
+$(BUILD_DIR)/$(JPF_NAME): $(OBJS)
 	$(CXX) $(OBJS) -o $@ $(LDFLAGS) $(LDLIBS)
 
 # Build step for C++ source
@@ -68,3 +66,19 @@ clean:
 # Makefiles. Initially, all the .d files will be missing, and we don't want those
 # errors to show up.
 -include $(DEPS)
+
+check: $(JPF_EXE)
+	$(JPF_EXE) -t
+
+deploy:
+	@gh auth login --with-token < ~/.github_token
+	@gh workflow run deploy_package.yml
+
+
+setup:
+	sudo cp $(ROOT_DIR)/deps/webfsd-jpf/webfsd-jpf /usr/bin
+	sudo mkdir -p /var/log/jpf && sudo chown ${USER} /var/log/jpf
+	sudo rm -rf /opt/jpf
+	sudo mkdir -p /opt/jpf && sudo chown ${USER} /opt/jpf
+	cp -r $(ROOT_DIR)/input /opt/jpf
+	cp -r $(ROOT_DIR)/support_files /opt/jpf
