@@ -205,16 +205,10 @@ void settings::setRoot(std::string path)
     if (path.length()==0)
         TERMINATE("Empty path when trying to set root directory.");
     
-    if (path[0]=='/')
-    { // absolute!
+    if (std::filesystem::exists(path))
         mRootDir = std::filesystem::canonical(path);
-    }
     else
-    {
-        char result[PATH_MAX] = {};
-        getcwd(result,PATH_MAX);
-        mRootDir = std::filesystem::canonical(std::string(result) + "/" + path); 
-    }
+        mRootDir = path;
 }
 
 std::string settings::getRoot() const

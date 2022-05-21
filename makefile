@@ -115,9 +115,10 @@ clean:
 # run tests
 check: $(JPF_EXE)
 	$(JPF_EXE) -t
-	$(JPF_EXE) .
-	$(JPF_EXE) -r .
-	rm -rf output
+	$(JPF_EXE) -c ~/jpf_test
+	$(JPF_EXE) ~/jpf_test
+	$(JPF_EXE) -r ~/jpf_test
+	rm -rf ~/jpf_test
 
 # use a GitHub Action to build and upload the debian package to packagecloud on Ubuntu 20.04 (i.e. release to the world!)
 deploy:

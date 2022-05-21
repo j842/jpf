@@ -169,7 +169,6 @@ int cMain::run_watch()
 
 int cMain::run_create_directories()
 {
-    gSettings().setRoot(".");
     std::string pr = gSettings().getRoot();
     std::string pi = pr + "/input/";
 
@@ -273,13 +272,13 @@ int cMain::showhelp()
       -c, -create     Create a skeleton working tree in the current directory, 
                       with example input files. 
 
-      -t, -test       Run unit tests.
-
       -r, -refresh    Refresh the input files (read, tidy, write).
 
       -a=dd/mm/yy     Advance start to date, decrementing work expected to be completed and
                       removing no longer relevant dates.
-                
+
+      -t, -test       Run unit tests. Ignores DIRECTORY.
+
 )";
     return 0;
 }
@@ -319,9 +318,6 @@ int cMain::go(int argc, char **argv)
         if (argc>=2 && strlen(argv[1])>1 && argv[1][0]=='-' && tolower(argv[1][1])=='t')
             return runtests() ? 0 : 1;     
 
-        if (argc>=2 && strlen(argv[1])>1 && argv[1][0]=='-' && tolower(argv[1][1])=='c')
-            return run_create_directories();
-
         // no directory specified.
         if (argv[argc-1][0]=='-')
         {
@@ -332,6 +328,12 @@ int cMain::go(int argc, char **argv)
         // set directory.
         std::string directory = argv[argc - 1];
         gSettings().setRoot(directory);
+
+
+        // -c option needs root directory, but not loading settings!
+        if (argc>=2 && strlen(argv[1])>1 && argv[1][0]=='-' && tolower(argv[1][1])=='c')
+            return run_create_directories();
+
         if (!gSettings().RootExists())
             TERMINATE("Root directory " + gSettings().getRoot() + " does not exist.");
 
@@ -375,6 +377,7 @@ int cMain::go(int argc, char **argv)
             return run_advance(s);
         case 'r':
             return run_refresh();
+
         default:
             TERMINATE("Bad parameter: " + s);
         }

@@ -77,6 +77,8 @@ void FileRotationLogSink(std::string s)
     }
     if (!initialised)
     {
+        if (!std::filesystem::exists(gSettings().getRoot()))
+            return; // getting created no doubt...
         checkcreatedirectory(getOutputPath_Base()); // create path to log to.
         checkcreatedirectory(getOutputPath_Log()); // create path to log to.
         initialised=true;
