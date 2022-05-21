@@ -1,15 +1,12 @@
 # output
-scheduler
-jpm
 jpf
 jpf_debug
 
 /output
-/obj
-/bin
+/build
 .obj
 .dep
-/webfsd-jpf/bin
+/deps/webfsd-jpf/bin
 
 version.h
 /src/templates

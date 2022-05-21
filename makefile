@@ -113,6 +113,7 @@ deploy:
 setup:
 	sudo cp $(ROOT_DIR)/deps/webfsd-jpf/webfsd-jpf /usr/bin
 	sudo rm -rf /opt/jpf
+	sudo mkdir -p /opt/jpf
 	sudo cp -r $(ROOT_DIR)/includes/dpkg_include/* /
 
 images:
