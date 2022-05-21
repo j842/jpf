@@ -10,6 +10,11 @@
 				"-std=c++17",
 				"-g",
 				"${workspaceFolder}/src/*.cpp",
+				"${workspaceFolder}/src/scheduler/*.cpp",
+				"${workspaceFolder}/src/templates/*.cpp",
+				"-I${workspaceFolder}/src",
+				"-I${workspaceFolder}/src/scheduler",
+				"-I${workspaceFolder}/src/templates",
 				"-o",
 				"${fileDirname}/jpf_debug",
 				"-lboost_date_time",
@@ -26,6 +31,26 @@
 				"isDefault": true
 			},
 			"detail": "compiler: /usr/bin/g++"
+		},
+		{
+			"type": "cppbuild",
+			"label": "C/C++: cpp build active file",
+			"command": "/usr/bin/cpp",
+			"args": [
+				"-fdiagnostics-color=always",
+				"-g",
+				"${file}",
+				"-o",
+				"${fileDirname}/${fileBasenameNoExtension}"
+			],
+			"options": {
+				"cwd": "${fileDirname}"
+			},
+			"problemMatcher": [
+				"$gcc"
+			],
+			"group": "build",
+			"detail": "compiler: /usr/bin/cpp"
 		}
 	]
 }
