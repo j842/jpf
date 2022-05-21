@@ -118,3 +118,12 @@ setup:
 	sudo mkdir -p /opt/jpf && sudo chown ${USER} /opt/jpf
 	cp -r $(ROOT_DIR)/input /opt/jpf
 	cp -r $(ROOT_DIR)/support_files /opt/jpf
+
+images:
+	make -C deploy images
+
+deb: $(JPF_EXE)
+	make -C deploy deb
+
+upload:
+	make -C deploy upload

@@ -31,10 +31,7 @@ $(JPF_SCRIPT_PATH) = \
 		--description \"John's Project Forecaster\" \
 		--url \"https://github.com/j842/jpf\" \
 		--maintainer \"John Enlow\" \
-		--after-install /opt/deploy/after-install.sh \
 		/opt/$(BIN_NAME)/$(JPF_NAME)=/usr/bin/$(JPF_NAME) \
-		/opt/$(INP_NAME)=/opt/jpf/ \
-		/opt/support_files=/opt/jpf/ \
 #
 $(JPF_SCRIPT_PATH): makefile
 	@echo "$($(@))" | sed -e 's/^[ ]//' >$(@)

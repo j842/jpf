@@ -91,7 +91,7 @@ cd jpf
 Set up relevant folders and build the podman images:
 ```
 make setup
-make -C deploy images
+make images
 ```
 
 Then compile jpf itself:
@@ -123,8 +123,8 @@ make upload
 ### Make the webfsd-jpf debian package
 
 ```
-cd webfsd-jpf
-make
+make -C deps/webfsd-jpf
+make -C deps/webfsd-jpf upload
 ```
 
 
