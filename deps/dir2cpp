@@ -42,6 +42,8 @@ function main {
    args=("$@")
 
    SRC=${args[0]}
+   SRC=$(echo "$SRC" | sed 's:/*$::')   # remove trailing slash, if it exists.
+
    DST=${args[1]}
    CNM=${DST##*/}
    SNM=${SRC##*/}
@@ -52,56 +54,7 @@ function main {
    
    echo "$SRC -> ${CNM}.cpp and ${CNM}.h"
 
-   for filename in Data/*.txt; do
-    [ -e "$filename" ] || continue
-    # ... rest of the loop body
-    echo "$filename"
-    done
-
-    exit 0;
-
-   cat <<EOF >${DST}.cpp
-// auto-generated cpp file.
-// created from ${SRC}.
-
-#include "${CNM}.h"
-
-void replace(std::string & s,  const std::map<std::string,std::string> & replacerules)
-{
-    for (auto iter = replacerules.begin(); iter != replacerules.end(); ++iter)
-        s = replacestring(s,iter->first,iter->second); 
-}
-
-/*static*/ bool ${CNM}::output(std::string path, const std::map<std::string,std::string> * replacerules)
-{
-   std::ostream os(path+getName());
-   if (!os.is_open())
-      return false;
-   os << getStr(replacerules);
-   os.close();
-}
-
-/*static*/ std::string ${CNM}::getName()
-{
-   return "${SNM}";
-}
-
-/*static*/ std::string getStr(const std::map<std::string,std::string> * replacerules)
-{
-   std::string s= 
-EOF
-
-echo -n "R(\"">>${DST}.cpp
-cat ${SRC}>>${DST}.cpp
-echo "\");">>${DST}.cpp
-cat <<EOF >>${DST}.cpp
-   if (replacerules!=NULL)
-      replace(s,*replacerules);
-   return s;
-}
-
-// end of auto-generated cpp file.
-EOF
+   #-------------------------------------------------------------------------
 
 cat <<EOF >${DST}.h
 #ifndef __${CNM}__H
@@ -111,14 +64,96 @@ cat <<EOF >${DST}.h
 
 class ${CNM}
 {
-   public:
-      static bool output(std::string path, const std::map<std::string,std::string> * replacerules = NULL); // recreate output file. Path needs to end in /
-      static std::string getStr(const std::map<std::string,std::string> * replacerules = NULL);  // contents of output file, with replacements as per rules.
-      static std::string getName(); // output file name.
+    public:
+        static bool output(std::string path); // recreate output files. Path needs to end in /
+
+    private:
+EOF
+
+for filename in ${SRC}/*; do
+    [ -e "$filename" ] || continue
+    basename=${filename##*/}
+    happyname=${basename//[^[:alnum:]]/_}
+    echo "   static bool output_${happyname}(std::string path);" >>${DST}.h
+done
+
+cat <<EOF >>${DST}.h
 };
 
 #endif
 EOF
+
+#----------------------------------------------------------------------------------------------------
+
+cat <<EOF >${DST}.cpp
+// auto-generated cpp file.
+// created from files in ${SRC}.
+
+#include <string>
+#include <fstream>
+
+#include "${CNM}.h"
+
+/*static*/ bool ${CNM}::output(std::string path)
+{
+EOF
+
+for filename in ${SRC}/*; do
+    [ -e "$filename" ] || continue
+    basename=${filename##*/}
+    happyname=${basename//[^[:alnum:]]/_}
+    echo "   if (!output_${happyname}(path)) return false;" >>${DST}.cpp
+done
+
+cat <<EOF >>${DST}.cpp
+    return true;
+}
+
+// end of auto-generated cpp file.
+EOF
+
+
+for filename in ${SRC}/*; do
+    [ -e "$filename" ] || continue
+    basename=${filename##*/}
+    happyname=${basename//[^[:alnum:]]/_}
+
+cat <<EOF >>${DST}.cpp
+
+
+// -----------------------------------------------------------------------------------------------------------
+//                                   ${basename}
+//
+
+/*static*/ bool ${CNM}::output_${happyname}(std::string path)
+{
+    if (path.length()==0) return false;
+    if (path[path.length()-1]!='/')
+        path.push_back('/');
+   std::wofstream os(path+std::string("${basename}"));
+   if (!os.is_open())
+      return false;
+
+   os << 
+EOF
+
+    echo -n "R\"LITERAL(">>${DST}.cpp
+    cat ${filename}>>${DST}.cpp
+    echo ")LITERAL\";">>${DST}.cpp
+
+cat <<EOF >>${DST}.cpp
+
+   os.close();
+   return true;
+}
+// -----------------------------------------------------------------------------------------------------------
+
+
+
+EOF
+done
+
+
 } # main
 
 main "$@"

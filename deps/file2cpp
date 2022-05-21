@@ -58,34 +58,37 @@ function main {
 
 #include "${CNM}.h"
 
-void replace(std::string & s,  const std::map<std::string,std::string> & replacerules)
+void replace(std::wstring & s,  const std::map<std::wstring,std::wstring> & replacerules)
 {
     for (auto iter = replacerules.begin(); iter != replacerules.end(); ++iter)
         s = replacestring(s,iter->first,iter->second); 
 }
 
-/*static*/ bool ${CNM}::output(std::string path, const std::map<std::string,std::string> * replacerules)
+/*static*/ bool ${CNM}::output(std::wstring path, const std::map<std::wstring,std::wstring> * replacerules)
 {
-   std::ostream os(path+getName());
+   if (path.length()==0) return false;
+   if (path[path.length()-1]!='/')
+      path.push_back('/');
+   std::wofstream os(path+getName());
    if (!os.is_open())
       return false;
    os << getStr(replacerules);
    os.close();
 }
 
-/*static*/ std::string ${CNM}::getName()
+/*static*/ std::wstring ${CNM}::getName()
 {
    return "${SNM}";
 }
 
-/*static*/ std::string getStr(const std::map<std::string,std::string> * replacerules)
+/*static*/ std::wstring getStr(const std::map<std::string,std::string> * replacerules)
 {
-   std::string s= 
+   std::wstring s= 
 EOF
 
-echo -n "R(\"">>${DST}.cpp
+echo -n "R(LITERAL\"">>${DST}.cpp
 cat ${SRC}>>${DST}.cpp
-echo "\");">>${DST}.cpp
+echo "\"LITERAL);">>${DST}.cpp
 cat <<EOF >>${DST}.cpp
    if (replacerules!=NULL)
       replace(s,*replacerules);
@@ -104,9 +107,9 @@ cat <<EOF >${DST}.h
 class ${CNM}
 {
    public:
-      static bool output(std::string path, const std::map<std::string,std::string> * replacerules = NULL); // recreate output file. Path needs to end in /
-      static std::string getStr(const std::map<std::string,std::string> * replacerules = NULL);  // contents of output file, with replacements as per rules.
-      static std::string getName(); // output file name.
+      static bool output(std::wstring path, const std::map<std::wstring,std::wstring> * replacerules = NULL); // recreate output file. 
+      static std::wstring getStr(const std::map<std::wstring,std::wstring> * replacerules = NULL);  // contents of output file, with replacements as per rules.
+      static std::wstring getName(); // output file name.
 };
 
 #endif
