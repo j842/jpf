@@ -1,12 +1,10 @@
 # output
-jpf
-jpf_debug
-
 /output
 /build
 .obj
 .dep
 /deps/webfsd-jpf/bin
+.vscode/jpf-debug
 
 version.h
 /src/templates
