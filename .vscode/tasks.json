@@ -12,9 +12,13 @@
 				"${workspaceFolder}/src/*.cpp",
 				"${workspaceFolder}/src/scheduler/*.cpp",
 				"${workspaceFolder}/src/templates/*.cpp",
+				"${workspaceFolder}/src/support_files/*.cpp",
+				"${workspaceFolder}/src/inputfiles/*.cpp",
 				"-I${workspaceFolder}/src",
 				"-I${workspaceFolder}/src/scheduler",
 				"-I${workspaceFolder}/src/templates",
+				"-I${workspaceFolder}/src/support_files",
+				"-I${workspaceFolder}/src/inputfiles",
 				"-o",
 				"${fileDirname}/jpf_debug",
 				"-lboost_date_time",
@@ -38,10 +42,17 @@
 			"command": "/usr/bin/cpp",
 			"args": [
 				"-fdiagnostics-color=always",
+				"-fdiagnostics-color=always",
+				"-std=c++17",
+				"-I${workspaceFolder}/src",
+				"-I${workspaceFolder}/src/scheduler",
+				"-I${workspaceFolder}/src/templates",
+				"-I${workspaceFolder}/src/support_files",
+				"-I${workspaceFolder}/src/inputfiles",
 				"-g",
 				"${file}",
 				"-o",
-				"${fileDirname}/${fileBasenameNoExtension}"
+				"${workspaceFolder}/build/${fileBasenameNoExtension}"
 			],
 			"options": {
 				"cwd": "${fileDirname}"
