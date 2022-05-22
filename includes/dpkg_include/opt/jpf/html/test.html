@@ -1,22 +1,15 @@
-<html>
-    <head>
-<script src="gantt/frappe-gantt.min.js"></script>
-<link rel="stylesheet" href="gantt/frappe-gantt.css">
-
-<style>
-.gantt .bar-wrapper {
-    pointer-events: none;
-}
-
-    .gantt .bar {
-			fill: tomato;
-		}
-
-    .cc-blue .bar { fill: rgb(43, 48, 122); }
-
-</style>
-</head>
-<body>
+---
+layout: default
+title: test page
+headincludes: |
+ <script src="gantt/frappe-gantt.min.js"></script> 
+ <link rel="stylesheet" href="gantt/frappe-gantt.css">
+ <style>
+ .gantt .bar-wrapper { pointer-events: none; }
+ .gantt .bar { fill: tomato; }
+ .cc-blue .bar { fill: rgb(43, 48, 122); }
+ </style>
+---
 
 <h2>Interactive Gantt Chart entirely made in SVG!</h2>
 <div class="gantt">
@@ -56,7 +49,3 @@ var gantt = new Gantt(".gantt", tasks);
 var new_height = gantt.$svg.getAttribute('height') - 80;
 gantt.$svg.setAttribute('height', new_height);
 </script>
-
-</body>
-
-</html>

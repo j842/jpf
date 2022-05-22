@@ -1,0 +1,67 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>{{ page.title }}</title>
+    {{ page.headincludes }}
+</head>
+
+
+<!----------------  HEADER ------------------------------->
+<h1><center>{{ page.title }}</center></h1>
+
+<center>
+<p style="margin-bottom:0.5cm;">
+<a href="index.html">Project Backlog</a>&nbsp;&nbsp;
+<a href="people.html">People Backlog</a>&nbsp;&nbsp;
+<a href="peopleeffort.html">People Effort</a>&nbsp;&nbsp;
+<a href="costdashboard.html">Cost Dashboard</a>&nbsp;&nbsp;
+<a href="highlevelgantt.html">High-Level Gantt</a>&nbsp;&nbsp;
+<a href="detailedgantt.html">Detailed Gantt</a>&nbsp;&nbsp;
+<a href="raw_backlog.html">Debug: Raw Backlog</a>&nbsp;&nbsp;
+</p>
+</center>
+<hr/>
+<p style="margin-bottom:0.8cm;"/>
+
+<!---------------- /HEADER ------------------------------->
+
+  <body>
+    {{ content }}
+
+
+<!----------------  FOOTER ------------------------------->
+
+<table>
+  {% for row in site.data.basevars %}
+  {% if forloop.first %}
+  <tr>
+    {% for pair in row %}
+    <th>{{ pair[0] }}</th>
+    {% endfor %}
+  </tr>
+  {% endif %}
+
+  {% tablerow pair in row %}
+  {{ pair[1] }}
+  {% endtablerow %}
+  {% endfor %}
+</table>
+
+<p style="margin-bottom:1cm;"/>
+<hr>
+<footer>
+<center>
+    <font size="-1">
+      {% assign bv = site.data.basevars %}
+    jpf version {{ bv.version }}, files generated {{ bv.timedate }}.
+    </font>
+</center>
+</footer>
+
+<!---------------- /FOOTER ------------------------------->
+
+
+  </body>
+</html>
+

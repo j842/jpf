@@ -79,7 +79,8 @@ https://www.ganttproject.biz/
 
 On either Ubuntu 20.04 or Debian 11 (including via WSL2 under Windows):
 ```
-sudo apt install build-essential libboost-date-time-dev libcppunit-dev podman gh sharutils
+sudo apt install build-essential libboost-date-time-dev libcppunit-dev podman gh ruby-full zlib1g-dev
+sudo gem install jekyll bundler webrick
 ```
 
 Clone:
