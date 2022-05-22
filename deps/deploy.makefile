@@ -28,9 +28,13 @@ $(JPF_SCRIPT_PATH) = \
 		-d libgcc-s1 \
 		-d libstdc++6 \
 		-d webfsd-jpf \
+		-d ruby-full \
+		-d build-essential \
+		-d zlib1g-dev \
 		--description \"John's Project Forecaster\" \
 		--url \"https://github.com/j842/jpf\" \
 		--maintainer \"John Enlow\" \
+		--after-install /opt/deps/dpkg/after-install.sh \
 		/opt/$(BIN_NAME)/$(JPF_NAME)=/usr/bin/$(JPF_NAME) \
 		/opt/includes/dpkg_include/=/ \
 #
