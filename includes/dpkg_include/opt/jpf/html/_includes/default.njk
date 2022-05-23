@@ -42,9 +42,9 @@
   </tr>
   {% endif %}
 
-  {% tablerow pair in row %}
+  <td>
   {{ pair[1] }}
-  {% endtablerow %}
+  </td>
   {% endfor %}
 </table>
 
@@ -53,7 +53,7 @@
 <footer>
 <center>
     <font size="-1">
-      {% assign bv = site.data.basevars %}
+    var bv = site.data.basevars
     jpf version {{ bv.version }}, files generated {{ bv.timedate }}.
     </font>
 </center>
