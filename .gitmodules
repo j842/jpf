@@ -1,0 +1,3 @@
+[submodule "includes/dpkg_include/opt/jpf/h/jpf/themes/ananke"]
+	path = includes/dpkg_include/opt/jpf/h/jpf/themes/ananke
+	url = https://github.com/theNewDynamic/gohugo-theme-ananke.git
