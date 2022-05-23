@@ -4,8 +4,11 @@
     <meta charset="utf-8">
     <title>{{ page.title }}</title>
     {{ page.headincludes }}
-</head>
 
+    <style>
+      body {  background-image: url('static/background.jpg'); }
+    </style>
+</head>
 
 <!----------------  HEADER ------------------------------->
 <h1><center>{{ page.title }}</center></h1>
@@ -26,42 +29,26 @@
 
 <!---------------- /HEADER ------------------------------->
 
-  <body>
+<!---------------- BODY    ------------------------------->
+<body>
+
     {{ content }}
 
+    <!---------------- (FOOTER)------------------------------->
 
-<!----------------  FOOTER ------------------------------->
+    <p style="margin-bottom:1cm;"/>
+    <hr>
+    <footer>
+    <center>
+        <font size="-1">
+          {%- assign vp = site.data.basevars | find:"key","version" -%}
+          {%- assign tp = site.data.basevars | find:"key","timedate" -%}
+          jpf version {{ vp.value }}, files generated {{ tp.value }}.
+        </font>
+    </center>
+    </footer>
 
-<table>
-  {%- for row in site.data.basevars -%}
-  {%- if forloop.first -%}
-  <tr>
-    {%- for pair in row -%}
-    <th>{{ pair[0] }}</th>
-    {%- endfor -%}
-  </tr>
-  {%- endif -%}
-
-  {%- tablerow pair in row -%}
-  {{ pair[1] }}
-  {%- endtablerow -%}
-  {%- endfor -%}
-</table>
-
-<p style="margin-bottom:1cm;"/>
-<hr>
-<footer>
-<center>
-    <font size="-1">
-      {%- assign vp = site.data.basevars | find:"key","version" -%}
-      {%- assign tp = site.data.basevars | find:"key","timedate" -%}
-      jpf version {{ vp.value }}, files generated {{ tp.value }}.
-    </font>
-</center>
-</footer>
-
-<!---------------- /FOOTER ------------------------------->
-
+    <!---------------- /BODY   ------------------------------->
 
   </body>
 </html>

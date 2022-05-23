@@ -12,6 +12,7 @@ version.h
 
 _site/
 node_modules/
+.jekyll-cache
 
 # Prerequisites
 *.d
