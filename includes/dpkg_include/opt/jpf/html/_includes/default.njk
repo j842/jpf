@@ -33,7 +33,7 @@
 <!----------------  FOOTER ------------------------------->
 
 <table>
-  {% for row in site.data.basevars %}
+  {% for row in basevars %}
   {% if forloop.first %}
   <tr>
     {% for pair in row %}
@@ -53,7 +53,8 @@
 <footer>
 <center>
     <font size="-1">
-    var bv = site.data.basevars
+    {% set bv = basevars %}
+    {{ bv }}
     jpf version {{ bv.version }}, files generated {{ bv.timedate }}.
     </font>
 </center>

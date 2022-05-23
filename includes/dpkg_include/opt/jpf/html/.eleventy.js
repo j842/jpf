@@ -1,11 +1,14 @@
 
+const CleanCSS = require("clean-css");
+const {parse} = require("csv-parse/sync");
+
 module.exports = function(eleventyConfig) {
-  eleventyConfig.addPassthroughCopy("verbatim/**");
-};
+  eleventyConfig.addPassthroughCopy({"verbatim/": "/"});
 
-const parse = require("csv-parse/lib/sync");
+  eleventyConfig.addFilter("cssmin", function(code) {
+    return new CleanCSS({}).minify(code).styles;
+  });
 
-module.exports = eleventyConfig => {
   eleventyConfig.addDataExtension("csv", (contents) => {
     const records = parse(contents, {
       columns: true,
