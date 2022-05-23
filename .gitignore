@@ -10,7 +10,7 @@ version.h
 /src/templates
 /src/support_files
 
-#_site/
+_site/
 node_modules/
 
 # Prerequisites
