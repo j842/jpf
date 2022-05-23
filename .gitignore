@@ -14,7 +14,7 @@ version.h
 node_modules/
 
 # 11ty output
-html/_site
+_site
 
 
 # Prerequisites
