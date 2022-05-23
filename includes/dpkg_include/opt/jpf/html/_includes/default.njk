@@ -1,3 +1,7 @@
+---
+
+---
+
 <!doctype html>
 <html>
   <head>
@@ -33,29 +37,36 @@
 <!----------------  FOOTER ------------------------------->
 
 <table>
-  {% for row in basevars %}
-  {% if forloop.first %}
+  {%- for row in basevars -%}
+  {%- if forloop.first -%}
   <tr>
-    {% for pair in row %}
-    <th>{{ pair[0] }}</th>
-    {% endfor %}
+    {%- for pair in row -%}
+    <th>
+      {{ pair[0] }}
+    </th>
+    {%- endfor -%}
   </tr>
-  {% endif %}
+  {%- endif -%}
 
+<tr>
+    {%- for pair in row -%}
   <td>
-  {{ pair[1] }}
+      {{ pair[1] }}
   </td>
-  {% endfor %}
+    {%- endfor -%}
+  {%- endfor -%}
+</tr>
 </table>
+
 
 <p style="margin-bottom:1cm;"/>
 <hr>
 <footer>
 <center>
     <font size="-1">
-    {% set bv = basevars %}
+
     {{ bv }}
-    jpf version {{ bv.version }}, files generated {{ bv.timedate }}.
+    jpf version {{ bv[version] }}, files generated {{ bv.timedate }}.
     </font>
 </center>
 </footer>

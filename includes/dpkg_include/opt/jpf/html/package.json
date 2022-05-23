@@ -13,6 +13,7 @@
     "csv-parse": "^5.0.4"
   },
   "dependencies": {
-    "@11ty/eleventy": "^1.0.1"
+    "@11ty/eleventy": "^1.0.1",
+    "csv-stringify": "^6.0.5"
   }
 }
