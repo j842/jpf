@@ -33,19 +33,19 @@
 <!----------------  FOOTER ------------------------------->
 
 <table>
-  {% for row in site.data.basevars %}
-  {% if forloop.first %}
+  {%- for row in site.data.basevars -%}
+  {%- if forloop.first -%}
   <tr>
-    {% for pair in row %}
+    {%- for pair in row -%}
     <th>{{ pair[0] }}</th>
-    {% endfor %}
+    {%- endfor -%}
   </tr>
-  {% endif %}
+  {%- endif -%}
 
-  {% tablerow pair in row %}
+  {%- tablerow pair in row -%}
   {{ pair[1] }}
-  {% endtablerow %}
-  {% endfor %}
+  {%- endtablerow -%}
+  {%- endfor -%}
 </table>
 
 <p style="margin-bottom:1cm;"/>
@@ -53,8 +53,9 @@
 <footer>
 <center>
     <font size="-1">
-      {% assign bv = site.data.basevars %}
-    jpf version {{ bv.version }}, files generated {{ bv.timedate }}.
+      {%- assign vp = site.data.basevars | find:"key","version" -%}
+      {%- assign tp = site.data.basevars | find:"key","timedate" -%}
+      jpf version {{ vp.value }}, files generated {{ tp.value }}.
     </font>
 </center>
 </footer>
