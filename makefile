@@ -133,9 +133,14 @@ setup:
 	sudo cp -r $(ROOT_DIR)/includes/dpkg_include/* /
 
 # create the podman (docker) images for building the debian package.
+.PHONY: images
 images:
 	make -C deps/podman
 
 # build the debian package.
 deb: $(BUILD_DIR)/$(JPF_NAME)
 	make -C deps -f deploy.makefile deb
+
+.PHONY: 11ty
+11ty: 
+	make -C includes/dpkg_include/opt/jpf/html

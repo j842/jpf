@@ -13,6 +13,9 @@ version.h
 # node modules
 node_modules/
 
+# 11ty output
+html/_site
+
 
 # Prerequisites
 *.d
