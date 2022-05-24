@@ -76,5 +76,6 @@ const std::string getOutputPath_Csv();
 const std::string getOutputPath_Log();
 
 const std::string getOptHTMLPath();
+const std::string getLocalTemplatePath();
 
 #endif

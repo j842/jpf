@@ -19,6 +19,7 @@
 #include "main.h"
 #include "simplecsv.h"
 #include "colours.h"
+#include "htmlcsvwriter.h"
 
 // --------------------------------------------------------------------
 
@@ -88,6 +89,9 @@ int cMain::run_refresh()
             s.schedule();
             s.createAllOutputFiles();
 
+            HTMLCSVWriter hcw;
+            hcw.createHTMLFolder(s);
+
             s.displayprojects_Console();
         }
     }
@@ -116,6 +120,9 @@ int cMain::run_console()
 
         s.displayprojects_Console();
         s.createAllOutputFiles();
+
+        HTMLCSVWriter hcw;
+        hcw.createHTMLFolder(s);
     }
     catch (TerminateRunException &pEx)
     {
@@ -147,6 +154,10 @@ int cMain::run_watch()
 
             timer tmr;
             s.createAllOutputFiles();
+
+            HTMLCSVWriter hcw;
+            hcw.createHTMLFolder(s);
+
             logdebug(S() << "File output done in " << std::setprecision(3) << tmr.stop() << "ms.");
         }
         catch (TerminateRunException &pEx)

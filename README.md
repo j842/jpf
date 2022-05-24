@@ -74,6 +74,15 @@ The Gantt chart software to read the output Gantt.csv is GanttProject:
 https://www.ganttproject.biz/
 
 
+## Your own graphs/themes
+
+You can modify the Jekyll templates to create your own look and feel for the HTML files generated, or to add new graphs or representations of the scheduled work. From your jpf project directory:
+
+```
+cp /opt/jpf/html ./template
+```
+
+Then edit the files in `template/`.
 
 ## Development Setup (Compiling jpf from source)
 

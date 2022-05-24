@@ -95,6 +95,8 @@ namespace scheduler
 
         static void getOutputWriters( std::vector<outputfilewriter> & writers);
 
+        void prioritySortArray(std::vector<int> &v) const;
+
     private:
 
         void create_output_directories() const;
@@ -132,8 +134,6 @@ namespace scheduler
         void _calc_project_summary();
 
         void _displaytable(std::ostream &ofs, std::vector<std::vector<std::string>> &vvs, std::string sepChar, bool consoleColour) const;
-
-        void prioritySortArray(std::vector<int> &v) const;
 
         scheduledperson &getPersonByName(const std::string name); // creates if not present, but checks against teams.
         unsigned int getItemIndexFromId(const std::string id) const;
@@ -183,6 +183,11 @@ namespace scheduler
         void resetSchedule();
 
 
+    public:
+        const inputfiles::constinputset & getInputs() const {return mI;}
+        const std::vector<scheduleditem> & getItems() const {return mItems;}
+        const std::vector<scheduledproject> & getProjects() const {return mProjects;}
+        const std::vector<worklogitem> & getWorkLog() const {return mWorkLog;}
     private:
         const inputfiles::constinputset mI;
         const inputfiles::projects & projects() const {return mI.mP;}
