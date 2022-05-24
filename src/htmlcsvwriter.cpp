@@ -59,22 +59,23 @@ void HTMLCSVWriter::write_projectbacklog_csv(const scheduler::scheduler &s) cons
         TERMINATE("Unable to open file " + projectbacklog_csv + " for writing.");
 
     simplecsv::outputr(outf, {"Project",
-                             "Team",
                              "Start",
                              "End",
-                             "Blocked",
-                             "Name"});
+                             "Task Name",
+                             "Team",
+                             "Blocked"
+});
 
     for (auto &x : v_sorted)
     {
         auto &z = s.getItems()[x];
 
         simplecsv::outputr(outf, {s.getProjects()[z.mProject].getName(),
+                                  z.mActualStart.getStr_nice_short(),
+                                  z.mActualEnd.getStr_nice_short(),
+                                  z.mDescription,
                                   s.getInputs().mT.at(z.mTeamNdx).mId,
-                                  z.mActualStart.getStr(),
-                                  z.mActualEnd.getStr(),
-                                  z.mBlockedBy,
-                                  z.mDescription});
+                                  z.mBlockedBy});
     }
 
     outf.close();
