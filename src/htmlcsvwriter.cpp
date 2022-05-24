@@ -128,6 +128,8 @@ void HTMLCSVWriter::write_basevars(const scheduler::scheduler & s) const
 
 void HTMLCSVWriter::run_jekyll() const
 {
+    timer tmr;
+
     loginfo("Running Jekyll build on "+getOutputPath_Jekyll());
     std::string cmd = "cd "+getOutputPath_Jekyll()+" ; /usr/local/bin/jekyll b 2>&1";
 
@@ -137,5 +139,5 @@ void HTMLCSVWriter::run_jekyll() const
     
     if (r.exitstatus!=0)
         throw (TerminateRunException(r.output));
-    loginfo("Jekyll Finished.");
+    loginfo(S()<<"Jekyll Finished in "<<tmr.stop()<<" ms.");
 }
