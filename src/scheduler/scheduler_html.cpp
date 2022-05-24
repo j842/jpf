@@ -11,9 +11,6 @@
 #include "utils.h"
 #include "settings.h"
 #include "colours.h"
-#include "testfile.html.h"
-#include "header.html.h"
-#include "footer.html.h"
 
 namespace scheduler
 {
@@ -659,42 +656,42 @@ namespace scheduler
         ofs.close();
     }
 
-    void scheduler::loadStandardRules(std::map<std::string,std::string> & rules) const
-    {
-        time_t now = time(0);
-        char* date_time = ctime(&now);
+    // void scheduler::loadStandardRules(std::map<std::string,std::string> & rules) const
+    // {
+    //     time_t now = time(0);
+    //     char* date_time = ctime(&now);
 
-        rules["^title^"] = __protect(gSettings().getTitle());
-        rules["^version^"] = __protect(gSettings().getJPFFullVersionStr());
-        rules["^timedate^"] = std::string(date_time);
+    //     rules["^title^"] = __protect(gSettings().getTitle());
+    //     rules["^version^"] = __protect(gSettings().getJPFFullVersionStr());
+    //     rules["^timedate^"] = std::string(date_time);
 
-        // https://github.com/LexmarkWeb/csi.js
-        rules["^datainclude^"] = R"(<script>window.onload=function(){function a(a,b){var c=/^(?:file):/,d=new XMLHttpRequest,e=0;d.onreadystatechange=function(){4==d.readyState&&(e=d.status),c.test(location.href)&&d.responseText&&(e=200),4==d.readyState&&200==e&&(a.outerHTML=d.responseText)};try{d.open("GET",b,!0),d.send()}catch(f){}}var b,c=document.getElementsByTagName("*");for(b in c)c[b].hasAttribute&&c[b].hasAttribute("data-include")&&a(c[b],c[b].getAttribute("data-include"))}; </script>)";
-    }
+    //     // https://github.com/LexmarkWeb/csi.js
+    //     rules["^datainclude^"] = R"(<script>window.onload=function(){function a(a,b){var c=/^(?:file):/,d=new XMLHttpRequest,e=0;d.onreadystatechange=function(){4==d.readyState&&(e=d.status),c.test(location.href)&&d.responseText&&(e=200),4==d.readyState&&200==e&&(a.outerHTML=d.responseText)};try{d.open("GET",b,!0),d.send()}catch(f){}}var b,c=document.getElementsByTagName("*");for(b in c)c[b].hasAttribute&&c[b].hasAttribute("data-include")&&a(c[b],c[b].getAttribute("data-include"))}; </script>)";
+    // }
 
 
-    void scheduler::outputHTML_testfile(std::ostream &ofs) const
-    {
-        std::map<std::string,std::string> rules;
-        loadStandardRules(rules);
-        testfile_html tfh;
-        tfh.output(ofs,&rules);
-    }
+    // void scheduler::outputHTML_testfile(std::ostream &ofs) const
+    // {
+    //     std::map<std::string,std::string> rules;
+    //     loadStandardRules(rules);
+    //     testfile_html tfh;
+    //     tfh.output(ofs,&rules);
+    // }
 
-    void scheduler::outputHTML_header(std::ostream &ofs) const
-    {
-        std::map<std::string,std::string> rules;
-        loadStandardRules(rules);
-        header_html tfh;
-        tfh.output(ofs,&rules);
-    }
+    // void scheduler::outputHTML_header(std::ostream &ofs) const
+    // {
+    //     std::map<std::string,std::string> rules;
+    //     loadStandardRules(rules);
+    //     header_html tfh;
+    //     tfh.output(ofs,&rules);
+    // }
 
-    void scheduler::outputHTML_footer(std::ostream &ofs) const
-    {
-        std::map<std::string,std::string> rules;
-        loadStandardRules(rules);
-        footer_html tfh;
-        tfh.output(ofs,&rules);
-    }
+    // void scheduler::outputHTML_footer(std::ostream &ofs) const
+    // {
+    //     std::map<std::string,std::string> rules;
+    //     loadStandardRules(rules);
+    //     footer_html tfh;
+    //     tfh.output(ofs,&rules);
+    // }
 
 } // namespace

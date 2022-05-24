@@ -116,11 +116,11 @@ namespace scheduler
         void outputHTML_People(std::ostream &ofs) const;
         void outputHTML_PeopleEffort(std::ostream & ofs) const;
         void outputHTML_RawBacklog(std::ostream &ofs) const;
-        void outputHTML_testfile(std::ostream &ofs) const;
-        void outputHTML_header(std::ostream &ofs) const;
-        void outputHTML_footer(std::ostream &ofs) const;
+        // void outputHTML_testfile(std::ostream &ofs) const;
+        // void outputHTML_header(std::ostream &ofs) const;
+        // void outputHTML_footer(std::ostream &ofs) const;
 
-        void loadStandardRules(std::map<std::string,std::string> & rules) const;
+        // void loadStandardRules(std::map<std::string,std::string> & rules) const;
 
     private:
         void _prepare_to_schedule();

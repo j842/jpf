@@ -50,6 +50,7 @@ namespace inputfiles
         workdate mEarliestStart;
         std::vector<resource> mResources;
         std::vector<std::string> mDependencies;
+        std::vector<std::string> mTags;
         std::string mComments;
 
     private:

@@ -2,7 +2,7 @@
 
 JPF_VERSION := 0.0.16
 JPF_RELEASE := 0
-INPUT_VERSION := 12
+INPUT_VERSION := 13
 #---------------------------------
 
 BIN_NAME:= build

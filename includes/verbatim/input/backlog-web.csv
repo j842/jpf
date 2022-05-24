@@ -1,5 +1,6 @@
-Project,ID,Description,Min Calendar WorkDays,Remaining DevDays Total,Earliest Start,Blocking,Contributing,Depends On,Comments
-Webserver,We.01,Logins,0,10.00,,Stu,Mark,,
-Webserver,,Security,0,5.00,,Sarah,,We.01,
-Webserver,We.02,Home page,0,15.00,,Mark,,We.01,
-Webserver,,Management Component,0,5.00,,Sarah,Stu,"We.01, We.02",Depends on both logins and home page.
+Project,ID,Description,Min Calendar WorkDays,Remaining DevDays Total,Earliest Start,Blocking,Contributing,Depends On,Tags,Comments
+Webserver,We.01,Logins,0,10.00,,Stu,Mark,,.
+Webserver,,Security,0,5.00,,Sarah,,We.01,.
+Webserver,We.02,Home page,0,15.00,,Mark,,We.01,.
+Webserver,We.03,Management Component,0,5.00,,Sarah,Stu,"We.01, We.02",,Depends on both logins and home page.
+Webserver,,Ready for Release,0,0,,,,"We.03","Milestone,Marketing","A completion milestone, that marketing will care about"
