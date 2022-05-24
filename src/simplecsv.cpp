@@ -178,7 +178,7 @@ std::string simplecsv::makesafe(std::string s)
 }
 
 
-void simplecsv::output(std::ostream & os, const std::vector<std::string> csvitems)
+void simplecsv::output(std::ostream & os, const std::vector<std::string> & csvitems)
 {
     for (unsigned int i=0;i<csvitems.size();++i)
         if (i>0)
@@ -187,7 +187,7 @@ void simplecsv::output(std::ostream & os, const std::vector<std::string> csvitem
             os << makesafe(csvitems[i]);
 }
 
-void simplecsv::outputr(std::ostream & os, const std::vector<std::string> csvitems)
+void simplecsv::outputr(std::ostream & os, const std::vector<std::string> & csvitems)
 {
     output(os,csvitems);
     os << std::endl;

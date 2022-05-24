@@ -3,31 +3,60 @@
 #include "htmlcsvwriter.h"
 #include "simplecsv.h"
 #include "settings.h"
+#include "utils.h"
+#include "command.h"
+
+simpleDataCSV::simpleDataCSV(std::string name) : mStream(getOutputPath_Jekyll() + "_data/" + name +".csv")
+{
+    if (!mStream.is_open())
+        TERMINATE("Unable to open file " + getOutputPath_Jekyll() + "_data/" + name + ".csv for writing.");
+}
+simpleDataCSV::~simpleDataCSV()
+{
+    mStream.close();
+}
+
+void simpleDataCSV::addrow(const std::vector<std::string> & row)
+{
+    simplecsv::outputr(mStream, row);
+}
+
+
 
 HTMLCSVWriter::HTMLCSVWriter()
 {
 }
 
+void HTMLCSVWriter::recreate_Directory(std::string path) const
+{
+    if (std::filesystem::exists(path))
+        std::filesystem::remove_all(path);
+    if (!std::filesystem::create_directory(path))
+        TERMINATE(S() << "Could not create directory: " << path);
+    logdebug(S() << "Created directory: " << path);
+}
+
+
 void HTMLCSVWriter::createHTMLFolder(const scheduler::scheduler &s) const
 {
+    recreate_Directory(getOutputPath_Jekyll());
+    recreate_Directory(getOutputPath_Html());
+
     CopyHTMLFolder();
+    write_basevars(s);
     write_projectbacklog_csv(s);
+
+    run_jekyll();
+
+    copy_site();
 }
 
 void HTMLCSVWriter::CopyHTMLFolder() const
-{
-
-    if (std::filesystem::exists(getOutputPath_Html()))
-        std::filesystem::remove_all(getOutputPath_Html());
-    if (!std::filesystem::create_directory(getOutputPath_Html()))
-        TERMINATE(S() << "Could not create directory: " << getOutputPath_Html());
-    logdebug(S() << "Created directory: " << getOutputPath_Html());
-
-    // ---------------------------
+{    // ---------------------------
 
     // also copy across all support_files into the HTML directory.
     {
-        std::string html = getOutputPath_Html();
+        std::string html = getOutputPath_Jekyll();
         std::string opt1 = getLocalTemplatePath();
         std::string opt2 = getOptHTMLPath();
 
@@ -48,35 +77,65 @@ void HTMLCSVWriter::CopyHTMLFolder() const
     // ----------------------------
 }
 
+void HTMLCSVWriter::copy_site() const
+{
+    namespace fs = std::filesystem;
+    fs::copy(getOutputPath_Jekyll()+"_site", getOutputPath_Html(), fs::copy_options::recursive | fs::copy_options::overwrite_existing);
+}
+
+
 void HTMLCSVWriter::write_projectbacklog_csv(const scheduler::scheduler &s) const
 {
-    std::string projectbacklog_csv = getOutputPath_Html() + "_data/projectbacklog.csv";
+    simpleDataCSV csv("projectbacklog");
+
     std::vector<int> v_sorted;
     s.prioritySortArray(v_sorted);
 
-    std::ofstream outf(projectbacklog_csv);
-    if (!outf.is_open())
-        TERMINATE("Unable to open file " + projectbacklog_csv + " for writing.");
-
-    simplecsv::outputr(outf, {"Project",
-                             "Start",
-                             "End",
-                             "Task Name",
-                             "Team",
-                             "Blocked"
-});
+    csv.addrow({"Project",
+                "Start",
+                "End",
+                "Task Name",
+                "Team",
+                "Blocked"
+                });
 
     for (auto &x : v_sorted)
     {
         auto &z = s.getItems()[x];
 
-        simplecsv::outputr(outf, {s.getProjects()[z.mProject].getName(),
-                                  z.mActualStart.getStr_nice_short(),
-                                  z.mActualEnd.getStr_nice_short(),
-                                  z.mDescription,
-                                  s.getInputs().mT.at(z.mTeamNdx).mId,
-                                  z.mBlockedBy});
+        csv.addrow({s.getProjects()[z.mProject].getName(),
+                    z.mActualStart.getStr_nice_short(),
+                    z.mActualEnd.getStr_nice_short(),
+                    z.mDescription,
+                    s.getInputs().mT.at(z.mTeamNdx).mId,
+                    z.mBlockedBy});
     }
+}
 
-    outf.close();
+
+void HTMLCSVWriter::write_basevars(const scheduler::scheduler & s) const
+{
+    simpleDataCSV csv("basevars");
+    time_t now = time(0);
+    // convert now to string form
+    char* date_time = ctime(&now);
+
+    csv.addrow({"key","value"});
+    csv.addrow({"version", gSettings().getJPFFullVersionStr()});
+    csv.addrow({"timedate", date_time });
+}
+
+
+void HTMLCSVWriter::run_jekyll() const
+{
+    loginfo("Running Jekyll build on "+getOutputPath_Jekyll());
+    std::string cmd = "cd "+getOutputPath_Jekyll()+" ; /usr/local/bin/jekyll b 2>&1";
+
+    raymii::Command c;
+
+    raymii::CommandResult r=c.exec(cmd);
+    
+    if (r.exitstatus!=0)
+        throw (TerminateRunException(r.output));
+    loginfo("Jekyll Finished.");
 }
