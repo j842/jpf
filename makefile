@@ -33,6 +33,8 @@ SUP_DIR:=includes/verbatim
 SUPFILES:=$(wildcard $(SUP_DIR)/*)
 SUPSRC:=$(SUPFILES:includes/verbatim/%=src/support_files/generate_%.cpp)
 
+ALLSUPFILES := $(shell find $(SUP_DIR) -name '*')
+
 VER_HEADER=src/version.h
 
 # Find all the C and C++ files we want to compile
@@ -73,7 +75,7 @@ $(BUILD_DIR)/%.cpp.o: %.cpp
 
 # make support_files files
 .PRECIOUS: src/support_files/generate_%.cpp
-src/support_files/generate_%.cpp: $(SUP_DIR)/% $(ROOT_DIR)/deps/scripts/dir2cpp
+src/support_files/generate_%.cpp: $(SUP_DIR)/% $(ROOT_DIR)/deps/scripts/dir2cpp $(ALLSUPFILES)
 	@printf "%b" "$(CRE_COLOR)Creating  $(OBJ_COLOR)$(@)$(NO_COLOR)\n";
 	@mkdir -p $(dir $@)
 	@$(ROOT_DIR)/deps/scripts/dir2cpp "$<" "$(basename $@)"
