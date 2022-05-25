@@ -7,7 +7,7 @@ headincludes: |
 ---
 
 <style>
-  .ganttprojects .bar-wrapper { pointer-events: none; }
+  {% comment %} .ganttprojects .bar-wrapper { pointer-events: none; } {% endcomment %}
   .ganttprojects .bar { fill: tomato; }
   {% for row in site.data.projectgantt %}
     .cc-{{row.TaskID}} .bar { fill: {{ row.Colour }}; }
@@ -38,4 +38,5 @@ headincludes: |
 var ganttprojects = new Gantt(".ganttprojects", ganttprojectstasks);
 var new_height = ganttprojects.$svg.getAttribute('height') - 80;
 ganttprojects.$svg.setAttribute('height', new_height);
+ganttprojects.change_view_mode('Month');
 </script>

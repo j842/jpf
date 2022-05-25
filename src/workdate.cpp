@@ -107,7 +107,7 @@ std::string simpledate::getAsGoogleNewDate() const
 std::string simpledate::getYYYY_MM_DD() const
 {
     const std::locale fmt(std::locale::classic(),
-                          new boost::gregorian::date_facet("%y-%m-%d"));
+                          new boost::gregorian::date_facet("%Y-%m-%d"));
     std::string d = _getstr(fmt);
     return d;
 }
