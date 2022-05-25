@@ -5,6 +5,7 @@
 #include "settings.h"
 #include "utils.h"
 #include "command.h"
+#include "colours.h"
 
 simpleDataCSV::simpleDataCSV(std::string name) : mStream(getOutputPath_Jekyll() + "_data/" + name +".csv")
 {
@@ -45,6 +46,7 @@ void HTMLCSVWriter::createHTMLFolder(const scheduler::scheduler &s) const
     CopyHTMLFolder();
     write_basevars(s);
     write_projectbacklog_csv(s);
+    write_projectgantt_csv(s);
 
     run_jekyll();
 
@@ -109,6 +111,51 @@ void HTMLCSVWriter::write_projectbacklog_csv(const scheduler::scheduler &s) cons
                     z.mDescription,
                     s.getInputs().mT.at(z.mTeamNdx).mId,
                     z.mBlockedBy});
+    }
+}
+
+struct rgbcolour
+{
+    int r, g, b;
+};
+
+void HTMLCSVWriter::write_projectgantt_csv(const scheduler::scheduler &s) const
+{
+    simpleDataCSV csv("projectgantt");    
+
+    csv.addrow({
+        "TaskID",
+        "TaskName",
+        "Start",
+        "End",
+        "Colour"
+    });
+
+    std::vector<rgbcolour> Colours( s.getProjects().size(), rgbcolour({0,0,0}));
+    colours::ColorGradient heatMapGradient;
+    unsigned int ci = 0;
+    for (ci = 0; ci < s.getProjects().size(); ++ci)
+    {
+        float r, g, b;
+        float v = (float)ci / (float)(s.getProjects().size());
+        heatMapGradient.getColorAtValue(v, r, g, b);
+        Colours[ci] = rgbcolour{.r = (int)(r * 255.0 + 0.5), .g = (int)(g * 255.0 + 0.5), .b = (int)(b * 255.0 + 0.5)};
+    }
+
+    int i=0;
+    for (auto & p : s.getProjects())
+    {        
+        std::string colour = S() << "rgb("<<Colours[i].r <<", "<<Colours[i].g<<", "<<Colours[i].b<<")";
+
+        ++i;
+
+        csv.addrow({
+            S()<<"Task"<< i, // first task is Task1
+            p.getId(),
+            p.mActualStart.getYYYY_MM_DD(),
+            p.mActualEnd.getYYYY_MM_DD(),
+            colour
+        });
     }
 }
 

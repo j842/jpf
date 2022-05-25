@@ -45,6 +45,7 @@ class simpledate
         std::string getStr_nice_short() const;
         std::string getAsGoogleNewDate() const;
         std::string getStr_FileName() const;
+        std::string getYYYY_MM_DD() const;
 
         void setForever();
         void setToStart();

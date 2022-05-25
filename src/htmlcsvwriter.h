@@ -25,6 +25,7 @@ class HTMLCSVWriter
     private:
         void CopyHTMLFolder() const;
         void write_projectbacklog_csv(const scheduler::scheduler & s) const;
+        void write_projectgantt_csv(const scheduler::scheduler & s) const;
         void write_basevars(const scheduler::scheduler & s) const;
 
         void recreate_Directory(std::string path) const;
