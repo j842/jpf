@@ -163,10 +163,8 @@ int cMain::run_watch()
         catch (TerminateRunException &pEx)
         {
             std::vector<scheduler::outputfilewriter> writers;
-            scheduler::scheduler::getOutputWriters(writers);
-            for (auto &x : writers)
-                if (x.mOutputType == scheduler::kFile_HTML)
-                    scheduler::scheduler::outputHTMLError(S()<<getOutputPath_Html() << x.mFileName, pEx.what());
+            for (auto x : {"index.html","gantt_projects.html","dashboard.html","people_effort.html","project_backlog.html"})
+                scheduler::scheduler::outputHTMLError(S()<<getOutputPath_Html() << x, pEx.what());
             logerror(pEx.what());
         }
 
