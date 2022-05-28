@@ -2,5 +2,21 @@
 
 if [[ $(id -u) -ne 0 ]] ; then echo "Please run as root" ; exit 1 ; fi
 
-gem install jekyll bundler webrick
+
+if ! command -v gem &> /dev/null
+then
+    echo "Ruby's gem command could not be found - aborting!"
+    exit 1
+fi
+
+
+if ! command -v jekyll &> /dev/null
+then
+    echo "Jekyll could not be found - installing"
+    gem install jekyll bundler webrick
+fi
+
+echo "Jekyll is available."
+
+exit 0
 
