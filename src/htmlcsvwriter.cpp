@@ -45,6 +45,7 @@ void HTMLCSVWriter::createHTMLFolder(const scheduler::scheduler &s) const
     write_projectbacklog_csv(s);
     write_projectgantt_csv(s);
     write_peopleeffortbymonth_months_people_csvs(s);
+    write_dashboard(s);
 
     run_jekyll();
 
@@ -161,6 +162,7 @@ void HTMLCSVWriter::write_basevars(const scheduler::scheduler &s) const
     csv.addrow({"key", "value"});
     csv.addrow({"version", gSettings().getJPFFullVersionStr()});
     csv.addrow({"timedate", date_time});
+    csv.addrow({"maxmonth", S()<<get_maxmonth(s)});
 }
 
 void HTMLCSVWriter::run_jekyll() const
@@ -245,6 +247,26 @@ void HTMLCSVWriter::write_peopleeffortbymonth_months_people_csvs(const scheduler
             csv3.addrow({pCode,p.mName});
         }
     }
+
+    {
+        simpleDataCSV csv4("projects");
+        csv4.addrow({"ProjectId", "ProjectName", "ProjectColour", "ProjectType"});
+
+        std::vector<scheduler::tProjectInfo> pi;
+        s.getProjectExtraInfo(pi);
+
+        for (auto p : pi)
+        {
+            auto &c = p.mColour;
+            std::string colour = S() << "rgb(" << c.r << ", " << c.g << ", " << c.b << ")";
+            csv4.addrow({
+                p.mId,
+                p.mName,
+                colour,
+                s.ItemType2String(p.mType)
+            });
+        }
+    }
 }
 
 unsigned long HTMLCSVWriter::get_maxmonth(const scheduler::scheduler &s) const
@@ -260,3 +282,74 @@ unsigned long HTMLCSVWriter::get_maxmonth(const scheduler::scheduler &s) const
     }
     return maxmonth;
 }
+
+void HTMLCSVWriter::write_dashboard(const scheduler::scheduler &s) const
+{
+    std::vector<std::vector<double>> DevDaysTally;
+    std::vector<scheduler::tProjectInfo> ProjectInfo;
+    s.CalculateDevDaysTally(DevDaysTally, ProjectInfo);
+    ASSERT(DevDaysTally.size()>0);
+    if (DevDaysTally.size() == 0)
+        return; // no data.
+    unsigned long maxmonth = DevDaysTally[0].size();
+
+
+    simpleDataCSV csv("projectcostbymonth");
+
+    csv.addrow(
+        {"MonthNum",
+         "DateStr",
+         "ProjectName",
+         "ProjectColour",
+         "ProjectId",
+         "ProjectCost"});
+
+    for (unsigned int i = 0; i < DevDaysTally.size(); ++i)
+        for (unsigned int m=0; m<maxmonth ; ++m)
+        {
+            auto &c = ProjectInfo[i].mColour;
+             csv.addrow({
+                S()<<m,
+                monthIndex(m).getString(),
+                ProjectInfo[i].mName,
+                S()<< "rgb(" << c.r << ", " << c.g << ", " << c.b << ")",
+                ProjectInfo[i].mId,
+                S() << (int)(0.5+ gSettings().dailyDevCost() * DevDaysTally[i][m])
+            });
+        }
+}
+
+
+
+        // for (unsigned int i = 0; i < DevDaysTally.size(); ++i)
+        // {
+        //     ofs << "var trace" << i << " ={" << std::endl;
+        //     {
+        //         listoutput lo(ofs, "x: [", ", ", "], ");
+        //         for (unsigned int m = 0; m < maxmonth; ++m)
+        //             lo.writehq(monthIndex(m).getString());
+        //     }
+
+        //     ofs << std::endl;
+        //     {
+        //         listoutput lo(ofs, "y: [", ", ", "], ");
+        //         for (unsigned int m = 0; m < maxmonth; ++m)
+        //             lo.write(S() << std::setprecision(3) << gSettings().dailyDevCost() * DevDaysTally[i][m]);
+        //     }
+        //     ofs << std::endl
+        //         << "name: '" << ProjectInfo[i].mName << "'," << std::endl;
+
+        //     auto &c = ProjectInfo[i].mColour;
+        //     ofs << "marker: { color: 'rgb(" << c.r << ", " << c.g << ", " << c.b << ")' }," << std::endl;
+
+        //     ofs << "type: 'bar'," << std::endl
+        //         << "};" << std::endl
+        //         << std::endl;
+        // }
+
+        // {
+        //     listoutput lo(ofs, "var data = [", ", ", "];");
+        //     for (auto it = ProjectInfo.size(); it > 0; --it)
+        //         lo.write(S() << "trace" << it - 1);
+        // }
+    

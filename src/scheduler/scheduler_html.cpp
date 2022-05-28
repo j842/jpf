@@ -15,13 +15,8 @@
 namespace scheduler
 {
 
-    void scheduler::CalculateDevDaysTally(
-        std::vector<std::vector<double>> &DevDaysTally, // [project][month in future]
-        std::vector<tProjectInfo>        &ProjectInfo,
-        tNdx personNdx
-    ) const
+    void scheduler::getProjectExtraInfo(std::vector<tProjectInfo> &ProjectInfo) const
     {
-        DevDaysTally.resize(mProjects.size() + kNumItemTypes);
         ProjectInfo.resize(mProjects.size() + kNumItemTypes);
 
         // set up project labels.
@@ -41,6 +36,48 @@ namespace scheduler
             ProjectInfo[x+3].mId="Overhead";
             ProjectInfo[x+3].mName="New Project Overhead";
         }
+
+
+        // tidy up BAU 
+        {
+            unsigned int pi = 0;
+            for (pi=0; pi < mProjects.size(); ++pi)
+                ProjectInfo[pi].mType = mProjects[pi].getBAU() ? kBAU : kNew;
+            ProjectInfo[pi+0].mType=kHol; // holidays 
+            ProjectInfo[pi+1].mType=kUna; // slack - assume new projects.
+            ProjectInfo[pi+2].mType=kBAU; // BAU.
+            ProjectInfo[pi+3].mType=kNew; // overhead.
+        }
+
+
+        // and Colours
+        {
+            colours::ColorGradient heatMapGradient;
+            unsigned int ci = 0;
+            for (ci=0; ci < mProjects.size(); ++ci)
+            {
+                float r, g, b;
+                float v = (float)ci / (float)(mProjects.size() - 4);
+                heatMapGradient.getColorAtValue(v, r, g, b);
+                ProjectInfo[ci].mColour = rgbcolour{.r = (int)(r * 255.0 + 0.5), .g = (int)(g * 255.0 + 0.5), .b = (int)(b * 255.0 + 0.5)};
+            }
+            ProjectInfo[ci+0].mColour = rgbcolour{.r = 176, .g = 82 , .b = 205}; // Holidays
+            ProjectInfo[ci+1].mColour = rgbcolour{.r = 210, .g = 180, .b = 140}; // slack
+            ProjectInfo[ci+2].mColour = rgbcolour{.r = 100, .g = 100, .b = 100}; // BAU
+            ProjectInfo[ci+3].mColour = rgbcolour{.r = 200, .g = 200, .b = 200}; // overhead
+        }
+    }
+
+
+
+    void scheduler::CalculateDevDaysTally(
+        std::vector<std::vector<double>> &DevDaysTally, // [project][month in future]
+        std::vector<tProjectInfo>        &ProjectInfo,
+        tNdx personNdx
+    ) const
+    {
+        DevDaysTally.resize(mProjects.size() + kNumItemTypes);
+        getProjectExtraInfo(ProjectInfo);
 
         // determine the maximum month to consider.
         unsigned long maxmonth = 0;
@@ -115,33 +152,6 @@ namespace scheduler
             }
         }
 
-        // tidy up BAU 
-        {
-            unsigned int pi = 0;
-            for (pi=0; pi < mProjects.size(); ++pi)
-                ProjectInfo[pi].mType = mProjects[pi].getBAU() ? kBAU : kNew;
-            ProjectInfo[pi+0].mType=kHol; // holidays 
-            ProjectInfo[pi+1].mType=kUna; // slack - assume new projects.
-            ProjectInfo[pi+2].mType=kBAU; // BAU.
-            ProjectInfo[pi+3].mType=kNew; // overhead.
-        }
-
-        // and Colours
-        {
-            colours::ColorGradient heatMapGradient;
-            unsigned int ci = 0;
-            for (ci=0; ci < mProjects.size(); ++ci)
-            {
-                float r, g, b;
-                float v = (float)ci / (float)(mProjects.size() - 4);
-                heatMapGradient.getColorAtValue(v, r, g, b);
-                ProjectInfo[ci].mColour = rgbcolour{.r = (int)(r * 255.0 + 0.5), .g = (int)(g * 255.0 + 0.5), .b = (int)(b * 255.0 + 0.5)};
-            }
-            ProjectInfo[ci+0].mColour = rgbcolour{.r = 176, .g = 82 , .b = 205}; // Holidays
-            ProjectInfo[ci+1].mColour = rgbcolour{.r = 210, .g = 180, .b = 140}; // slack
-            ProjectInfo[ci+2].mColour = rgbcolour{.r = 100, .g = 100, .b = 100}; // BAU
-            ProjectInfo[ci+3].mColour = rgbcolour{.r = 200, .g = 200, .b = 200}; // overhead
-        }
 
         // now drop empty projects
         for (long pi = (long)DevDaysTally.size()-1; pi>=0 ; --pi)

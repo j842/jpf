@@ -116,6 +116,12 @@ namespace scheduler
             std::vector<tProjectInfo> &ProjectInfo,
             tNdx personNdx = ULONG_MAX) const;
 
+        void getProjectExtraInfo(
+            std::vector<tProjectInfo> &ProjectInfo
+        ) const;
+        std::string ItemType2String(tItemTypes i) const;
+
+
     private:
         void create_output_directories() const;
 
@@ -169,7 +175,6 @@ namespace scheduler
         static void HTMLheaders(std::ostream &ofs, std::string inHead);
         static std::string __protect(std::string s); // remove half quotes.
         static void writelist(std::ostream &oss, const std::vector<std::string> &v);
-        std::string ItemType2String(tItemTypes i) const;
 
     private:
         bool mScheduled;

@@ -28,6 +28,7 @@ class HTMLCSVWriter
         void write_projectgantt_csv(const scheduler::scheduler & s) const;
         void write_basevars(const scheduler::scheduler & s) const;
         void write_peopleeffortbymonth_months_people_csvs(const scheduler::scheduler & s) const;
+        void write_dashboard(const scheduler::scheduler & s) const;
 
         void recreate_Directory(std::string path) const;
 
