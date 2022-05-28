@@ -1,4 +1,4 @@
-name: Test the Deployed Debian Package
+name: Test the Deployed JPF Package
 
 on:
   workflow_dispatch
