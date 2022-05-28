@@ -78,7 +78,7 @@ void HTMLCSVWriter::CopyHTMLFolder() const
         // recursive copy getOptHTMLPath to getOutputPath_Html
         fs::copy(opt, html, fs::copy_options::recursive | fs::copy_options::overwrite_existing);
 
-        std::string ganttpath = html + "_site/static/gantt"; // one of the paths we expect to be present.
+        std::string ganttpath = html + "static/gantt"; // one of the paths we expect to be present.
         if (!fs::exists(ganttpath))
             fatal("HTML contribution directory was not successfully created: " + ganttpath);
 
