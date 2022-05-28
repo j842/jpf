@@ -1,4 +1,4 @@
-name: Test jpf
+name: Build and Test JPF
 on:
   push:
     branches: [ main ]

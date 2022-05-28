@@ -1,4 +1,4 @@
-name: Deploy deb Package
+name: Make and Deploy JPF Package
 
 on:
   workflow_dispatch

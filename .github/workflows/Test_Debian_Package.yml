@@ -1,4 +1,4 @@
-name: Test Debian Package
+name: Test the Deployed Debian Package
 
 on:
   workflow_dispatch
