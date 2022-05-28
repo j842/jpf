@@ -112,7 +112,7 @@ check: $(JPF_EXE)
 # use a GitHub Action to build and upload the debian package to packagecloud on Ubuntu 20.04 (i.e. release to the world!)
 deploy:
 	@gh auth login --with-token < ~/.github_token
-	@gh workflow run deploy_package.yml
+	@gh workflow run Build_and_Deploy_JPF.yml
 
 # initial setup for dev environment.
 setup:
