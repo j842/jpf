@@ -269,3 +269,27 @@ const std::string getLocalTemplatePath()
     else
         return p;
 }
+const std::string getExePath()
+{
+    std::vector<char> buf(400);
+    size_t len;
+
+    do
+    {
+        buf.resize(buf.size() + 100);
+        len = ::readlink("/proc/self/exe", &(buf[0]), buf.size());
+    } while (buf.size() == len);
+
+    if (len > 0)
+    {
+        buf[len] = '\0';
+        std::string exepath(&(buf[0]));
+        exepath= std::filesystem::canonical(exepath);
+        if (exepath.length()==0)
+            return "";
+        if (exepath[exepath.length()-1]!='/')
+            exepath.push_back('/');
+    }
+    /* handle error */
+    return "";
+}

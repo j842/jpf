@@ -58,12 +58,21 @@ void HTMLCSVWriter::CopyHTMLFolder() const
     // also copy across all support_files into the HTML directory.
     {
         std::string html = getOutputPath_Jekyll();
-        std::string opt1 = getLocalTemplatePath();
-        std::string opt2 = getOptHTMLPath();
+        std::string opt_debug = getExePath() + "includes/dpkg_include/opt/jpf/html";
+        std::string opt_local = getLocalTemplatePath();
+        std::string opt_system = getOptHTMLPath();
 
-        std::string opt = opt2;
-        if (std::filesystem::exists(opt1))
-            opt = opt1;
+        std::string opt = opt_system;
+        if (std::filesystem::exists(opt_local))
+        {
+            loginfo("Using project directory for Jekyll template: "+opt_local);
+            opt = opt_local;
+        } 
+        else if (std::filesystem::exists(opt_debug))
+        {
+            loginfo("Using local directory for Jekyll files: "+opt_debug);
+            opt=opt_debug;
+        } 
 
         namespace fs = std::filesystem;
         // recursive copy getOptHTMLPath to getOutputPath_Html
