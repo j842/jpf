@@ -1,0 +1,6 @@
+TaskID,TaskName,Start,End,Colour
+Task1,Webserver,02/05/22,08/06/22,"rgb(0, 0, 255)"
+Task2,Android App,02/05/22,06/05/22,"rgb(0, 204, 255)"
+Task3,iPhone App,05/05/22,27/05/22,"rgb(0, 255, 102)"
+Task4,Desktop Client,06/05/22,08/06/22,"rgb(102, 255, 0)"
+Task5,Concrete Sculpture,26/05/22,06/06/22,"rgb(255, 204, 0)"

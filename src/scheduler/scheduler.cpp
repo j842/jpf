@@ -48,17 +48,18 @@ namespace scheduler
             outputfilewriter("workchunks.csv", kFile_CSV, &scheduler::displayworkchunks),
             outputfilewriter("milestones.txt", kFile_Text, &scheduler::displaymilestones),
             outputfilewriter("raw_backlog.txt", kFile_Text, &scheduler::displaybacklog_raw),
-            outputfilewriter("projects.txt", kFile_Text, &scheduler::displayprojects),
-            outputfilewriter("index.html", kFile_HTML, &scheduler::outputHTML_Index),
-            outputfilewriter("header.html", kFile_HTML, &scheduler::outputHTML_header),
-            outputfilewriter("footer.html", kFile_HTML, &scheduler::outputHTML_footer),
-            outputfilewriter("people.html", kFile_HTML, &scheduler::outputHTML_People),
-            outputfilewriter("costdashboard.html", kFile_HTML, &scheduler::outputHTML_Dashboard),
-            outputfilewriter("highlevelgantt.html", kFile_HTML, &scheduler::outputHTML_High_Level_Gantt),
-            outputfilewriter("detailedgantt.html", kFile_HTML, &scheduler::outputHTML_Detailed_Gantt),
-            outputfilewriter("raw_backlog.html", kFile_HTML, &scheduler::outputHTML_RawBacklog),
-            outputfilewriter("peopleeffort.html", kFile_HTML, &scheduler::outputHTML_PeopleEffort),
-            outputfilewriter("testfile.html", kFile_HTML, &scheduler::outputHTML_testfile)};
+            outputfilewriter("projects.txt", kFile_Text, &scheduler::displayprojects)
+    };
+            // outputfilewriter("index.html", kFile_HTML, &scheduler::outputHTML_Index),
+            // outputfilewriter("header.html", kFile_HTML, &scheduler::outputHTML_header),
+            // outputfilewriter("footer.html", kFile_HTML, &scheduler::outputHTML_footer),
+            // outputfilewriter("people.html", kFile_HTML, &scheduler::outputHTML_People),
+            // outputfilewriter("costdashboard.html", kFile_HTML, &scheduler::outputHTML_Dashboard),
+            // outputfilewriter("highlevelgantt.html", kFile_HTML, &scheduler::outputHTML_High_Level_Gantt),
+            // outputfilewriter("detailedgantt.html", kFile_HTML, &scheduler::outputHTML_Detailed_Gantt),
+            // outputfilewriter("raw_backlog.html", kFile_HTML, &scheduler::outputHTML_RawBacklog),
+            // outputfilewriter("peopleeffort.html", kFile_HTML, &scheduler::outputHTML_PeopleEffort),
+            // outputfilewriter("testfile.html", kFile_HTML, &scheduler::outputHTML_testfile)};
 }
 
 
@@ -72,23 +73,6 @@ namespace scheduler
     void scheduler::createAllOutputFiles() const
     {
         create_output_directories();
-
-        // ---------------------------
-
-        // also copy across all support_files into the HTML directory.
-        {
-            std::string html = getOutputPath_Html();
-            std::string opt = getOptHTMLPath();
-
-            namespace fs = std::filesystem;
-            // recursive copy getOptHTMLPath to getOutputPath_Html
-            fs::copy(opt, html, fs::copy_options::recursive | fs::copy_options::overwrite_existing);
-            
-            if (!fs::exists(html+"gantt"))
-                fatal("HTML contribution directory was not successfully created: " + html+"gantt");
-        }
-        // ----------------------------
-
 
         std::vector<outputfilewriter> writers;
         getOutputWriters(writers);
@@ -124,7 +108,7 @@ namespace scheduler
         checkcreatedirectory(getOutputPath_Base());
         checkcreatedirectory(getOutputPath_Txt());
         checkcreatedirectory(getOutputPath_Csv());
-        checkcreatedirectory(getOutputPath_Html());
+        // checkcreatedirectory(getOutputPath_Html());
         checkcreatedirectory(getOutputPath_Log());
     }
 

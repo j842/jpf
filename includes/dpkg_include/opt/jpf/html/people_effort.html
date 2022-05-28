@@ -1,0 +1,12 @@
+---
+layout: default
+title: Projects by Person
+headincludes: |
+    <script src="https://cdn.plot.ly/plotly-2.11.1.min.js"></script>
+---
+
+{%- for row in site.data.people -%}
+    <h2 id="{{row.PersonCode}}"> {{row.PersonName}} : Projected Effort by Month </h2>
+    {% include subpage_people_effort_person.liquid PersonCode=row.PersonCode PersonName=row.PersonName %}
+    {% include subpage_people_effort_index.liquid %}
+{%- endfor -%}

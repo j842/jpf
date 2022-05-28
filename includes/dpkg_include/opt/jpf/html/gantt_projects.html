@@ -1,0 +1,40 @@
+---
+layout: default
+title: Gantt Projects
+headincludes: |
+  <script src="static/gantt/frappe-gantt.min.js"></script> 
+  <link rel="stylesheet" href="static/gantt/frappe-gantt.css">
+---
+
+<style>
+  {% comment %} .ganttprojects .bar-wrapper { pointer-events: none; } {% endcomment %}
+  .ganttprojects .bar { fill: tomato; }
+  {% for row in site.data.projectgantt %}
+    .cc-{{row.TaskID}} .bar { fill: {{ row.Colour }}; }
+  {% endfor %}
+</style>
+
+<div class="ganttprojects">
+</div>
+
+<script>
+    var ganttprojectstasks = [
+    {%- for row in site.data.projectgantt -%}
+      {%- if forloop.first==false -%}
+        ,
+      {%- endif -%}
+      {
+        id: '{{row.TaskID}}',
+        name: '{{row.TaskName}}',
+        start: '{{row.Start}}',
+        end: '{{row.End}}',
+        dependencies: '',
+        custom_class: 'cc-{{row.TaskID}}'
+      }
+    {%- endfor -%}
+];
+var ganttprojects = new Gantt(".ganttprojects", ganttprojectstasks);
+var new_height = ganttprojects.$svg.getAttribute('height') - 80;
+ganttprojects.$svg.setAttribute('height', new_height);
+ganttprojects.change_view_mode('Month');
+</script>

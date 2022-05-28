@@ -1,0 +1,48 @@
+---
+layout: default
+title: Project Backlog
+headincludes: |
+    <link rel="stylesheet" href="static/nicetable.css">
+---
+{%- assign project = "blah" -%}
+
+<span>
+{%- assign projectnum=0 -%}
+{%- for row in site.data.projectbacklog -%}
+    {%- if project != row.Project -%}
+        {% assign projectnum = projectnum | plus: 1 %}
+        {%- assign project = row.Project -%}
+        <a href="#project-{{projectnum}}">{{project}}</a> &nbsp &nbsp
+    {%- endif -%}
+{%- endfor -%}
+</span>
+
+<center>
+<table>
+{%- assign projectnum=0 -%}
+{%- for row in site.data.projectbacklog -%}
+    {%- if project != row.Project -%}
+        {%- assign project = row.Project -%}
+        {%- if forloop.first == false -%}
+            <tr class="spacer"><td colspan="4">&nbsp;</td></tr>
+        {%- endif -%}
+        <!-- write out header -->
+        {% assign projectnum = projectnum | plus: 1 %}
+        <tr id="project-{{projectnum}}"><th colspan="6" class="sectiontitle"><center>{{project}}</center></th></tr>
+        <tr>
+            {%- for pair in site.data.projectbacklog[0] offset:1 -%}
+                    <th>{{ pair[0] }}</th>
+            {% endfor %}
+        </tr>
+    {% endif %}
+
+    {%- tablerow pair in row offset:1 -%}
+        {%- if pair[0] == "Task Name" -%}
+            <i>{{ pair[1] }}</i>
+        {%- else -%}
+            {{ pair[1] }}
+        {%- endif -%}
+    {%- endtablerow -%}
+{%- endfor -%}
+</table>
+</center>

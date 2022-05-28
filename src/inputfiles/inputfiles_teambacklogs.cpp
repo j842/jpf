@@ -30,7 +30,7 @@ namespace inputfiles
     {
         mTeamNdx = teamndx;
 
-        ASSERT(csvitems.size() == 10);
+        ASSERT(csvitems.size() == 11);
 
         // 0 - project
         mProjectName = csvitems[0];
@@ -65,8 +65,11 @@ namespace inputfiles
         // 8 - dependencies
         simplecsv::splitcsv(csvitems[8], mDependencies);
 
-        // 9 - comments
-        mComments = csvitems[9];
+        // 9 - tags
+        simplecsv::splitcsv(csvitems[9],mTags);
+
+        // 10 - comments
+        mComments = csvitems[10];
     }
 
     void backlogitem::output(std::ostream &os) const
@@ -100,10 +103,14 @@ namespace inputfiles
             r += (r.length() > 0 ? std::string(", ") + i : i);
         csvitems.push_back(r);
 
+        r.clear();
+        for (auto &i : mTags)
+            r += (r.length() > 0 ? std::string(", ") + i : i);
+        csvitems.push_back(r);
+
         csvitems.push_back(mComments);
 
-        simplecsv::output(os, csvitems);
-        os << std::endl;
+        simplecsv::outputr(os, csvitems);
     }
 
     bool backlogitem::hasDependency(std::string d)
@@ -138,11 +145,12 @@ namespace inputfiles
         {
             unsigned int j = 1;
             std::string filename = "backlog-" + makelower(tms[i].mId) + ".csv";
-            simplecsv teambacklog(filename, true, 10);
+            logdebug("Reading "+filename);
+            simplecsv teambacklog(filename, true, 11);
             if (teambacklog.openedOkay())
             {
                 std::vector<std::string> items;
-                while (teambacklog.getline(items, 10))
+                while (teambacklog.getline(items, 11))
                 {
                     backlogitem b(items, i);
                     {
@@ -171,7 +179,7 @@ namespace inputfiles
 
     void teambacklogs::save_team_CSV(std::ostream &os, unsigned int teamNdx) const // output the backlog as a inputtable csv.
     {
-        os << "Project,ID,Description,Min Calendar WorkDays,Remaining DevDays Total,Earliest Start,Blocking,Contributing,Depends On,Comments" << std::endl;
+        os << "Project,ID,Description,Min Calendar WorkDays,Remaining DevDays Total,Earliest Start,Blocking,Contributing,Depends On,Tags,Comments" << std::endl;
         for (auto &i : mTeamItems)
             for (auto & j : i)
                 if (j.mTeamNdx == teamNdx)

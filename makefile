@@ -28,21 +28,19 @@ CXXFLAGS := -g -Wall -std=c++17
 LDFLAGS  := -g
 LDLIBS   := -l:libboost_date_time.a -l:libcppunit.a
 #DEPFLAGS = -MT $@ -MD -MP -MF $(DEP_DIR)/$*.Td
-TMPL_DIR:=includes/templates
-TMPL:=$(wildcard $(TMPL_DIR)/*)
-TMPLSRC:=$(TMPL:includes/templates/%=src/templates/%.cpp)
 
 SUP_DIR:=includes/verbatim
 SUPFILES:=$(wildcard $(SUP_DIR)/*)
 SUPSRC:=$(SUPFILES:includes/verbatim/%=src/support_files/generate_%.cpp)
 
+ALLSUPFILES := $(shell find $(SUP_DIR) -name '*')
+
 VER_HEADER=src/version.h
 
 # Find all the C and C++ files we want to compile
 # Note the single quotes around the * expressions. Make will incorrectly expand these otherwise.
-SRCS :=  $(TMPLSRC) $(SUPSRC) $(shell find $(SRC_DIRS) -name '*.cpp' -or -name '*.c' -or -name '*.s')
+SRCS := $(SUPSRC) $(shell find $(SRC_DIRS) -name '*.cpp' -or -name '*.c' -or -name '*.s')
 # combine and remove duplicates.
-#SRCS := $(sort $(SRCS) $(TMPLSRC) $(SUPSRC))
 SRCS := $(call uniq,${SRCS})
 
 # String substitution for every C/C++ file.
@@ -56,7 +54,7 @@ DEPS := $(OBJS:.o=.d)
 
 # Every folder in ./src will need to be passed to GCC so that it can find header files
 INC_DIRS := $(shell find $(SRC_DIRS) -type d)
-INC_DIRS := $(sort $(INC_DIRS) src/support_files src/templates)
+INC_DIRS := $(sort $(INC_DIRS) src/support_files)
 # Add a prefix to INC_DIRS. So moduleA would become -ImoduleA. GCC understands this -I flag
 INC_FLAGS := $(addprefix -I,$(INC_DIRS))
 
@@ -75,17 +73,9 @@ $(BUILD_DIR)/%.cpp.o: %.cpp
 	@mkdir -p $(dir $@)
 	@$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $< -o $@
 
-# make template files
-.PRECIOUS:  src/templates/%.cpp
-src/templates/%.cpp: $(TMPL_DIR)/% $(ROOT_DIR)/deps/scripts/file2cpp
-	@printf "%b" "$(CRE_COLOR)Creating  $(OBJ_COLOR)$(@)$(NO_COLOR)\n";
-	@mkdir -p $(dir $@)
-	@$(ROOT_DIR)/deps/scripts/file2cpp "$<" "$(basename $@)"
-src/templates/%.h: src/templates/%.cpp
-
 # make support_files files
 .PRECIOUS: src/support_files/generate_%.cpp
-src/support_files/generate_%.cpp: $(SUP_DIR)/% $(ROOT_DIR)/deps/scripts/dir2cpp
+src/support_files/generate_%.cpp: $(SUP_DIR)/% $(ROOT_DIR)/deps/scripts/dir2cpp $(ALLSUPFILES)
 	@printf "%b" "$(CRE_COLOR)Creating  $(OBJ_COLOR)$(@)$(NO_COLOR)\n";
 	@mkdir -p $(dir $@)
 	@$(ROOT_DIR)/deps/scripts/dir2cpp "$<" "$(basename $@)"
@@ -103,7 +93,6 @@ $(VER_HEADER): deps/versions.makefile
 .PHONY: clean
 clean:
 	rm -rf $(BUILD_DIR)
-	rm -rf src/templates
 	rm -rf src/support_files
 	rm $(VER_HEADER)
 

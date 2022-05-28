@@ -10,6 +10,9 @@ version.h
 /src/templates
 /src/support_files
 
+_site/
+node_modules/
+.jekyll-cache
 
 # Prerequisites
 *.d

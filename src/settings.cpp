@@ -253,10 +253,19 @@ void settings::advance(workdate newStart)
         mEndDate = boost::gregorian::date(mStartDate.getGregorian().year()+1,1,1);
 }
 
-const std::string getInputPath() { return gSettings().getRoot()+"/input/"; }
-const std::string getOutputPath_Base() { return gSettings().getRoot()+"/output/"; }
-const std::string getOutputPath_Txt() { return gSettings().getRoot()+"/output/txt/"; }
-const std::string getOutputPath_Html() { return gSettings().getRoot()+"/output/html/"; }
-const std::string getOutputPath_Csv() { return gSettings().getRoot()+"/output/csv/"; }
-const std::string getOutputPath_Log() { return gSettings().getRoot()+"/output/log/"; }
-const std::string getOptHTMLPath() { return "/opt/jpf/html/";}
+const std::string getInputPath() { return gSettings().getRoot() + "/input/"; }
+const std::string getOutputPath_Base() { return gSettings().getRoot() + "/output/"; }
+const std::string getOutputPath_Txt() { return gSettings().getRoot() + "/output/txt/"; }
+const std::string getOutputPath_Html() { return gSettings().getRoot() + "/output/html/"; }
+const std::string getOutputPath_Jekyll() { return gSettings().getRoot() + "/output/.jekyll/"; }
+const std::string getOutputPath_Csv() { return gSettings().getRoot() + "/output/csv/"; }
+const std::string getOutputPath_Log() { return gSettings().getRoot() + "/output/log/"; }
+const std::string getOptHTMLPath() { return "/opt/jpf/html/"; }
+const std::string getLocalTemplatePath()
+{
+    std::string p = gSettings().getRoot()+"template";
+    if (std::filesystem::exists(p))
+        return std::filesystem::canonical(p);
+    else
+        return p;
+}
