@@ -26,7 +26,6 @@ bool iSame(const std::string &s1, const std::string &s2)
     return true;
 }
 
-
 void _terminate(const std::string &s,const std::string &func, const std::string &file, int line)
 {
     logdebug(
@@ -228,6 +227,10 @@ void checkcreatedirectory(std::string d)
     {
         if (!std::filesystem::create_directory(d))
             TERMINATE(S()<<"Could not create directory: "<<d);
+
+        if (!std::filesystem::exists(d))
+            TERMINATE(S()<<"Attempted to create directory, but it doesn't exist: "<<d);
+
         logdebug(S()<<"Created directory: "<<d);
     }    
 }

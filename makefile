@@ -102,7 +102,7 @@ clean:
 -include $(DEPS)
 
 # run tests
-check: $(JPF_EXE)
+check: $(JPF_EXE) setup
 	$(JPF_EXE) -t
 	$(JPF_EXE) -c ~/jpf_test
 	$(JPF_EXE) ~/jpf_test
