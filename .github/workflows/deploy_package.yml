@@ -11,7 +11,9 @@ jobs:
     - name: install .packagecloud
       run: cat <<< "{\"url\":\"https://packagecloud.io\", \"token\":\"${{ secrets.PACKAGE_CLOUD_TOKEN }}\"}" > ~/.packagecloud
     - name: install prereqs
-      run: sudo apt install build-essential libboost-date-time-dev libcppunit-dev podman
+      run: sudo apt install build-essential libboost-date-time-dev libcppunit-dev podman ruby-full zlib1g-dev 
+    - name: install jekyll
+      run: sudo deps/dpkg/after-install.sh
     - name: make setup
       run: make setup
     - name: make

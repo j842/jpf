@@ -10,10 +10,13 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: install prereqs
-      run: sudo apt install build-essential libboost-date-time-dev libcppunit-dev
+      run: sudo apt install build-essential libboost-date-time-dev libcppunit-dev ruby-full zlib1g-dev 
+    - name: install jekyll
+      run: sudo deps/dpkg/after-install.sh
     - name: make setup
       run: make setup
     - name: make
       run: make
     - name: make check
       run: make check
+
