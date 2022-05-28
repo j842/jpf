@@ -14,7 +14,16 @@ John's Project Forecaster
 
 ## Installing Binary from Debian/Ubuntu Package
 
+
 Intended to work on Debian 11 (Bullseye), Ubuntu 20.04 (Focal) and Ubuntu 22.04 (Jammy). Does not work on Debian 10 (Buster) or Ubuntu 18.04 (Bionic) as g++ and libs are too old.
+
+### With Script
+
+```
+wget https://raw.githubusercontent.com/j842/jpf/main/install.sh && chmod a+x install.sh && sudo ./install.sh
+```
+
+### Manually
 
 ```
 sudo apt update
