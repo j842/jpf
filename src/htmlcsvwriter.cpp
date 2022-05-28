@@ -37,8 +37,8 @@ void HTMLCSVWriter::recreate_Directory(std::string path) const
 
 void HTMLCSVWriter::createHTMLFolder(const scheduler::scheduler &s) const
 {
-    recreate_Directory(getOutputPath_Jekyll());
     recreate_Directory(getOutputPath_Html());
+    recreate_Directory(getOutputPath_Jekyll());
 
     CopyHTMLFolder();
     write_basevars(s);

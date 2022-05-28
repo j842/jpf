@@ -108,7 +108,7 @@ namespace scheduler
         checkcreatedirectory(getOutputPath_Base());
         checkcreatedirectory(getOutputPath_Txt());
         checkcreatedirectory(getOutputPath_Csv());
-        // checkcreatedirectory(getOutputPath_Html());
+        checkcreatedirectory(getOutputPath_Html());
         checkcreatedirectory(getOutputPath_Log());
     }
 
