@@ -1,11 +1,9 @@
 ---
 layout: default
-title: People Effort
+title: Projects by Person
 headincludes: |
     <script src="https://cdn.plot.ly/plotly-2.11.1.min.js"></script>
 ---
-
-<h1>Individual Projects</h1>
 
 {%- for row in site.data.people -%}
     <h2 id="{{row.PersonCode}}"> {{row.PersonName}} : Projected Effort by Month </h2>

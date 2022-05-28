@@ -293,63 +293,70 @@ void HTMLCSVWriter::write_dashboard(const scheduler::scheduler &s) const
         return; // no data.
     unsigned long maxmonth = DevDaysTally[0].size();
 
+    { // by month total cost graph
+        simpleDataCSV csv("projectcostbymonth");
 
-    simpleDataCSV csv("projectcostbymonth");
+        csv.addrow(
+            {"MonthNum",
+            "DateStr",
+            "ProjectName",
+            "ProjectColour",
+            "ProjectId",
+            "ProjectCost"});
 
-    csv.addrow(
-        {"MonthNum",
-         "DateStr",
-         "ProjectName",
-         "ProjectColour",
-         "ProjectId",
-         "ProjectCost"});
+        for (unsigned int i = 0; i < DevDaysTally.size(); ++i)
+            for (unsigned int m=0; m<maxmonth ; ++m)
+            {
+                auto &c = ProjectInfo[i].mColour;
+                csv.addrow({
+                    S()<<m,
+                    monthIndex(m).getString(),
+                    ProjectInfo[i].mName,
+                    S()<< "rgb(" << c.r << ", " << c.g << ", " << c.b << ")",
+                    ProjectInfo[i].mId,
+                    S() << (int)(0.5+ gSettings().dailyDevCost() * DevDaysTally[i][m])
+                });
+            }
+    }
 
-    for (unsigned int i = 0; i < DevDaysTally.size(); ++i)
-        for (unsigned int m=0; m<maxmonth ; ++m)
+    { // total project cost pie graph   
+        std::vector<double> vProjectCostRemaining(DevDaysTally.size(), 0.0);
+        for (unsigned int i = 0; i < DevDaysTally.size(); ++i)
+            for (double j : DevDaysTally[i])
+                vProjectCostRemaining[i] += j;    
+
+        double totalProjectCostRemaining = 0.0;
+        for (auto &vpc : vProjectCostRemaining)
+            totalProjectCostRemaining += vpc;
+
+        simpleDataCSV csv2("projectcosttotal");
+
+        csv2.addrow(
+            {
+                "ProjectId",
+                "ProjectName",
+                "ProjectColour",
+                "TextLabel",
+                "Cost"
+            }
+        );
+
+        for (unsigned int i = 0; i < ProjectInfo.size(); ++i)
         {
+            std::string textlabel; // only significant projects get a label!
+             if (vProjectCostRemaining[i] > 0.01 * totalProjectCostRemaining)
+                textlabel = S() << ProjectInfo[i].mId << "   " << getDollars(gSettings().dailyDevCost() * vProjectCostRemaining[i]);
+
             auto &c = ProjectInfo[i].mColour;
-             csv.addrow({
-                S()<<m,
-                monthIndex(m).getString(),
-                ProjectInfo[i].mName,
-                S()<< "rgb(" << c.r << ", " << c.g << ", " << c.b << ")",
-                ProjectInfo[i].mId,
-                S() << (int)(0.5+ gSettings().dailyDevCost() * DevDaysTally[i][m])
-            });
+            csv2.addrow(
+                {
+                    ProjectInfo[i].mId,
+                    ProjectInfo[i].mName,
+                    S()<< "rgb(" << c.r << ", " << c.g << ", " << c.b << ")",
+                    textlabel,
+                    S()<< (int)(0.5 + gSettings().dailyDevCost() * vProjectCostRemaining[i])
+                }
+            );
         }
+    }
 }
-
-
-
-        // for (unsigned int i = 0; i < DevDaysTally.size(); ++i)
-        // {
-        //     ofs << "var trace" << i << " ={" << std::endl;
-        //     {
-        //         listoutput lo(ofs, "x: [", ", ", "], ");
-        //         for (unsigned int m = 0; m < maxmonth; ++m)
-        //             lo.writehq(monthIndex(m).getString());
-        //     }
-
-        //     ofs << std::endl;
-        //     {
-        //         listoutput lo(ofs, "y: [", ", ", "], ");
-        //         for (unsigned int m = 0; m < maxmonth; ++m)
-        //             lo.write(S() << std::setprecision(3) << gSettings().dailyDevCost() * DevDaysTally[i][m]);
-        //     }
-        //     ofs << std::endl
-        //         << "name: '" << ProjectInfo[i].mName << "'," << std::endl;
-
-        //     auto &c = ProjectInfo[i].mColour;
-        //     ofs << "marker: { color: 'rgb(" << c.r << ", " << c.g << ", " << c.b << ")' }," << std::endl;
-
-        //     ofs << "type: 'bar'," << std::endl
-        //         << "};" << std::endl
-        //         << std::endl;
-        // }
-
-        // {
-        //     listoutput lo(ofs, "var data = [", ", ", "];");
-        //     for (auto it = ProjectInfo.size(); it > 0; --it)
-        //         lo.write(S() << "trace" << it - 1);
-        // }
-    
