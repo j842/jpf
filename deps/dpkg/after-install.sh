@@ -12,8 +12,10 @@ fi
 
 if ! command -v jekyll &> /dev/null
 then
-    echo "Jekyll could not be found - installing"
-    gem install jekyll bundler webrick
+    echo "Jekyll could not be found - aborting!"
+    exit 1
+#    echo "Jekyll could not be found - installing"
+#    gem install jekyll bundler webrick
 fi
 
 echo "Jekyll is available."
