@@ -18,7 +18,9 @@ then
 #    gem install jekyll bundler webrick
 fi
 
-echo "Jekyll is available."
+echo "Jekyll is available. Ensuring we have the latest version."
+
+gem update jekyll
 
 exit 0
 

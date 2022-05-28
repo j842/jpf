@@ -173,8 +173,16 @@ void HTMLCSVWriter::run_jekyll() const
 {
     timer tmr;
 
+    std::string jekyllpath;
+    if (std::filesystem::exists("/usr/local/bin/jekyll")) // prefer /usr/local/bin - that's where the latest gets installed.
+        jekyllpath="/usr/local/bin/jekyll";
+    else if (std::filesystem::exists("/usr/bin/jekyll"))
+        jekyllpath="/usr/bin/jekyll";
+    else
+        jekyllpath="jekyll"; 
+
     loginfo("Running Jekyll build on " + getOutputPath_Jekyll());
-    std::string cmd = "cd " + getOutputPath_Jekyll() + " ; /usr/local/bin/jekyll b 2>&1";
+    std::string cmd = "cd " + getOutputPath_Jekyll() + " ; "+jekyllpath+" b 2>&1";
 
     raymii::Command c;
 
