@@ -130,7 +130,7 @@ int cMain::run_console()
         return 1;
     }
 
-    loginfo(S() <<"Completed in " << std::setprecision(3) << tmr.stop() << "ms.");
+    loginfo(S() <<"Completed in " << std::fixed << std::setprecision(3) << tmr.stop()/1000.0 << "s.");
     return 0;
 }
 
