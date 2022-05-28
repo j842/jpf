@@ -13,7 +13,7 @@ fi
 if ! command -v jekyll &> /dev/null
 then
     echo "Jekyll could not be found - installing"
-    MAKE="make -j $(nproc)" gem install jekyll bundler --no-rdoc --no-ri
+    MAKE="make -j $(nproc)" gem install jekyll bundler --no-document
 fi
 
 echo "Jekyll is available."
