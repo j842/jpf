@@ -1,4 +1,5 @@
 <hr>
+<center>
 {% assign pei_person = "blah" %}
 
 {%- for pei_row in site.data.peopleeffortbymonth -%}
@@ -7,4 +8,5 @@
         <a href="#{{pei_row.PersonCode}}">{{pei_row.PersonName}}</a> &nbsp &nbsp
     {% endif %}
 {%- endfor -%}
+</center>
 <hr>
