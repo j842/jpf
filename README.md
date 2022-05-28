@@ -76,8 +76,9 @@ Connect to `http://localhost:5000`
 
 ## Related Software
 
-A good CSV editor is Modern CSV:  https://www.moderncsv.com/
-Crossplatform and makes it easy to move tasks around.
+A simple CSV editor is Modern CSV:  https://www.moderncsv.com/
+Crossplatform and makes it easy to move tasks around. Visual Studio
+Code has a number of plugins to help with CSV also.
 
 The Gantt chart software to read the output Gantt.csv is GanttProject:
 https://www.ganttproject.biz/
@@ -171,7 +172,4 @@ https://clay-atlas.com/us/blog/2021/08/31/windows-en-wsl-2-memory/
 
 ## Github Actions
 
-This repo contains two github actions:
-
-- test_jpf, which runs the unit tests on any commit to Main
-- deploy_package, which is manually invoked. It builds the debian package and uploads it to the official repository. 
+This repo contains four github actions, which should be self explanatory.
