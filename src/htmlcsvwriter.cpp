@@ -7,7 +7,7 @@
 #include "command.h"
 #include "colours.h"
 
-simpleDataCSV::simpleDataCSV(std::string name) : mStream(getOutputPath_Jekyll() + "_data/" + name +".csv")
+simpleDataCSV::simpleDataCSV(std::string name) : mStream(getOutputPath_Jekyll() + "_data/" + name + ".csv")
 {
     if (!mStream.is_open())
         TERMINATE("Unable to open file " + getOutputPath_Jekyll() + "_data/" + name + ".csv for writing.");
@@ -17,12 +17,10 @@ simpleDataCSV::~simpleDataCSV()
     mStream.close();
 }
 
-void simpleDataCSV::addrow(const std::vector<std::string> & row)
+void simpleDataCSV::addrow(const std::vector<std::string> &row)
 {
     simplecsv::outputr(mStream, row);
 }
-
-
 
 HTMLCSVWriter::HTMLCSVWriter()
 {
@@ -37,7 +35,6 @@ void HTMLCSVWriter::recreate_Directory(std::string path) const
     logdebug(S() << "Created directory: " << path);
 }
 
-
 void HTMLCSVWriter::createHTMLFolder(const scheduler::scheduler &s) const
 {
     recreate_Directory(getOutputPath_Jekyll());
@@ -47,6 +44,7 @@ void HTMLCSVWriter::createHTMLFolder(const scheduler::scheduler &s) const
     write_basevars(s);
     write_projectbacklog_csv(s);
     write_projectgantt_csv(s);
+    write_peopleeffortbymonth_months_people_csvs(s);
 
     run_jekyll();
 
@@ -54,7 +52,7 @@ void HTMLCSVWriter::createHTMLFolder(const scheduler::scheduler &s) const
 }
 
 void HTMLCSVWriter::CopyHTMLFolder() const
-{    // ---------------------------
+{ // ---------------------------
 
     // also copy across all support_files into the HTML directory.
     {
@@ -74,7 +72,7 @@ void HTMLCSVWriter::CopyHTMLFolder() const
         if (!fs::exists(ganttpath))
             fatal("HTML contribution directory was not successfully created: " + ganttpath);
 
-        logdebug(S()<<"Copied HTML template from "<<opt);
+        logdebug(S() << "Copied HTML template from " << opt);
     }
     // ----------------------------
 }
@@ -82,9 +80,8 @@ void HTMLCSVWriter::CopyHTMLFolder() const
 void HTMLCSVWriter::copy_site() const
 {
     namespace fs = std::filesystem;
-    fs::copy(getOutputPath_Jekyll()+"_site", getOutputPath_Html(), fs::copy_options::recursive | fs::copy_options::overwrite_existing);
+    fs::copy(getOutputPath_Jekyll() + "_site", getOutputPath_Html(), fs::copy_options::recursive | fs::copy_options::overwrite_existing);
 }
-
 
 void HTMLCSVWriter::write_projectbacklog_csv(const scheduler::scheduler &s) const
 {
@@ -98,8 +95,7 @@ void HTMLCSVWriter::write_projectbacklog_csv(const scheduler::scheduler &s) cons
                 "End",
                 "Task Name",
                 "Team",
-                "Blocked"
-                });
+                "Blocked"});
 
     for (auto &x : v_sorted)
     {
@@ -121,17 +117,15 @@ struct rgbcolour
 
 void HTMLCSVWriter::write_projectgantt_csv(const scheduler::scheduler &s) const
 {
-    simpleDataCSV csv("projectgantt");    
+    simpleDataCSV csv("projectgantt");
 
-    csv.addrow({
-        "TaskID",
-        "TaskName",
-        "Start",
-        "End",
-        "Colour"
-    });
+    csv.addrow({"TaskID",
+                "TaskName",
+                "Start",
+                "End",
+                "Colour"});
 
-    std::vector<rgbcolour> Colours( s.getProjects().size(), rgbcolour({0,0,0}));
+    std::vector<rgbcolour> Colours(s.getProjects().size(), rgbcolour({0, 0, 0}));
     colours::ColorGradient heatMapGradient;
     unsigned int ci = 0;
     for (ci = 0; ci < s.getProjects().size(); ++ci)
@@ -142,49 +136,127 @@ void HTMLCSVWriter::write_projectgantt_csv(const scheduler::scheduler &s) const
         Colours[ci] = rgbcolour{.r = (int)(r * 255.0 + 0.5), .g = (int)(g * 255.0 + 0.5), .b = (int)(b * 255.0 + 0.5)};
     }
 
-    int i=0;
-    for (auto & p : s.getProjects())
-    {        
-        std::string colour = S() << "rgb("<<Colours[i].r <<", "<<Colours[i].g<<", "<<Colours[i].b<<")";
+    int i = 0;
+    for (auto &p : s.getProjects())
+    {
+        std::string colour = S() << "rgb(" << Colours[i].r << ", " << Colours[i].g << ", " << Colours[i].b << ")";
 
         ++i;
 
-        csv.addrow({
-            S()<<"Task"<< i, // first task is Task1
-            p.getId(),
-            p.mActualStart.getYYYY_MM_DD(),
-            p.mActualEnd.getYYYY_MM_DD(),
-            colour
-        });
+        csv.addrow({S() << "Task" << i, // first task is Task1
+                    p.getId(),
+                    p.mActualStart.getYYYY_MM_DD(),
+                    p.mActualEnd.getYYYY_MM_DD(),
+                    colour});
     }
 }
 
-
-void HTMLCSVWriter::write_basevars(const scheduler::scheduler & s) const
+void HTMLCSVWriter::write_basevars(const scheduler::scheduler &s) const
 {
     simpleDataCSV csv("basevars");
     time_t now = time(0);
     // convert now to string form
-    char* date_time = ctime(&now);
+    char *date_time = ctime(&now);
 
-    csv.addrow({"key","value"});
+    csv.addrow({"key", "value"});
     csv.addrow({"version", gSettings().getJPFFullVersionStr()});
-    csv.addrow({"timedate", date_time });
+    csv.addrow({"timedate", date_time});
 }
-
 
 void HTMLCSVWriter::run_jekyll() const
 {
     timer tmr;
 
-    loginfo("Running Jekyll build on "+getOutputPath_Jekyll());
-    std::string cmd = "cd "+getOutputPath_Jekyll()+" ; /usr/local/bin/jekyll b 2>&1";
+    loginfo("Running Jekyll build on " + getOutputPath_Jekyll());
+    std::string cmd = "cd " + getOutputPath_Jekyll() + " ; /usr/local/bin/jekyll b 2>&1";
 
     raymii::Command c;
 
-    raymii::CommandResult r=c.exec(cmd);
-    
-    if (r.exitstatus!=0)
-        throw (TerminateRunException(r.output));
-    loginfo(S()<<"Jekyll Finished in "<<tmr.stop()<<" ms.");
+    raymii::CommandResult r = c.exec(cmd);
+
+    if (r.exitstatus != 0)
+        throw(TerminateRunException(r.output));
+    loginfo(S() << "Jekyll Finished in " << tmr.stop() << " ms.");
+}
+
+void HTMLCSVWriter::write_peopleeffortbymonth_months_people_csvs(const scheduler::scheduler &s) const
+{
+    simpleDataCSV csv("peopleeffortbymonth");
+
+    csv.addrow(
+        {"PersonCode",
+         "PersonName",
+         "MonthNum",
+         "DateStr",
+         "ProjectName",
+         "ProjectColour",
+         "ProjectId",
+         "Effort"});
+
+    for (scheduler::tNdx personNdx = 0; personNdx < s.getPeople().size(); ++personNdx)
+    {
+
+        std::vector<std::vector<double>> DevDaysTally;
+        std::vector<scheduler::tProjectInfo> ProjectInfo;
+        s.CalculateDevDaysTally(DevDaysTally, ProjectInfo, personNdx);
+        if (DevDaysTally.size() == 0)
+            return; // no data.
+
+        std::string pCode = s.getPeople()[personNdx].mName;
+        removewhitespace(pCode);
+        unsigned long maxmonth = DevDaysTally[0].size();
+
+        for (unsigned int i = 0; i < ProjectInfo.size(); ++i)
+            for (unsigned int m = 0; m < maxmonth; ++m)
+            {
+                auto &c = ProjectInfo[i].mColour;
+                std::string colour = S() << "rgb(" << c.r << ", " << c.g << ", " << c.b << ")";
+
+                csv.addrow(
+                    {pCode,
+                     s.getPeople()[personNdx].mName,
+                     S() << m,
+                     monthIndex(m).getString(),
+                     ProjectInfo[i].mName,
+                     colour,
+                     ProjectInfo[i].mId,
+                     S() << std::fixed << std::setprecision(1) << DevDaysTally[i][m]});
+            }
+    }
+
+    {
+        simpleDataCSV csv2("months");
+        csv2.addrow({"MonthNum", "DateStr"});
+
+        unsigned long maxmonth = get_maxmonth(s);
+        for (unsigned int m = 0; m < maxmonth; ++m)
+            csv2.addrow({S() << m, monthIndex(m).getString()});
+    }
+
+
+    {
+        simpleDataCSV csv3("people");
+        csv3.addrow({"PersonCode", "PersonName"});
+
+        for (auto p : s.getPeople())
+        {
+            std::string pCode = p.mName;
+            removewhitespace(pCode);
+            csv3.addrow({pCode,p.mName});
+        }
+    }
+}
+
+unsigned long HTMLCSVWriter::get_maxmonth(const scheduler::scheduler &s) const
+{
+    // determine the maximum month to consider.
+    unsigned long maxmonth = 0;
+    {
+        for (auto &z : s.getItems())
+            if (z.mActualEnd.getMonthIndex() >= maxmonth)
+                maxmonth = z.mActualEnd.getMonthIndex() + 1;
+
+        maxmonth = std::min(maxmonth, gSettings().endMonth() + 1);
+    }
+    return maxmonth;
 }

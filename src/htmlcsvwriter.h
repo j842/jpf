@@ -27,12 +27,15 @@ class HTMLCSVWriter
         void write_projectbacklog_csv(const scheduler::scheduler & s) const;
         void write_projectgantt_csv(const scheduler::scheduler & s) const;
         void write_basevars(const scheduler::scheduler & s) const;
+        void write_peopleeffortbymonth_months_people_csvs(const scheduler::scheduler & s) const;
 
         void recreate_Directory(std::string path) const;
 
         void copy_site() const;
 
         void run_jekyll() const;
+
+        unsigned long get_maxmonth(const scheduler::scheduler & s) const;
 };
 
 

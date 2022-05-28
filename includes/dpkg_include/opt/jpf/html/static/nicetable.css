@@ -1,0 +1,29 @@
+main {
+    display: flex;
+    justify-content: center;
+}
+
+table {
+    max-width: 100%;
+}
+
+tr:nth-child(odd) {
+    background-color: #eee;
+}
+
+th {
+    background-color: #fed;
+    color: #000;
+}
+th,
+td {
+text-align: left;
+padding: 0.1em 1em;
+}
+tr.spacer td {
+   border: none;
+}
+th.sectiontitle {
+    background-color: #842;
+    color: #fff;            
+}

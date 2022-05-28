@@ -1,0 +1,10 @@
+<hr>
+{% assign pei_person = "blah" %}
+
+{%- for pei_row in site.data.peopleeffortbymonth -%}
+    {%- if pei_person != pei_row.PersonName -%}
+        {%- assign pei_person = pei_row.PersonName -%}
+        <a href="#{{pei_row.PersonCode}}">{{pei_row.PersonName}}</a> &nbsp &nbsp
+    {% endif %}
+{%- endfor -%}
+<hr>

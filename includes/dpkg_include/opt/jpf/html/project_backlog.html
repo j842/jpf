@@ -2,52 +2,33 @@
 layout: default
 title: Project Backlog
 headincludes: |
-    <style>
-        main {
-            display: flex;
-            justify-content: center;
-        }
-
-        table {
-            max-width: 100%;
-        }
-
-        tr:nth-child(odd) {
-            background-color: #eee;
-        }
-
-        th {
-            background-color: #fed;
-            color: #000;
-        }
-        th,
-        td {
-        text-align: left;
-        padding: 0.1em 1em;
-        }
-        tr.spacer td {
-           border: none;
-        }
-        th.sectiontitle {
-            background-color: #842;
-            color: #fff;            
-        }
-    </style>
+    <link rel="stylesheet" href="static/nicetable.css">
 ---
 {%- assign project = "blah" -%}
 
+<span>
+{%- assign projectnum=0 -%}
+{%- for row in site.data.projectbacklog -%}
+    {%- if project != row.Project -%}
+        {% assign projectnum = projectnum | plus: 1 %}
+        {%- assign project = row.Project -%}
+        <a href="#project-{{projectnum}}">{{project}}</a> &nbsp &nbsp
+    {%- endif -%}
+{%- endfor -%}
+</span>
+
 <center>
 <table>
+{%- assign projectnum=0 -%}
 {%- for row in site.data.projectbacklog -%}
-    {%- assign rowproject = row.Project -%}
-
-    {%- if project != rowproject -%}
-        {%- assign project = rowproject -%}
+    {%- if project != row.Project -%}
+        {%- assign project = row.Project -%}
         {%- if forloop.first == false -%}
             <tr class="spacer"><td colspan="4">&nbsp;</td></tr>
         {%- endif -%}
         <!-- write out header -->
-        <tr><th colspan="6" class="sectiontitle"><center>{{rowproject}}</center></th></tr>
+        {% assign projectnum = projectnum | plus: 1 %}
+        <tr id="project-{{projectnum}}"><th colspan="6" class="sectiontitle"><center>{{project}}</center></th></tr>
         <tr>
             {%- for pair in site.data.projectbacklog[0] offset:1 -%}
                     <th>{{ pair[0] }}</th>

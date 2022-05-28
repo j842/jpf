@@ -1,0 +1,87 @@
+
+{% assign height=600 %}
+
+<div id="stackedbardevdays_{{include.PersonCode}}" style="width:auto;height:{{height}};"></div>
+<script>
+
+    {%- assign pep_project = "blah" -%}
+
+    {% assign pebm = site.data.peopleeffortbymonth | where: "PersonCode", include.PersonCode %}
+
+    {%- for pep_row in pebm -%}
+        {%- if pep_project!=pep_row.ProjectId -%}
+            {% assign pep_project=pep_row.ProjectId %}
+
+            {% assign pebmp = pebm | where: "ProjectId", pep_project %}
+
+            var trace_{{include.PersonCode}}_{{pep_row.ProjectId | slugify | remove: "-" }} ={
+                name: '{{pep_row.ProjectName}}',
+                marker: { color: '{{pep_row.ProjectColour}}'},
+                type: 'bar',
+
+                x: [
+                    {%- for pep_mrow in site.data.months -%}
+                        '{{pep_mrow.DateStr}}'
+                        {%- if forloop.last==false -%},{%- endif -%}
+                    {%- endfor -%}
+                ],
+
+                y: [
+                    {%- for pep_yrow in pebmp -%}
+                        {{pep_yrow.Effort}}
+                        {%- if forloop.last==false -%},{%- endif -%}
+                    {%- endfor -%}
+                    ],
+
+                text: [
+                    {%- for pep_textrow in pebmp -%}
+                        '{{pep_textrow.ProjectId}}'
+                        {%- if forloop.last==false -%},{%- endif -%}
+                    {%- endfor -%}
+                ],
+
+            };
+
+        {%- endif -%}
+    {% endfor %}
+
+    var data_{{include.PersonCode}} = [
+
+        {%- assign pep_project = "blah" -%}
+        {%- for pep_row in pebm reversed -%}
+            {%- if pep_project!=pep_row.ProjectId -%}
+                {% assign pep_project=pep_row.ProjectId %}
+                trace_{{include.PersonCode}}_{{pep_row.ProjectId | slugify | remove: "-" }},
+            {%- endif -%}
+        {% endfor %}
+    ];
+
+    var layout_{{include.PersonCode}} = { 
+            title: '{{include.PersonName}}\'s Projected Effort (days)',
+            xaxis: {tickfont: {
+                size: 14,
+                color: 'rgb(107, 107, 107)'
+                }},
+            yaxis: {
+                title: 'Effort (days)',
+                titlefont: {
+                size: 16,
+                color: 'rgb(107, 107, 107)'
+                },
+                tickfont: {
+                size: 14,
+                color: 'rgb(107, 107, 107)'
+                },
+                range: [0, 25]
+            },
+            barmode: 'stack',
+            height: {{height}},
+        };
+
+    Plotly.newPlot(
+        'stackedbardevdays_{{include.PersonCode}}', 
+        data_{{include.PersonCode}}, 
+        layout_{{include.PersonCode}}
+    );
+
+</script>

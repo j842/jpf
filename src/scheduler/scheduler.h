@@ -12,9 +12,31 @@
 #include "workdate.h"
 #include "utils.h"
 
-
 namespace scheduler
 {
+
+    struct rgbcolour
+    {
+        int r, g, b;
+    };
+    // rgbcolour heatmap(float minimum, float maximum, float value) const;
+
+    typedef enum
+    {
+        kBAU = 0,
+        kNew = 1,
+        kUna = 2, // unassigned
+        kHol = 3,
+        kNumItemTypes,
+    } tItemTypes;
+
+    typedef struct
+    {
+        std::string mId;
+        std::string mName;
+        rgbcolour mColour;
+        tItemTypes mType;
+    } tProjectInfo;
 
     class scheduleditem : public inputfiles::backlogitem
     {
@@ -32,34 +54,34 @@ namespace scheduler
         std::string mBlockedBy;
         unsigned int mItemIndexInTeamBacklog;
 
-        std::vector<tCentiDay> mLoadingPercent;     // index is person (as in mResources)
-        std::vector<tCentiDay> mTotalContribution;  // index is person (as in mResources) 
+        std::vector<tCentiDay> mLoadingPercent;    // index is person (as in mResources)
+        std::vector<tCentiDay> mTotalContribution; // index is person (as in mResources)
     };
 
     class scheduledproject : public inputfiles::project
     {
-        public:
-            scheduledproject(const inputfiles::project &prj);
+    public:
+        scheduledproject(const inputfiles::project &prj);
 
-            // set when project scheduled.
-            workdate mActualStart;
-            workdate mActualEnd;
-            tCentiDay mTotalDevCentiDays; // proportional to cost.
+        // set when project scheduled.
+        workdate mActualStart;
+        workdate mActualEnd;
+        tCentiDay mTotalDevCentiDays; // proportional to cost.
     };
 
-
-    typedef enum {
-        kFile_Text=0,
-        kFile_HTML=1,
-        kFile_CSV=2,
-        kFile_Log=3,
-        kFile_N=4
+    typedef enum
+    {
+        kFile_Text = 0,
+        kFile_HTML = 1,
+        kFile_CSV = 2,
+        kFile_Log = 3,
+        kFile_N = 4
     } tOutputTypes;
 
     class scheduler;
 
     typedef void (scheduler::*tFuncPtr)(std::ostream &ofs) const;
-\
+
     class outputfilewriter
     {
     public:
@@ -70,14 +92,6 @@ namespace scheduler
         tFuncPtr mFuncPtr;
     };
 
-    typedef enum
-    {
-        kBAU = 0,
-        kNew = 1,
-        kUna = 2, // unassigned
-        kHol = 3,
-        kNumItemTypes,
-    } tItemTypes;
 
     class scheduler
     {
@@ -85,20 +99,24 @@ namespace scheduler
         scheduler(inputfiles::constinputset ifiles);
 
         void schedule();
-        void refresh(inputfiles::inputset & iset); 
-        void advance(workdate newStart, inputfiles::inputset & iset) const;
+        void refresh(inputfiles::inputset &iset);
+        void advance(workdate newStart, inputfiles::inputset &iset) const;
 
         void createAllOutputFiles() const;
         void displayprojects(std::ostream &ofs) const;
         void displayprojects_Console() const;
         static void outputHTMLError(std::string filename, std::string errormsg);
 
-        static void getOutputWriters( std::vector<outputfilewriter> & writers);
+        static void getOutputWriters(std::vector<outputfilewriter> &writers);
 
         void prioritySortArray(std::vector<int> &v) const;
 
-    private:
+        void CalculateDevDaysTally(
+            std::vector<std::vector<double>> &DevDaysTally, // [project][month in future]
+            std::vector<tProjectInfo> &ProjectInfo,
+            tNdx personNdx = ULONG_MAX) const;
 
+    private:
         void create_output_directories() const;
 
         void displaybacklog(std::ostream &ofs) const;
@@ -114,7 +132,7 @@ namespace scheduler
         void outputHTML_High_Level_Gantt2(std::ostream &ofs) const;
         void outputHTML_Detailed_Gantt(std::ostream &ofs) const;
         void outputHTML_People(std::ostream &ofs) const;
-        void outputHTML_PeopleEffort(std::ostream & ofs) const;
+        void outputHTML_PeopleEffort(std::ostream &ofs) const;
         void outputHTML_RawBacklog(std::ostream &ofs) const;
         // void outputHTML_testfile(std::ostream &ofs) const;
         // void outputHTML_header(std::ostream &ofs) const;
@@ -141,26 +159,6 @@ namespace scheduler
 
         // HTML helper routines.
 
-        struct rgbcolour
-        {
-            int r, g, b;
-        };
-        // rgbcolour heatmap(float minimum, float maximum, float value) const;
-
-        typedef struct
-        {
-            std::string mId;
-            std::string mName;
-            rgbcolour mColour;
-            tItemTypes mType;
-        } tProjectInfo;
-
-        void CalculateDevDaysTally(
-            std::vector<std::vector<double>> &DevDaysTally, // [project][month in future]
-            std::vector<tProjectInfo>        &ProjectInfo,
-            tNdx personNdx = ULONG_MAX
-        ) const;
-        
         void Graph_Project_Cost(std::ostream &ofs) const;
         void Graph_Person_Project_Cost(std::ostream &ofs, tNdx personNdx) const;
         void Graph_Total_Project_Cost(std::ostream &ofs) const;
@@ -175,25 +173,26 @@ namespace scheduler
 
     private:
         bool mScheduled;
-        scheduledpeople mPeople; // taken from teammembers, but with added fields.
-        std::vector<scheduleditem> mItems; // copied from mI.mB.mTeamItems, merged, and scheduled.
+        scheduledpeople mPeople;                 // taken from teammembers, but with added fields.
+        std::vector<scheduleditem> mItems;       // copied from mI.mB.mTeamItems, merged, and scheduled.
         std::vector<scheduledproject> mProjects; // copied from mI.mP, but with start, end dates etc.
-        std::vector<worklogitem> mWorkLog; // record of the work done to complete the items (person-day chunks)
+        std::vector<worklogitem> mWorkLog;       // record of the work done to complete the items (person-day chunks)
 
         void resetSchedule();
 
-
     public:
-        const inputfiles::constinputset & getInputs() const {return mI;}
-        const std::vector<scheduleditem> & getItems() const {return mItems;}
-        const std::vector<scheduledproject> & getProjects() const {return mProjects;}
-        const std::vector<worklogitem> & getWorkLog() const {return mWorkLog;}
+        const inputfiles::constinputset &getInputs() const { return mI; }
+        const std::vector<scheduleditem> &getItems() const { return mItems; }
+        const std::vector<scheduledproject> &getProjects() const { return mProjects; }
+        const scheduledpeople &getPeople() const { return mPeople; }
+        const std::vector<worklogitem> &getWorkLog() const { return mWorkLog; }
+
     private:
         const inputfiles::constinputset mI;
-        const inputfiles::projects & projects() const {return mI.mP;}
-        const inputfiles::teams & teams() const {return mI.mT;}
-        const inputfiles::publicholidays & holidays() const {return mI.mH;}
-        const inputfiles::teambacklogs & teambacklogs() const {return mI.mB;}
+        const inputfiles::projects &projects() const { return mI.mP; }
+        const inputfiles::teams &teams() const { return mI.mT; }
+        const inputfiles::publicholidays &holidays() const { return mI.mH; }
+        const inputfiles::teambacklogs &teambacklogs() const { return mI.mB; }
     };
 
 } // namespace
