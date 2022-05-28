@@ -111,11 +111,6 @@ void HTMLCSVWriter::write_projectbacklog_csv(const scheduler::scheduler &s) cons
     }
 }
 
-struct rgbcolour
-{
-    int r, g, b;
-};
-
 void HTMLCSVWriter::write_projectgantt_csv(const scheduler::scheduler &s) const
 {
     simpleDataCSV csv("projectgantt");
@@ -126,7 +121,7 @@ void HTMLCSVWriter::write_projectgantt_csv(const scheduler::scheduler &s) const
                 "End",
                 "Colour"});
 
-    std::vector<rgbcolour> Colours(s.getProjects().size(), rgbcolour({0, 0, 0}));
+    std::vector<scheduler::rgbcolour> Colours(s.getProjects().size(), scheduler::rgbcolour({0, 0, 0}));
     colours::ColorGradient heatMapGradient;
     unsigned int ci = 0;
     for (ci = 0; ci < s.getProjects().size(); ++ci)
@@ -134,7 +129,7 @@ void HTMLCSVWriter::write_projectgantt_csv(const scheduler::scheduler &s) const
         float r, g, b;
         float v = (float)ci / (float)(s.getProjects().size());
         heatMapGradient.getColorAtValue(v, r, g, b);
-        Colours[ci] = rgbcolour{.r = (int)(r * 255.0 + 0.5), .g = (int)(g * 255.0 + 0.5), .b = (int)(b * 255.0 + 0.5)};
+        Colours[ci] = scheduler::rgbcolour{.r = (int)(r * 255.0 + 0.5), .g = (int)(g * 255.0 + 0.5), .b = (int)(b * 255.0 + 0.5)};
     }
 
     int i = 0;
@@ -162,7 +157,7 @@ void HTMLCSVWriter::write_basevars(const scheduler::scheduler &s) const
     csv.addrow({"key", "value"});
     csv.addrow({"version", gSettings().getJPFFullVersionStr()});
     csv.addrow({"timedate", date_time});
-    csv.addrow({"maxmonth", S()<<get_maxmonth(s)});
+    csv.addrow({"maxmonth", S() << get_maxmonth(s)});
 }
 
 void HTMLCSVWriter::run_jekyll() const
@@ -235,7 +230,6 @@ void HTMLCSVWriter::write_peopleeffortbymonth_months_people_csvs(const scheduler
             csv2.addrow({S() << m, monthIndex(m).getString()});
     }
 
-
     {
         simpleDataCSV csv3("people");
         csv3.addrow({"PersonCode", "PersonName"});
@@ -244,7 +238,7 @@ void HTMLCSVWriter::write_peopleeffortbymonth_months_people_csvs(const scheduler
         {
             std::string pCode = p.mName;
             removewhitespace(pCode);
-            csv3.addrow({pCode,p.mName});
+            csv3.addrow({pCode, p.mName});
         }
     }
 
@@ -259,12 +253,10 @@ void HTMLCSVWriter::write_peopleeffortbymonth_months_people_csvs(const scheduler
         {
             auto &c = p.mColour;
             std::string colour = S() << "rgb(" << c.r << ", " << c.g << ", " << c.b << ")";
-            csv4.addrow({
-                p.mId,
-                p.mName,
-                colour,
-                s.ItemType2String(p.mType)
-            });
+            csv4.addrow({p.mId,
+                         p.mName,
+                         colour,
+                         s.ItemType2String(p.mType)});
         }
     }
 }
@@ -288,7 +280,7 @@ void HTMLCSVWriter::write_dashboard(const scheduler::scheduler &s) const
     std::vector<std::vector<double>> DevDaysTally;
     std::vector<scheduler::tProjectInfo> ProjectInfo;
     s.CalculateDevDaysTally(DevDaysTally, ProjectInfo);
-    ASSERT(DevDaysTally.size()>0);
+    ASSERT(DevDaysTally.size() > 0);
     if (DevDaysTally.size() == 0)
         return; // no data.
     unsigned long maxmonth = DevDaysTally[0].size();
@@ -298,32 +290,32 @@ void HTMLCSVWriter::write_dashboard(const scheduler::scheduler &s) const
 
         csv.addrow(
             {"MonthNum",
-            "DateStr",
-            "ProjectName",
-            "ProjectColour",
-            "ProjectId",
-            "ProjectCost"});
+             "DateStr",
+             "ProjectName",
+             "ProjectColour",
+             "ProjectId",
+             "ProjectCost"});
 
         for (unsigned int i = 0; i < DevDaysTally.size(); ++i)
-            for (unsigned int m=0; m<maxmonth ; ++m)
+            for (unsigned int m = 0; m < maxmonth; ++m)
             {
                 auto &c = ProjectInfo[i].mColour;
-                csv.addrow({
-                    S()<<m,
-                    monthIndex(m).getString(),
-                    ProjectInfo[i].mName,
-                    S()<< "rgb(" << c.r << ", " << c.g << ", " << c.b << ")",
-                    ProjectInfo[i].mId,
-                    S() << (int)(0.5+ gSettings().dailyDevCost() * DevDaysTally[i][m])
-                });
+                csv.addrow({S() << m,
+                            monthIndex(m).getString(),
+                            ProjectInfo[i].mName,
+                            S() << "rgb(" << c.r << ", " << c.g << ", " << c.b << ")",
+                            ProjectInfo[i].mId,
+                            S() << (int)(0.5 + gSettings().dailyDevCost() * DevDaysTally[i][m])});
             }
     }
 
-    { // total project cost pie graph   
+    // -----------------------
+
+    { // total project cost pie graph
         std::vector<double> vProjectCostRemaining(DevDaysTally.size(), 0.0);
         for (unsigned int i = 0; i < DevDaysTally.size(); ++i)
             for (double j : DevDaysTally[i])
-                vProjectCostRemaining[i] += j;    
+                vProjectCostRemaining[i] += j;
 
         double totalProjectCostRemaining = 0.0;
         for (auto &vpc : vProjectCostRemaining)
@@ -332,31 +324,100 @@ void HTMLCSVWriter::write_dashboard(const scheduler::scheduler &s) const
         simpleDataCSV csv2("projectcosttotal");
 
         csv2.addrow(
-            {
-                "ProjectId",
-                "ProjectName",
-                "ProjectColour",
-                "TextLabel",
-                "Cost"
-            }
-        );
+            {"ProjectId",
+             "ProjectName",
+             "ProjectColour",
+             "TextLabel",
+             "Cost"});
 
         for (unsigned int i = 0; i < ProjectInfo.size(); ++i)
         {
             std::string textlabel; // only significant projects get a label!
-             if (vProjectCostRemaining[i] > 0.01 * totalProjectCostRemaining)
+            if (vProjectCostRemaining[i] > 0.01 * totalProjectCostRemaining)
                 textlabel = S() << ProjectInfo[i].mId << "   " << getDollars(gSettings().dailyDevCost() * vProjectCostRemaining[i]);
 
             auto &c = ProjectInfo[i].mColour;
             csv2.addrow(
-                {
-                    ProjectInfo[i].mId,
-                    ProjectInfo[i].mName,
-                    S()<< "rgb(" << c.r << ", " << c.g << ", " << c.b << ")",
-                    textlabel,
-                    S()<< (int)(0.5 + gSettings().dailyDevCost() * vProjectCostRemaining[i])
-                }
-            );
+                {ProjectInfo[i].mId,
+                 ProjectInfo[i].mName,
+                 S() << "rgb(" << c.r << ", " << c.g << ", " << c.b << ")",
+                 textlabel,
+                 S() << (int)(0.5 + gSettings().dailyDevCost() * vProjectCostRemaining[i])});
         }
+    }
+
+    // -----------------------
+
+    { // BAU!
+        using namespace scheduler;
+
+        simpleDataCSV csv4("projecttypes");
+        csv4.addrow({"TypeNum",
+                     "TypeName",
+                     "TypeColour"});
+        for (unsigned int i = 0; i < kNumItemTypes; ++i)
+        {
+            rgbcolour c;
+            switch (i)
+            {
+            case kBAU:
+                c = {190, 30, 50};
+                break;
+            case kNew:
+                c = {30, 190, 30};
+                break;
+            case kUna:
+                c = ProjectInfo[ProjectInfo.size() - 3].mColour;
+                break;
+            case kHol:
+                c = ProjectInfo[ProjectInfo.size() - 4].mColour;
+                break;
+            };
+            csv4.addrow(
+                {S() << i,
+                 s.ItemType2String(static_cast<tItemTypes>(i)),
+                 S() << "rgb(" << c.r << ", " << c.g << ", " << c.b << ")"});
+        }
+
+        simpleDataCSV csv3("projecttypepercents");
+
+        csv3.addrow({"TypeNum",
+                     "MonthNum",
+                     "DateStr",
+                     "Percentage",
+                     "Label"});
+
+        std::vector<std::vector<double>> DDT; // [BAU/New][month]
+        DDT.resize(kNumItemTypes);
+        for (unsigned int i = 0; i < kNumItemTypes; ++i)
+            DDT[i].resize(maxmonth, 0.0);
+
+        for (unsigned int pi = 0; pi < DevDaysTally.size(); ++pi)
+            for (unsigned int m = 0; m < maxmonth; ++m)
+                DDT[ProjectInfo[pi].mType][m] += DevDaysTally[pi][m];
+
+        for (unsigned int m = 0; m < maxmonth; ++m)
+        { // make percentages.
+            double tot = DDT[kBAU][m] + DDT[kNew][m] + DDT[kUna][m] + DDT[kHol][m];
+            DDT[kBAU][m] = (DDT[kBAU][m] * 100) / tot;
+            DDT[kNew][m] = (DDT[kNew][m] * 100) / tot;
+            DDT[kHol][m] = (DDT[kHol][m] * 100) / tot;
+            DDT[kUna][m] = 100 - DDT[kBAU][m] - DDT[kNew][m] - DDT[kHol][m];
+        }
+
+        for (unsigned int i = 0; i < kNumItemTypes; ++i)
+            for (unsigned int m = 0; m < maxmonth; ++m)
+            {
+
+                csv3.addrow(
+                    {
+                        S() << i,
+                        S() << m,
+                        monthIndex(m).getString(),
+                        S() << std::setprecision(3) << DDT[i][m],
+                        S() << s.ItemType2String(static_cast<tItemTypes>(i)) 
+                                << " - " << (int)(0.5 + DDT[i][m]) << "%"
+                    });
+            }
     }
 }
