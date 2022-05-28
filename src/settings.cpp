@@ -260,7 +260,7 @@ const std::string getOutputPath_Html() { return gSettings().getRoot() + "/output
 const std::string getOutputPath_Jekyll() { return gSettings().getRoot() + "/output/.jekyll/"; }
 const std::string getOutputPath_Csv() { return gSettings().getRoot() + "/output/csv/"; }
 const std::string getOutputPath_Log() { return gSettings().getRoot() + "/output/log/"; }
-const std::string getOptHTMLPath() { return "/opt/jpf/html/"; }
+
 const std::string getLocalTemplatePath()
 {
     std::string p = gSettings().getRoot()+"template";
@@ -287,8 +287,12 @@ const std::string getExePath()
         exepath= std::filesystem::canonical(exepath);
         if (exepath.length()==0)
             return "";
-        if (exepath[exepath.length()-1]!='/')
-            exepath.push_back('/');
+
+        unsigned int i=exepath.length()-1;
+        while (i>0 && exepath[i]!='/') --i;
+        if (i>0 && i<exepath.length()-1)
+            exepath.erase(exepath.begin()+i+1,exepath.end());
+        return exepath;
     }
     /* handle error */
     return "";

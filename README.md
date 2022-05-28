@@ -98,9 +98,8 @@ git clone https://github.com/j842/jpf.git
 cd jpf
 ```
 
-Set up relevant folders and build the podman images:
+Build the podman images:
 ```
-make setup
 make images
 ```
 

@@ -75,7 +75,6 @@ const std::string getOutputPath_Html();
 const std::string getOutputPath_Csv();
 const std::string getOutputPath_Log();
 
-const std::string getOptHTMLPath();
 const std::string getLocalTemplatePath();
 const std::string getOutputPath_Jekyll();
 const std::string getExePath();

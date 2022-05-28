@@ -14,8 +14,6 @@ jobs:
       run: sudo apt install build-essential libboost-date-time-dev libcppunit-dev podman ruby-full zlib1g-dev
     - name: check jekyll
       run: sudo deps/dpkg/after-install.sh
-    - name: make setup
-      run: make setup
     - name: make
       run: make
     - name: make check

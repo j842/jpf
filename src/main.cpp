@@ -319,10 +319,6 @@ int cMain::go(int argc, char **argv)
 
     try
     {
-        if (!std::filesystem::exists("/opt/jpf"))
-            fatal("jpf has not been correctly installed on this system. If it's dev environment, run make setup.");
-
-
         // handle options which do not require a directory.
         if (argc>=2 && strlen(argv[1])>1 && argv[1][0]=='-' && tolower(argv[1][1])=='t')
             return runtests() ? 0 : 1;     

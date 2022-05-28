@@ -114,13 +114,6 @@ deploy:
 	@gh auth login --with-token < ~/.github_token
 	@gh workflow run Build_and_Deploy_JPF.yml
 
-# initial setup for dev environment.
-setup:
-	sudo cp $(ROOT_DIR)/deps/webfsd-jpf/webfsd-jpf /usr/bin
-	sudo rm -rf /opt/jpf
-	sudo mkdir -p /opt/jpf
-	sudo cp -r $(ROOT_DIR)/includes/dpkg_include/* /
-
 # create the podman (docker) images for building the debian package.
 images:
 	make -C deps/podman

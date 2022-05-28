@@ -58,9 +58,9 @@ void HTMLCSVWriter::CopyHTMLFolder() const
     // also copy across all support_files into the HTML directory.
     {
         std::string html = getOutputPath_Jekyll();
-        std::string opt_debug = getExePath() + "includes/dpkg_include/opt/jpf/html";
+        std::string opt_debug = getExePath() + "../includes/dpkg_include/opt/jpf/html"; // go up from build directory.
         std::string opt_local = getLocalTemplatePath();
-        std::string opt_system = getOptHTMLPath();
+        std::string opt_system = "/opt/jpf/html/"; 
 
         std::string opt = opt_system;
         if (std::filesystem::exists(opt_local))
@@ -70,12 +70,13 @@ void HTMLCSVWriter::CopyHTMLFolder() const
         } 
         else if (std::filesystem::exists(opt_debug))
         {
+            opt_debug = std::filesystem::canonical(opt_debug);
             loginfo("Using local directory for Jekyll files: "+opt_debug);
             opt=opt_debug;
         } 
 
         namespace fs = std::filesystem;
-        // recursive copy getOptHTMLPath to getOutputPath_Html
+        // recursive copy to getOutputPath_Html
         fs::copy(opt, html, fs::copy_options::recursive | fs::copy_options::overwrite_existing);
 
         std::string ganttpath = html + "static/gantt"; // one of the paths we expect to be present.
