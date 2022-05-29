@@ -4,6 +4,29 @@
 
 namespace scheduler
 {
+    class lowercasecountedmap
+    {
+        public:
+            lowercasecountedmap() {}
+
+            std::string get(std::string key) {return mV[to_lowercase(key)];}
+            int getcount(std::string key) {return mC[to_lowercase(key)];}
+            
+            void set(std::string key, std::string value) {mV[to_lowercase(key)]=value; }
+            void addcount(std::string key) {mC[to_lowercase(key)]+=1;} // insert of 0 on non-exist.
+
+            std::string to_lowercase(std::string s)
+            {
+                std::transform(s.begin(), s.end(), s.begin(),
+                    [](unsigned char c){ return std::tolower(c); });
+
+                return s;
+            }
+
+        private:
+            std::map<std::string,std::string> mV;
+            std::map<std::string,int> mC;
+    };
 
     void scheduler::refresh(inputfiles::inputset &iset)
     {
@@ -12,21 +35,19 @@ namespace scheduler
 
         _prioritiseAndMergeTeams(); // merge the tasks from each team list together, based on project priorities and preserving team ordering.
 
-        std::map<std::string, std::string> refMap;
+        lowercasecountedmap refMap;
 
         { // 1. remove any unused refrences.
             std::vector<unsigned int> teamitemcount(iset.mT.size(), 0);
-            std::map<std::string, int> refCounts;
 
             unsigned int removedRefs = 0;
             for (auto &i : mItems)
                 for (auto &j : i.mDependencies)
-                    refCounts[j] += 1;
+                    refMap.addcount(j);
 
             for (auto &i : mItems)
-                if (i.mId.length() > 0 && refCounts[i.mId] == 0)
+                if (i.mId.length() > 0 && refMap.getcount(i.mId)==0)
                 {
-                    refMap[i.mId] = "";
                     i.mId.clear();
                     ++removedRefs;
                 }
@@ -41,13 +62,17 @@ namespace scheduler
             for (auto &i : mItems)
                 if (i.mId.length() > 0)
                 {
+                    ASSERT(refMap.getcount(i.mId)>0);
                     teamItemCount[i.mTeamNdx] += 1;
-                    refMap[i.mId] = (S() << iset.mT[i.mTeamNdx].mRefCode << "." << std::setw(2) << std::setfill('0') << teamItemCount[i.mTeamNdx]);
-                    i.mId = refMap[i.mId];
+                    refMap.set(
+                        i.mId, 
+                        S() << iset.mT[i.mTeamNdx].mRefCode << "." << std::setw(2) << std::setfill('0') << teamItemCount[i.mTeamNdx]
+                        );
+                    i.mId = refMap.get(i.mId);
                 }
             for (auto &i : mItems)
                 for (auto &j : i.mDependencies)
-                    j = refMap[j];
+                    j = refMap.get(j);
         }
 
         { // 3. Fix the team backlogs now with the new references.
@@ -55,10 +80,10 @@ namespace scheduler
                 for (auto &bl : t0)
                 {
                     if (bl.mId.length() > 0)
-                        bl.mId = refMap[bl.mId];
+                        bl.mId = refMap.get(bl.mId);
 
                     for (auto &dep : bl.mDependencies)
-                        dep = refMap[dep];
+                        dep = refMap.get(dep);
                 }
         }
     }

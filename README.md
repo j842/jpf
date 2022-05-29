@@ -5,7 +5,9 @@ John's Project Forecaster
 - Auto schedules *REMAINING* work for projects, from date specified in settings.csv
 - Does nothing for historical work or review.
 - Constraints are:
-   - resources (people), and can have multiple on a task (even workload assumed),
+   - resources (people) availability; can have multiple on a task (will finish as quickly as it can)
+   - blocking resources will prevent a task starting until they are avaialable.
+   - contributing resources will help if they are free, but are not essential to start.
    - number of dev days per task total (at full capacity),
    - minimum calendar days to complete a task,
    - multiple cross-team dependencies on other tasks,
