@@ -102,22 +102,40 @@ void HTMLCSVWriter::write_projectbacklog_csv(const scheduler::scheduler &s) cons
     s.prioritySortArray(v_sorted);
 
     csv.addrow({"Project",
+                "TaskPopUp",
                 "Start",
                 "End",
                 "Task Name",
                 "Team",
-                "Blocked"});
+                "Id",
+                "Blocked",
+                });
 
     for (auto &x : v_sorted)
     {
         auto &z = s.getItems()[x];
 
+        std::string popup=S()
+                <<"<pre>"
+                <<"Id:           "<<z.mId << "<br/>"
+                <<"Tags:         ";    
+        for (auto & t : z.mTags)
+            popup += t + " ";
+        popup+= S() << "<br/>"
+                <<"Dependencies: ";
+        for (auto & d : z.mDependencies) 
+            popup +=d+" ";
+        popup+=S()<<"<br/></pre>"<<z.mComments;
+                
         csv.addrow({s.getProjects()[z.mProject].getName(),
+                    popup,
                     z.mActualStart.getStr_nice_short(),
                     z.mActualEnd.getStr_nice_short(),
                     z.mDescription,
                     s.getInputs().mT.at(z.mTeamNdx).mId,
-                    z.mBlockedBy});
+                    z.mId,
+                    z.mBlockedBy
+                    });
     }
 }
 

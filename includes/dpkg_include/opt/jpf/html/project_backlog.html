@@ -2,6 +2,8 @@
 layout: default
 title: Project Backlog
 headincludes: |
+    <script src="static/jquery-3.6.0.min.js"></script>
+    <script type="text/javascript" src="static/nhpup_1.1.js"></script>
     <link rel="stylesheet" href="static/nicetable.css">
 ---
 {%- assign project = "blah" -%}
@@ -30,15 +32,17 @@ headincludes: |
         {% assign projectnum = projectnum | plus: 1 %}
         <tr id="project-{{projectnum}}"><th colspan="6" class="sectiontitle"><center>{{project}}</center></th></tr>
         <tr>
-            {%- for pair in site.data.projectbacklog[0] offset:1 -%}
+            {%- for pair in site.data.projectbacklog[0] offset:2 -%}
                     <th>{{ pair[0] }}</th>
             {% endfor %}
         </tr>
     {% endif %}
 
-    {%- tablerow pair in row offset:1 -%}
+    {%- tablerow pair in row offset:2 -%}
         {%- if pair[0] == "Task Name" -%}
-            <i>{{ pair[1] }}</i>
+            <a onmouseover="nhpup.popup(
+                '{{row.TaskPopUp}}',
+                {'width': 300});">{{ pair[1] }}</a>
         {%- else -%}
             {{ pair[1] }}
         {%- endif -%}
@@ -46,3 +50,4 @@ headincludes: |
 {%- endfor -%}
 </table>
 </center>
+
