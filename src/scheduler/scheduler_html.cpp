@@ -114,7 +114,7 @@ namespace scheduler
                     simpledate d(workdate::WorkDays2Date(dayndx));
                     monthIndex mI(d);
                     for (const auto &zc : zp.getChunks(dayndx))
-                        DevDaysTally[mItems[zc.mItemIndex].mProject][mI] += ((double)zc.mEffort) / 100.0;
+                        DevDaysTally[mItems[zc.mItemIndex].mProjectIndex][mI] += ((double)zc.mEffort) / 100.0;
                 }
             }
 

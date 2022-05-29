@@ -111,9 +111,9 @@ namespace scheduler
         {
             auto &z = mItems[x];
 
-            if (z.mProject != prevproj)
+            if (z.mProjectIndex != prevproj)
             {
-                std::string pname = mProjects[z.mProject].getName();
+                std::string pname = mProjects[z.mProjectIndex].getName();
 
                 ofs << std::endl
                     << std::endl
@@ -121,7 +121,7 @@ namespace scheduler
                     << std::endl; // blank line between projects.
                 std::string s(maxtitlew, '-');
                 ofs << s << std::endl;
-                prevproj = z.mProject;
+                prevproj = z.mProjectIndex;
             }
             // ofs << std::setw(7) << z.mId << " ";
 
@@ -173,13 +173,13 @@ namespace scheduler
 
             if (z.mDevCentiDays == 0 && z.mMinCalendarDays == 0)
             { // output all 0 day items.
-                if (prevproj != z.mProject)
+                if (prevproj != z.mProjectIndex)
                 {
                     ofs << std::endl
-                        << mProjects[z.mProject].getId() << std::endl; // blank line between projects.
-                    std::string s(mProjects[z.mProject].getId().length(), '-');
+                        << mProjects[z.mProjectIndex].getId() << std::endl; // blank line between projects.
+                    std::string s(mProjects[z.mProjectIndex].getId().length(), '-');
                     ofs << s << std::endl;
-                    prevproj = z.mProject;
+                    prevproj = z.mProjectIndex;
                 }
                 ofs << z.mActualStart.getStr_short() << "   ";
                 ofs << z.mDescription << std::endl;

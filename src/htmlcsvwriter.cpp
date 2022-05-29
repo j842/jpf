@@ -101,7 +101,13 @@ void HTMLCSVWriter::write_projectbacklog_csv(const scheduler::scheduler &s) cons
     std::vector<int> v_sorted;
     s.prioritySortArray(v_sorted);
 
+    std::vector<scheduler::tProjectInfo> ProjectInfo;
+    s.getProjectExtraInfo(ProjectInfo);
+
+    std::vector<scheduler::rgbcolour> Colours(s.getProjects().size(), scheduler::rgbcolour({0, 0, 0}));
+
     csv.addrow({"project",
+                "projectcolour",
                 "start",
                 "end",
                 "taskname",
@@ -130,7 +136,10 @@ void HTMLCSVWriter::write_projectbacklog_csv(const scheduler::scheduler &s) cons
         for (unsigned int pi = 0 ; pi<z.mResources.size(); pi++)
             resources+= S()<< z.mResources[pi].mName<<": "<< std::fixed<<std::setprecision(2)<<0.01*(double)z.mTotalContribution[pi]<<"  ";
 
-        csv.addrow({s.getProjects()[z.mProject].getName(),
+        scheduler::rgbcolour rgbc = ProjectInfo[ z.mProjectIndex ].mColour;
+
+        csv.addrow({s.getProjects()[z.mProjectIndex].getName(),
+                    S() << "rgb(" << rgbc.r << ", " << rgbc.g << ", " << rgbc.b << ")",
                     z.mActualStart.getStr_nice_short(),
                     z.mActualEnd.getStr_nice_short(),
                     z.mDescription,
@@ -156,21 +165,13 @@ void HTMLCSVWriter::write_projectgantt_csv(const scheduler::scheduler &s) const
                 "End",
                 "Colour"});
 
-    std::vector<scheduler::rgbcolour> Colours(s.getProjects().size(), scheduler::rgbcolour({0, 0, 0}));
-    colours::ColorGradient heatMapGradient;
-    unsigned int ci = 0;
-    for (ci = 0; ci < s.getProjects().size(); ++ci)
-    {
-        float r, g, b;
-        float v = (float)ci / (float)(s.getProjects().size());
-        heatMapGradient.getColorAtValue(v, r, g, b);
-        Colours[ci] = scheduler::rgbcolour{.r = (int)(r * 255.0 + 0.5), .g = (int)(g * 255.0 + 0.5), .b = (int)(b * 255.0 + 0.5)};
-    }
+    std::vector<scheduler::tProjectInfo> ProjectInfo;
+    s.getProjectExtraInfo(ProjectInfo);
 
     int i = 0;
     for (auto &p : s.getProjects())
     {
-        std::string colour = S() << "rgb(" << Colours[i].r << ", " << Colours[i].g << ", " << Colours[i].b << ")";
+        std::string colour = S() << "rgb(" << ProjectInfo[i].mColour.r << ", " << ProjectInfo[i].mColour.g << ", " << ProjectInfo[i].mColour.b << ")";
 
         ++i;
 

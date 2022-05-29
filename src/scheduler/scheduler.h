@@ -46,7 +46,7 @@ namespace scheduler
 
     public:
         // set while scheduling the task.
-        unsigned int mProject;
+        unsigned int mProjectIndex;
         unsigned int mPriority;
         workdate mActualStart;
         workdate mActualEnd;

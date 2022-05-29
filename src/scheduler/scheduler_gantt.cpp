@@ -57,7 +57,7 @@ namespace scheduler
             ofs << ","; // assignments
 
             ofs << ",,,"; // task colour, web link, notes.
-            ofs << std::setfill('0') << std::setw(2) << x.mProject + 1 << " " << mProjects[x.mProject].getId();
+            ofs << std::setfill('0') << std::setw(2) << x.mProjectIndex + 1 << " " << mProjects[x.mProjectIndex].getId();
             ofs << std::endl;
         }
 

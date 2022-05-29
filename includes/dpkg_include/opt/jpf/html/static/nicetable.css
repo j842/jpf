@@ -27,6 +27,11 @@ th.sectiontitle {
     background-color: #842;
     color: #fff;            
 }
+th.sectiontitle a:link, th.sectiontitle a:visited {
+    background-color: #842;
+    color: #fff;           
+    text-decoration: none; 
+}
 
 tr:hover {background-color: coral;}
 

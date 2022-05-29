@@ -21,7 +21,7 @@ namespace scheduler
 
 
     scheduleditem::scheduleditem(const inputfiles::backlogitem &bli, unsigned int priority,  unsigned int projectndx, unsigned int itemIndexInTeamBacklog) : 
-        inputfiles::backlogitem(bli), mProject(projectndx), mPriority(priority),mItemIndexInTeamBacklog(itemIndexInTeamBacklog), 
+        inputfiles::backlogitem(bli), mProjectIndex(projectndx), mPriority(priority),mItemIndexInTeamBacklog(itemIndexInTeamBacklog), 
         mLoadingPercent(bli.mResources.size(),0),
         mTotalContribution(bli.mResources.size(),0)
     {
@@ -119,8 +119,8 @@ namespace scheduler
         std::iota(v.begin(), v.end(), 0);
         std::sort(begin(v), end(v), [this](int index_left, int index_right)
                   { 
-        if (mItems[index_left].mProject != mItems[index_right].mProject)
-            return mItems[index_left].mProject < mItems[index_right].mProject; 
+        if (mItems[index_left].mProjectIndex != mItems[index_right].mProjectIndex)
+            return mItems[index_left].mProjectIndex < mItems[index_right].mProjectIndex; 
         else
             if (mItems[index_left].mActualEnd != mItems[index_right].mActualEnd)
                 return mItems[index_left].mActualEnd < mItems[index_right].mActualEnd;
@@ -198,7 +198,7 @@ namespace scheduler
         // iterate through tasks, taking max and min duration.
         for (const auto &task : mItems)
         {
-            auto &p = mProjects[task.mProject];
+            auto &p = mProjects[task.mProjectIndex];
 
             if (task.mActualStart < p.mActualStart)
                 p.mActualStart = task.mActualStart;
