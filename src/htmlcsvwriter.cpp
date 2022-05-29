@@ -115,18 +115,32 @@ void HTMLCSVWriter::write_projectbacklog_csv(const scheduler::scheduler &s) cons
     {
         auto &z = s.getItems()[x];
 
+        
         std::string popup=S()
                 <<"<pre>"
-                <<"Id:           "<<z.mId << "<br/>"
-                <<"Tags:         ";    
-        for (auto & t : z.mTags)
-            popup += t + " ";
-        popup+= S() << "<br/>"
-                <<"Dependencies: ";
+                <<"Id:           "<<z.mId << "<br/>";
+
+        popup+= S() <<"Dependencies: ";
         for (auto & d : z.mDependencies) 
             popup +=d+" ";
-        popup+=S()<<"<br/></pre>"<<z.mComments;
-                
+        popup+="<br/>";
+
+        popup+=S()<<"Tags:         ";    
+        for (auto & t : z.mTags)
+            popup += t + " ";
+        popup+="<br/>";
+
+        popup+=S()<<"Days:         "<<std::fixed<<std::setprecision(2)<<0.01*(double)z.mDevCentiDays<<"<br/>";
+
+        popup+=S()<<"Resources:    ";
+        for (unsigned int pi = 0 ; pi<z.mResources.size(); pi++)
+            popup+= S()<< z.mResources[pi].mName<<": "<< std::fixed<<std::setprecision(2)<<0.01*(double)z.mTotalContribution[pi]<<"  ";
+        popup+="<br/>";
+
+        popup+=S()<<"</pre>"<<z.mComments;
+
+
+
         csv.addrow({s.getProjects()[z.mProject].getName(),
                     popup,
                     z.mActualStart.getStr_nice_short(),
