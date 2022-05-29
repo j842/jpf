@@ -21,33 +21,31 @@ headincludes: |
 
 <center>
 <table>
+{%- assign project = "blah" -%}
 {%- assign projectnum=0 -%}
 {%- for row in site.data.projectbacklog -%}
-    {%- if project != row.Project -%}
-        {%- assign project = row.Project -%}
+    {%- if project != row.project -%}
+        {%- assign project = row.project -%}
         {%- if forloop.first == false -%}
             <tr class="spacer"><td colspan="4">&nbsp;</td></tr>
         {%- endif -%}
         <!-- write out header -->
         {% assign projectnum = projectnum | plus: 1 %}
         <tr id="project-{{projectnum}}"><th colspan="6" class="sectiontitle"><center>{{project}}</center></th></tr>
-        <tr>
-            {%- for pair in site.data.projectbacklog[0] offset:2 -%}
-                    <th>{{ pair[0] }}</th>
-            {% endfor %}
-        </tr>
+        <tr><th>Start</th><th>End</th><th>Task Name</th><th>Team</th><th>Id</th></tr>
     {% endif %}
 
-    {%- tablerow pair in row offset:2 -%}
-        {%- if pair[0] == "Task Name" -%}
-            <a onmouseover="nhpup.popup(
-                '{{row.TaskPopUp}}',
-                {'width': 400});">{{ pair[1] }}</a>
-        {%- else -%}
-            {{ pair[1] }}
-        {%- endif -%}
-    {%- endtablerow -%}
+    <tr class="row1">
+    <td class="col1">{{row.start}}</td>
+    <td class="col2">{{row.end}}</td>
+    <td class="col3"><a onmouseover="nhpup.popup(' {{row.taskname}}<pre>project:      {{row.project}}<br/>id:           {{row.id}}<br/>dependencies: {{row.dependencies}}<br/>tags:         {{row.tags}}<br/>devdays:      {{row.devdays}}<br/>resources:    {{row.resources}}<br/></pre>{{row.comments}}',{'width': 400});">{{row.taskname}}</a>
+    <td class="col4">{{row.team}}</td>
+    <td class="col5">{{row.id}}</td>
+    </td>
 {%- endfor -%}
 </table>
 </center>
 
+<td class="col3"><a onmouseover="nhpup.popup(
+                '<pre>Id:           C.01<br/>Dependencies: <br/>Tags:         <br/>Days:         1.30<br/>Resources:    Brett: 0.47  Paul: 0.83  <br/></pre>',
+                {'width': 400});">N190 Total Fert Correction - Implementation</a></td>

@@ -101,54 +101,47 @@ void HTMLCSVWriter::write_projectbacklog_csv(const scheduler::scheduler &s) cons
     std::vector<int> v_sorted;
     s.prioritySortArray(v_sorted);
 
-    csv.addrow({"Project",
-                "TaskPopUp",
-                "Start",
-                "End",
-                "Task Name",
-                "Team",
-                "Id",
-                "Blocked",
+    csv.addrow({"project",
+                "start",
+                "end",
+                "taskname",
+                "team",
+                "id",
+                "blocked",
+                "dependencies",
+                "tags",
+                "devdays",
+                "resources",
+                "comments"
                 });
 
     for (auto &x : v_sorted)
     {
         auto &z = s.getItems()[x];
 
-        
-        std::string popup=S()
-                <<"<pre>"
-                <<"Id:           "<<z.mId << "<br/>";
-
-        popup+= S() <<"Dependencies: ";
+        std::string dependencies;
         for (auto & d : z.mDependencies) 
-            popup +=d+" ";
-        popup+="<br/>";
-
-        popup+=S()<<"Tags:         ";    
+            dependencies +=d+" ";
+        std::string tags;
         for (auto & t : z.mTags)
-            popup += t + " ";
-        popup+="<br/>";
-
-        popup+=S()<<"Days:         "<<std::fixed<<std::setprecision(2)<<0.01*(double)z.mDevCentiDays<<"<br/>";
-
-        popup+=S()<<"Resources:    ";
+            tags += t + " ";
+        std::string devdays = S()<<std::fixed<<std::setprecision(2)<<0.01*(double)z.mDevCentiDays;
+        std::string resources;
         for (unsigned int pi = 0 ; pi<z.mResources.size(); pi++)
-            popup+= S()<< z.mResources[pi].mName<<": "<< std::fixed<<std::setprecision(2)<<0.01*(double)z.mTotalContribution[pi]<<"  ";
-        popup+="<br/>";
-
-        popup+=S()<<"</pre>"<<z.mComments;
-
-
+            resources+= S()<< z.mResources[pi].mName<<": "<< std::fixed<<std::setprecision(2)<<0.01*(double)z.mTotalContribution[pi]<<"  ";
 
         csv.addrow({s.getProjects()[z.mProject].getName(),
-                    popup,
                     z.mActualStart.getStr_nice_short(),
                     z.mActualEnd.getStr_nice_short(),
                     z.mDescription,
                     s.getInputs().mT.at(z.mTeamNdx).mId,
                     z.mId,
-                    z.mBlockedBy
+                    z.mBlockedBy,
+                    dependencies,
+                    tags,
+                    devdays,
+                    resources,
+                    z.mComments
                     });
     }
 }
