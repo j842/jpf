@@ -37,6 +37,10 @@ class HTMLCSVWriter
         void run_jekyll() const;
 
         unsigned long get_maxmonth(const scheduler::scheduler & s) const;
+
+        void write_all_tag_files(const scheduler::scheduler &s) const;
+        void write_tag_file(const scheduler::scheduler &s, const std::string tag) const;
+
 };
 
 

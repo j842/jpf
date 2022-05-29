@@ -1,6 +1,7 @@
 #include "scheduler.h"
 #include "inputfiles_inputset.h"
 #include "settings.h"
+#include "utils.h"
 
 namespace scheduler
 {
@@ -9,19 +10,11 @@ namespace scheduler
         public:
             lowercasecountedmap() {}
 
-            std::string get(std::string key) {return mV[to_lowercase(key)];}
-            int getcount(std::string key) {return mC[to_lowercase(key)];}
+            std::string get(std::string key) {return mV[makelower(key)];}
+            int getcount(std::string key) {return mC[makelower(key)];}
             
-            void set(std::string key, std::string value) {mV[to_lowercase(key)]=value; }
-            void addcount(std::string key) {mC[to_lowercase(key)]+=1;} // insert of 0 on non-exist.
-
-            std::string to_lowercase(std::string s)
-            {
-                std::transform(s.begin(), s.end(), s.begin(),
-                    [](unsigned char c){ return std::tolower(c); });
-
-                return s;
-            }
+            void set(std::string key, std::string value) {mV[makelower(key)]=value; }
+            void addcount(std::string key) {mC[makelower(key)]+=1;} // insert of 0 on non-exist.
 
         private:
             std::map<std::string,std::string> mV;

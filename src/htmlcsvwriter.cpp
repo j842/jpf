@@ -46,6 +46,7 @@ void HTMLCSVWriter::createHTMLFolder(const scheduler::scheduler &s) const
     write_projectgantt_csv(s);
     write_peopleeffortbymonth_months_people_csvs(s);
     write_dashboard(s);
+    write_all_tag_files(s);
 
     run_jekyll();
 
@@ -130,7 +131,7 @@ void HTMLCSVWriter::write_projectbacklog_csv(const scheduler::scheduler &s) cons
             dependencies +=d+" ";
         std::string tags;
         for (auto & t : z.mTags)
-            tags += t + " ";
+            tags += makelower(t) + " ";
         std::string devdays = S()<<std::fixed<<std::setprecision(2)<<0.01*(double)z.mDevCentiDays;
         std::string resources;
         for (unsigned int pi = 0 ; pi<z.mResources.size(); pi++)
@@ -153,6 +154,89 @@ void HTMLCSVWriter::write_projectbacklog_csv(const scheduler::scheduler &s) cons
                     z.mComments
                     });
     }
+}
+
+void HTMLCSVWriter::write_all_tag_files(const scheduler::scheduler &s) const
+{
+    std::vector<std::string> tagslist;
+    for (const auto & i : s.getItems())
+        i.addToTags(tagslist);
+
+    {
+        simpleDataCSV csv("tags");
+        csv.addrow({"tag"});
+        for (const auto & i : tagslist)
+            csv.addrow({i});
+    }
+
+    for (auto t : tagslist)
+        write_tag_file(s,t);
+}
+
+void HTMLCSVWriter::write_tag_file(const scheduler::scheduler &s, const std::string tag) const
+{
+
+    std::vector<scheduler::tProjectInfo> ProjectInfo;
+    s.getProjectExtraInfo(ProjectInfo);
+
+    std::vector<scheduler::rgbcolour> Colours(s.getProjects().size(), scheduler::rgbcolour({0, 0, 0}));
+
+    std::vector<std::vector<std::string>> csvcontent;
+
+    for (auto &z : s.getItems())
+    {
+        bool hasTag(false);
+        for (auto & t : z.mTags)
+            if (iSame(t,tag))
+                hasTag=true;
+
+        if (hasTag)
+        {
+            std::string dependencies;
+            for (auto & d : z.mDependencies) 
+                dependencies +=d+" ";
+
+            std::string devdays = S()<<std::fixed<<std::setprecision(2)<<0.01*(double)z.mDevCentiDays;
+            scheduler::rgbcolour rgbc = ProjectInfo[ z.mProjectIndex ].mColour;
+
+            csvcontent.push_back({s.getProjects()[z.mProjectIndex].getName(),
+                        S() << "rgb(" << rgbc.r << ", " << rgbc.g << ", " << rgbc.b << ")",
+                        z.mActualStart.getStr_nice_short(),
+                        z.mActualEnd.getStr_nice_short(),
+                        z.mDescription,
+                        s.getInputs().mT.at(z.mTeamNdx).mId,
+                        z.mId,
+                        z.mBlockedBy,
+                        dependencies,
+                        devdays,
+                        z.mComments,
+                        z.mActualEnd.getStr()
+                        });
+        }
+    }
+
+    simpleDataCSV csv("tag_"+tag);
+    csv.addrow({"project",
+                "projectcolour",
+                "start",
+                "end",
+                "taskname",
+                "team",
+                "id",
+                "blocked",
+                "dependencies",
+                "devdays",
+                "comments",
+                "endparsy"
+                });
+
+    sort( csvcontent.begin( ), csvcontent.end( ), [ ]( const auto& lhs, const auto& rhs )
+        {
+        return simpledate(lhs[lhs.size()-1]) < simpledate(rhs[rhs.size()-1]);
+        });
+
+    for (auto & x : csvcontent)
+        csv.addrow(x);    
 }
 
 void HTMLCSVWriter::write_projectgantt_csv(const scheduler::scheduler &s) const
@@ -189,10 +273,12 @@ void HTMLCSVWriter::write_basevars(const scheduler::scheduler &s) const
     time_t now = time(0);
     // convert now to string form
     char *date_time = ctime(&now);
+    std::string ds( date_time );
+    trim(ds);
 
     csv.addrow({"key", "value"});
     csv.addrow({"version", gSettings().getJPFFullVersionStr()});
-    csv.addrow({"timedate", date_time});
+    csv.addrow({"timedate", ds});
     csv.addrow({"maxmonth", S() << get_maxmonth(s)});
 }
 

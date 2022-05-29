@@ -211,5 +211,27 @@ namespace inputfiles
         return mTotalNumItems;
     }
 
+    bool backlogitem::hasTag(std::string tag) const
+    {
+        for (auto & t : mTags)
+            if (iSame(t,tag))
+                return true;
+        return false;
+    }
+    void backlogitem::addToTags(std::vector<std::string> & tags) const
+    {
+        for (auto & t : mTags)
+        {
+            bool alreadyThere=false;
+            for (auto & tt : tags)
+                if (iSame(t,tt))
+                    alreadyThere=true;
+
+            if (!alreadyThere)
+                tags.push_back(makelower(t));
+        }
+    }
+
+
 
 } // namespace

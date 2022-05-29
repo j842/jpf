@@ -38,6 +38,9 @@ namespace inputfiles
         unsigned long getDurationDays() const;
         std::string getFullName() const;
 
+        bool hasTag(std::string tag) const;
+        void addToTags(std::vector<std::string> & tags) const;
+
     public:
         // explicitly set from CSV file.
         std::string mTeam;

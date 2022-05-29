@@ -10,8 +10,7 @@ then
 fi
 
 
-if ! command -v jekyll &> /dev/null
-then
+if ! { [ -f "/usr/bin/jekyll" ] || [ -f "/usr/local/bin/jekyll" ]; }; then
     echo "Jekyll could not be found - installing (this will take several minutes)"
     MAKE="make -j $(nproc)" gem install jekyll bundler --no-document
 fi
