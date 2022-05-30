@@ -376,7 +376,7 @@ void HTMLCSVWriter::write_peopleeffortbymonth_months_people_csvs(const scheduler
 
     {
         simpleDataCSV csv4("projects");
-        csv4.addrow({"ProjectId", "ProjectName", "ProjectColour", "ProjectType"});
+        csv4.addrow({"projectid", "projectname", "projectcolour", "projecttype"});
 
         std::vector<scheduler::tProjectInfo> pi;
         s.getProjectExtraInfo(pi);

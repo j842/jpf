@@ -6,8 +6,8 @@
 
 
     {%- for project in site.data.projects -%}
-        var trace_{{project.ProjectId | slugify | remove: "-"}} ={
-        {% assign projdata = site.data.projectcostbymonth | where: "ProjectId", project.ProjectId %}
+        var trace_{{project.projectid | slugify | remove: "-"}} ={
+        {% assign projdata = site.data.projectcostbymonth | where: "ProjectId", project.projectid %}
 
         x: [
             {%- for month in site.data.months -%}
@@ -23,8 +23,8 @@
             {%- endfor -%}
         ],
 
-        name: '{{project.ProjectName}}',
-        marker: { color: '{{project.ProjectColour}}'},
+        name: '{{project.projectname}}',
+        marker: { color: '{{project.projectcolour}}'},
         type: 'bar',
 
     };
@@ -32,7 +32,7 @@
 
     var data = [
         {%- for project in site.data.projects reversed -%}
-            trace_{{project.ProjectId | slugify | remove: "-"}}
+            trace_{{project.projectid | slugify | remove: "-"}}
             {%- if forloop.last==false -%},{%- endif -%}
         {%- endfor -%}
     ];
