@@ -107,7 +107,8 @@ void HTMLCSVWriter::write_projectbacklog_csv(const scheduler::scheduler &s) cons
 
     std::vector<scheduler::rgbcolour> Colours(s.getProjects().size(), scheduler::rgbcolour({0, 0, 0}));
 
-    csv.addrow({"project",
+    csv.addrow({"projectindex",
+                "project",
                 "projectcolour",
                 "start",
                 "end",
@@ -139,7 +140,8 @@ void HTMLCSVWriter::write_projectbacklog_csv(const scheduler::scheduler &s) cons
 
         scheduler::rgbcolour rgbc = ProjectInfo[ z.mProjectIndex ].mColour;
 
-        csv.addrow({s.getProjects()[z.mProjectIndex].getName(),
+        csv.addrow({S()<<z.mProjectIndex,
+                    s.getProjects()[z.mProjectIndex].getName(),
                     S() << "rgb(" << rgbc.r << ", " << rgbc.g << ", " << rgbc.b << ")",
                     z.mActualStart.getStr_nice_short(),
                     z.mActualEnd.getStr_nice_short(),
