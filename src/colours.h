@@ -7,24 +7,9 @@
 namespace colours
 {
 
-class ColorGradient
-{
-private:
-  struct ColorPoint  // Internal class used to store colors at different points in the gradient.
-  {
-    float r,g,b;      // Red, green and blue values of our color.
-    float val;        // Position of our color along the gradient (between 0 and 1).
-    ColorPoint(float red, float green, float blue, float value);
-  };
-  std::vector<ColorPoint> color;      // An array of color points in ascending value.
-  
-public:
-  ColorGradient();
-  void addColorPoint(float red, float green, float blue, float value);
-  void clearGradient();
-  void createDefaultHeatMapGradient();
-  void getColorAtValue(const float value, float &red, float &green, float &blue);
-};
+
+void turbo_getColour(const float value, float &red, float &green, float &blue);
+void andrew_getColour(const float value, float &red, float &green, float &blue);
 
 // Typical Use:
 

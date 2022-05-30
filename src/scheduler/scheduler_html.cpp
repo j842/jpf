@@ -52,14 +52,13 @@ namespace scheduler
 
         // and Colours
         {
-            colours::ColorGradient heatMapGradient;
             unsigned int ci = 0;
             for (ci=0; ci < mProjects.size(); ++ci)
             {
                 float r, g, b;
                 float v = (float)ci / (float)(mProjects.size() - 4);
-                heatMapGradient.getColorAtValue(v, r, g, b);
-                ProjectInfo[ci].mColour = rgbcolour{.r = (int)(r * 255.0 + 0.5), .g = (int)(g * 255.0 + 0.5), .b = (int)(b * 255.0 + 0.5)};
+                colours::turbo_getColour(v, r, g, b);
+                ProjectInfo[ci].mColour = rgbcolour{.r = (int)(r * 255.0 + 0.4999), .g = (int)(g * 255.0 + 0.4999), .b = (int)(b * 255.0 + 0.4999)};
             }
             ProjectInfo[ci+0].mColour = rgbcolour{.r = 176, .g = 82 , .b = 205}; // Holidays
             ProjectInfo[ci+1].mColour = rgbcolour{.r = 210, .g = 180, .b = 140}; // slack
