@@ -8,17 +8,18 @@ headincludes: |
 ---
 {%- assign project = "blah" -%}
 
-<span id="toc">
+<div id="toc" style="width:90%; margin: 0 auto;">
 {%- assign projectnum=0 -%}
 {%- for row in site.data.projectbacklog -%}
     {%- if project != row.project -%}
-        {% assign projectnum = projectnum | plus: 1 %}
         {%- assign project = row.project -%}
         <a href="#project-{{projectnum}}"  style="color: {{row.projectcolour}}">{{project}}</a> &nbsp &nbsp
+        {% assign projectnum = projectnum | plus: 1 %}
     {%- endif -%}
 {%- endfor -%}
-</span>
-
+</div>
+<br/>
+<br/>
 <center>
 <table>
 {%- assign project = "blah" -%}
@@ -30,8 +31,8 @@ headincludes: |
             <tr class="spacer"><td colspan="4">&nbsp;</td></tr>
         {%- endif -%}
         <!-- write out header -->
+        <tr id="project-{{projectnum}}"><th colspan="6" class="sectiontitle" style="background-color: {{site.data.projects[projectnum].ProjectColour}}"><center><a href="#topofpage">{{project}}</a></center></th></tr>
         {% assign projectnum = projectnum | plus: 1 %}
-        <tr id="project-{{projectnum}}"><th colspan="6" class="sectiontitle"><center><a href="#topofpage">{{project}}</a></center></th></tr>
         <tr><th>Start</th><th>End</th><th>Task Name</th><th>Team</th><th>Id</th></tr>
     {% endif %}
 
