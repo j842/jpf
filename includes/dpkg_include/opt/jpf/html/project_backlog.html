@@ -8,15 +8,18 @@ headincludes: |
 ---
 
 <!-- Table of contents. Loop through once for speed. -->
-{%- assign project = "blah" -%}
-<div id="toc" style="width:90%; margin: 0 auto;">
-{%- for row in site.data.projectbacklog -%}
-    {%- if project != row.project -%}
-        {%- assign project = row.project -%}
-        <a href="#project-{{row.projectindex}}"  style="color: {{row.projectcolour}}">{{project}}</a> &nbsp &nbsp
-    {%- endif -%}
-{%- endfor -%}
+
+{% assign project = "blah" %}
+<center>
+<div id="toc" style="width:90%; margin: 0 auto; white-space: normal;">
+    {% for row in site.data.projectbacklog %}
+        {%- if project != row.project -%}
+            {%- assign project = row.project -%}
+            <a href="#project-{{row.projectindex}}"  style="color: {{row.projectcolour}}; margin-right:15px; white-space: nowrap;">{{project}}</a>
+        {% endif %}
+    {%- endfor -%}
 </div>
+</center>
 <br/>
 
 <!-- tables of projects. -->

@@ -47,3 +47,8 @@ tr:hover {background-color: coral;}
     color: white;
     font-size: 0.95em;
   }
+
+  .dontwrap {
+    white-space: nowrap;
+  }
+  
