@@ -123,7 +123,10 @@ namespace scheduler
                 TERMINATE(S() << "Out of order dependency : " << z.mDependencies[j] << " is needed for "
                               << z.mId << " (" << z.getFullName() << ")");
             if (mItems[k].mActualEnd >= z.mActualStart)
+            {
+                z.mBlockedBy = (mItems[k].mId.length()>0 ? mItems[k].mId : mItems[k].mDescription);
                 z.mActualStart = mItems[k].mActualEnd; // intervals are half open.
+            }
         }
 
         // and update schedule based on resourcing (blocking and contributing).
