@@ -156,9 +156,6 @@ namespace scheduler
         void Graph_Total_Project_Cost(std::ostream &ofs) const;
         void Graph_BAU(std::ostream &ofs) const;
 
-        void HTMLheaders_Plotly(std::ostream &ofs) const;
-        static void HTMLfooters(std::ostream &ofs);
-        static void HTMLheaders(std::ostream &ofs, std::string inHead);
         static std::string __protect(std::string s); // remove half quotes.
         static void writelist(std::ostream &oss, const std::vector<std::string> &v);
 

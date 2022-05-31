@@ -1,3 +1,5 @@
+#include <experimental/iterator>
+
 #include "inputfiles_teambacklogs.h"
 
 #include "settings.h"
@@ -137,7 +139,16 @@ namespace inputfiles
         oss << ",";
     }
 
-    teambacklogs::teambacklogs(const teams & tms) : mTotalNumItems(0)
+    std::string vec2str(std::vector<std::string> & i)
+    {
+        std::ostringstream oss;
+        std::copy(i.begin(),
+              i.end(),
+              std::experimental::make_ostream_joiner(oss, ", "));
+        return oss.str();
+    }
+
+    teambacklogs::teambacklogs(const teams & tms,const projects & pjts) : mTotalNumItems(0)
     {
         // Create mTeamsItems
         mTeamItems.resize(tms.size());
@@ -155,9 +166,19 @@ namespace inputfiles
                     backlogitem b(items, i);
                     {
                         if (b.mId.length()>0 && exists(b.mId))
-                            TERMINATE(S() << "Duplicate ID " << b.mId << " of two backlog items:" << std::endl
-                                          << b.getFullName() << std::endl
+                            TERMINATE(S() << "Duplicate ID \"" << b.mId << "\" of two backlog items:" << std::endl
+                                            << "Task "<< j<<" from "<<filename<<":"<<std::endl
+                                            << vec2str(items) << std::endl
+                                          << "previously declared by: "<<std::endl
                                           << getItemFromId(b.mId).getFullName());
+
+                        if (pjts.getIndexByID(b.mProjectName)==eNotFound)
+                            TERMINATE(S() << "The project name \""<< b.mProjectName<<"\" was not found in projects.csv."<<
+                            std::endl
+                            << "Task "<< j<<" from "<<filename<<":"<<std::endl
+                            << vec2str(items) << std::endl
+                            );
+                        
                     }
                     mTeamItems[b.mTeamNdx].push_back(b);
                     ++mTotalNumItems;

@@ -50,6 +50,7 @@ void HTMLCSVWriter::createHTMLFolder(const scheduler::scheduler &s) const
     write_projectbacklog_csv(s);
     write_projectgantt_csv(s);
     write_peopleeffortbymonth_months_people_csvs(s);
+    write_peoplebacklog(s);
 
     // dashboard.html
     write_projecttypes(s, DevDaysTally, ProjectInfo);
@@ -64,7 +65,7 @@ void HTMLCSVWriter::createHTMLFolder(const scheduler::scheduler &s) const
     copy_site();
 }
 
-void HTMLCSVWriter::CopyHTMLFolder() const
+/* static */ void HTMLCSVWriter::CopyHTMLFolder() const
 { // ---------------------------
 
     // also copy across all support_files into the HTML directory.

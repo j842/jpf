@@ -63,7 +63,7 @@ namespace inputfiles
     class teambacklogs
     {
     public:
-        teambacklogs(const teams & tms);
+        teambacklogs(const teams & tms,const projects &pjts);
         teambacklogs(const teambacklogs & other);
         void save_team_CSV(std::ostream &os, unsigned int teamNdx) const; // output the backlog as a inputtable csv.
         bool exists(std::string id) const;

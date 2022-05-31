@@ -24,6 +24,8 @@ class HTMLCSVWriter
 
     private:
         void CopyHTMLFolder() const;
+        void copy_site() const;
+
         void write_projectbacklog_csv(const scheduler::scheduler & s) const;
         void write_projectgantt_csv(const scheduler::scheduler & s) const;
         void write_basevars(const scheduler::scheduler & s) const;
@@ -53,7 +55,6 @@ class HTMLCSVWriter
 
         void recreate_Directory(std::string path) const;
 
-        void copy_site() const;
 
         void run_jekyll() const;
 

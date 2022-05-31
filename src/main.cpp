@@ -67,7 +67,7 @@ int cMain::run_refresh()
             inputfiles::projects p;
             inputfiles::teams t;
             inputfiles::publicholidays h;
-            inputfiles::teambacklogs b(t);
+            inputfiles::teambacklogs b(t,p);
             inputfiles::inputset iset(p,t,h,b);
             scheduler::scheduler s(iset);
             s.refresh(iset);
@@ -82,7 +82,7 @@ int cMain::run_refresh()
             inputfiles::projects p;
             inputfiles::teams t;
             inputfiles::publicholidays h;
-            inputfiles::teambacklogs b(t);
+            inputfiles::teambacklogs b(t,p);
             inputfiles::inputset iset(p,t,h,b);
             scheduler::scheduler s(iset);
 
@@ -112,7 +112,7 @@ int cMain::run_console()
         inputfiles::projects p;
         inputfiles::teams t;
         inputfiles::publicholidays h;
-        inputfiles::teambacklogs b(t);
+        inputfiles::teambacklogs b(t,p);
         inputfiles::inputset iset(p,t,h,b);
 
         scheduler::scheduler s(iset);
@@ -146,7 +146,7 @@ int cMain::run_watch()
             inputfiles::projects p;
             inputfiles::teams t;
             inputfiles::publicholidays h;
-            inputfiles::teambacklogs b(t);
+            inputfiles::teambacklogs b(t,p);
             inputfiles::inputset iset(p,t,h,b);
 
             scheduler::scheduler s(iset);
@@ -161,9 +161,17 @@ int cMain::run_watch()
             logdebug(S() << "File output done in " << std::setprecision(3) << tmr.stop() << "ms.");
         }
         catch (TerminateRunException &pEx)
-        {
-            std::vector<scheduler::outputfilewriter> writers;
-            for (auto x : {"index.html","gantt_projects.html","dashboard.html","people_effort.html","project_backlog.html"})
+        {            
+            for (auto x : {
+                "dashboard.html",
+                "gantt_projects.html",
+                "index.html",
+                "people_backlog.html",
+                "people_effort.html",
+                "project_backlog.html",
+                "tags.html"
+                }
+                )
                 scheduler::scheduler::outputHTMLError(S()<<getOutputPath_Html() << x, pEx.what());
             logerror(pEx.what());
         }
@@ -230,7 +238,7 @@ int cMain::run_advance(std::string s)
             inputfiles::projects p;
             inputfiles::teams t;
             inputfiles::publicholidays h;
-            inputfiles::teambacklogs b(t);
+            inputfiles::teambacklogs b(t,p);
             inputfiles::inputset iset(p, t, h, b);
             // advance and throw away scheduler.
             scheduler::scheduler s(iset);

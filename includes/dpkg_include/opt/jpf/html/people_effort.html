@@ -1,9 +1,14 @@
 ---
 layout: default
-title: Projects by Person
+title: Backlog per Person
 headincludes: |
-    <script src="https://cdn.plot.ly/plotly-2.11.1.min.js"></script>
+    <script src="static/jquery-3.6.0.min.js"></script>
+    <script type="text/javascript" src="static/nhpup_1.1.js"></script>
+    <link rel="stylesheet" href="static/nicetable.css">
 ---
+
+
+
 
 {%- for row in site.data.people -%}
     <h2 id="{{row.PersonCode}}"> {{row.PersonName}} : Projected Effort by Month </h2>
