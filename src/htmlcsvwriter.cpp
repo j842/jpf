@@ -41,11 +41,22 @@ void HTMLCSVWriter::createHTMLFolder(const scheduler::scheduler &s) const
     recreate_Directory(getOutputPath_Jekyll());
 
     CopyHTMLFolder();
+
+    std::vector<std::vector<double>> DevDaysTally;
+    std::vector<scheduler::tProjectInfo> ProjectInfo;
+    s.CalculateDevDaysTally(DevDaysTally, ProjectInfo);
+
     write_basevars(s);
     write_projectbacklog_csv(s);
     write_projectgantt_csv(s);
     write_peopleeffortbymonth_months_people_csvs(s);
-    write_dashboard(s);
+
+    // dashboard.html
+    write_projecttypes(s, DevDaysTally, ProjectInfo);
+    write_projectcostbymonth(s, DevDaysTally, ProjectInfo);
+    write_projectcosttotal(s, DevDaysTally, ProjectInfo);
+    write_projecttypepercents(s, DevDaysTally, ProjectInfo);
+
     write_all_tag_files(s);
 
     run_jekyll();
@@ -61,20 +72,20 @@ void HTMLCSVWriter::CopyHTMLFolder() const
         std::string html = getOutputPath_Jekyll();
         std::string opt_debug = getExePath() + "../includes/dpkg_include/opt/jpf/html"; // go up from build directory.
         std::string opt_local = getLocalTemplatePath();
-        std::string opt_system = "/opt/jpf/html/"; 
+        std::string opt_system = "/opt/jpf/html/";
 
         std::string opt = opt_system;
         if (std::filesystem::exists(opt_local))
         {
-            loginfo("Using project directory for Jekyll template: "+opt_local);
+            loginfo("Using project directory for Jekyll template: " + opt_local);
             opt = opt_local;
-        } 
+        }
         else if (std::filesystem::exists(opt_debug))
         {
             opt_debug = std::filesystem::canonical(opt_debug);
-            loginfo("Using local directory for Jekyll files: "+opt_debug);
-            opt=opt_debug;
-        } 
+            loginfo("Using local directory for Jekyll files: " + opt_debug);
+            opt = opt_debug;
+        }
 
         namespace fs = std::filesystem;
         // recursive copy to getOutputPath_Html
@@ -120,27 +131,26 @@ void HTMLCSVWriter::write_projectbacklog_csv(const scheduler::scheduler &s) cons
                 "tags",
                 "devdays",
                 "resources",
-                "comments"
-                });
+                "comments"});
 
     for (auto &x : v_sorted)
     {
         auto &z = s.getItems()[x];
 
         std::string dependencies;
-        for (auto & d : z.mDependencies) 
-            dependencies +=d+" ";
+        for (auto &d : z.mDependencies)
+            dependencies += d + " ";
         std::string tags;
-        for (auto & t : z.mTags)
+        for (auto &t : z.mTags)
             tags += makelower(t) + " ";
-        std::string devdays = S()<<std::fixed<<std::setprecision(2)<<0.01*(double)z.mDevCentiDays;
+        std::string devdays = S() << std::fixed << std::setprecision(2) << 0.01 * (double)z.mDevCentiDays;
         std::string resources;
-        for (unsigned int pi = 0 ; pi<z.mResources.size(); pi++)
-            resources+= S()<< z.mResources[pi].mName<<": "<< std::fixed<<std::setprecision(2)<<0.01*(double)z.mTotalContribution[pi]<<"  ";
+        for (unsigned int pi = 0; pi < z.mResources.size(); pi++)
+            resources += S() << z.mResources[pi].mName << ": " << std::fixed << std::setprecision(2) << 0.01 * (double)z.mTotalContribution[pi] << "  ";
 
-        scheduler::rgbcolour rgbc = ProjectInfo[ z.mProjectIndex ].mColour;
+        scheduler::rgbcolour rgbc = ProjectInfo[z.mProjectIndex].mColour;
 
-        csv.addrow({S()<<z.mProjectIndex,
+        csv.addrow({S() << z.mProjectIndex,
                     s.getProjects()[z.mProjectIndex].getName(),
                     S() << "rgb(" << rgbc.r << ", " << rgbc.g << ", " << rgbc.b << ")",
                     z.mActualStart.getStr_nice_short(),
@@ -153,26 +163,25 @@ void HTMLCSVWriter::write_projectbacklog_csv(const scheduler::scheduler &s) cons
                     tags,
                     devdays,
                     resources,
-                    z.mComments
-                    });
+                    z.mComments});
     }
 }
 
 void HTMLCSVWriter::write_all_tag_files(const scheduler::scheduler &s) const
 {
     std::vector<std::string> tagslist;
-    for (const auto & i : s.getItems())
+    for (const auto &i : s.getItems())
         i.addToTags(tagslist);
 
     {
         simpleDataCSV csv("tags");
         csv.addrow({"tag"});
-        for (const auto & i : tagslist)
+        for (const auto &i : tagslist)
             csv.addrow({i});
     }
 
     for (auto t : tagslist)
-        write_tag_file(s,t);
+        write_tag_file(s, t);
 }
 
 void HTMLCSVWriter::write_tag_file(const scheduler::scheduler &s, const std::string tag) const
@@ -188,36 +197,35 @@ void HTMLCSVWriter::write_tag_file(const scheduler::scheduler &s, const std::str
     for (auto &z : s.getItems())
     {
         bool hasTag(false);
-        for (auto & t : z.mTags)
-            if (iSame(t,tag))
-                hasTag=true;
+        for (auto &t : z.mTags)
+            if (iSame(t, tag))
+                hasTag = true;
 
         if (hasTag)
         {
             std::string dependencies;
-            for (auto & d : z.mDependencies) 
-                dependencies +=d+" ";
+            for (auto &d : z.mDependencies)
+                dependencies += d + " ";
 
-            std::string devdays = S()<<std::fixed<<std::setprecision(2)<<0.01*(double)z.mDevCentiDays;
-            scheduler::rgbcolour rgbc = ProjectInfo[ z.mProjectIndex ].mColour;
+            std::string devdays = S() << std::fixed << std::setprecision(2) << 0.01 * (double)z.mDevCentiDays;
+            scheduler::rgbcolour rgbc = ProjectInfo[z.mProjectIndex].mColour;
 
             csvcontent.push_back({s.getProjects()[z.mProjectIndex].getName(),
-                        S() << "rgb(" << rgbc.r << ", " << rgbc.g << ", " << rgbc.b << ")",
-                        z.mActualStart.getStr_nice_short(),
-                        z.mActualEnd.getStr_nice_short(),
-                        z.mDescription,
-                        s.getInputs().mT.at(z.mTeamNdx).mId,
-                        z.mId,
-                        z.mBlockedBy,
-                        dependencies,
-                        devdays,
-                        z.mComments,
-                        z.mActualEnd.getStr()
-                        });
+                                  S() << "rgb(" << rgbc.r << ", " << rgbc.g << ", " << rgbc.b << ")",
+                                  z.mActualStart.getStr_nice_short(),
+                                  z.mActualEnd.getStr_nice_short(),
+                                  z.mDescription,
+                                  s.getInputs().mT.at(z.mTeamNdx).mId,
+                                  z.mId,
+                                  z.mBlockedBy,
+                                  dependencies,
+                                  devdays,
+                                  z.mComments,
+                                  z.mActualEnd.getStr()});
         }
     }
 
-    simpleDataCSV csv("tag_"+tag);
+    simpleDataCSV csv("tag_" + tag);
     csv.addrow({"project",
                 "projectcolour",
                 "start",
@@ -229,16 +237,13 @@ void HTMLCSVWriter::write_tag_file(const scheduler::scheduler &s, const std::str
                 "dependencies",
                 "devdays",
                 "comments",
-                "endparsy"
-                });
+                "endparsy"});
 
-    sort( csvcontent.begin( ), csvcontent.end( ), [ ]( const auto& lhs, const auto& rhs )
-        {
-        return simpledate(lhs[lhs.size()-1]) < simpledate(rhs[rhs.size()-1]);
-        });
+    sort(csvcontent.begin(), csvcontent.end(), [](const auto &lhs, const auto &rhs)
+         { return simpledate(lhs[lhs.size() - 1]) < simpledate(rhs[rhs.size() - 1]); });
 
-    for (auto & x : csvcontent)
-        csv.addrow(x);    
+    for (auto &x : csvcontent)
+        csv.addrow(x);
 }
 
 void HTMLCSVWriter::write_projectgantt_csv(const scheduler::scheduler &s) const
@@ -275,7 +280,7 @@ void HTMLCSVWriter::write_basevars(const scheduler::scheduler &s) const
     time_t now = time(0);
     // convert now to string form
     char *date_time = ctime(&now);
-    std::string ds( date_time );
+    std::string ds(date_time);
     trim(ds);
 
     csv.addrow({"key", "value"});
@@ -290,14 +295,14 @@ void HTMLCSVWriter::run_jekyll() const
 
     std::string jekyllpath;
     if (std::filesystem::exists("/usr/local/bin/jekyll")) // prefer /usr/local/bin - that's where the latest gets installed.
-        jekyllpath="/usr/local/bin/jekyll";
+        jekyllpath = "/usr/local/bin/jekyll";
     else if (std::filesystem::exists("/usr/bin/jekyll"))
-        jekyllpath="/usr/bin/jekyll";
+        jekyllpath = "/usr/bin/jekyll";
     else
-        jekyllpath="jekyll"; 
+        jekyllpath = "jekyll";
 
     loginfo("Running Jekyll build on " + getOutputPath_Jekyll());
-    std::string cmd = "cd " + getOutputPath_Jekyll() + " ; "+jekyllpath+" b 2>&1";
+    std::string cmd = "cd " + getOutputPath_Jekyll() + " ; " + jekyllpath + " b 2>&1";
 
     raymii::Command c;
 
@@ -407,12 +412,50 @@ unsigned long HTMLCSVWriter::get_maxmonth(const scheduler::scheduler &s) const
     return maxmonth;
 }
 
-void HTMLCSVWriter::write_dashboard(const scheduler::scheduler &s) const
+void HTMLCSVWriter::write_projectcosttotal(
+    const scheduler::scheduler &s,
+    const std::vector<std::vector<double>> &DevDaysTally,
+    const std::vector<scheduler::tProjectInfo> &ProjectInfo) const
+{ // total project cost pie graph
+    std::vector<double> vProjectCostRemaining(DevDaysTally.size(), 0.0);
+    for (unsigned int i = 0; i < DevDaysTally.size(); ++i)
+        for (double j : DevDaysTally[i])
+            vProjectCostRemaining[i] += j;
+
+    double totalProjectCostRemaining = 0.0;
+    for (auto &vpc : vProjectCostRemaining)
+        totalProjectCostRemaining += vpc;
+
+    simpleDataCSV csv2("projectcosttotal");
+
+    csv2.addrow(
+        {"ProjectId",
+         "ProjectName",
+         "ProjectColour",
+         "TextLabel",
+         "Cost"});
+
+    for (unsigned int i = 0; i < ProjectInfo.size(); ++i)
+    {
+        std::string textlabel; // only significant projects get a label!
+        if (vProjectCostRemaining[i] > 0.01 * totalProjectCostRemaining)
+            textlabel = S() << ProjectInfo[i].mId << "   " << getDollars(gSettings().dailyDevCost() * vProjectCostRemaining[i]);
+
+        auto &c = ProjectInfo[i].mColour;
+        csv2.addrow(
+            {ProjectInfo[i].mId,
+             ProjectInfo[i].mName,
+             S() << "rgb(" << c.r << ", " << c.g << ", " << c.b << ")",
+             textlabel,
+             S() << (int)(0.5 + gSettings().dailyDevCost() * vProjectCostRemaining[i])});
+    }
+}
+
+void HTMLCSVWriter::write_projectcostbymonth(
+    const scheduler::scheduler &s,
+    const std::vector<std::vector<double>> &DevDaysTally,
+    const std::vector<scheduler::tProjectInfo> &ProjectInfo) const
 {
-    std::vector<std::vector<double>> DevDaysTally;
-    std::vector<scheduler::tProjectInfo> ProjectInfo;
-    s.CalculateDevDaysTally(DevDaysTally, ProjectInfo);
-    ASSERT(DevDaysTally.size() > 0);
     if (DevDaysTally.size() == 0)
         return; // no data.
     unsigned long maxmonth = DevDaysTally[0].size();
@@ -440,116 +483,123 @@ void HTMLCSVWriter::write_dashboard(const scheduler::scheduler &s) const
                             S() << (int)(0.5 + gSettings().dailyDevCost() * DevDaysTally[i][m])});
             }
     }
+}
 
-    // -----------------------
+void HTMLCSVWriter::write_projecttypes(
+    const scheduler::scheduler &s,
+    const std::vector<std::vector<double>> &DevDaysTally,
+    const std::vector<scheduler::tProjectInfo> &ProjectInfo) const
+{ // BAU!
+    using namespace scheduler;
 
-    { // total project cost pie graph
-        std::vector<double> vProjectCostRemaining(DevDaysTally.size(), 0.0);
-        for (unsigned int i = 0; i < DevDaysTally.size(); ++i)
-            for (double j : DevDaysTally[i])
-                vProjectCostRemaining[i] += j;
-
-        double totalProjectCostRemaining = 0.0;
-        for (auto &vpc : vProjectCostRemaining)
-            totalProjectCostRemaining += vpc;
-
-        simpleDataCSV csv2("projectcosttotal");
-
-        csv2.addrow(
-            {"ProjectId",
-             "ProjectName",
-             "ProjectColour",
-             "TextLabel",
-             "Cost"});
-
-        for (unsigned int i = 0; i < ProjectInfo.size(); ++i)
+    simpleDataCSV csv4("projecttypes");
+    csv4.addrow({"TypeNum",
+                 "TypeName",
+                 "TypeColour"});
+    for (unsigned int i = 0; i < kNumItemTypes; ++i)
+    {
+        rgbcolour c;
+        switch (i)
         {
-            std::string textlabel; // only significant projects get a label!
-            if (vProjectCostRemaining[i] > 0.01 * totalProjectCostRemaining)
-                textlabel = S() << ProjectInfo[i].mId << "   " << getDollars(gSettings().dailyDevCost() * vProjectCostRemaining[i]);
+        case kBAU:
+            c = {190, 30, 50};
+            break;
+        case kNew:
+            c = {30, 190, 30};
+            break;
+        case kUna:
+            c = ProjectInfo[ProjectInfo.size() - 3].mColour;
+            break;
+        case kHol:
+            c = ProjectInfo[ProjectInfo.size() - 4].mColour;
+            break;
+        };
+        csv4.addrow(
+            {S() << i,
+             s.ItemType2String(static_cast<tItemTypes>(i)),
+             S() << "rgb(" << c.r << ", " << c.g << ", " << c.b << ")"});
+    }
+}
 
-            auto &c = ProjectInfo[i].mColour;
-            csv2.addrow(
-                {ProjectInfo[i].mId,
-                 ProjectInfo[i].mName,
-                 S() << "rgb(" << c.r << ", " << c.g << ", " << c.b << ")",
-                 textlabel,
-                 S() << (int)(0.5 + gSettings().dailyDevCost() * vProjectCostRemaining[i])});
-        }
+void HTMLCSVWriter::write_projecttypepercents(
+    const scheduler::scheduler &s,
+    const std::vector<std::vector<double>> &DevDaysTally,
+    const std::vector<scheduler::tProjectInfo> &ProjectInfo) const
+{
+    using namespace scheduler;
+
+    if (DevDaysTally.size() == 0)
+        return; // no data.
+    unsigned long maxmonth = DevDaysTally[0].size();
+
+    simpleDataCSV csv3("projecttypepercents");
+
+    csv3.addrow({"TypeNum",
+                 "MonthNum",
+                 "DateStr",
+                 "Percentage",
+                 "Label"});
+
+    std::vector<std::vector<double>> DDT; // [BAU/New][month]
+    DDT.resize(kNumItemTypes);
+    for (unsigned int i = 0; i < kNumItemTypes; ++i)
+        DDT[i].resize(maxmonth, 0.0);
+
+    for (unsigned int pi = 0; pi < DevDaysTally.size(); ++pi)
+        for (unsigned int m = 0; m < maxmonth; ++m)
+            DDT[ProjectInfo[pi].mType][m] += DevDaysTally[pi][m];
+
+    for (unsigned int m = 0; m < maxmonth; ++m)
+    { // make percentages.
+        double tot = DDT[kBAU][m] + DDT[kNew][m] + DDT[kUna][m] + DDT[kHol][m];
+        DDT[kBAU][m] = (DDT[kBAU][m] * 100) / tot;
+        DDT[kNew][m] = (DDT[kNew][m] * 100) / tot;
+        DDT[kHol][m] = (DDT[kHol][m] * 100) / tot;
+        DDT[kUna][m] = 100 - DDT[kBAU][m] - DDT[kNew][m] - DDT[kHol][m];
     }
 
-    // -----------------------
-
-    { // BAU!
-        using namespace scheduler;
-
-        simpleDataCSV csv4("projecttypes");
-        csv4.addrow({"TypeNum",
-                     "TypeName",
-                     "TypeColour"});
-        for (unsigned int i = 0; i < kNumItemTypes; ++i)
-        {
-            rgbcolour c;
-            switch (i)
-            {
-            case kBAU:
-                c = {190, 30, 50};
-                break;
-            case kNew:
-                c = {30, 190, 30};
-                break;
-            case kUna:
-                c = ProjectInfo[ProjectInfo.size() - 3].mColour;
-                break;
-            case kHol:
-                c = ProjectInfo[ProjectInfo.size() - 4].mColour;
-                break;
-            };
-            csv4.addrow(
-                {S() << i,
-                 s.ItemType2String(static_cast<tItemTypes>(i)),
-                 S() << "rgb(" << c.r << ", " << c.g << ", " << c.b << ")"});
-        }
-
-        simpleDataCSV csv3("projecttypepercents");
-
-        csv3.addrow({"TypeNum",
-                     "MonthNum",
-                     "DateStr",
-                     "Percentage",
-                     "Label"});
-
-        std::vector<std::vector<double>> DDT; // [BAU/New][month]
-        DDT.resize(kNumItemTypes);
-        for (unsigned int i = 0; i < kNumItemTypes; ++i)
-            DDT[i].resize(maxmonth, 0.0);
-
-        for (unsigned int pi = 0; pi < DevDaysTally.size(); ++pi)
-            for (unsigned int m = 0; m < maxmonth; ++m)
-                DDT[ProjectInfo[pi].mType][m] += DevDaysTally[pi][m];
-
+    for (unsigned int i = 0; i < kNumItemTypes; ++i)
         for (unsigned int m = 0; m < maxmonth; ++m)
-        { // make percentages.
-            double tot = DDT[kBAU][m] + DDT[kNew][m] + DDT[kUna][m] + DDT[kHol][m];
-            DDT[kBAU][m] = (DDT[kBAU][m] * 100) / tot;
-            DDT[kNew][m] = (DDT[kNew][m] * 100) / tot;
-            DDT[kHol][m] = (DDT[kHol][m] * 100) / tot;
-            DDT[kUna][m] = 100 - DDT[kBAU][m] - DDT[kNew][m] - DDT[kHol][m];
+        {
+
+            csv3.addrow(
+                {S() << i,
+                 S() << m,
+                 monthIndex(m).getString(),
+                 S() << std::setprecision(3) << DDT[i][m],
+                 S() << s.ItemType2String(static_cast<tItemTypes>(i))
+                     << " - " << (int)(0.5 + DDT[i][m]) << "%"});
         }
+}
 
-        for (unsigned int i = 0; i < kNumItemTypes; ++i)
-            for (unsigned int m = 0; m < maxmonth; ++m)
+void HTMLCSVWriter::write_peoplebacklog(const scheduler::scheduler &s) const
+{
+    simpleDataCSV csv("peoplebacklog");
+
+    csv.addrow({
+        "personname","start","end","utilisation","taskname"
+    });
+
+    for (auto &z : s.getPeople())
+    {
+        for (auto &j : s.getItems())
+            for (unsigned long pi = 0; pi < j.mResources.size(); ++pi)
             {
+                auto &p = j.mResources[pi];
+                if (iSame(p.mName, z.mName))
+                {
+                    tCentiDay utilisation = 100;
+                    if (z.getMaxAvialability() > 0)
+                        utilisation = j.mLoadingPercent[pi];
 
-                csv3.addrow(
-                    {
-                        S() << i,
-                        S() << m,
-                        monthIndex(m).getString(),
-                        S() << std::setprecision(3) << DDT[i][m],
-                        S() << s.ItemType2String(static_cast<tItemTypes>(i)) 
-                                << " - " << (int)(0.5 + DDT[i][m]) << "%"
+                    csv.addrow({
+                        p.mName,
+                        j.mActualStart.getStr(),
+                        j.mActualEnd.getStr(),
+                        S()<<utilisation,
+                        j.getFullName()
                     });
+                }
             }
     }
 }

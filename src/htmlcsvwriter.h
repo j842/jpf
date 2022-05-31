@@ -28,7 +28,28 @@ class HTMLCSVWriter
         void write_projectgantt_csv(const scheduler::scheduler & s) const;
         void write_basevars(const scheduler::scheduler & s) const;
         void write_peopleeffortbymonth_months_people_csvs(const scheduler::scheduler & s) const;
-        void write_dashboard(const scheduler::scheduler & s) const;
+        void write_peoplebacklog(const scheduler::scheduler & s) const;
+
+        void write_projecttypes(
+            const scheduler::scheduler & s,
+            const std::vector<std::vector<double>> & DevDaysTally,
+            const std::vector<scheduler::tProjectInfo> &ProjectInfo
+            ) const;
+        void write_projectcostbymonth(
+            const scheduler::scheduler & s,
+            const std::vector<std::vector<double>> & DevDaysTally,
+            const std::vector<scheduler::tProjectInfo> &ProjectInfo
+            ) const;
+        void write_projectcosttotal(
+            const scheduler::scheduler & s,
+            const std::vector<std::vector<double>> & DevDaysTally,
+            const std::vector<scheduler::tProjectInfo> &ProjectInfo
+            ) const;
+        void write_projecttypepercents(
+            const scheduler::scheduler & s,
+            const std::vector<std::vector<double>> & DevDaysTally,
+            const std::vector<scheduler::tProjectInfo> &ProjectInfo
+            ) const;
 
         void recreate_Directory(std::string path) const;
 
