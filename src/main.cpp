@@ -137,7 +137,7 @@ int cMain::run_console()
 int cMain::run_watch()
 {
     webserver wserver(gSettings().getPort());
-    watcher w(getInputPath());
+    watcher w({getInputPath(),getInputPath_Jekyll()});
 
     while (true)
     {

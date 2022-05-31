@@ -9,6 +9,7 @@
 #include <sys/inotify.h>
 #include <chrono>
 #include <map>
+#include <vector>
 
 #include <cppunit/extensions/TestFactoryRegistry.h>
 #include <cppunit/ui/text/TestRunner.h>
@@ -98,13 +99,14 @@ public:
 class watcher
 {
     public:
-        watcher(std::string path);
+        watcher(std::vector<std::string> paths);
         ~watcher();
 
         void waitforchange(); // create, modify, delete
 
     private:
-        int wd,fd;
+        std::vector<int> wd;
+        int fd;
         char buffer[BUF_LEN];
 };
     

@@ -54,24 +54,33 @@ void trim(std::string &str)
 
 
 
-watcher::watcher(std::string path)
+watcher::watcher(std::vector<std::string> paths)
 {
     //https://developer.ibm.com/tutorials/l-ubuntu-inotify/
     fd = inotify_init();
     if ( fd < 0 ) 
         TERMINATE( "inotify_init" );
-    wd = inotify_add_watch( fd, path.c_str(), IN_CLOSE_WRITE  | IN_CREATE | IN_DELETE ); // IN_MODIFY gets called 2x...
+    for (auto p : paths)
+    {
+        std::string pc = std::filesystem::canonical(p);
+        if (std::filesystem::exists(pc))
+            wd.push_back(
+                inotify_add_watch( fd, pc.c_str(), IN_CLOSE_WRITE  | IN_CREATE | IN_DELETE )
+            );
+    }
 }
 watcher::~watcher()
 {
-    inotify_rm_watch( fd, wd );
+    for (auto i : wd)
+        inotify_rm_watch( fd, i );
     close( fd );    
 }
 
 void watcher::waitforchange() // create, modify, delete
 {
-    // block until one or more events arrive.
-    /*length =*/ read( fd, buffer, BUF_LEN );  
+    if (wd.size()>0)
+        // block until one or more events arrive.
+        /*length =*/ read( fd, buffer, BUF_LEN );  
 }
 
 

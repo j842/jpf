@@ -297,3 +297,21 @@ const std::string getExePath()
     /* handle error */
     return "";
 }
+
+
+const std::string getInputPath_Jekyll()
+{
+    std::string opt_debug = getExePath() + "../includes/dpkg_include/opt/jpf/html"; // go up from build directory.
+    std::string opt_local = getLocalTemplatePath();
+    std::string opt_system = "/opt/jpf/html/";
+
+    std::string opt = opt_system;
+    if (std::filesystem::exists(opt_local))
+        opt = opt_local;
+    else if (std::filesystem::exists(opt_debug))
+    {
+        opt_debug = std::filesystem::canonical(opt_debug);
+        opt = opt_debug;
+    }
+    return opt;
+}

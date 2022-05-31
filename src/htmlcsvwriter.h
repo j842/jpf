@@ -31,6 +31,7 @@ class HTMLCSVWriter
         void write_basevars(const scheduler::scheduler & s) const;
         void write_peopleeffortbymonth_months_people_csvs(const scheduler::scheduler & s) const;
         void write_peoplebacklog(const scheduler::scheduler & s) const;
+        void write_settings(const scheduler::scheduler & s) const;
 
         void write_projecttypes(
             const scheduler::scheduler & s,

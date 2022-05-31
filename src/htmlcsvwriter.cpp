@@ -51,6 +51,7 @@ void HTMLCSVWriter::createHTMLFolder(const scheduler::scheduler &s) const
     write_projectgantt_csv(s);
     write_peopleeffortbymonth_months_people_csvs(s);
     write_peoplebacklog(s);
+    write_settings(s);
 
     // dashboard.html
     write_projecttypes(s, DevDaysTally, ProjectInfo);
@@ -65,28 +66,15 @@ void HTMLCSVWriter::createHTMLFolder(const scheduler::scheduler &s) const
     copy_site();
 }
 
+
 /* static */ void HTMLCSVWriter::CopyHTMLFolder() const
 { // ---------------------------
 
     // also copy across all support_files into the HTML directory.
     {
         std::string html = getOutputPath_Jekyll();
-        std::string opt_debug = getExePath() + "../includes/dpkg_include/opt/jpf/html"; // go up from build directory.
-        std::string opt_local = getLocalTemplatePath();
-        std::string opt_system = "/opt/jpf/html/";
-
-        std::string opt = opt_system;
-        if (std::filesystem::exists(opt_local))
-        {
-            loginfo("Using project directory for Jekyll template: " + opt_local);
-            opt = opt_local;
-        }
-        else if (std::filesystem::exists(opt_debug))
-        {
-            opt_debug = std::filesystem::canonical(opt_debug);
-            loginfo("Using local directory for Jekyll files: " + opt_debug);
-            opt = opt_debug;
-        }
+        std::string opt = getInputPath_Jekyll();
+        loginfo("Using this directory for Jekyll files: " + opt);
 
         namespace fs = std::filesystem;
         // recursive copy to getOutputPath_Html
@@ -603,4 +591,17 @@ void HTMLCSVWriter::write_peoplebacklog(const scheduler::scheduler &s) const
                 }
             }
     }
+}
+
+
+void HTMLCSVWriter::write_settings(const scheduler::scheduler & s) const
+{
+    simpleDataCSV csv("settings");
+
+    csv.addrow({"key","value"});
+    csv.addrow({"title",gSettings().getTitle()});
+    csv.addrow({"start",gSettings().startDate().getStr()});
+    csv.addrow({"end",gSettings().endDate().getStr()});
+    csv.addrow({"endmonth",gSettings().endMonth().getString()});
+    csv.addrow({"rootdir",gSettings().getRoot()});
 }

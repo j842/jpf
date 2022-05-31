@@ -78,6 +78,7 @@ const std::string getOutputPath_Log();
 const std::string getLocalTemplatePath();
 const std::string getOutputPath_Jekyll();
 const std::string getExePath();
+const std::string getInputPath_Jekyll();
 
 
 #endif
