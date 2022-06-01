@@ -337,13 +337,13 @@ void HTMLCSVWriter::write_peopleeffortbymonth_months_people_csvs(const scheduler
 
                 csv.addrow(
                     {pCode,
-                     s.getPeople()[personNdx].mName,
-                     S() << m,
-                     monthIndex(m).getString(),
-                     ProjectInfo[i].mName,
-                     colour,
-                     ProjectInfo[i].mId,
-                     S() << std::fixed << std::setprecision(1) << DevDaysTally[i][m]});
+                    s.getPeople()[personNdx].mName,
+                    S() << m,
+                    monthIndex(m).getString(),
+                    ProjectInfo[i].mName,
+                    colour,
+                    ProjectInfo[i].mId,
+                    S() << std::fixed << std::setprecision(1) << DevDaysTally[i][m]});
             }
     }
 

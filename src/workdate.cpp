@@ -400,7 +400,7 @@ unsigned long leaverange::holidayDaysInMonth(unsigned long month) const // numbe
     if (monthIndex(mStart)>month || monthIndex(mEnd)<month)
         return 0;
     workdate wd(mStart);
-    while (wd<mEnd)
+    while (wd<=mEnd) // it's a CLOSED interval!
     {
         unsigned long wdm = wd.getMonthIndex();
         if (wdm==month)

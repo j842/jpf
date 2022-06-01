@@ -138,11 +138,11 @@ namespace scheduler
                     auto &worker = mPeople[ndx];
 
                     monthsholidays += worker.holidaysInMonth(m);
-                    monthcapacity += workingdaysinmonth * ((double)worker.mEFTProject) / 100.0;
-                    monthbau += workingdaysinmonth * ((double)worker.mEFTBAU) / 100.0;
-                    monthoverhead += workingdaysinmonth * ((double)worker.mEFTOverhead) / 100.0;
+                    monthcapacity += (workingdaysinmonth - worker.holidaysInMonth(m)) * ((double)worker.mEFTProject) / 100.0;
+                    monthbau += (workingdaysinmonth - worker.holidaysInMonth(m)) * ((double)worker.mEFTBAU) / 100.0;
+                    monthoverhead += (workingdaysinmonth - worker.holidaysInMonth(m)) * ((double)worker.mEFTOverhead) / 100.0;
                 }
-                double monthslack = monthcapacity - devdaystotalinmonth - monthsholidays;
+                double monthslack = monthcapacity - monthbau - devdaystotalinmonth;
 
                 DevDaysTally[mProjects.size() + 0][m] = monthsholidays;
                 DevDaysTally[mProjects.size() + 1][m] = monthslack;
