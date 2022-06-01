@@ -142,7 +142,7 @@ namespace scheduler
                     monthbau += (workingdaysinmonth - worker.holidaysInMonth(m)) * ((double)worker.mEFTBAU) / 100.0;
                     monthoverhead += (workingdaysinmonth - worker.holidaysInMonth(m)) * ((double)worker.mEFTOverhead) / 100.0;
                 }
-                double monthslack = monthcapacity - monthbau - devdaystotalinmonth;
+                double monthslack = monthcapacity - devdaystotalinmonth;
 
                 DevDaysTally[mProjects.size() + 0][m] = monthsholidays;
                 DevDaysTally[mProjects.size() + 1][m] = monthslack;
