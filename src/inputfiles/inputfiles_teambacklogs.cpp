@@ -178,6 +178,12 @@ namespace inputfiles
                             << "Task "<< j<<" from "<<filename<<":"<<std::endl
                             << vec2str(items) << std::endl
                             );
+
+                        if (b.mDevCentiDays>0 && b.mResources.size()==0)
+                            TERMINATE(S() << "A task requires development effort, but is assigned to nobody:" << std::endl
+                            << "Task "<< j<<" from "<<filename<<":"<<std::endl
+                            << vec2str(items) << std::endl
+                            );
                         
                     }
                     mTeamItems[b.mTeamNdx].push_back(b);
