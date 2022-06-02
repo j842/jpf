@@ -161,7 +161,7 @@ namespace scheduler
         }
 
 
-        // now drop empty projects
+        // now drop empty projects. pi needs to be long so it can drop to -1 to terminate the loop.
         for (long pi = (long)DevDaysTally.size()-1; pi>=0 ; --pi)
         {
             double tally=0;
