@@ -225,6 +225,17 @@ simpledate workdate::snapWorkDay_forward(simpledate d)
     return d0;
 }
 
+simpledate workdate::snapWorkDay_backward(simpledate d)
+{
+    boost::gregorian::date d0 = d.getGregorian();
+    if (d0.day_of_week() == boost::date_time::Saturday)
+        return d0 - boost::gregorian::days(1);
+    if (d0.day_of_week() == boost::date_time::Sunday)
+        return d0 - boost::gregorian::days(2);
+    return d0;
+}
+
+
 // half open interval.
 unsigned long workdate::countWorkDays(simpledate dA, simpledate dB)
 {

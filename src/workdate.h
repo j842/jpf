@@ -132,8 +132,8 @@ class workdate : public simpledate
         void incrementWorkDay();
         unsigned long getDayAsIndex() const;
 
-
         static simpledate snapWorkDay_forward(simpledate d);
+        static simpledate snapWorkDay_backward(simpledate d);
         static unsigned long countWorkDays(simpledate dA, simpledate dB); // half open interval.
 
         static simpledate WorkDays2Date(unsigned long ndays);

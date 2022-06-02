@@ -78,22 +78,25 @@ namespace scheduler
         DevDaysTally.resize(mProjects.size() + kNumItemTypes);
         getProjectExtraInfo(ProjectInfo);
 
-        // determine the maximum month to consider.
+        // determine the maximum month - one past the index of the last month we consider (half open).
         unsigned long maxmonth = 0;
         {
             for (auto &z : mItems)
                 if (z.mActualEnd.getMonthIndex() >= maxmonth)
                     maxmonth = z.mActualEnd.getMonthIndex() + 1;
 
-            maxmonth = std::min(maxmonth, gSettings().endMonth() + 1);
+            maxmonth = std::min(maxmonth, gSettings().endMonth() + 1); 
         }
 
         // determine DevDaysTally
         {
             for (auto &p : DevDaysTally)
-                p.resize(maxmonth, 0.0);
+                p.resize(maxmonth, 0.0); // [0,...,maxmonth)  -- half open.
 
-            unsigned int maxday = workdate(monthIndex(maxmonth).getLastMonthDay()).getDayAsIndex();
+            // determine last day of the month maxmonth-1 --- maxday is one workday later, so [0,maxday) is half-open.
+            unsigned int maxday = workdate(monthIndex(maxmonth).getFirstMonthDay()).getDayAsIndex();
+            ASSERT(workdate(maxday-1).getGregorian() <= monthIndex(maxmonth-1).getLastMonthDay());
+
             tNdx ns=0,ne=mPeople.size();
             { // set limits on iteration of people.
                 ASSERT(personNdx<mPeople.size() || personNdx==ULONG_MAX);
@@ -113,7 +116,13 @@ namespace scheduler
                     simpledate d(workdate::WorkDays2Date(dayndx));
                     monthIndex mI(d);
                     for (const auto &zc : zp.getChunks(dayndx))
+                    {
+                        ASSERT(mI<maxmonth);
+                        ASSERT(zc.mItemIndex < mItems.size());
+                        ASSERT(mItems[zc.mItemIndex].mProjectIndex < DevDaysTally.size());
+                        ASSERT(mI<DevDaysTally[mItems[zc.mItemIndex].mProjectIndex].size());
                         DevDaysTally[mItems[zc.mItemIndex].mProjectIndex][mI] += ((double)zc.mEffort) / 100.0;
+                    }
                 }
             }
 
@@ -161,6 +170,8 @@ namespace scheduler
             
             if (tally<0.01)
                 {
+                    ASSERT((long)DevDaysTally.size()>pi);
+                    ASSERT((long)ProjectInfo.size()>pi);
                     DevDaysTally.erase(DevDaysTally.begin()+pi);
                     ProjectInfo.erase(ProjectInfo.begin()+pi);
                 }

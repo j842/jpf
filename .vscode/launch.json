@@ -2,33 +2,30 @@
     "version": "0.2.0",
     "configurations": [
       {
-        "name": "g++ build and debug active file",
+        "name": "(gdb) Launch",
         "type": "cppdbg",
         "request": "launch",
-//        "program": "${fileDirname}/jpf_debug",
-        "program": "${fileDirname}/../build/jpf",
-       "args": [
-//            "${workspaceFolder}"
-//          "-t"
-//            "-a=15/5/22",
-//            "~/code/tracmap/pf0/"
-//            "~/code/tracmap/project_forecasting/"
-          "-"
-],
+        "program": "${workspaceFolder}/build/jpf",
+        "args": [
+          "~/code/tracmap/project_forecasting/"
+        ],
         "stopAtEntry": false,
-        "cwd": "${workspaceFolder}/src",
+        "cwd": "${workspaceFolder}",
         "environment": [],
         "externalConsole": false,
         "MIMode": "gdb",
         "setupCommands": [
-          {
-            "description": "Enable pretty-printing for gdb",
-            "text": "-enable-pretty-printing",
-            "ignoreFailures": true
-          }
-        ],
-        //"preLaunchTask": "C/C++: g++ build active file",
-        "miDebuggerPath": "/usr/bin/gdb"
+            {
+                "description": "Enable pretty-printing for gdb",
+                "text": "-enable-pretty-printing",
+                "ignoreFailures": true
+            },
+            {
+                "description":  "Set Disassembly Flavor to Intel",
+                "text": "-gdb-set disassembly-flavor intel",
+                "ignoreFailures": true
+            }
+        ]
       }
     ]
-  }
+}
