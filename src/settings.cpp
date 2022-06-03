@@ -205,10 +205,7 @@ void settings::setRoot(std::string path)
     if (path.length()==0)
         TERMINATE("Empty path when trying to set root directory.");
     
-    if (std::filesystem::exists(path))
-        mRootDir = std::filesystem::canonical(path);
-    else
-        mRootDir = path;
+    mRootDir = makecanonicalslash(path);
 }
 
 std::string settings::getRoot() const
@@ -253,22 +250,15 @@ void settings::advance(workdate newStart)
         mEndDate = boost::gregorian::date(mStartDate.getGregorian().year()+1,1,1);
 }
 
-const std::string getInputPath() { return gSettings().getRoot() + "/input/"; }
-const std::string getOutputPath_Base() { return gSettings().getRoot() + "/output/"; }
-const std::string getOutputPath_Txt() { return gSettings().getRoot() + "/output/txt/"; }
-const std::string getOutputPath_Html() { return gSettings().getRoot() + "/output/html/"; }
-const std::string getOutputPath_Jekyll() { return gSettings().getRoot() + "/output/.jekyll/"; }
-const std::string getOutputPath_Csv() { return gSettings().getRoot() + "/output/csv/"; }
-const std::string getOutputPath_Log() { return gSettings().getRoot() + "/output/log/"; }
+const std::string getInputPath() { return gSettings().getRoot() + "input/"; }
+const std::string getOutputPath_Base() { return gSettings().getRoot() + "output/"; }
+const std::string getOutputPath_Txt() { return gSettings().getRoot() + "output/txt/"; }
+const std::string getOutputPath_Html() { return gSettings().getRoot() + "output/html/"; }
+const std::string getOutputPath_Jekyll() { return gSettings().getRoot() + "output/.jekyll/"; }
+const std::string getOutputPath_Csv() { return gSettings().getRoot() + "output/csv/"; }
+const std::string getOutputPath_Log() { return gSettings().getRoot() + "output/log/"; }
+const std::string getLocalTemplatePath() { return gSettings().getRoot()+"template/"; }
 
-const std::string getLocalTemplatePath()
-{
-    std::string p = gSettings().getRoot()+"template";
-    if (std::filesystem::exists(p))
-        return std::filesystem::canonical(p);
-    else
-        return p;
-}
 const std::string getExePath()
 {
     std::vector<char> buf(400);
@@ -291,7 +281,7 @@ const std::string getExePath()
         unsigned int i=exepath.length()-1;
         while (i>0 && exepath[i]!='/') --i;
         if (i>0 && i<exepath.length()-1)
-            exepath.erase(exepath.begin()+i+1,exepath.end());
+            exepath.erase(exepath.begin()+i+1,exepath.end()); // keep ye slash.
         return exepath;
     }
     /* handle error */
@@ -301,7 +291,7 @@ const std::string getExePath()
 
 const std::string getInputPath_Jekyll()
 {
-    std::string opt_debug = getExePath() + "../includes/dpkg_include/opt/jpf/html"; // go up from build directory.
+    std::string opt_debug = makecanonicalslash(getExePath() + "../includes/dpkg_include/opt/jpf/html/"); // go up from build directory.
     std::string opt_local = getLocalTemplatePath();
     std::string opt_system = "/opt/jpf/html/";
 
@@ -309,9 +299,7 @@ const std::string getInputPath_Jekyll()
     if (std::filesystem::exists(opt_local))
         opt = opt_local;
     else if (std::filesystem::exists(opt_debug))
-    {
-        opt_debug = std::filesystem::canonical(opt_debug);
         opt = opt_debug;
-    }
+
     return opt;
 }

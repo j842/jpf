@@ -157,6 +157,6 @@ void streamReplace(std::string ifile, std::string ofile, const std::map<std::str
 void streamReplace(std::string ifile, std::ostream &ofs, const std::map<std::string,std::string> & replacerules);
 void replace(std::string & s,  const std::map<std::string,std::string> & replacerules);
 std::string replacestring(std::string subject, const std::string &search, const std::string &replace);
-
+std::string makecanonicalslash(const std::string & s);
 
 #endif

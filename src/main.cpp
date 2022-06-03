@@ -187,7 +187,7 @@ int cMain::run_watch()
 int cMain::run_create_directories()
 {
     std::string pr = gSettings().getRoot();
-    std::string pi = pr + "/input/";
+    std::string pi = getInputPath();
 
     checkcreatedirectory(pr);
 

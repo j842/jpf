@@ -62,7 +62,7 @@ watcher::watcher(std::vector<std::string> paths)
         TERMINATE( "inotify_init" );
     for (auto p : paths)
     {
-        std::string pc = std::filesystem::canonical(p);
+        std::string pc = makecanonicalslash(p);
         if (std::filesystem::exists(pc))
             wd.push_back(
                 inotify_add_watch( fd, pc.c_str(), IN_CLOSE_WRITE  | IN_CREATE | IN_DELETE )
@@ -374,4 +374,14 @@ std::string replacestring(std::string subject, const std::string &search,
         pos += replace.length();
     }
     return subject;
+}
+
+std::string makecanonicalslash(const std::string &s)
+{
+    std::string ss(s);
+    if (std::filesystem::exists(ss))
+        ss = std::filesystem::canonical(ss);
+    if (ss.back()!='/')
+        ss.push_back('/');
+    return ss;
 }
