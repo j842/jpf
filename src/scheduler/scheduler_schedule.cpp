@@ -136,23 +136,36 @@ namespace scheduler
         }
         else
         { // manage resources (people!)
+            workdate minstart;
+            minstart.setForever();
+            unsigned int blockcount=0;
             // 1. adjust start by blocking resources, ensuring *all* blockers are available to start together.
             for (int pi = 0; pi < (int)z.mResources.size(); ++pi)
-                if (z.mResources[pi].mBlocking)
                 {
                     scheduledperson &p = getPersonByName(z.mResources[pi].mName);
                     workdate pstart = p.getEarliestStart(z.mActualStart);
 
-                    if (pstart.isForever())
-                        TERMINATE(p.mName + " is blocking but can never start task " + z.getFullName());
+                    if (!pstart.isForever() && pstart<minstart)
+                        minstart=pstart;
 
-                    if (pstart > z.mActualStart)
+                    if (z.mResources[pi].mBlocking)
                     {
-                        z.mActualStart = pstart;
-                        z.mBlockedBy = p.mName;
-                        pi = -1; // start over, finding the first date *everyone* blocking has some availability!
+                        ++blockcount;
+                        if (pstart.isForever())
+                            TERMINATE(p.mName + " is blocking but can never start task " + z.getFullName());
+                        if (pstart > z.mActualStart)
+                        {
+                            z.mActualStart = pstart;
+                            z.mBlockedBy = p.mName;
+                            pi = -1; // start over, finding the first date *everyone* blocking has some availability!
+                        }
                     }
                 }
+            if (blockcount==0)
+            {
+                //logdebug(S()<<"minstart="<<minstart.getStr()<<"  actualstart="<<z.mActualStart.getStr()<<std::endl<<z.getFullName()<<std::endl<<std::endl);
+                z.mActualStart = std::max(z.mActualStart,minstart); // handle the case where there is nobody blocking -- start is the first day someone (anyone) is available!
+            }
 
             // 2. do the task.
             _dotask_v2(backlogitemNdx);

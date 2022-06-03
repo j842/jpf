@@ -585,25 +585,7 @@ void HTMLCSVWriter::write_peoplebacklog(const scheduler::scheduler &s) const
 
                     workdate start( j.mActualStart );
                     workdate end( j.mActualEnd );
-                    if (utilisation>0)
-                    {
-                        start=j.mActualEnd;
-                        end=j.mActualStart;
-                        std::string personname = p.mName;
-                        workdate s = j.mActualStart;
-                        for (;s<j.mActualEnd;s.incrementWorkDay())
-                        {
-                            for (auto c : z.getChunks(s.getDayAsIndex()))
-                                if (c.mItemIndex==in && c.mEffort>0)
-                                {
-                                    start=std::min(start,s);
-                                    workdate s2=s;
-                                    s2.incrementWorkDay();
-                                    end=std::max(end,s2);
-                                }
-                        }
-                    }
-                    
+                
                     if (end>start)
                         end.decrementWorkDay();
 
