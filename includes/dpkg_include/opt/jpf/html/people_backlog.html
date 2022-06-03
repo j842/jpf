@@ -30,7 +30,7 @@ headincludes: |
     {%- if person != row.personname -%}
         {%- assign person = row.personname -%}
         <tr class="spacer"><td colspan="4">&nbsp;</td></tr>
-        <tr id="person-{{row.personname}}"><th colspan="6" class="sectiontitle" style="background-color: #842"><center>
+        <tr id="person-{{row.personname}}"><th colspan="4" class="sectiontitle" style="background-color: #842"><center>
             <a href="#topofpage">{{row.personname}}</a></center></th></tr>
         <tr><th>Start</th><th>End</th><th>% time</th><th>Task Name</th></tr>
     {%- endif -%}

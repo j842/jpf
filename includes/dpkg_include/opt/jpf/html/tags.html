@@ -2,44 +2,34 @@
 layout: default
 title: Tags
 headincludes: |
-    <script src="static/jquery-3.6.0.min.js"></script>
-    <script type="text/javascript" src="static/nhpup_1.1.js"></script>
-    <link rel="stylesheet" href="static/nicetable.css">
-    <link rel="stylesheet" href="static/nicetabs.css">
+    <link rel="stylesheet" type="text/css" href="static/nicetable.css">
+    <link rel="stylesheet" type="text/css" href="static/tabby-ui.min.css">
+    <script src="static/tabby.polyfills.min.js"></script>
 ---
 
-<!-- 
-  
-  Radio version of tabs.
-
-  Requirements:
-  - not rely on specific IDs for CSS (the CSS shouldn't need to know specific IDs)
-  - flexible for any number of unkown tabs [2-6]
-  - accessible
-
-  Caveats:
-  - since these are checkboxes the tabs not tab-able, need to use arrow keys
-
-  Also worth reading:
-  http://simplyaccessible.com/article/danger-aria-tabs/
--->
 <center>
 
-<div class="tabset">
-    {% for row in site.data.tags %}
+    <ul data-tabs>
+        {% for row in site.data.tags %}
         {% capture tabname %}tab_{{ forloop.index }}{% endcapture %}
-        <input type="radio" name="tabset" id="{{tabname}}" aria-controls="{{row.tag}}" checked>
-        <label for="{{tabname}}">{{row.tag}}</label>
+        <li><a 
+            {% if forloop.first %}
+            data-tabby-default
+            {% endif %}
+            href="#{{tabname}}">{{row.tag}}</a></li>
+        {% endfor %}
+    </ul>
+
+    {% for row in site.data.tags %}
+    {% capture tabname %}tab_{{ forloop.index }}{% endcapture %}
+    <div id="{{tabname}}">
+        <p/>
+        {% include subpage_tagfile.liquid tag=row.tag %}
+    </div>
     {% endfor %}
 
-    <div class="tab-panels">
-        {% for row in site.data.tags %}
-        <section id="{{tabname}}" class="tab-panel">
-            {% include subpage_tagfile.liquid tag=row.tag %}
-        </section>
-        {% endfor %}
-    </div>
-    
-  </div>
-  
 </center>
+
+<script>
+    var tabs = new Tabby('[data-tabs]');
+</script>
