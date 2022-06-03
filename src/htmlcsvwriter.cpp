@@ -571,7 +571,9 @@ void HTMLCSVWriter::write_peoplebacklog(const scheduler::scheduler &s) const
 
     for (auto &z : s.getPeople())
     {
-        for (auto &j : s.getItems())
+        for (unsigned long in=0;in<s.getItems().size();++in)
+        {
+            auto & j = s.getItems()[in];
             for (unsigned long pi = 0; pi < j.mResources.size(); ++pi)
             {
                 auto &p = j.mResources[pi];
@@ -581,15 +583,40 @@ void HTMLCSVWriter::write_peoplebacklog(const scheduler::scheduler &s) const
                     if (z.getMaxAvialability() > 0)
                         utilisation = j.mLoadingPercent[pi];
 
+                    workdate start( j.mActualStart );
+                    workdate end( j.mActualEnd );
+                    if (utilisation>0)
+                    {
+                        start=j.mActualEnd;
+                        end=j.mActualStart;
+                        std::string personname = p.mName;
+                        workdate s = j.mActualStart;
+                        for (;s<j.mActualEnd;s.incrementWorkDay())
+                        {
+                            for (auto c : z.getChunks(s.getDayAsIndex()))
+                                if (c.mItemIndex==in && c.mEffort>0)
+                                {
+                                    start=std::min(start,s);
+                                    workdate s2=s;
+                                    s2.incrementWorkDay();
+                                    end=std::max(end,s2);
+                                }
+                        }
+                    }
+                    
+                    if (end>start)
+                        end.decrementWorkDay();
+
                     csv.addrow({
                         p.mName,
-                        j.mActualStart.getStr(),
-                        j.mActualEnd.getStr(),
+                        start.getStr(),
+                        end.getStr(),
                         S()<<utilisation,
                         j.getFullName()
                     });
                 }
             }
+        }
     }
 }
 
