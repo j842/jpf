@@ -2,46 +2,72 @@
 layout: default
 title: Backlog by Person
 headincludes: |
-    <script src="static/jquery-3.6.0.min.js"></script>
-    <script type="text/javascript" src="static/nhpup_1.1.js"></script>
-    <link rel="stylesheet" href="static/nicetable.css">
+    <link rel="stylesheet" type="text/css" href="static/nicetable.css">
+    <link rel="stylesheet" type="text/css" href="static/tabby-ui.min.css">
+    <script src="static/tabby.polyfills.min.js"></script>
 ---
 
 <!-- Table of contents. Loop through once for speed. -->
 
 {% assign person = "blah" %}
 <center>
-<div id="toc" style="width:90%; margin: 0 auto; white-space: normal;">
-    {% for row in site.data.peoplebacklog %}
-        {%- if person != row.personname -%}
-            {%- assign person = row.personname -%}
-            <a href="#person-{{row.personname}}"  style="margin-right:15px; white-space: nowrap;">{{person}}</a>
-        {% endif %}
-    {%- endfor -%}
-</div>
+    <ul data-tabs>
+        {% for row in site.data.peoplebacklog %}
+            {%- if person != row.personname -%}
+                {%- assign person = row.personname -%}
+                <li><a 
+                    {% if forloop.first %}
+                    data-tabby-default
+                    {% endif %}
+                    href="#person-{{row.personname}}">{{person}}</a></li>
+            {% endif %}
+        {%- endfor -%}
+    </ul>
 </center>
-<br/>
+<br />
 
 <!-- tables of projects. -->
 <center>
-<table>
-{%- assign person = "blah" -%}
-{%- for row in site.data.peoplebacklog -%}
-    {%- if person != row.personname -%}
-        {%- assign person = row.personname -%}
-        <tr class="spacer"><td colspan="4">&nbsp;</td></tr>
-        <tr id="person-{{row.personname}}"><th colspan="4" class="sectiontitle" style="background-color: #842"><center>
-            <a href="#topofpage">{{row.personname}}</a></center></th></tr>
-        <tr><th>Start</th><th>End</th><th>% time</th><th>Task Name</th></tr>
-    {%- endif -%}
+    <div>
+        <table>
+        {%- assign person = "blah" -%}
+        {%- for row in site.data.peoplebacklog -%}
+            {%- if person != row.personname -%}
+            {%- assign person = row.personname -%}
+            </table>
+            </div>
+            <div id="person-{{row.personname}}">
+            <table>
+                <tr>
+                    <th colspan="4" class="sectiontitle" style="background-color: #842">
+                        <center>{{row.personname}}</center>
+                    </th>
+                </tr>
+                <tr>
+                    <th>Start</th>
+                    <th>End</th>
+                    <th>% time</th>
+                    <th>Task Name</th>
+                </tr>
+            {%- endif -%}
 
-    <tr class="row1">
-    <td class="col1">{{row.start}}</td>
-    <td class="col2">{{row.end}}</td>
-    <td class="col3">{{row.utilisation}}</td>
-    <!--    <td class="col3"><a onmouseover="nhpup.popup(' {{row.taskname| escape}}<pre>project:      {{row.project| escape}}<br/>id:           {{row.id| escape}}<br/>dependencies: {{row.dependencies| escape}}<br/>tags:         {{row.tags| escape}}<br/>devdays:      {{row.devdays| escape}}<br/>resources:    {{row.resources| escape}}<br/></pre>{{row.comments| escape}}',{'width': 400});">{{row.taskname}}</a>-->
-    <td class="col4">{{row.taskname}}</td>
+        {%- if {{row.utilisation}} == "0" -%}
+            <tr class="row1" style="color:lightgrey;">
+        {%- else -%}
+            <tr class="row1">
+        {%- endif -%}
+        <td class="col1">{{row.start}}</td>
+        <td class="col2">{{row.end}}</td>
+        <td class="col3">{{row.utilisation}}</td>
+        <td class="col4">{{row.taskname}}</td>
+        </tr>
+        {%- endfor -%}
+        </table>
+    </div>
+</center>
 
-{%- endfor -%}
-    </table>
-    </center>
+
+
+<script>
+    var tabs = new Tabby('[data-tabs]');
+</script>
