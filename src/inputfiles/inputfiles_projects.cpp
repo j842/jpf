@@ -9,7 +9,8 @@
 namespace inputfiles
 {
 
-    project::project(std::string id, std::string name, std::string desc, bool BAU, std::string comments) : mId(id), mName(name), mDescription(desc), mBAU(BAU), mComments(comments)
+    project::project(std::string id, std::string name, std::string desc, bool BAU, std::string comments) : 
+        mId(id), mName(name), mDescription(desc), mBAU(BAU), mComments(comments)
     {
     }
 
@@ -31,7 +32,7 @@ namespace inputfiles
     void projects::load_projects()
     {
         mMaxProjectNameWidth = 0;
-        simplecsv c("projects.csv");
+        simplecsv c("projects.csv",5);
 
         if (!c.openedOkay())
             TERMINATE("Could not open projects.csv!");
@@ -46,7 +47,7 @@ namespace inputfiles
     }
     void projects::save_projects_CSV(std::ostream &os) const
     {
-        os << R"(Project ID,Description,BAU or New,Comments)" << std::endl;
+        os << R"(Project ID,Project Name,Description,BAU or New,Comments)" << std::endl;
 
         for (const auto &i : *this)
         {
