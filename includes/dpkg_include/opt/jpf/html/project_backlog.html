@@ -23,6 +23,7 @@ headincludes: |
 <br/>
 
 <!-- tables of projects. -->
+{%- assign popupwidth = 500 -%}
 <center>
 <table>
 {%- assign project = "blah" -%}
@@ -38,7 +39,7 @@ headincludes: |
     <tr class="row1">
     <td class="col1">{{row.start}}</td>
     <td class="col2">{{row.end}}</td>
-    <td class="col3"><a onmouseover="nhpup.popup(' {{row.taskname| escape}}<pre>project:      {{row.project| escape}}<br/>id:           {{row.id| escape}}<br/>dependencies: {{row.dependencies| escape}}<br/>tags:         {{row.tags| escape}}<br/>devdays:      {{row.devdays| escape}}<br/>blocked:      {{row.blocked| escape}}<br/>resources:    {{row.resources| escape}}<br/></pre>{{row.comments| escape}}',{'width': 400});">{{row.taskname}}</a>
+    <td class="col3"><a onmouseover="nhpup.popup(' {{row.taskname| escape}}<pre>project:      {{row.project| escape}}<br/>id:           {{row.id| escape}}<br/>dependencies: {{row.dependencies| escape}}<br/>tags:         {{row.tags| escape}}<br/>devdays:      {{row.devdays| escape}}<br/>blocked:      {{row.blocked| escape}}<br/>resources:    {{row.resources| escape}}<br/></pre>{{row.comments| escape}}',{'width': {{popupwidth}}});">{{row.taskname}}</a>
     <td class="col4">{{row.team}}</td>
     <td class="col5">{{row.id}}</td>       
 

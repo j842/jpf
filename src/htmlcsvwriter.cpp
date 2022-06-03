@@ -143,7 +143,7 @@ void HTMLCSVWriter::write_projectbacklog_csv(const scheduler::scheduler &s) cons
                     s.getProjects()[z.mProjectIndex].getName(),
                     S() << "rgb(" << rgbc.r << ", " << rgbc.g << ", " << rgbc.b << ")",
                     z.mActualStart.getStr_nice_short(),
-                    z.mActualEnd.getStr_nice_short(),
+                    z.getLastDayWorked().getStr_nice_short(),
                     z.mDescription,
                     s.getInputs().mT.at(z.mTeamNdx).mId,
                     z.mId,
@@ -202,7 +202,7 @@ void HTMLCSVWriter::write_tag_file(const scheduler::scheduler &s, const std::str
             csvcontent.push_back({s.getProjects()[z.mProjectIndex].getName(),
                                   S() << "rgb(" << rgbc.r << ", " << rgbc.g << ", " << rgbc.b << ")",
                                   z.mActualStart.getStr_nice_short(),
-                                  z.mActualEnd.getStr_nice_short(),
+                                  z.getLastDayWorked().getStr_nice_short(),
                                   z.mDescription,
                                   s.getInputs().mT.at(z.mTeamNdx).mId,
                                   z.mId,
@@ -210,7 +210,7 @@ void HTMLCSVWriter::write_tag_file(const scheduler::scheduler &s, const std::str
                                   dependencies,
                                   devdays,
                                   z.mComments,
-                                  z.mActualEnd.getStr()});
+                                  z.getLastDayWorked().getStr()});
         }
     }
 
@@ -585,7 +585,25 @@ void HTMLCSVWriter::write_peoplebacklog(const scheduler::scheduler &s) const
 
                     workdate start( j.mActualStart );
                     workdate end( j.mActualEnd );
-                
+                    if (utilisation>0)
+                    { // determine the actual start and end date worked for a particular person! tricky.
+                        start=j.mActualEnd;
+                        end=j.mActualStart;
+                        std::string personname = p.mName;
+                        workdate s = j.mActualStart;
+                        for (;s<j.mActualEnd;s.incrementWorkDay())
+                        {
+                            for (auto c : z.getChunks(s.getDayAsIndex()))
+                                if (c.mItemIndex==in && c.mEffort>0)
+                                {
+                                    start=std::min(start,s);
+                                    workdate s2=s;
+                                    s2.incrementWorkDay();
+                                    end=std::max(end,s2);
+                                }
+                        }
+                    }
+                    
                     if (end>start)
                         end.decrementWorkDay();
 

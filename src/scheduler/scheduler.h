@@ -44,12 +44,14 @@ namespace scheduler
         scheduleditem(const inputfiles::backlogitem &bli, unsigned int priority, unsigned int projectndx, unsigned int itemIndexInTeamBacklog);
         unsigned long getDurationDays() const;
 
+        workdate getLastDayWorked() const;
+
     public:
         // set while scheduling the task.
         unsigned int mProjectIndex;
         unsigned int mPriority;
         workdate mActualStart;
-        workdate mActualEnd;
+        workdate mActualEnd; // half open interval.
         workdate mClosedEnd;
         std::string mBlockedBy;
         unsigned int mItemIndexInTeamBacklog;

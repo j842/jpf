@@ -32,6 +32,17 @@ namespace scheduler
         return workdate::countWorkDays(mActualStart,mActualEnd);
     }
 
+    workdate scheduleditem::getLastDayWorked() const
+    {
+        ASSERT(mActualEnd>=mActualStart);
+        if (mActualEnd.isForever() || mActualEnd==mActualStart)
+            return mActualEnd;
+        workdate s = mActualEnd;
+        s.decrementWorkDay();
+        return s;
+    }
+
+
     scheduledproject::scheduledproject(const inputfiles::project &prj) : inputfiles::project(prj), mTotalDevCentiDays(0)
     {
 
