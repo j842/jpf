@@ -184,11 +184,11 @@ void HTMLCSVWriter::write_all_tag_files(const scheduler::scheduler &s) const
         csv.addrow({"tag"});
         for (const auto & i : tagslist)
             csv.addrow({i});
-        csv.addrow({"allprojects"});
+        csv.addrow({"All_Projects"});
 
         for (auto t : tagslist)
             write_project_tag_file(s,t);
-        write_project_tag_file(s,"allprojects");
+        write_project_tag_file(s,"All_Projects");
     }
 }
 
@@ -207,6 +207,7 @@ void HTMLCSVWriter::write_project_tag_file(const scheduler::scheduler &s, const 
                 "description",
                 "comments",
                 "team",
+                "projectindex",
                 "endparsy"});
 
     std::vector<std::vector<std::string>> csvcontent;
@@ -214,7 +215,7 @@ void HTMLCSVWriter::write_project_tag_file(const scheduler::scheduler &s, const 
     for (unsigned int i=0;i< s.getProjects().size();++i)
     {
         auto & z = s.getProjects().at(i);
-        if (iSame(tag,"allprojects") || z.getTags().hasTag(tag))
+        if (iSame(tag,"All_Projects") || z.getTags().hasTag(tag))
         { // project has desired tag!
             scheduler::rgbcolour rgbc = ProjectInfo[i].mColour;
             workdate end = z.mActualEnd;
@@ -239,6 +240,7 @@ void HTMLCSVWriter::write_project_tag_file(const scheduler::scheduler &s, const 
                     z.getDesc(),
                     z.getmComments(),
                     team.getAsString(),
+                    S()<<i,
                     end.getStr()
                }
             );

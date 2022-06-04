@@ -26,7 +26,7 @@ void cTags::addToTags(std::vector<std::string> &tags) const // add the stored ta
                 alreadyThere = true;
 
         if (!alreadyThere)
-            tags.push_back(makelower(t));
+            tags.push_back(t);
     }
 }
 
