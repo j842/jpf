@@ -122,11 +122,12 @@ int cMain::run_console()
         scheduler::scheduler s(iset);
         s.schedule();
 
-        s.displayprojects_Console();
         s.createAllOutputFiles();
 
         HTMLCSVWriter hcw;
         hcw.createHTMLFolder(s);
+
+        s.displayprojects_Console();
     }
     catch (TerminateRunException &pEx)
     {

@@ -128,3 +128,14 @@ images:
 # build the debian package.
 deb: $(BUILD_DIR)/$(JPF_NAME)
 	make -C deps -f deploy.makefile deb
+
+DATA_DIR := $(ROOT_DIR)/includes/dpkg_include/opt/jpf/html/_data
+.PHONY: data
+data:
+	rm -rf ~/.jpf_test
+	$(JPF_EXE) -c ~/.jpf_test
+	$(JPF_EXE) ~/.jpf_test
+	rm $(DATA_DIR)/*
+	cp ~/.jpf_test/output/.jekyll/_data/* $(DATA_DIR)
+	rm -rf ~/.jpf_test
+	
