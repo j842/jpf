@@ -132,7 +132,7 @@ void HTMLCSVWriter::write_projectbacklog_csv(const scheduler::scheduler &s) cons
             dependencies += d + " ";
         std::string tags;
         for (auto &t : z.mTags)
-            tags += makelower(t) + " ";
+            tags += t + " ";
         std::string devdays = S() << std::fixed << std::setprecision(2) << 0.01 * (double)z.mDevCentiDays;
         std::string resources;
         for (unsigned int pi = 0; pi < z.mResources.size(); pi++)
@@ -184,9 +184,11 @@ void HTMLCSVWriter::write_all_tag_files(const scheduler::scheduler &s) const
         csv.addrow({"tag"});
         for (const auto & i : tagslist)
             csv.addrow({i});
+        csv.addrow({"allprojects"});
 
         for (auto t : tagslist)
             write_project_tag_file(s,t);
+        write_project_tag_file(s,"allprojects");
     }
 }
 
@@ -203,19 +205,30 @@ void HTMLCSVWriter::write_project_tag_file(const scheduler::scheduler &s, const 
                 "id",
                 "devdays",
                 "description",
-                "comments"});
+                "comments",
+                "team",
+                "endparsy"});
+
+    std::vector<std::vector<std::string>> csvcontent;
 
     for (unsigned int i=0;i< s.getProjects().size();++i)
     {
         auto & z = s.getProjects().at(i);
-        if (z.getTags().hasTag(tag))
+        if (iSame(tag,"allprojects") || z.getTags().hasTag(tag))
         { // project has desired tag!
             scheduler::rgbcolour rgbc = ProjectInfo[i].mColour;
             workdate end = z.mActualEnd;
             if (end>z.mActualStart)
                 end.decrementWorkDay(); // make closed interval
 
-            csv.addrow(
+            cTags team;
+            for (auto & itm : s.getItems())
+                if (itm.mProjectIndex == i)
+                    for (auto & rsc : itm.mResources)
+                        if (!team.hasTag(rsc.mName))
+                            team.push_back(rsc.mName);
+
+            csvcontent.push_back(
                 {
                     z.getName(),
                     S() << "rgb(" << rgbc.r << ", " << rgbc.g << ", " << rgbc.b << ")",
@@ -224,11 +237,18 @@ void HTMLCSVWriter::write_project_tag_file(const scheduler::scheduler &s, const 
                     z.getId(),
                     S()<<(int)(0.5+(double)z.mTotalDevCentiDays/100.0),
                     z.getDesc(),
-                    z.getmComments()
+                    z.getmComments(),
+                    team.getAsString(),
+                    end.getStr()
                }
             );
         }
     }
+
+    sort(csvcontent.begin(), csvcontent.end(), [](const auto &lhs, const auto &rhs)
+         { return simpledate(lhs[lhs.size() - 1]) < simpledate(rhs[rhs.size() - 1]); });
+    for (auto &x : csvcontent)
+        csv.addrow(x);
 }
 
 void HTMLCSVWriter::write_task_tag_file(const scheduler::scheduler &s, const std::string tag) const
