@@ -103,6 +103,7 @@ clean:
 
 # run tests
 check: $(JPF_EXE)
+	rm -rf ~/jpf_test
 	$(JPF_EXE) -t
 	$(JPF_EXE) -c ~/jpf_test
 	$(JPF_EXE) ~/jpf_test
