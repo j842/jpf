@@ -1,8 +1,8 @@
 #include <sstream>
 
 #include "simplecsv.h"
-#include "utils.h"
-#include "settings.h"
+#include "../utils.h"
+#include "../settings.h"
 
 CPPUNIT_TEST_SUITE_REGISTRATION( simplecsv_test );
 

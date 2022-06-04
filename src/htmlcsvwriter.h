@@ -32,6 +32,7 @@ class HTMLCSVWriter
         void write_peopleeffortbymonth_months_people_csvs(const scheduler::scheduler & s) const;
         void write_peoplebacklog(const scheduler::scheduler & s) const;
         void write_settings(const scheduler::scheduler & s) const;
+        void write_projects_csv(const scheduler::scheduler &s) const;
 
         void write_projecttypes(
             const scheduler::scheduler & s,
@@ -62,8 +63,8 @@ class HTMLCSVWriter
         unsigned long get_maxmonth(const scheduler::scheduler & s) const;
 
         void write_all_tag_files(const scheduler::scheduler &s) const;
-        void write_tag_file(const scheduler::scheduler &s, const std::string tag) const;
-
+        void write_task_tag_file(const scheduler::scheduler &s, const std::string tag) const;
+        void write_project_tag_file(const scheduler::scheduler &s, const std::string tag) const;
 };
 
 

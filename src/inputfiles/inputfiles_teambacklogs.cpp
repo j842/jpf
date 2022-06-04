@@ -65,10 +65,10 @@ namespace inputfiles
             mResources.push_back(resource(name, false)); // contributing resources
 
         // 8 - dependencies
-        simplecsv::splitcsv(csvitems[8], mDependencies);
+        mDependencies = cTags(csvitems[8]);
 
         // 9 - tags
-        simplecsv::splitcsv(csvitems[9],mTags);
+        mTags = cTags(csvitems[9]);
 
         // 10 - comments
         mComments = csvitems[10];
@@ -100,15 +100,9 @@ namespace inputfiles
                 r += (r.length() > 0 ? std::string(", ") + i.mName : i.mName);
         csvitems.push_back(r);
 
-        r.clear();
-        for (auto &i : mDependencies)
-            r += (r.length() > 0 ? std::string(", ") + i : i);
-        csvitems.push_back(r);
+        csvitems.push_back(mDependencies.getAsString());
 
-        r.clear();
-        for (auto &i : mTags)
-            r += (r.length() > 0 ? std::string(", ") + i : i);
-        csvitems.push_back(r);
+        csvitems.push_back(mTags.getAsString());
 
         csvitems.push_back(mComments);
 
@@ -117,7 +111,7 @@ namespace inputfiles
 
     bool backlogitem::hasDependency(std::string d)
     {
-        for (auto &ch : mDependencies)
+        for (const auto &ch : mDependencies)
             if (iSame(ch, d))
                 return true;
 
@@ -240,23 +234,12 @@ namespace inputfiles
 
     bool backlogitem::hasTag(std::string tag) const
     {
-        for (auto & t : mTags)
-            if (iSame(t,tag))
-                return true;
-        return false;
+        return mTags.hasTag(tag);
     }
+
     void backlogitem::addToTags(std::vector<std::string> & tags) const
     {
-        for (auto & t : mTags)
-        {
-            bool alreadyThere=false;
-            for (auto & tt : tags)
-                if (iSame(t,tt))
-                    alreadyThere=true;
-
-            if (!alreadyThere)
-                tags.push_back(makelower(t));
-        }
+        mTags.addToTags(tags);
     }
 
 

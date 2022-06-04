@@ -6,6 +6,7 @@
 #include <ostream>
 
 #include "workdate.h"
+#include "ctags.h"
 
 namespace inputfiles
 {
@@ -52,8 +53,8 @@ namespace inputfiles
         tCentiDay mDevCentiDays;
         workdate mEarliestStart;
         std::vector<resource> mResources;
-        std::vector<std::string> mDependencies;
-        std::vector<std::string> mTags;
+        cTags mDependencies;
+        cTags mTags;
         std::string mComments;
 
     private:

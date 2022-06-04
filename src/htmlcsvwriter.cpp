@@ -52,6 +52,7 @@ void HTMLCSVWriter::createHTMLFolder(const scheduler::scheduler &s) const
     write_peopleeffortbymonth_months_people_csvs(s);
     write_peoplebacklog(s);
     write_settings(s);
+    write_projects_csv(s);
 
     // dashboard.html
     write_projecttypes(s, DevDaysTally, ProjectInfo);
@@ -158,29 +159,84 @@ void HTMLCSVWriter::write_projectbacklog_csv(const scheduler::scheduler &s) cons
 
 void HTMLCSVWriter::write_all_tag_files(const scheduler::scheduler &s) const
 {
-    std::vector<std::string> tagslist;
-    for (const auto &i : s.getItems())
-        i.addToTags(tagslist);
+    { // tasks
+        std::vector<std::string> tagslist;
+        for (const auto &i : s.getItems())
+            i.addToTags(tagslist);
 
-    {
-        simpleDataCSV csv("tags");
-        csv.addrow({"tag"});
-        for (const auto &i : tagslist)
-            csv.addrow({i});
+        {
+            simpleDataCSV csv("task_tags");
+            csv.addrow({"tag"});
+            for (const auto &i : tagslist)
+                csv.addrow({i});
+        }
+
+        for (auto t : tagslist)
+            write_task_tag_file(s, t);
     }
 
-    for (auto t : tagslist)
-        write_tag_file(s, t);
+    { // projects
+        cTags tagslist;
+        for (const auto & i : s.getProjects())
+            i.getTags().addToTags(tagslist);
+
+        simpleDataCSV csv("project_tags");
+        csv.addrow({"tag"});
+        for (const auto & i : tagslist)
+            csv.addrow({i});
+
+        for (auto t : tagslist)
+            write_project_tag_file(s,t);
+    }
 }
 
-void HTMLCSVWriter::write_tag_file(const scheduler::scheduler &s, const std::string tag) const
+void HTMLCSVWriter::write_project_tag_file(const scheduler::scheduler &s, const std::string tag) const
 {
+    std::vector<scheduler::tProjectInfo> ProjectInfo;
+    s.getProjectExtraInfo(ProjectInfo);
 
+    simpleDataCSV csv("project_tag_" + tag);
+    csv.addrow({"project",
+                "projectcolour",
+                "start",
+                "end",
+                "id",
+                "devdays",
+                "description",
+                "comments"});
+
+    for (unsigned int i=0;i< s.getProjects().size();++i)
+    {
+        auto & z = s.getProjects().at(i);
+        if (z.getTags().hasTag(tag))
+        { // project has desired tag!
+            scheduler::rgbcolour rgbc = ProjectInfo[i].mColour;
+            workdate end = z.mActualEnd;
+            if (end>z.mActualStart)
+                end.decrementWorkDay(); // make closed interval
+
+            csv.addrow(
+                {
+                    z.getName(),
+                    S() << "rgb(" << rgbc.r << ", " << rgbc.g << ", " << rgbc.b << ")",
+                    z.mActualStart.getStr_nice_short(),
+                    end.getStr_nice_short(),
+                    z.getId(),
+                    S()<<(int)(0.5+(double)z.mTotalDevCentiDays/100.0),
+                    z.getDesc(),
+                    z.getmComments()
+               }
+            );
+        }
+    }
+}
+
+void HTMLCSVWriter::write_task_tag_file(const scheduler::scheduler &s, const std::string tag) const
+{
     std::vector<scheduler::tProjectInfo> ProjectInfo;
     s.getProjectExtraInfo(ProjectInfo);
 
     std::vector<scheduler::rgbcolour> Colours(s.getProjects().size(), scheduler::rgbcolour({0, 0, 0}));
-
     std::vector<std::vector<std::string>> csvcontent;
 
     for (auto &z : s.getItems())
@@ -214,7 +270,7 @@ void HTMLCSVWriter::write_tag_file(const scheduler::scheduler &s, const std::str
         }
     }
 
-    simpleDataCSV csv("tag_" + tag);
+    simpleDataCSV csv("task_tag_" + tag);
     csv.addrow({"project",
                 "projectcolour",
                 "start",
@@ -367,23 +423,24 @@ void HTMLCSVWriter::write_peopleeffortbymonth_months_people_csvs(const scheduler
             csv3.addrow({pCode, p.mName});
         }
     }
+}
 
+void HTMLCSVWriter::write_projects_csv(const scheduler::scheduler &s) const
+{
+    simpleDataCSV csv4("projects");
+    csv4.addrow({"projectid", "projectname", "projectcolour", "projecttype"});
+
+    std::vector<scheduler::tProjectInfo> pi;
+    s.getProjectExtraInfo(pi);
+
+    for (auto p : pi)
     {
-        simpleDataCSV csv4("projects");
-        csv4.addrow({"projectid", "projectname", "projectcolour", "projecttype"});
-
-        std::vector<scheduler::tProjectInfo> pi;
-        s.getProjectExtraInfo(pi);
-
-        for (auto p : pi)
-        {
-            auto &c = p.mColour;
-            std::string colour = S() << "rgb(" << c.r << ", " << c.g << ", " << c.b << ")";
-            csv4.addrow({p.mId,
-                         p.mName,
-                         colour,
-                         s.ItemType2String(p.mType)});
-        }
+        auto &c = p.mColour;
+        std::string colour = S() << "rgb(" << c.r << ", " << c.g << ", " << c.b << ")";
+        csv4.addrow({p.mId,
+                     p.mName,
+                     colour,
+                     s.ItemType2String(p.mType)});
     }
 }
 

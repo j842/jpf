@@ -46,8 +46,8 @@ headincludes: |
                 <tr>
                     <th>Start</th>
                     <th>End</th>
-                    <th>% time</th>
                     <th>Task Name</th>
+                    <th>Max % Time</th>
                 </tr>
             {%- endif -%}
 
@@ -58,8 +58,8 @@ headincludes: |
         {%- endif -%}
         <td class="col1">{{row.start}}</td>
         <td class="col2">{{row.end}}</td>
-        <td class="col3">{{row.utilisation}}</td>
-        <td class="col4">{{row.taskname}}</td>
+        <td class="col3">{{row.taskname}}</td>
+        <td class="col4">{{row.utilisation}}</td>
         </tr>
         {%- endfor -%}
         </table>

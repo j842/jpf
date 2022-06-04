@@ -1,6 +1,6 @@
 ---
 layout: default
-title: Tags
+title: Task Tags
 headincludes: |
     <link rel="stylesheet" type="text/css" href="static/nicetable.css">
     <link rel="stylesheet" type="text/css" href="static/tabby-ui.min.css">
@@ -10,7 +10,7 @@ headincludes: |
 <center>
 
     <ul data-tabs>
-        {% for row in site.data.tags %}
+        {% for row in site.data.task_tags %}
         {% capture tabname %}tab_{{ forloop.index }}{% endcapture %}
         <li><a 
             {% if forloop.first %}
@@ -20,11 +20,11 @@ headincludes: |
         {% endfor %}
     </ul>
 
-    {% for row in site.data.tags %}
+    {% for row in site.data.task_tags %}
     {% capture tabname %}tab_{{ forloop.index }}{% endcapture %}
     <div id="{{tabname}}">
         <p/>
-        {% include subpage_tagfile.liquid tag=row.tag %}
+        {% include subpage_tasktagfile.liquid tag=row.tag %}
     </div>
     {% endfor %}
 

@@ -5,7 +5,7 @@
     <tr class="spacer"><td colspan="4">&nbsp;</td></tr>
     <tr><th>Date</th><th>Project</th><th>Task Name</th><th>Team</th></tr>
 
-    {% capture thefile %}tag_{{ include.tag }}{% endcapture %}
+    {% capture thefile %}task_tag_{{ include.tag }}{% endcapture %}
     {%- for row in site.data[thefile] -%}
         <tr class="row1">
             <td class="col1">{{row.end}}</td>

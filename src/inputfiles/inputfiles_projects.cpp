@@ -9,8 +9,8 @@
 namespace inputfiles
 {
 
-    project::project(std::string id, std::string name, std::string desc, bool BAU, std::string comments) : 
-        mId(id), mName(name), mDescription(desc), mBAU(BAU), mComments(comments)
+    project::project(std::string id, std::string name, std::string desc, bool BAU, std::string comments, const cTags & tags) : 
+        mId(id), mName(name), mDescription(desc), mBAU(BAU), mComments(comments), mTags(tags)
     {
     }
 
@@ -32,15 +32,15 @@ namespace inputfiles
     void projects::load_projects()
     {
         mMaxProjectNameWidth = 0;
-        simplecsv c("projects.csv",5);
+        simplecsv c("projects.csv",6);
 
         if (!c.openedOkay())
             TERMINATE("Could not open projects.csv!");
 
         std::vector<std::string> row;
-        while (c.getline(row, 5))
+        while (c.getline(row, 6))
         {
-            project p(row[0], row[1], row[2], isBAU(row[3]), row[4]);
+            project p(row[0], row[1], row[2], isBAU(row[3]), row[4], cTags(row[5]));
             mMaxProjectNameWidth = std::max(mMaxProjectNameWidth, (unsigned int)p.getId().length());
             this->push_back(p);
         }
@@ -56,7 +56,8 @@ namespace inputfiles
                 i.getName(),
                 i.getDesc(),
                 i.getBAU() ? "BAU" : "New",
-                i.getmComments()};
+                i.getmComments(),
+                i.getTags().getAsString()};
             simplecsv::output(os, row);
             os << std::endl;
         }
