@@ -106,8 +106,6 @@ void HTMLCSVWriter::write_projectbacklog_csv(const scheduler::scheduler &s) cons
     std::vector<scheduler::tProjectInfo> ProjectInfo;
     s.getProjectExtraInfo(ProjectInfo);
 
-    std::vector<scheduler::rgbcolour> Colours(s.getProjects().size(), scheduler::rgbcolour({0, 0, 0}));
-
     csv.addrow({"projectindex",
                 "project",
                 "projectcolour",
@@ -403,8 +401,7 @@ void HTMLCSVWriter::write_peopleeffortbymonth_months_people_csvs(const scheduler
         if (DevDaysTally.size() == 0)
             return; // no data.
 
-        std::string pCode = s.getPeople()[personNdx].mName;
-        removewhitespace(pCode);
+        std::string pCode = makecode(s.getPeople()[personNdx].mName);
         unsigned long maxmonth = DevDaysTally[0].size();
 
         for (unsigned int i = 0; i < ProjectInfo.size(); ++i)
@@ -645,7 +642,7 @@ void HTMLCSVWriter::write_peoplebacklog(const scheduler::scheduler &s) const
     simpleDataCSV csv("peoplebacklog");
 
     csv.addrow({
-        "personname","start","end","utilisation","taskname"
+        "personname","personcode","start","end","utilisation","taskname"
     });
 
     for (auto &z : s.getPeople())
@@ -688,6 +685,7 @@ void HTMLCSVWriter::write_peoplebacklog(const scheduler::scheduler &s) const
 
                     csv.addrow({
                         p.mName,
+                        makecode(p.mName),
                         start.getStr(),
                         end.getStr(),
                         S()<<utilisation,

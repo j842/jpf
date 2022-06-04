@@ -56,7 +56,7 @@ namespace scheduler
             for (ci=0; ci < mProjects.size(); ++ci)
             {
                 float r, g, b;
-                float v = (float)ci / (float)(mProjects.size() - 4);
+                float v = (float)ci / (float)(mProjects.size());
                 colours::turbo_getColour(v, r, g, b);
                 ProjectInfo[ci].mColour = rgbcolour{.r = (int)(r * 255.0 + 0.4999), .g = (int)(g * 255.0 + 0.4999), .b = (int)(b * 255.0 + 0.4999)};
             }

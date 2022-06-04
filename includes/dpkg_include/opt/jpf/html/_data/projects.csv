@@ -1,0 +1,10 @@
+projectid,projectname,projectcolour,projecttype
+Webserver,Webserver,"rgb(48, 18, 59)",BAU
+Android App,Android App,"rgb(122, 4, 3)",BAU
+iPhone App,iPhone App,"rgb(122, 4, 3)",New
+Desktop Client,Windows Desktop Client,"rgb(122, 4, 3)",New
+Concrete Sculpture,Enormous Concrete Sculpture,"rgb(122, 4, 3)",New
+Holidays,Holidays,"rgb(176, 82, 205)",Holiday
+Unscheduled,Unscheduled Time,"rgb(210, 180, 140)",Slack
+Other BAU,Non-project BAU work,"rgb(100, 100, 100)",BAU
+Overhead,New Project Overhead,"rgb(200, 200, 200)",New

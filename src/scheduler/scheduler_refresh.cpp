@@ -98,6 +98,9 @@ void scheduler::refresh(inputfiles::inputset &iset)
             {
                 teamItemCount[mItems[i].mTeamNdx] += 1;
                 refMap[i] = S() << iset.mT[mItems[i].mTeamNdx].mRefCode << "." << std::setw(2) << std::setfill('0') << teamItemCount[mItems[i].mTeamNdx];
+
+                if (!iSame(refMap[i],mItems[i].mId))
+                    logdebug(S()<<"Changing Task ID ["<<mItems[i].mId<<"] to ["<<refMap[i]<<"].");
             }
 
         }
@@ -127,6 +130,20 @@ void scheduler::refresh(inputfiles::inputset &iset)
                         unsigned int ndx = getItemIndexFromId(dep);
                         if (ndx != eNotFound)
                             dep = refMap[ndx]; // otherwise a project.
+                    }
+
+                    // also ensure we're using the project Id not full name.
+                    unsigned int ndx = iset.mP.getIndexByID(bli.mProjectName);
+                    if (ndx==eNotFound)
+                    {
+                        logerror(S()<<"Unable to find project ["+bli.mProjectName<<"]!");
+                        ASSERT(ndx!=eNotFound);
+                    }
+                    const std::string & realid = iset.mP[ ndx ].getId();
+                    if (!iSame(realid, bli.mProjectName))
+                    {
+                        logdebug(S()<<"Using project id ["<<realid<<"] instead of full project name for task "<<bli.mId );
+                        bli.mProjectName =realid;
                     }
                 }
         }

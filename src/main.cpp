@@ -64,14 +64,18 @@ int cMain::run_refresh()
     try
     {
         { // load and refresh
+            loginfo("Loading files...");
             inputfiles::projects p;
             inputfiles::teams t;
             inputfiles::publicholidays h;
             inputfiles::teambacklogs b(t,p);
             inputfiles::inputset iset(p,t,h,b);
             scheduler::scheduler s(iset);
+
+            loginfo("Recreating Ids as needed...");
             s.refresh(iset);
 
+            loginfo("Saving updated input files...");
             replace_all_input_CSV_files(iset);
             replace_settings_CSV();
         }

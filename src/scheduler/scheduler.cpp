@@ -154,11 +154,11 @@ namespace scheduler
 
     unsigned int scheduler::getProjectIndexFromId(const std::string id) const
     {
-        if (id.length() == 0)
+        if (id.length()==0)
             return eNotFound;
-        for (unsigned int pi = 0; pi < mProjects.size(); ++pi)
-            if (iSame(mProjects[pi].getId(), id))
-                return pi;
+        for (unsigned int i = 0; i < mProjects.size(); ++i)
+            if (iSame(mProjects.at(i).getId(), id) || iSame(mProjects.at(i).getName(),id))
+                return i;
         return eNotFound;
     }
 

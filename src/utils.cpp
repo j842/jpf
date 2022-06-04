@@ -45,6 +45,23 @@ void removewhitespace(std::string & s)
     s.erase( std::remove(s.begin(), s.end(), ' '), s.end());
 }
 
+// remove char if true.
+bool codepredicate(char c)
+{
+    if (isalnum(c)) return false;
+    std::string happy="_-";
+    if (happy.find(c) != std::string::npos)
+        return false;
+    return true;
+}
+
+std::string makecode(const std::string & str) // alphanumeric, safe as HTML id etc.
+{
+    std::string s(str);
+    s.erase(std::remove_if(s.begin(), s.end(), codepredicate), s.end());
+    return s;
+}
+
 void trim(std::string &str)
 {
     const char *typeOfWhitespaces = " \t\n\r\f\v";

@@ -7,7 +7,8 @@
         "request": "launch",
         "program": "${workspaceFolder}/build/jpf",
         "args": [
-          "~/code/tracmap/project_forecasting/"
+          //"~/code/tracmap/project_forecasting/"
+          "-r","~/ttt"
         ],
         "stopAtEntry": false,
         "cwd": "${workspaceFolder}",

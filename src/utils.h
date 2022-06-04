@@ -19,6 +19,7 @@ class workdate; // forward declaration to avoid circular dependency.
 
 // string manipulation etc.
 void removewhitespace(std::string & s);
+std::string makecode(const std::string & str); // alphanumeric, safe as HTML id etc.
 void checkcreatedirectory(std::string d);
 std::string makelower(const std::string & s);
 bool iSame(const std::string &s1, const std::string &s2);

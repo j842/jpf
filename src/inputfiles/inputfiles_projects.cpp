@@ -65,6 +65,8 @@ namespace inputfiles
 
     unsigned int projects::getIndexByID(std::string id) const // returns eNotFound if index isn't there.
     {
+        if (id.length()==0)
+            return eNotFound;
         for (unsigned int i = 0; i < this->size(); ++i)
             if (iSame(this->at(i).getId(), id) || iSame(this->at(i).getName(),id))
                 return i;

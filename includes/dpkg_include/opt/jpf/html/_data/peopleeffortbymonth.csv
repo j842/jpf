@@ -1,0 +1,69 @@
+PersonCode,PersonName,MonthNum,DateStr,ProjectName,ProjectColour,ProjectId,Effort
+Stu,Stu,0,May 22,Webserver,"rgb(48, 18, 59)",Webserver,4.8
+Stu,Stu,1,Jun 22,Webserver,"rgb(48, 18, 59)",Webserver,2.4
+Stu,Stu,0,May 22,Holidays,"rgb(176, 82, 205)",Holidays,2.0
+Stu,Stu,1,Jun 22,Holidays,"rgb(176, 82, 205)",Holidays,2.0
+Stu,Stu,0,May 22,Unscheduled Time,"rgb(210, 180, 140)",Unscheduled,11.2
+Stu,Stu,1,Jun 22,Unscheduled Time,"rgb(210, 180, 140)",Unscheduled,13.6
+Stu,Stu,0,May 22,Non-project BAU work,"rgb(100, 100, 100)",Other BAU,2.0
+Stu,Stu,1,Jun 22,Non-project BAU work,"rgb(100, 100, 100)",Other BAU,2.0
+Stu,Stu,0,May 22,New Project Overhead,"rgb(200, 200, 200)",Overhead,2.0
+Stu,Stu,1,Jun 22,New Project Overhead,"rgb(200, 200, 200)",Overhead,2.0
+Mark,Mark,0,May 22,Webserver,"rgb(48, 18, 59)",Webserver,19.6
+Mark,Mark,1,Jun 22,Webserver,"rgb(48, 18, 59)",Webserver,0.6
+Mark,Mark,0,May 22,Holidays,"rgb(176, 82, 205)",Holidays,0.0
+Mark,Mark,1,Jun 22,Holidays,"rgb(176, 82, 205)",Holidays,2.0
+Mark,Mark,0,May 22,Unscheduled Time,"rgb(210, 180, 140)",Unscheduled,0.2
+Mark,Mark,1,Jun 22,Unscheduled Time,"rgb(210, 180, 140)",Unscheduled,17.4
+Mark,Mark,0,May 22,Non-project BAU work,"rgb(100, 100, 100)",Other BAU,2.2
+Mark,Mark,1,Jun 22,Non-project BAU work,"rgb(100, 100, 100)",Other BAU,2.0
+Sarah,Sarah,0,May 22,Webserver,"rgb(48, 18, 59)",Webserver,5.0
+Sarah,Sarah,1,Jun 22,Webserver,"rgb(48, 18, 59)",Webserver,2.6
+Sarah,Sarah,0,May 22,Holidays,"rgb(176, 82, 205)",Holidays,0.0
+Sarah,Sarah,1,Jun 22,Holidays,"rgb(176, 82, 205)",Holidays,2.0
+Sarah,Sarah,0,May 22,Unscheduled Time,"rgb(210, 180, 140)",Unscheduled,14.8
+Sarah,Sarah,1,Jun 22,Unscheduled Time,"rgb(210, 180, 140)",Unscheduled,15.4
+Sarah,Sarah,0,May 22,Non-project BAU work,"rgb(100, 100, 100)",Other BAU,2.2
+Sarah,Sarah,1,Jun 22,Non-project BAU work,"rgb(100, 100, 100)",Other BAU,2.0
+Stephen,Stephen,0,May 22,Android App,"rgb(122, 4, 3)",Android App,2.9
+Stephen,Stephen,1,Jun 22,Android App,"rgb(122, 4, 3)",Android App,0.0
+Stephen,Stephen,0,May 22,Enormous Concrete Sculpture,"rgb(122, 4, 3)",Concrete Sculpture,3.2
+Stephen,Stephen,1,Jun 22,Enormous Concrete Sculpture,"rgb(122, 4, 3)",Concrete Sculpture,2.4
+Stephen,Stephen,0,May 22,Holidays,"rgb(176, 82, 205)",Holidays,0.0
+Stephen,Stephen,1,Jun 22,Holidays,"rgb(176, 82, 205)",Holidays,2.0
+Stephen,Stephen,0,May 22,Unscheduled Time,"rgb(210, 180, 140)",Unscheduled,11.5
+Stephen,Stephen,1,Jun 22,Unscheduled Time,"rgb(210, 180, 140)",Unscheduled,13.6
+Stephen,Stephen,0,May 22,Non-project BAU work,"rgb(100, 100, 100)",Other BAU,2.2
+Stephen,Stephen,1,Jun 22,Non-project BAU work,"rgb(100, 100, 100)",Other BAU,2.0
+Stephen,Stephen,0,May 22,New Project Overhead,"rgb(200, 200, 200)",Overhead,2.2
+Stephen,Stephen,1,Jun 22,New Project Overhead,"rgb(200, 200, 200)",Overhead,2.0
+Blair,Blair,0,May 22,Android App,"rgb(122, 4, 3)",Android App,3.5
+Blair,Blair,1,Jun 22,Android App,"rgb(122, 4, 3)",Android App,0.0
+Blair,Blair,0,May 22,iPhone App,"rgb(122, 4, 3)",iPhone App,15.0
+Blair,Blair,1,Jun 22,iPhone App,"rgb(122, 4, 3)",iPhone App,0.0
+Blair,Blair,0,May 22,Enormous Concrete Sculpture,"rgb(122, 4, 3)",Concrete Sculpture,3.5
+Blair,Blair,1,Jun 22,Enormous Concrete Sculpture,"rgb(122, 4, 3)",Concrete Sculpture,2.9
+Blair,Blair,0,May 22,Holidays,"rgb(176, 82, 205)",Holidays,0.0
+Blair,Blair,1,Jun 22,Holidays,"rgb(176, 82, 205)",Holidays,2.0
+Blair,Blair,0,May 22,Unscheduled Time,"rgb(210, 180, 140)",Unscheduled,0.0
+Blair,Blair,1,Jun 22,Unscheduled Time,"rgb(210, 180, 140)",Unscheduled,17.1
+Carly,Carly,0,May 22,Android App,"rgb(122, 4, 3)",Android App,3.5
+Carly,Carly,1,Jun 22,Android App,"rgb(122, 4, 3)",Android App,0.0
+Carly,Carly,0,May 22,Windows Desktop Client,"rgb(122, 4, 3)",Desktop Client,18.0
+Carly,Carly,1,Jun 22,Windows Desktop Client,"rgb(122, 4, 3)",Desktop Client,4.0
+Carly,Carly,0,May 22,Holidays,"rgb(176, 82, 205)",Holidays,0.0
+Carly,Carly,1,Jun 22,Holidays,"rgb(176, 82, 205)",Holidays,2.0
+Carly,Carly,0,May 22,Unscheduled Time,"rgb(210, 180, 140)",Unscheduled,0.5
+Carly,Carly,1,Jun 22,Unscheduled Time,"rgb(210, 180, 140)",Unscheduled,16.0
+Fred,Fred,0,May 22,Holidays,"rgb(176, 82, 205)",Holidays,0.0
+Fred,Fred,1,Jun 22,Holidays,"rgb(176, 82, 205)",Holidays,2.0
+Fred,Fred,0,May 22,Unscheduled Time,"rgb(210, 180, 140)",Unscheduled,22.0
+Fred,Fred,1,Jun 22,Unscheduled Time,"rgb(210, 180, 140)",Unscheduled,20.0
+Sarah,Sarah,0,May 22,Holidays,"rgb(176, 82, 205)",Holidays,0.0
+Sarah,Sarah,1,Jun 22,Holidays,"rgb(176, 82, 205)",Holidays,2.0
+Sarah,Sarah,0,May 22,Unscheduled Time,"rgb(210, 180, 140)",Unscheduled,22.0
+Sarah,Sarah,1,Jun 22,Unscheduled Time,"rgb(210, 180, 140)",Unscheduled,20.0
+Greg,Greg,0,May 22,Holidays,"rgb(176, 82, 205)",Holidays,0.0
+Greg,Greg,1,Jun 22,Holidays,"rgb(176, 82, 205)",Holidays,2.0
+Greg,Greg,0,May 22,Unscheduled Time,"rgb(210, 180, 140)",Unscheduled,22.0
+Greg,Greg,1,Jun 22,Unscheduled Time,"rgb(210, 180, 140)",Unscheduled,20.0

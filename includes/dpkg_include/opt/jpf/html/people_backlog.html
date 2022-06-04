@@ -19,7 +19,7 @@ headincludes: |
                     {% if forloop.first %}
                     data-tabby-default
                     {% endif %}
-                    href="#person-{{row.personname}}">{{person}}</a></li>
+                    href="#person-{{row.personcode}}">{{person}}</a></li>
             {% endif %}
         {%- endfor -%}
     </ul>
@@ -36,7 +36,7 @@ headincludes: |
             {%- assign person = row.personname -%}
             </table>
             </div>
-            <div id="person-{{row.personname}}">
+            <div id="person-{{row.personcode}}">
             <table>
                 <tr>
                     <th colspan="4" class="sectiontitle" style="background-color: #842">
