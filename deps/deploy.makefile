@@ -1,7 +1,7 @@
 ROOT_DIR:=$(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 ROOT_DIR := $(abspath $(ROOT_DIR)/../)
 
-include $(ROOT_DIR)/deps/versions.makefile
+include $(ROOT_DIR)/versions.makefile
 
 JPF_DEB_NAME 	:= $(JPF_NAME)-$(JPF_VERSION)-$(JPF_RELEASE)-any.deb
 JPF_DEB_PATH    := $(BIN_DIR)/$(JPF_DEB_NAME)

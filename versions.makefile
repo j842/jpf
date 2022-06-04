@@ -1,7 +1,7 @@
 #---------------------------------
 
 JPF_VERSION := 0.0.17
-JPF_RELEASE := 2
+JPF_RELEASE := 3
 INPUT_VERSION := 15
 #---------------------------------
 
@@ -16,3 +16,6 @@ INP_DIR := $(ROOT_DIR)/$(INP_NAME)
 
 JPF_NAME:= jpf
 JPF_EXE := $(BIN_DIR)/$(JPF_NAME)
+
+
+JPF_FULL_VER := jpf $(JPF_VERSION)-$(JPF_RELEASE)

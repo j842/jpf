@@ -3,6 +3,7 @@ layout: default
 title: Backlog by Person
 headincludes: |
     <link rel="stylesheet" type="text/css" href="static/nicetable.css">
+    <link rel="stylesheet" type="text/css" href="static/dot.css">
     <link rel="stylesheet" type="text/css" href="static/tabby-ui.min.css">
     <script src="static/tabby.polyfills.min.js"></script>
 ---
@@ -39,13 +40,14 @@ headincludes: |
             <div id="person-{{row.personcode}}">
             <table>
                 <tr>
-                    <th colspan="4" class="sectiontitle" style="background-color: #842">
+                    <th colspan="5" class="sectiontitle" style="background-color: #842">
                         <center>{{row.personname}}</center>
                     </th>
                 </tr>
                 <tr>
                     <th>Start</th>
                     <th>End</th>
+                    <th>Project</th>
                     <th>Task Name</th>
                     <th>Max % Time</th>
                 </tr>
@@ -58,8 +60,11 @@ headincludes: |
         {%- endif -%}
         <td class="col1">{{row.start}}</td>
         <td class="col2">{{row.end}}</td>
-        <td class="col3">{{row.taskname}}</td>
-        <td class="col4">{{row.utilisation}}</td>
+        <td class="col3">
+            <span class="dot" style="background-color: {{row.projectcolour}};"></span>
+            {{row.project}}</td>        
+        <td class="col4">{{row.taskname}}</td>
+        <td class="col5">{{row.utilisation}}</td>
         </tr>
         {%- endfor -%}
         </table>

@@ -641,8 +641,12 @@ void HTMLCSVWriter::write_peoplebacklog(const scheduler::scheduler &s) const
 {
     simpleDataCSV csv("peoplebacklog");
 
+    std::vector<scheduler::tProjectInfo> ProjectInfo;
+    s.getProjectExtraInfo(ProjectInfo);
+
+
     csv.addrow({
-        "personname","personcode","start","end","utilisation","taskname"
+        "personname","personcode","start","end","utilisation","project","projectcolour","taskname"
     });
 
     for (auto &z : s.getPeople())
@@ -683,13 +687,17 @@ void HTMLCSVWriter::write_peoplebacklog(const scheduler::scheduler &s) const
                     if (end>start)
                         end.decrementWorkDay();
 
+                    const auto &c = ProjectInfo[j.mProjectIndex].mColour;                            
+
                     csv.addrow({
                         p.mName,
                         makecode(p.mName),
                         start.getStr(),
                         end.getStr(),
                         S()<<utilisation,
-                        j.getFullName()
+                        j.mProjectName,
+                        S() << "rgb(" << c.r << ", " << c.g << ", " << c.b << ")",
+                        j.mDescription
                     });
                 }
             }

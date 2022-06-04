@@ -2,13 +2,14 @@ MAKEFLAGS+="-j -l $(shell grep -c ^processor /proc/cpuinfo)"
 
 ROOT_DIR:=$(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 
-include $(ROOT_DIR)/deps/versions.makefile
+include $(ROOT_DIR)/versions.makefile
 
 
 COM_COLOR   := \033[0;34m
 CRE_COLOR   := \033[0;35m
 LIN_COLOR   := \033[0;33m
 OBJ_COLOR   := \033[0;36m
+VER_COLOR	:= \033[0;92m
 NO_COLOR    := \033[m
 
 define uniq =
@@ -63,9 +64,10 @@ INC_FLAGS := $(addprefix -I,$(INC_DIRS))
 CPPFLAGS := $(INC_FLAGS) -MMD -MP
 
 # The final build step.
-$(BUILD_DIR)/$(JPF_NAME): $(VER_HEADER) $(OBJS)
+$(BUILD_DIR)/$(JPF_NAME): SHOWVER $(VER_HEADER) $(OBJS) 
 	@printf "%b" "$(LIN_COLOR)Linking   $(OBJ_COLOR)$(@)$(NO_COLOR)\n";
 	@$(CXX) $(OBJS) -o $@ $(LDFLAGS) $(LDLIBS)
+	@echo 
 
 # Build step for C++ source
 $(BUILD_DIR)/%.cpp.o: %.cpp
@@ -83,7 +85,7 @@ src/support_files/generate_%.h: src/support_files/generate_%.cpp
 
 # make version header file.
 .PRECIOUS: $(VER_HEADER)
-$(VER_HEADER): deps/versions.makefile
+$(VER_HEADER): versions.makefile
 	@printf "%b" "$(CRE_COLOR)Creating  $(OBJ_COLOR)$(@)$(NO_COLOR)\n";
 	@echo "#define __JPF_VERSION \"${JPF_VERSION}\"" > $@
 	@echo "#define __JPF_RELEASE \"${JPF_RELEASE}\"" >> $@
@@ -95,6 +97,10 @@ clean:
 	rm -rf $(BUILD_DIR)
 	rm -rf src/support_files
 	rm $(VER_HEADER)
+
+.PHONY: SHOWVER
+SHOWVER:
+	@printf "%b" "\n$(VER_COLOR)Building $(JPF_FULL_VER)$(NO_COLOR)\n";
 
 # Include the .d makefiles. The - at the front suppresses the errors of missing
 # Makefiles. Initially, all the .d files will be missing, and we don't want those
