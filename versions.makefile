@@ -1,10 +1,11 @@
 #---------------------------------
 
-JPF_VERSION := 0.0.17
-JPF_RELEASE := 5
+JPF_VERSION   := 0.0.17
+JPF_RELEASE   := 5
 INPUT_VERSION := 15
 #---------------------------------
 
+JPF_NAME:= jpf
 BIN_NAME:= build
 INP_NAME:= input
 
@@ -14,8 +15,5 @@ DEP_DIR := $(ROOT_DIR)/.dep
 BIN_DIR := $(ROOT_DIR)/build
 INP_DIR := $(ROOT_DIR)/$(INP_NAME)
 
-JPF_NAME:= jpf
-JPF_EXE := $(BIN_DIR)/$(JPF_NAME)
-
-
-JPF_FULL_VER := jpf $(JPF_VERSION)-$(JPF_RELEASE)
+JPF_EXE      := $(BIN_DIR)/$(JPF_NAME)
+JPF_FULL_VER := $(JPF_NAME) $(JPF_VERSION)-$(JPF_RELEASE)
