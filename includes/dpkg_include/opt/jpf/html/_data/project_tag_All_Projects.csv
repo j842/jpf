@@ -1,6 +1,6 @@
 project,projectcolour,start,end,id,devdays,description,comments,team,projectindex,endparsy
-Android App,"rgb(122, 4, 3)", 2 May 2022, 5 May 2022,Android App,10,Android App to manage accounts,,"Stephen, Blair, Carly",1,05/05/22
-iPhone App,"rgb(122, 4, 3)", 5 May 2022,26 May 2022,iPhone App,15,iPhone port of the Android app,,Blair,2,26/05/22
-Enormous Concrete Sculpture,"rgb(122, 4, 3)",26 May 2022, 3 Jun 2022,Concrete Sculpture,12,Support for customers who like concrete,,"Stephen, Blair, Carly",4,03/06/22
-Webserver,"rgb(48, 18, 59)", 2 May 2022, 7 Jun 2022,Webserver,35,Create a new webserver,,"Stu, Mark, Sarah",0,07/06/22
-Windows Desktop Client,"rgb(122, 4, 3)", 6 May 2022, 7 Jun 2022,Desktop Client,22,Desktop client for managing accounts,Needed Dave from Taranaki,Carly,3,07/06/22
+Android App,"rgb(62, 155, 254)", 2 May 2022, 5 May 2022,Android App,10,Android App to manage accounts,,"Stephen, Blair, Carly",1,05/05/22
+iPhone App,"rgb(70, 248, 132)", 5 May 2022,26 May 2022,iPhone App,15,iPhone port of the Android app,,Blair,2,26/05/22
+Enormous Concrete Sculpture,"rgb(240, 91, 18)",26 May 2022, 3 Jun 2022,Concrete Sculpture,12,Support for customers who like concrete,,"Stephen, Blair, Carly",4,03/06/22
+Webserver,"rgb(48, 18, 59)", 2 May 2022, 7 Jun 2022,Webserver,35,Create a new webserver,,"Stu, Mark, Sarah C",0,07/06/22
+Windows Desktop Client,"rgb(225, 221, 55)", 6 May 2022, 7 Jun 2022,Desktop Client,22,Desktop client for managing accounts,Needed Dave from Taranaki,Carly,3,07/06/22

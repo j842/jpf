@@ -1,14 +1,14 @@
 MonthNum,DateStr,ProjectName,ProjectColour,ProjectId,ProjectCost
 0,May 22,Webserver,"rgb(48, 18, 59)",Webserver,14700
 1,Jun 22,Webserver,"rgb(48, 18, 59)",Webserver,2800
-0,May 22,Android App,"rgb(122, 4, 3)",Android App,5000
-1,Jun 22,Android App,"rgb(122, 4, 3)",Android App,0
-0,May 22,iPhone App,"rgb(122, 4, 3)",iPhone App,7500
-1,Jun 22,iPhone App,"rgb(122, 4, 3)",iPhone App,0
-0,May 22,Windows Desktop Client,"rgb(122, 4, 3)",Desktop Client,9000
-1,Jun 22,Windows Desktop Client,"rgb(122, 4, 3)",Desktop Client,2000
-0,May 22,Enormous Concrete Sculpture,"rgb(122, 4, 3)",Concrete Sculpture,3335
-1,Jun 22,Enormous Concrete Sculpture,"rgb(122, 4, 3)",Concrete Sculpture,2665
+0,May 22,Android App,"rgb(62, 155, 254)",Android App,5000
+1,Jun 22,Android App,"rgb(62, 155, 254)",Android App,0
+0,May 22,iPhone App,"rgb(70, 248, 132)",iPhone App,7500
+1,Jun 22,iPhone App,"rgb(70, 248, 132)",iPhone App,0
+0,May 22,Windows Desktop Client,"rgb(225, 221, 55)",Desktop Client,9000
+1,Jun 22,Windows Desktop Client,"rgb(225, 221, 55)",Desktop Client,2000
+0,May 22,Enormous Concrete Sculpture,"rgb(240, 91, 18)",Concrete Sculpture,3335
+1,Jun 22,Enormous Concrete Sculpture,"rgb(240, 91, 18)",Concrete Sculpture,2665
 0,May 22,Holidays,"rgb(176, 82, 205)",Holidays,1000
 1,Jun 22,Holidays,"rgb(176, 82, 205)",Holidays,9000
 0,May 22,Unscheduled Time,"rgb(210, 180, 140)",Unscheduled,52065

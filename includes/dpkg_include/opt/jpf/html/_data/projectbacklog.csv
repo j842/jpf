@@ -1,11 +1,10 @@
 projectindex,project,projectcolour,start,end,taskname,team,id,blocked,dependencies,tags,devdays,resources,comments
 0,Webserver,"rgb(48, 18, 59)", 2 May 2022, 9 May 2022,Logins,Web,We.01,,,,10.00,Stu: 4.75  Mark: 5.25  ,
-0,Webserver,"rgb(48, 18, 59)",10 May 2022,17 May 2022,Security,Web,We.02,We.01,We.01 ,,5.00,Sarah: 5.00  ,
+0,Webserver,"rgb(48, 18, 59)",10 May 2022,17 May 2022,Security,Web,We.02,We.01,We.01 ,,5.00,Sarah C: 5.00  ,
 0,Webserver,"rgb(48, 18, 59)",10 May 2022, 1 Jun 2022,Home page,Web,We.03,We.01,We.01 ,,15.00,Mark: 15.00  ,
-0,Webserver,"rgb(48, 18, 59)", 2 Jun 2022, 7 Jun 2022,Management Component,Web,We.04,We.03,We.01 We.03 ,,5.00,Sarah: 2.60  Stu: 2.40  ,Depends on both logins and home page.
-0,Webserver,"rgb(48, 18, 59)", 8 Jun 2022, 8 Jun 2022,Ready for Release,Web,We.05,We.04,We.04 ,Milestone Marketing ,0.00,,"A completion milestone, that marketing will care about"
-1,Android App,"rgb(122, 4, 3)", 2 May 2022, 2 May 2022,Release Milestone,Apps,Ap.02,,,,0.00,,
-1,Android App,"rgb(122, 4, 3)", 2 May 2022, 5 May 2022,Update App to Android 17,Apps,Ap.01,,,,10.00,Stephen: 2.93  Blair: 3.53  Carly: 3.54  ,
-2,iPhone App,"rgb(122, 4, 3)", 5 May 2022,26 May 2022,Port from Android,Apps,Ap.03,Blair,,,15.00,Blair: 15.00  ,
-3,Windows Desktop Client,"rgb(122, 4, 3)", 6 May 2022, 7 Jun 2022,Write whole desktop client,Apps,Ap.04,Ap.01,Ap.01 ,,22.00,Carly: 22.00  ,
-4,Enormous Concrete Sculpture,"rgb(122, 4, 3)",26 May 2022, 3 Jun 2022,Build a gorgeous sculpture,Apps,Ap.05,Blair,,,12.00,Stephen: 5.60  Blair: 6.40  Carly: 0.00  ,
+0,Webserver,"rgb(48, 18, 59)", 2 Jun 2022, 7 Jun 2022,Management Component,Web,We.04,We.03,We.01 We.03 ,,5.00,Sarah C: 2.60  Stu: 2.40  ,Depends on both logins and home page.
+1,Android App,"rgb(62, 155, 254)", 2 May 2022, 2 May 2022,Release Milestone,Apps,Ap.02,,,,0.00,,
+1,Android App,"rgb(62, 155, 254)", 2 May 2022, 5 May 2022,Update App to Android 17,Apps,Ap.01,,,,10.00,Stephen: 2.93  Blair: 3.53  Carly: 3.54  ,
+2,iPhone App,"rgb(70, 248, 132)", 5 May 2022,26 May 2022,Port from Android,Apps,Ap.03,Blair,,,15.00,Blair: 15.00  ,
+3,Windows Desktop Client,"rgb(225, 221, 55)", 6 May 2022, 7 Jun 2022,Write whole desktop client,Apps,Ap.04,Ap.01,Ap.01 ,,22.00,Carly: 22.00  ,
+4,Enormous Concrete Sculpture,"rgb(240, 91, 18)",26 May 2022, 3 Jun 2022,Build a gorgeous sculpture,Apps,Ap.05,Blair,,,12.00,Stephen: 5.60  Blair: 6.40  Carly: 0.00  ,
