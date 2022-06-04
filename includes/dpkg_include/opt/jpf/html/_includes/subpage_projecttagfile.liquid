@@ -16,7 +16,8 @@ td a:link, td a:visited {
     {%- for row in site.data[thefile] -%}
         <tr class="row1">
             <td class="col1">{{row.end}}</td>
-            <td class="col2"><a href="/project_backlog.html#project-{{row.projectindex}}">{{row.project}}</a></td>
+            <td class="col2"><span class="dot" style="background-color: {{row.projectcolour}};"></span>
+                <a href="/project_backlog.html#project-{{row.projectindex}}">{{row.project}}</a></td>
             <td class="col3"><a href="/project_backlog.html#project-{{row.projectindex}}">{{row.description}}</a></td>
 <!--            <td class="col3"><a onmouseover="nhpup.popup(' {{row.taskname| escape}}<pre>project:      {{row.project| escape}}<br/></pre>{{row.comments| escape}}',{'width': 400});">{{row.taskname}}</a> -->
             <td class="col4">{{row.team}}</td>

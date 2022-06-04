@@ -1,0 +1,52 @@
+---
+layout: default
+title: Team Backlog
+headincludes: |
+    <link rel="stylesheet" type="text/css" href="static/dot.css">
+    <script src="static/jquery-3.6.0.min.js"></script>
+    <script type="text/javascript" src="static/nhpup_1.1.js"></script>
+    <link rel="stylesheet" href="static/nicetable.css">
+    <link rel="stylesheet" type="text/css" href="static/tabby-ui.min.css">
+    <script src="static/tabby.polyfills.min.js"></script>
+---
+
+<!-- Table of contents. Loop through once for speed. -->
+<center>
+<ul data-tabs>
+{% for teamrow in site.data.teams %}
+    <li>
+    <a href="#team-{{teamrow.teamindex}}" style="margin-right:15px; white-space: nowrap;"
+     {%- if forloop.first -%}data-tabby-default{%- endif %} >{{teamrow.teamname}}</a>
+    </li>
+{% endfor %}
+</ul>
+</center>
+
+<!-- tables of projects. -->
+{%- assign popupwidth = 500 -%}
+{% for teamrow in site.data.teams %}
+    <center>
+    <div  id="team-{{teamrow.teamindex}}">
+    <table>
+    <tr class="spacer"><td colspan="4">&nbsp;</td></tr>
+    <tr><th colspan="5" class="sectiontitle" style="background-color: #035"><center><a href="#topofpage">{{teamrow.teamname}}</a></center></th></tr>
+    <tr><th>Id</th><th>Start</th><th>End</th><th>Project</th><th>Task Name</th></tr>
+
+    {% assign teamdata = site.data.projectbacklog | where: "teamindex", teamrow.teamindex %}
+    {%- for row in teamdata -%}
+        <tr class="row1">
+        <td class="col1">{{row.id}}</td>  
+        <td class="col2">{{row.start}}</td>
+        <td class="col3">{{row.end}}</td>
+        <td class="col4"><span class="dot" style="background-color: {{row.projectcolour}};"></span> {{row.project}}</td>
+        <td class="col5"><a onmouseover="nhpup.popup(' {{row.taskname| escape}}<pre>project:      {{row.project| escape}}<br/>id:           {{row.id| escape}}<br/>dependencies: {{row.dependencies| escape}}<br/>tags:         {{row.tags| escape}}<br/>devdays:      {{row.devdays| escape}}<br/>blocked:      {{row.blocked| escape}}<br/>resources:    {{row.resources| escape}}<br/></pre>{{row.comments| escape}}',{'width': {{popupwidth}}});">{{row.taskname}}</a>
+        </tr>     
+    {%- endfor -%}
+</table>
+</div>
+</center>
+{% endfor %}
+
+<script>
+    var tabs = new Tabby('[data-tabs]');
+</script>

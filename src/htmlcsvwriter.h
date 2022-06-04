@@ -27,6 +27,7 @@ class HTMLCSVWriter
         void copy_site() const;
 
         void write_projectbacklog_csv(const scheduler::scheduler & s) const;
+        void write_teams_csv(const scheduler::scheduler & s) const;
         void write_projectgantt_csv(const scheduler::scheduler & s) const;
         void write_basevars(const scheduler::scheduler & s) const;
         void write_peopleeffortbymonth_months_people_csvs(const scheduler::scheduler & s) const;

@@ -48,6 +48,7 @@ void HTMLCSVWriter::createHTMLFolder(const scheduler::scheduler &s) const
 
     write_basevars(s);
     write_projectbacklog_csv(s);
+    write_teams_csv(s);
     write_projectgantt_csv(s);
     write_peopleeffortbymonth_months_people_csvs(s);
     write_peoplebacklog(s);
@@ -113,6 +114,7 @@ void HTMLCSVWriter::write_projectbacklog_csv(const scheduler::scheduler &s) cons
                 "end",
                 "taskname",
                 "team",
+                "teamindex",
                 "id",
                 "blocked",
                 "dependencies",
@@ -145,6 +147,7 @@ void HTMLCSVWriter::write_projectbacklog_csv(const scheduler::scheduler &s) cons
                     z.getLastDayWorked().getStr_nice_short(),
                     z.mDescription,
                     s.getInputs().mT.at(z.mTeamNdx).mId,
+                    S()<<z.mTeamNdx,
                     z.mId,
                     z.mBlockedBy,
                     dependencies,
@@ -154,6 +157,18 @@ void HTMLCSVWriter::write_projectbacklog_csv(const scheduler::scheduler &s) cons
                     z.mComments});
     }
 }
+
+
+void HTMLCSVWriter::write_teams_csv(const scheduler::scheduler &s) const
+{
+    {
+        simpleDataCSV teams("teams");
+        teams.addrow({"teamindex","teamcode","teamname"});
+        for (unsigned int t=0;t<s.getInputs().mT.size();++t)
+            teams.addrow({S()<<t,makecode(s.getInputs().mT[t].mId), s.getInputs().mT[t].mId});
+    }
+}
+
 
 void HTMLCSVWriter::write_all_tag_files(const scheduler::scheduler &s) const
 {
