@@ -69,6 +69,7 @@ namespace scheduler
         workdate mActualStart;
         workdate mActualEnd;
         tCentiDay mTotalDevCentiDays; // proportional to cost.
+        cTags mContributors;
     };
 
     typedef enum

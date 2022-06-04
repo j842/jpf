@@ -16,7 +16,7 @@ std::string cTags::getAsString() const
     return r;
 }
 
-void cTags::addToTags(std::vector<std::string> &tags) const // add the stored tags to tags.
+void cTags::copyinto(std::vector<std::string> &tags) const // add the stored tags to tags.
 {
     for (auto &t : *this)
     {
@@ -29,6 +29,12 @@ void cTags::addToTags(std::vector<std::string> &tags) const // add the stored ta
             tags.push_back(t);
     }
 }
+void cTags::mergefrom(const std::vector<std::string> & tags)
+{
+    for (auto &t : tags)
+        if (!hasTag(t))
+            this->push_back(t);
+}
 
 bool cTags::hasTag(std::string tag) const
 {
@@ -37,3 +43,4 @@ bool cTags::hasTag(std::string tag) const
             return true;
     return false;
 }
+

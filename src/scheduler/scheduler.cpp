@@ -217,11 +217,13 @@ namespace scheduler
             if (task.mActualEnd > p.mActualEnd)
                 p.mActualEnd = task.mActualEnd;
 
-            if (task.mDependencies.size() == 0)
+//            if (task.mResources.size() == 0)
                 p.mTotalDevCentiDays += task.mDevCentiDays;
-            else
-                for (auto &x : task.mTotalContribution)
-                    p.mTotalDevCentiDays += x;
+            // else
+            //     for (auto &x : task.mTotalContribution) // total contribution per resource
+            //         p.mTotalDevCentiDays += x;
+
+            p.mContributors.mergefromT<inputfiles::resource>(task.mResources); 
         }
 
         for (auto &proj : mProjects)

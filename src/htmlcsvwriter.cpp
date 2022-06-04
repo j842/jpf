@@ -162,7 +162,7 @@ void HTMLCSVWriter::write_all_tag_files(const scheduler::scheduler &s) const
     { // tasks
         std::vector<std::string> tagslist;
         for (const auto &i : s.getItems())
-            i.addToTags(tagslist);
+            i.copyinto(tagslist);
 
         {
             simpleDataCSV csv("task_tags");
@@ -178,7 +178,7 @@ void HTMLCSVWriter::write_all_tag_files(const scheduler::scheduler &s) const
     { // projects
         cTags tagslist;
         for (const auto & i : s.getProjects())
-            i.getTags().addToTags(tagslist);
+            i.getTags().copyinto(tagslist);
 
         simpleDataCSV csv("project_tags");
         csv.addrow({"tag"});

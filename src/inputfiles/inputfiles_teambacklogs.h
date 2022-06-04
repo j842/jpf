@@ -10,7 +10,6 @@
 
 namespace inputfiles
 {
-
     class projects; // forward decl
     class teams;
 
@@ -21,6 +20,8 @@ namespace inputfiles
         resource() : mBlocking(false) {}
         resource(const resource &o) : mName(o.mName), mBlocking(o.mBlocking) {}
         resource(std::string n, bool b) : mName(n), mBlocking(b) {}
+        
+        operator std::string() const {return mName;}
 
         std::string mName;
         bool mBlocking;
@@ -40,7 +41,7 @@ namespace inputfiles
         std::string getFullName() const;
 
         bool hasTag(std::string tag) const;
-        void addToTags(std::vector<std::string> & tags) const;
+        void copyinto(std::vector<std::string> & tags) const;
 
     public:
         // explicitly set from CSV file.
@@ -61,6 +62,34 @@ namespace inputfiles
         void _set(const std::vector<std::string> csvitems, const unsigned int teamndx);
     };
 
+    typedef enum 
+    {
+        kInvalid = 0,
+        kProject,
+        kTask
+    } tDepType;
+
+    class teambacklogs;
+
+    class depRef
+    {
+        public:
+            depRef(std::string dep, const teambacklogs & tbl, const projects &pjts);
+
+            tDepType getType() const;
+
+            unsigned int getProjectNdx() const;
+            void getTeamItemNdx(unsigned int & teamndx, unsigned int & itemindexinteam) const;
+            std::string getRefString() const;
+
+        private:
+            std::string mDep;
+            tDepType mType;
+            unsigned int mProjectNdx;
+            unsigned int mTeamNdx;
+            unsigned int mItemIndexinTeam;
+    };
+
     class teambacklogs
     {
     public:
@@ -73,6 +102,9 @@ namespace inputfiles
         unsigned int getTotalNumItems() const;
 
         std::vector<std::deque<backlogitem>> mTeamItems; // first index is team, second is backlog of items for that team.
+
+    private:
+        void validateBacklogItem(const backlogitem & b, const teams & tms,const projects &pjts, unsigned int taskNum, std::string filename, std::string row) const;
 
     private:
         unsigned int mTotalNumItems;

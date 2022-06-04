@@ -142,6 +142,31 @@ namespace inputfiles
         return oss.str();
     }
 
+    void teambacklogs::validateBacklogItem(const backlogitem & b,const teams & tms,const projects &pjts, unsigned int taskNum, std::string filename, std::string row) const
+    {
+        std::string errmsg="";
+        if (b.mId.length()>0 && exists(b.mId))
+            errmsg += S() << "Duplicate ID \"" << b.mId << "\" with previous backlog item:" << std::endl
+                            << getItemFromId(b.mId).getFullName() << std::endl;
+
+        if (pjts.getIndexByID(b.mProjectName)==eNotFound)
+            errmsg += S() << "The project name \""<< b.mProjectName<<"\" was not found in projects.csv."<<std::endl;
+
+        if (b.mDevCentiDays>0 && b.mResources.size()==0)
+            errmsg += S() << "The task requires development effort, but is assigned to nobody." << std::endl;
+        
+        if (b.mId.length()==0)
+            errmsg += S() << "The task does not have an Id."<< std::endl;
+
+        if (errmsg.length()>0)
+            TERMINATE(
+                S()<<"Error processing task "<<taskNum<<" from "<<filename<<": "<<std::endl
+                << row << std::endl << std::endl
+                << errmsg
+            );
+    }
+
+
     teambacklogs::teambacklogs(const teams & tms,const projects & pjts) : mTotalNumItems(0)
     {
         // Create mTeamsItems
@@ -158,28 +183,7 @@ namespace inputfiles
                 while (teambacklog.getline(items, 11))
                 {
                     backlogitem b(items, i);
-                    {
-                        if (b.mId.length()>0 && exists(b.mId))
-                            TERMINATE(S() << "Duplicate ID \"" << b.mId << "\" of two backlog items:" << std::endl
-                                            << "Task "<< j<<" from "<<filename<<":"<<std::endl
-                                            << vec2str(items) << std::endl
-                                          << "previously declared by: "<<std::endl
-                                          << getItemFromId(b.mId).getFullName());
-
-                        if (pjts.getIndexByID(b.mProjectName)==eNotFound)
-                            TERMINATE(S() << "The project name \""<< b.mProjectName<<"\" was not found in projects.csv."<<
-                            std::endl
-                            << "Task "<< j<<" from "<<filename<<":"<<std::endl
-                            << vec2str(items) << std::endl
-                            );
-
-                        if (b.mDevCentiDays>0 && b.mResources.size()==0)
-                            TERMINATE(S() << "A task requires development effort, but is assigned to nobody:" << std::endl
-                            << "Task "<< j<<" from "<<filename<<":"<<std::endl
-                            << vec2str(items) << std::endl
-                            );
-                        
-                    }
+                    validateBacklogItem(b,tms,pjts,j,filename, vec2str(items));
                     mTeamItems[b.mTeamNdx].push_back(b);
                     ++mTotalNumItems;
                     ++j;
@@ -188,6 +192,24 @@ namespace inputfiles
             else
                 logwarning(S()<<"Unable to open team csv: " << filename);
         }
+
+        // validate dependencies.
+        for (unsigned int i = 0; i < tms.size(); ++i)
+            for (auto & bi : mTeamItems[i])
+                for (auto & dep : bi.mDependencies)
+                { // needs to be either a project or a 
+                    depRef dr(dep,*this,pjts);
+                    if (dr.getType()==kInvalid)
+                    {
+                        std::ostringstream oss;
+                        bi.output(oss);
+                        TERMINATE(
+                            S() << "Error processing task from "<<"backlog-" + makelower(tms[i].mId) + ".csv"<<": "<<std::endl
+                                << oss.str() << std::endl << std::endl
+                                << "The dependency "<<dep<<" is neither a task Id nor a project Id." << std::endl
+                        );
+                    }
+                }
     }
 
     teambacklogs::teambacklogs(const teambacklogs & other) : mTotalNumItems(0)
@@ -237,11 +259,54 @@ namespace inputfiles
         return mTags.hasTag(tag);
     }
 
-    void backlogitem::addToTags(std::vector<std::string> & tags) const
+    void backlogitem::copyinto(std::vector<std::string> & tags) const
     {
-        mTags.addToTags(tags);
+        mTags.copyinto(tags);
     }
 
+
+
+    depRef::depRef(std::string dep, const teambacklogs & tbl, const projects &pjts) : 
+        mDep(dep),mProjectNdx(0),mTeamNdx(0),mItemIndexinTeam(0)
+    {
+        for (unsigned int pi=0;pi<pjts.size();++pi)
+            if (iSame(pjts[pi].getId(),dep))
+            {
+                mType=kProject;
+                mProjectNdx = pi;
+                return;
+            }
+        
+        for (unsigned int ti=0;ti<tbl.mTeamItems.size();++ti)
+            for (unsigned int tim=0;tim<tbl.mTeamItems[ti].size();++tim)
+                if (iSame(tbl.mTeamItems[ti][tim].mId,dep))
+                    {
+                        mType = kTask;
+                        mTeamNdx = ti;
+                        mItemIndexinTeam = tim;
+                        return;
+                    }
+    }
+
+    tDepType depRef::getType() const 
+    {
+        return mType;
+    }
+    unsigned int depRef::getProjectNdx() const
+    {
+        ASSERT(mType==kProject);
+        return mProjectNdx;
+    }
+    void depRef::getTeamItemNdx(unsigned int & teamndx, unsigned int & itemindexinteam) const
+    {
+        ASSERT(mType==kTask);
+        teamndx = mTeamNdx;
+        itemindexinteam = mItemIndexinTeam;
+    }
+    std::string depRef::getRefString() const
+    {
+        return mDep;
+    }
 
 
 } // namespace
