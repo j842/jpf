@@ -3,6 +3,7 @@
 
 #include "simplecsv.h"
 
+
 class cTags : public std::vector<std::string>
 {
 public:
@@ -24,5 +25,16 @@ public:
                 this->push_back(static_cast<std::string>(t));
     }
 };
+
+
+class ciSet : public std::vector<unsigned int>
+{
+public:
+    ciSet();
+    void add(unsigned int x);
+    void add(const ciSet & other);
+    bool has(unsigned int x) const;
+};
+
 
 #endif

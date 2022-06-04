@@ -54,7 +54,7 @@ namespace inputfiles
         tCentiDay mDevCentiDays;
         workdate mEarliestStart;
         std::vector<resource> mResources;
-        cTags mDependencies;
+        cTags mDependencies; // can be task Ids or Project Ids
         cTags mTags;
         std::string mComments;
 

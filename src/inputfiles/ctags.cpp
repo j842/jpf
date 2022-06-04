@@ -44,3 +44,26 @@ bool cTags::hasTag(std::string tag) const
     return false;
 }
 
+
+
+ciSet::ciSet()
+{
+}
+void ciSet::add(unsigned int x)
+{
+    if (!has(x))
+        push_back(x);
+}
+void ciSet::add(const ciSet & other)
+{
+    for (unsigned int x : other)
+        add(x);
+}
+
+bool ciSet::has(unsigned int x) const
+{
+    for (unsigned int y : *this)
+        if (y==x)
+            return true;
+    return false;
+}

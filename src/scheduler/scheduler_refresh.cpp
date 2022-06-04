@@ -107,10 +107,11 @@ void scheduler::refresh(inputfiles::inputset &iset)
                 for (auto &j : itm.mDependencies)
                 {
                     unsigned int ndx = getItemIndexFromId(j);
-                    if (ndx==eNotFound)
-                        TERMINATE(S()<<"Failed to find the item with id "<<j<<", referenced from item "<<itm.getFullName());
-                    ASSERT(ndx>=0 && ndx<mItems.size());
-                    j = refMap[ndx];
+                    if (ndx!=eNotFound)
+                    { // otherwise it's a project - leave it alone.
+                        ASSERT(ndx>=0 && ndx<mItems.size());
+                        j = refMap[ndx];
+                    }
                 }
         }
 
@@ -124,8 +125,8 @@ void scheduler::refresh(inputfiles::inputset &iset)
                     for (auto &dep : bli.mDependencies)
                     {
                         unsigned int ndx = getItemIndexFromId(dep);
-                        ASSERT(ndx != eNotFound);
-                        dep = refMap[ndx];
+                        if (ndx != eNotFound)
+                            dep = refMap[ndx]; // otherwise a project.
                     }
                 }
         }

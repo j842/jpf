@@ -48,13 +48,15 @@ namespace scheduler
 
     public:
         // set while scheduling the task.
-        unsigned int mProjectIndex;
+        unsigned int mProjectIndex; // doesn't change with scheduling.
+        unsigned int mItemIndexInTeamBacklog; // doesn't change with scheduling.
+        
         unsigned int mPriority;
         workdate mActualStart;
         workdate mActualEnd; // half open interval.
         workdate mClosedEnd;
         std::string mBlockedBy;
-        unsigned int mItemIndexInTeamBacklog;
+        ciSet mExpandedDependencyIndices;
 
         std::vector<tCentiDay> mLoadingPercent;    // index is person (as in mResources)
         std::vector<tCentiDay> mTotalContribution; // index is person (as in mResources)
@@ -68,8 +70,10 @@ namespace scheduler
         // set when project scheduled.
         workdate mActualStart;
         workdate mActualEnd;
+        workdate mClosedEnd;
         tCentiDay mTotalDevCentiDays; // proportional to cost.
         cTags mContributors;
+        ciSet mAllItemIndices;
     };
 
     typedef enum
@@ -139,6 +143,7 @@ namespace scheduler
         void _prepare_to_schedule();
         void _schedule();
         void _prioritiseAndMergeTeams();
+        void _expandDependencies();
         void _topological_sort();
         void _topological_visit(int node, std::vector<bool> &tempMarks, std::vector<bool> &permMarks, std::vector<unsigned int> &scheduledList);
         void _determinestart_and_dotask(unsigned int backlogitemNdx);
@@ -150,6 +155,7 @@ namespace scheduler
 
         scheduledperson &getPersonByName(const std::string name); // creates if not present, but checks against teams.
         unsigned int getItemIndexFromId(const std::string id) const;
+        unsigned int getProjectIndexFromId(const std::string id) const;
         unsigned int getPersonIndexFromName(const std::string name) const;
 
         // HTML helper routines.

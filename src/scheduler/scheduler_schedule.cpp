@@ -23,14 +23,7 @@ namespace scheduler
 
         tempMarks[node] = true;
 
-        std::vector<int> depNdxs;
-        for (auto &d : mItems[node].mDependencies)
-        {
-            unsigned int k = getItemIndexFromId(d);
-            if (k == eNotFound)
-                TERMINATE(S() << "The dependency \"" << d << "\" does not exist!");
-            depNdxs.push_back(k);
-        }
+        ciSet depNdxs = mItems[node].mExpandedDependencyIndices; // take a copy.
         std::sort(depNdxs.begin(), depNdxs.end());
         for (auto d : depNdxs)
             _topological_visit(d, tempMarks, permMarks, scheduledList);
@@ -56,6 +49,11 @@ namespace scheduler
             mItems[scheduledList[i]].mPriority = i;
 
         std::sort(mItems.begin(), mItems.end(), comparePriority);
+
+        for (auto & itm : mItems)
+            itm.mExpandedDependencyIndices.clear(); // is garbage since we've changed the order!
+        for (auto & proj : mProjects)
+            proj.mAllItemIndices.clear(); // also garbage.
     }
 
     void scheduler::_prioritiseAndMergeTeams()
@@ -114,13 +112,10 @@ namespace scheduler
         ASSERT(!z.mActualStart.isForever());
 
         // now update based on dependencies
-        for (unsigned int j = 0; j < z.mDependencies.size(); j++)
+        for (unsigned int k : z.mExpandedDependencyIndices)
         {
-            unsigned int k = getItemIndexFromId(z.mDependencies[j]);
-            if (k == eNotFound)
-                TERMINATE("programming error - couldn't find already found dependency " + z.mDependencies[j]);
             if (k > backlogitemNdx)
-                TERMINATE(S() << "Out of order dependency : " << z.mDependencies[j] << " is needed for "
+                TERMINATE(S() << "Out of order dependency : " << mItems[k].mId << " is needed for "
                               << z.mId << " (" << z.getFullName() << ")");
             if (mItems[k].mActualEnd >= z.mActualStart)
             {
@@ -133,6 +128,9 @@ namespace scheduler
         if (z.mResources.size() == 0 || z.mDevCentiDays == 0)
         { // no internal resources! Hurrah.
             z.mActualEnd = z.mActualStart + std::max(z.mDevCentiDays.getRoundUpDays(), z.mMinCalendarDays);
+            z.mClosedEnd = z.mActualEnd;
+            if (z.mClosedEnd>z.mActualStart)
+                z.mClosedEnd.decrementWorkDay();
         }
         else
         { // manage resources (people!)
@@ -241,6 +239,7 @@ namespace scheduler
         std::vector<tCentiDay> maxCentiDays(z.mResources.size(), 0);
         tCentiDay totalDevCentiDaysRemaining = z.mDevCentiDays;
         workdate id = z.mActualStart;
+        z.mClosedEnd = z.mActualStart; // if task requires no work set to same-day.
         ASSERT(!z.mActualStart.isForever());
         while (totalDevCentiDaysRemaining > 0)
         { // loop over days (id)
@@ -261,6 +260,7 @@ namespace scheduler
             id.incrementWorkDay();
         }
         z.mActualEnd = id;
+        ASSERT(z.mClosedEnd>=z.mActualStart);
 
         //double duration = z.getDurationDays();
         for (unsigned int pi = 0; pi < z.mLoadingPercent.size(); ++pi)
@@ -268,6 +268,38 @@ namespace scheduler
             z.mLoadingPercent[pi] = maxCentiDays[pi]; //sumCentiDays[pi].getL() / duration;
             z.mTotalContribution[pi]=sumCentiDays[pi];
         }
+    }
+
+    void scheduler::_expandDependencies()
+    {
+        for (auto & itm : mItems)
+            ASSERT(itm.mExpandedDependencyIndices.size()==0);
+        for (auto & proj : mProjects)
+            ASSERT(proj.mAllItemIndices.size()==0);
+
+        for (unsigned int i=0;i<mItems.size();++i)
+            {
+                auto & item = mItems[i];
+                mProjects[item.mProjectIndex].mAllItemIndices.add(i);
+            }
+        
+        for (unsigned int i=0;i<mItems.size();++i)
+            for (unsigned int j=0;j<mItems[i].mDependencies.size();++j)
+            {
+                auto & dep = mItems[i].mDependencies[j];
+                unsigned int ndx = getProjectIndexFromId(dep);
+                if (ndx!=eNotFound)
+                {
+                    mItems[i].mExpandedDependencyIndices.add( mProjects[ndx].mAllItemIndices );
+                } 
+                else
+                {
+                    ndx = getItemIndexFromId(dep); /// or eNotFound
+                    if (ndx==eNotFound)
+                        TERMINATE(S()<<" Could not find dependency "<<dep);
+                    mItems[i].mExpandedDependencyIndices.add(ndx);
+                }
+            }
     }
 
     // ---------------------------------------------------------------------------------------------------------------------------------------
@@ -281,7 +313,9 @@ namespace scheduler
 
         // these two order the tasks optimally.
         _prioritiseAndMergeTeams(); // merge the tasks from each team list together, based on project priorities.
+        _expandDependencies();      // turn project dependencies into individual item dependencies.
         _topological_sort();        // sort based on task dependency directed graph.
+        _expandDependencies();      // order has changed - recreate!
 
         // now figure out start and end dates for the items, based on human resourcing, reserving resources as we go.
         for (unsigned int zndx = 0; zndx < mItems.size(); ++zndx)
@@ -315,6 +349,49 @@ namespace scheduler
             mProjects.push_back(scheduledproject(p));
     }
 
+
+    void scheduler::_calc_project_summary()
+    { // scheduling done.
+        ASSERT(mScheduled);
+
+        for (auto &z : mProjects)
+        {
+            z.mTotalDevCentiDays = 0;
+            z.mActualStart.setForever();
+            z.mActualEnd.setToStart();
+            z.mClosedEnd.setToStart();
+        }
+
+        // iterate through tasks, taking max and min duration.
+        for (const auto &task : mItems)
+        {
+            auto &p = mProjects[task.mProjectIndex];
+
+            if (task.mActualStart < p.mActualStart)
+                p.mActualStart = task.mActualStart;
+
+            if (task.mActualEnd > p.mActualEnd)
+                p.mActualEnd = task.mActualEnd;
+
+            if (task.mClosedEnd > p.mClosedEnd)
+                p.mClosedEnd = task.mClosedEnd;
+
+            ASSERT(task.mClosedEnd>=task.mActualStart);
+
+//            if (task.mResources.size() == 0)
+                p.mTotalDevCentiDays += task.mDevCentiDays;
+            // else
+            //     for (auto &x : task.mTotalContribution) // total contribution per resource
+            //         p.mTotalDevCentiDays += x;
+
+            p.mContributors.mergefromT<inputfiles::resource>(task.mResources); 
+        }
+
+        for (auto &proj : mProjects)
+            if (proj.mActualStart.isForever()) // no tasks.
+                proj.mActualStart.setToStart();
+
+    }
 
     // -----------------------------------------------------------------------------------------------------------------
     // -----------------------------------------------------------------------------------------------------------------

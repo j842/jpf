@@ -36,12 +36,6 @@ namespace scheduler
             ofs << (int)(0.5 + ((double)(x.mDevCentiDays.getL() * std::max((size_t)1, x.mResources.size()) * gSettings().dailyDevCost())) / 100.0) << ","; // cost
             ofs << ",";
 
-            // dependencies list. Too complicated for GanttProject.
-            //  for (unsigned int j=0;j<x.mDependencies.size();++j)
-            //  {
-            //      if (j>0) ofs << ";";
-            //      ofs <<  getItemIndexFromId(x.mDependencies[j])+1;
-            //  }
             ofs << ","; // assignments
 
             ofs << i + 1 << ","; // outline number

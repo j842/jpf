@@ -21,7 +21,8 @@ namespace scheduler
 
 
     scheduleditem::scheduleditem(const inputfiles::backlogitem &bli, unsigned int priority,  unsigned int projectndx, unsigned int itemIndexInTeamBacklog) : 
-        inputfiles::backlogitem(bli), mProjectIndex(projectndx), mPriority(priority),mItemIndexInTeamBacklog(itemIndexInTeamBacklog), 
+        inputfiles::backlogitem(bli), mProjectIndex(projectndx),mItemIndexInTeamBacklog(itemIndexInTeamBacklog), 
+        mPriority(priority),
         mLoadingPercent(bli.mResources.size(),0),
         mTotalContribution(bli.mResources.size(),0)
     {
@@ -34,12 +35,14 @@ namespace scheduler
 
     workdate scheduleditem::getLastDayWorked() const
     {
-        ASSERT(mActualEnd>=mActualStart);
-        if (mActualEnd.isForever() || mActualEnd==mActualStart)
-            return mActualEnd;
-        workdate s = mActualEnd;
-        s.decrementWorkDay();
-        return s;
+        ASSERT(mClosedEnd>=mActualStart);
+        return mClosedEnd;
+        // ASSERT(mActualEnd>=mActualStart);
+        // if (mActualEnd.isForever() || mActualEnd==mActualStart)
+        //     return mActualEnd;
+        // workdate s = mActualEnd;
+        // s.decrementWorkDay();
+        // return s;
     }
 
 
@@ -149,6 +152,16 @@ namespace scheduler
         std::rotate(it + i_new, it + i_old, it + i_old + 1);
     }
 
+    unsigned int scheduler::getProjectIndexFromId(const std::string id) const
+    {
+        if (id.length() == 0)
+            return eNotFound;
+        for (unsigned int pi = 0; pi < mProjects.size(); ++pi)
+            if (iSame(mProjects[pi].getId(), id))
+                return pi;
+        return eNotFound;
+    }
+
     unsigned int scheduler::getItemIndexFromId(const std::string id) const
     {
         if (id.length() == 0)
@@ -193,42 +206,6 @@ namespace scheduler
         for (auto &z : v)
             std::cout << z.mId << " ";
         std::cout << std::endl;
-    }
-
-    void scheduler::_calc_project_summary()
-    { // scheduling done.
-        ASSERT(mScheduled);
-
-        for (auto &z : mProjects)
-        {
-            z.mTotalDevCentiDays = 0;
-            z.mActualStart.setForever();
-            z.mActualEnd.setToStart();
-        }
-
-        // iterate through tasks, taking max and min duration.
-        for (const auto &task : mItems)
-        {
-            auto &p = mProjects[task.mProjectIndex];
-
-            if (task.mActualStart < p.mActualStart)
-                p.mActualStart = task.mActualStart;
-
-            if (task.mActualEnd > p.mActualEnd)
-                p.mActualEnd = task.mActualEnd;
-
-//            if (task.mResources.size() == 0)
-                p.mTotalDevCentiDays += task.mDevCentiDays;
-            // else
-            //     for (auto &x : task.mTotalContribution) // total contribution per resource
-            //         p.mTotalDevCentiDays += x;
-
-            p.mContributors.mergefromT<inputfiles::resource>(task.mResources); 
-        }
-
-        for (auto &proj : mProjects)
-            if (proj.mActualStart.isForever()) // no tasks.
-                proj.mActualStart.setToStart();
     }
 
     // -----------------------------------------------------------------------------------------------------------------
