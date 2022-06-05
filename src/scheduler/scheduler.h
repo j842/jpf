@@ -73,6 +73,7 @@ namespace scheduler
         workdate mClosedEnd;
         tCentiDay mTotalDevCentiDays; // proportional to cost.
         cTags mContributors;
+        cTags mAggregatedTags;
         ciSet mAllItemIndices;
     };
 

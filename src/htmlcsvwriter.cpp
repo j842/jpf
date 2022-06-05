@@ -191,7 +191,7 @@ void HTMLCSVWriter::write_all_tag_files(const scheduler::scheduler &s) const
     { // projects
         cTags tagslist;
         for (const auto & i : s.getProjects())
-            i.getTags().copyinto(tagslist);
+            i.mAggregatedTags.copyinto(tagslist);
 
         simpleDataCSV csv("project_tags");
         csv.addrow({"tag"});
@@ -229,7 +229,7 @@ void HTMLCSVWriter::write_project_tag_file(const scheduler::scheduler &s, const 
     for (unsigned int i=0;i< s.getProjects().size();++i)
     {
         auto & z = s.getProjects().at(i);
-        if (iSame(tag,"All_Projects") || z.getTags().hasTag(tag))
+        if (iSame(tag,"All_Projects") || z.mAggregatedTags.hasTag(tag))
         { // project has desired tag!
             scheduler::rgbcolour rgbc = ProjectInfo[i].mColour;
             workdate end = z.mActualEnd;

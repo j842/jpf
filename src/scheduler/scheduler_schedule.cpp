@@ -360,6 +360,8 @@ namespace scheduler
             z.mActualStart.setForever();
             z.mActualEnd.setToStart();
             z.mClosedEnd.setToStart();
+
+            z.mAggregatedTags.mergefrom( z.getTags() );
         }
 
         // iterate through tasks, taking max and min duration.
@@ -385,12 +387,12 @@ namespace scheduler
             //         p.mTotalDevCentiDays += x;
 
             p.mContributors.mergefromT<inputfiles::resource>(task.mResources); 
+            p.mAggregatedTags.mergefrom(task.mTags);
         }
 
         for (auto &proj : mProjects)
             if (proj.mActualStart.isForever()) // no tasks.
                 proj.mActualStart.setToStart();
-
     }
 
     // -----------------------------------------------------------------------------------------------------------------
