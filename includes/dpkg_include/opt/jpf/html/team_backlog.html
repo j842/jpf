@@ -32,7 +32,7 @@ headincludes: |
     <tr><th colspan="5" class="sectiontitle" style="background-color: #035"><center><a href="#topofpage">{{teamrow.teamname}}</a></center></th></tr>
     <tr><th>Id</th><th>Start</th><th>End</th><th>Project</th><th>Task Name</th></tr>
 
-    {% assign teamdata = site.data.projectbacklog | where: "teamindex", teamrow.teamindex %}
+    {% assign teamdata = site.data.projectbacklog | where: "teamindex", teamrow.teamindex | sort: 'startday' %}
     {%- for row in teamdata -%}
         <tr class="row1">
         <td class="col1">{{row.id}}</td>  

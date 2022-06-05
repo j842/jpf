@@ -112,6 +112,8 @@ void HTMLCSVWriter::write_projectbacklog_csv(const scheduler::scheduler &s) cons
                 "projectcolour",
                 "start",
                 "end",
+                "startday",
+                "endday",
                 "taskname",
                 "team",
                 "teamindex",
@@ -145,6 +147,8 @@ void HTMLCSVWriter::write_projectbacklog_csv(const scheduler::scheduler &s) cons
                     S() << "rgb(" << rgbc.r << ", " << rgbc.g << ", " << rgbc.b << ")",
                     z.mActualStart.getStr_nice_short(),
                     z.getLastDayWorked().getStr_nice_short(),
+                    S()<<z.mActualStart.getDayAsIndex(),
+                    S()<<z.getLastDayWorked().getDayAsIndex(),
                     z.mDescription,
                     s.getInputs().mT.at(z.mTeamNdx).mId,
                     S()<<z.mTeamNdx,
@@ -665,7 +669,7 @@ void HTMLCSVWriter::write_peoplebacklog(const scheduler::scheduler &s) const
 
 
     csv.addrow({
-        "personname","personcode","start","end","utilisation","project","projectcolour","taskname"
+        "personname","personcode","start","end","startday","endday","utilisation","project","projectcolour","taskname"
     });
 
     for (auto &z : s.getPeople())
@@ -713,6 +717,8 @@ void HTMLCSVWriter::write_peoplebacklog(const scheduler::scheduler &s) const
                         makecode(p.mName),
                         start.getStr(),
                         end.getStr(),
+                        S()<<start.getDayAsIndex(),
+                        S()<<end.getDayAsIndex(),
                         S()<<utilisation,
                         j.mProjectName,
                         S() << "rgb(" << c.r << ", " << c.g << ", " << c.b << ")",

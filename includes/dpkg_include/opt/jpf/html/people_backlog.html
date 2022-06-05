@@ -53,19 +53,19 @@ headincludes: |
                 </tr>
             {%- endif -%}
 
-        {%- if {{row.utilisation}} == "0" -%}
-            <tr class="row1" style="color:lightgrey;">
-        {%- else -%}
-            <tr class="row1">
-        {%- endif -%}
-        <td class="col1">{{row.start}}</td>
-        <td class="col2">{{row.end}}</td>
-        <td class="col3">
-            <span class="dot" style="background-color: {{row.projectcolour}};"></span>
-            {{row.project}}</td>        
-        <td class="col4">{{row.taskname}}</td>
-        <td class="col5">{{row.utilisation}}</td>
-        </tr>
+            {%- if {{row.utilisation}} == "0" -%}
+                <tr class="row1" style="color:lightgrey;">
+            {%- else -%}
+                <tr class="row1">
+            {%- endif -%}
+            <td class="col1">{{row.start}}</td>
+            <td class="col2">{{row.end}}</td>
+            <td class="col3">
+                <span class="dot" style="background-color: {{row.projectcolour}};"></span>
+                {{row.project}}</td>        
+            <td class="col4">{{row.taskname}}</td>
+            <td class="col5">{{row.utilisation}}</td>
+            </tr>
         {%- endfor -%}
         </table>
     </div>
