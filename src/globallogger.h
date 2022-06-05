@@ -21,6 +21,6 @@ void logdebug(std::string s);
 void logerror(std::string s);
 void loginfo(std::string s);
 void logwarning(std::string s);
-void fatal(std::string s);
+int fatal(std::string s);
 
 #endif

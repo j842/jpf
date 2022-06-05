@@ -325,31 +325,54 @@ cMain::cMain(int argc, char **argv) : mrVal(0)
     mrVal = go(argc, argv);
 }
 
-int cMain::go(int argc, char **argv)
+int cMain::go(int ac, char **av)
 {
-    if (argc <= 1 || argc > 3)
-        return showhelp();
+    cLocalSettings localsettings;
+
+    std::vector<std::string> argv(ac);
+    for (int z=0;z<ac;++z)
+        argv[z] = std::string(av[z]);
+    if (argv.size()>0)
+        argv.erase(argv.begin()); // drop exe name.
+
+    std::vector<char> opts;
+
+    for (auto & i : argv)
+        if (i.length()>1 && i[0]=='-')
+            opts.push_back(i[1]);
+
+    if (opts.size()>1)
+        showhelp();
+
+    // no directory needed.
+    if (opts.size()>0 && opts[0]=='t')
+        return runtests() ? 0 : 1;     
+
+    // all other options need a root directory to be specified.
+    
+    std::string dir;
+    if (argv.size()>0 && argv.back().length() > 0 && argv.back()[0] != '-')
+    {
+        dir = argv.back();
+        if (dir.length() > 0 && std::filesystem::exists(dir))
+            dir = std::filesystem::canonical(dir);
+    }
+    else
+    {
+        if (localsettings.isLoaded() && localsettings.getSetting("input").length() > 0)
+            dir = localsettings.getSetting("input");
+    }
+
+    if (dir.length()==0)
+        showhelp();
 
     try
     {
-        // handle options which do not require a directory.
-        if (argc>=2 && strlen(argv[1])>1 && argv[1][0]=='-' && tolower(argv[1][1])=='t')
-            return runtests() ? 0 : 1;     
-
-        // no directory specified.
-        if (argv[argc-1][0]=='-')
-        {
-            fatal("You need to specify a directory.");
-            return showhelp();   
-        }
-
-        // set directory.
-        std::string directory = argv[argc - 1];
-        gSettings().setRoot(directory);
-
+        gSettings().setRoot(dir);
+        localsettings.setSetting("input",gSettings().getRoot());
 
         // -c option needs root directory, but not loading settings!
-        if (argc>=2 && strlen(argv[1])>1 && argv[1][0]=='-' && tolower(argv[1][1])=='c')
+        if (opts.size()>0 && opts[0]=='c')
             return run_create_directories();
 
         if (!gSettings().RootExists())
@@ -357,8 +380,8 @@ int cMain::go(int argc, char **argv)
 
         if (!std::filesystem::exists( getInputPath()+"settings.csv" ))
             fatal("The settings.csv file does not exist:\n  "+getInputPath()+"settings.csv\n\nRun with -c flag to create input directories.");
-        gSettings().load_settings();
 
+        gSettings().load_settings();
 
         // ----------------------------------------------------------------------------------------------
         // Settings loaded. Let's go!
@@ -366,24 +389,19 @@ int cMain::go(int argc, char **argv)
 
         logdebug(S()<<"\n"+std::string(79,'-')<<"\n");
         std::string aaa;
-        for (int i=0;i<argc;++i)
-            aaa+=S()<<argv[i]<<" ";
+        for (auto & a : argv)
+            aaa+=S()<<a<<" ";
         logdebug(aaa);
 
         loginfo(S()<<"John's Project Forecaster " << gSettings().getJPFVersionStr() << "-" << gSettings().getJPFReleaseStr() << " - An auto-balancing forecasting tool.");
         logdebug(S()<<"Root directory: " << gSettings().getRoot());
         logdebug(S() << "Input file version is "<<gSettings().getInputVersion());
 
-        if (argc == 2)
+
+        if (opts.size()==0)
             return run_console();
 
-        std::string s = argv[1];
-        if (s.length() < 2)
-            TERMINATE("Bad parameter: " + s);
-        if (s[0] != '-')
-            TERMINATE("Options must start with - : " + s);
-
-        switch (s[1])
+        switch (opts[0])
         {
         case 'w':
         {
@@ -392,12 +410,14 @@ int cMain::go(int argc, char **argv)
             return 0;
         }
         case 'a':
-            return run_advance(s);
+            for (auto & i : argv)
+                if (i.length()>1 && i[0]=='-' && tolower(i[1])=='a')
+                    return run_advance(i);
         case 'r':
             return run_refresh();
 
         default:
-            TERMINATE("Bad parameter: " + s);
+            TERMINATE("Bad option: -" + opts[0]);
         }
     }
 
@@ -413,4 +433,45 @@ int cMain::go(int argc, char **argv)
     }
 
     return 0;
+}
+
+cLocalSettings::cLocalSettings() :
+    mFilePath(S()<<getHomeDir() << ".jpf_settings"),
+    mLoaded(false)
+{
+    if (std::filesystem::exists(mFilePath))
+    {
+        simplecsv csv(mFilePath,2);
+        if (!csv.openedOkay())
+            TERMINATE("Could not open "+mFilePath);
+        std::vector<std::string> line;
+        while (csv.getline(line,2))
+            mSettings[line[0]]=line[1];
+        mLoaded=true;
+    }
+}
+bool cLocalSettings::isLoaded() const
+{
+    return mLoaded;
+}
+void cLocalSettings::setSetting(std::string key, std::string value)
+{
+    mSettings[key]=value;
+    save();
+}
+std::string cLocalSettings::getSetting(std::string key) const
+{
+    for (auto & s : mSettings)
+        if (iSame(s.first,key))
+            return s.second;
+    return "";
+}
+void cLocalSettings::save() const
+{
+    std::ofstream ofs(mFilePath);
+    if (!ofs.is_open())
+        TERMINATE("Could not open settings file for writing: "+mFilePath);
+    simplecsv::outputr(ofs,{"key","value"});
+    for (auto & s : mSettings)
+        simplecsv::outputr(ofs,{s.first,s.second});    
 }

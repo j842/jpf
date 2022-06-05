@@ -4,6 +4,10 @@
 #include <errno.h>
 #include <filesystem>
 
+#include <unistd.h>
+#include <sys/types.h>
+#include <pwd.h>
+
 #include "settings.h"
 #include "simplecsv.h"
 #include "utils.h"
@@ -302,4 +306,11 @@ const std::string getInputPath_Jekyll()
         opt = opt_debug;
 
     return opt;
+}
+
+const std::string getHomeDir()
+{
+    struct passwd *pw = getpwuid(getuid());
+    const char *homedir = pw->pw_dir;
+    return makecanonicalslash(homedir);
 }

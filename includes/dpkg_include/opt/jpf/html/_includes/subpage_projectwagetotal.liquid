@@ -35,7 +35,10 @@ var pwt_datapie = [{
 
     type: 'pie',
     textinfo: "text",
-    hoverinfo: "label+value+percent",
+    <!--hoverinfo: "label+value+percent",-->
+    hovertemplate: '<b>%{label}</b><br>'+
+        '<i>Cost</i>: $%{value:.0f}<br>'+
+        '%{percent}',
     automargin: true,
     marker: {
         colors: pwt_colorlist

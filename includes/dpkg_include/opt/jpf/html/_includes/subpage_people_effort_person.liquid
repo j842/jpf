@@ -40,6 +40,15 @@
                     {%- endfor -%}
                 ],
 
+                hovertext: [
+                    {%- for pep_textrow in pebmp -%}
+                        '{{pep_textrow.ProjectName}}'
+                        {%- if forloop.last==false -%},{%- endif -%}
+                    {%- endfor -%}
+                ],
+
+                hovertemplate: '<b>%{hovertext}</b><br>'+
+                        '<i>Effort</i>: %{y:.1f} days',
             };
 
         {%- endif -%}
@@ -84,6 +93,14 @@
     t: 50,
     pad: 4
   },
+  showlegend: false,
+  <!--
+  legend: {"orientation": "h"},
+    legend: {
+    x: 0.5,
+    y: 0
+  }
+  -->
         };
 
     Plotly.newPlot(

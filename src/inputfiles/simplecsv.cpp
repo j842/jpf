@@ -1,4 +1,5 @@
 #include <sstream>
+#include <filesystem>
 
 #include "simplecsv.h"
 #include "../utils.h"
@@ -12,7 +13,6 @@ simplecsv::simplecsv(std::string filename, bool hasHeaderRow, unsigned int requi
 {
     mOpenedOkay = mFile.is_open();
     
-    
     if (hasHeaderRow && mOpenedOkay) 
         mOpenedOkay = getline(mHeaders,requiredcols);
     mHeaderCols = mHeaders.size();
@@ -24,9 +24,12 @@ simplecsv::~simplecsv()
 
 std::string simplecsv::filename2path(const std::string filename)
 {
-    return getInputPath()+filename;
+    if (filename.find('/')==std::string::npos)
+        return getInputPath()+filename;
+    if (std::filesystem::exists(filename))
+        return std::filesystem::canonical(filename);
+    return filename;
 }
-
 
 bool simplecsv::splitcsv(const std::string s, // copy
                          std::vector<std::string> &items)

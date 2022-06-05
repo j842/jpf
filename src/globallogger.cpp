@@ -213,9 +213,10 @@ void logmsg(eLogLevel level, std::string s)
     logverbatim(level, info + s2 + "\n");
 }
 
-void fatal(std::string s)
+int fatal(std::string s)
 {
     throw TerminateRunException(s);
+    return -1;
 }
 
 void logdebug(std::string s) { logmsg(kLDEBUG, (s)); }

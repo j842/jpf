@@ -1,6 +1,23 @@
 #ifndef __MAIN_H
 #define __MAIN_H
 
+#include <map>
+
+class cLocalSettings
+{   
+    public:
+        cLocalSettings();
+        void setSetting(std::string key, std::string value);
+        std::string getSetting(std::string key) const;
+        bool isLoaded() const;
+
+    private:
+        void save() const;
+        const std::string mFilePath;
+        std::map<std::string,std::string> mSettings;
+        bool mLoaded;
+};
+
 class cMain
 {
     public:
