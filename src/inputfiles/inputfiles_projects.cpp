@@ -47,7 +47,7 @@ namespace inputfiles
     }
     void projects::save_projects_CSV(std::ostream &os) const
     {
-        os << R"(Project ID,Project Name,Description,BAU or New,Comments)" << std::endl;
+        os << R"(Project ID,Project Name,Description,BAU or New,Comments,Tags)" << std::endl;
 
         for (const auto &i : *this)
         {

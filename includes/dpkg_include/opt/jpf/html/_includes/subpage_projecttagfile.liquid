@@ -15,7 +15,7 @@ td a:link, td a:visited {
     {% capture thefile %}project_tag_{{ include.tag }}{% endcapture %}
     {%- for row in site.data[thefile] -%}
         <tr class="row1">
-            <td class="col1">{{row.end}}</td>
+            <td class="col1">{{row.safeendmonth}}</td>
             <td class="col2"><span class="dot" style="background-color: {{row.projectcolour}};"></span>
                 <a href="/project_backlog.html#project-{{row.projectindex}}">{{row.project}}</a></td>
             <td class="col3"><a href="/project_backlog.html#project-{{row.projectindex}}">{{row.description}}</a></td>

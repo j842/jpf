@@ -43,6 +43,7 @@ class simpledate
         std::string getStr_short() const;     
         std::string getStr_nice_long() const;
         std::string getStr_nice_short() const;
+        std::string getStr_SafeMonth() const;
         std::string getAsGoogleNewDate() const;
         std::string getStr_FileName() const;
         std::string getYYYY_MM_DD() const;
@@ -138,6 +139,7 @@ class workdate : public simpledate
 
         static simpledate WorkDays2Date(unsigned long ndays);
         static unsigned long Date2WorkDays(simpledate d0);
+
 
     public:
         friend workdate operator+(const workdate& lhs, unsigned long rhs); // advance x work days.

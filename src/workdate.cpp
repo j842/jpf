@@ -59,6 +59,27 @@ std::string simpledate::getStr_nice_short() const
     return oss.str();
 }
 
+std::string simpledate::getStr_SafeMonth() const
+{
+    using namespace boost::gregorian;
+    date monthdate(mD);
+    if (monthdate.day()>15)
+    {
+        monthdate = boost::gregorian::date(monthdate.year(),monthdate.month(),1);
+        month_iterator m_itr(monthdate);
+        ++m_itr;
+        monthdate = *m_itr;
+    }
+    const std::locale fmt(std::locale::classic(),
+                          new boost::gregorian::date_facet("%b %Y"));    
+    std::ostringstream oss;
+    oss.imbue(fmt);
+    oss << monthdate;
+    return oss.str();
+}
+
+
+
 simpledate simpledate::parseDateStringDDMMYY(std::string datestr) const
 {
     removewhitespace(datestr);
@@ -213,7 +234,6 @@ unsigned long workdate::getDayAsIndex() const
 {
     return countWorkDays(gSettings().startDate(), *this);
 }
-
 
 simpledate workdate::snapWorkDay_forward(simpledate d)
 {
