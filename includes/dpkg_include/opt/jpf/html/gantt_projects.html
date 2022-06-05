@@ -6,10 +6,12 @@ headincludes: |
   <link rel="stylesheet" href="static/gantt/frappe-gantt.css">
 ---
 
+{% assign ganttdata = site.data.projectgantt | sort: 'endday' %}
+
 <style>
   {% comment %} .ganttprojects .bar-wrapper { pointer-events: none; } {% endcomment %}
   .ganttprojects .bar { fill: tomato; }
-  {% for row in site.data.projectgantt %}
+  {% for row in ganttdata %}
     .cc-{{row.TaskID}} .bar { fill: {{ row.Colour }}; }
   {% endfor %}
 </style>
@@ -19,7 +21,7 @@ headincludes: |
 
 <script>
     var ganttprojectstasks = [
-    {%- for row in site.data.projectgantt -%}
+    {%- for row in ganttdata -%}
       {%- if forloop.first==false -%}
         ,
       {%- endif -%}

@@ -345,6 +345,8 @@ void HTMLCSVWriter::write_projectgantt_csv(const scheduler::scheduler &s) const
                 "TaskName",
                 "Start",
                 "End",
+                "startday",
+                "endday",
                 "Colour"});
 
     std::vector<scheduler::tProjectInfo> ProjectInfo;
@@ -361,6 +363,8 @@ void HTMLCSVWriter::write_projectgantt_csv(const scheduler::scheduler &s) const
                     p.getId(),
                     p.mActualStart.getYYYY_MM_DD(),
                     p.mActualEnd.getYYYY_MM_DD(),
+                    S()<<p.mActualStart.getDayAsIndex(),
+                    S()<<p.mActualEnd.getDayAsIndex(),
                     colour});
     }
 }

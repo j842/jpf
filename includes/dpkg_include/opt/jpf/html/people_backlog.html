@@ -6,6 +6,7 @@ headincludes: |
     <link rel="stylesheet" type="text/css" href="static/dot.css">
     <link rel="stylesheet" type="text/css" href="static/tabby-ui.min.css">
     <script src="static/tabby.polyfills.min.js"></script>
+    <script src="https://cdn.plot.ly/plotly-2.11.1.min.js"></script>
 ---
 
 {%- assign peoplewithtasks = site.data.people | where_exp: "item", "item.numtasks != '0'" -%}
@@ -28,6 +29,11 @@ headincludes: |
 <center>
     {%- for prow in peoplewithtasks -%}
         <div id="person-{{prow.personcode}}">
+
+        <div style="width: 95%";>
+        {% include subpage_people_effort_person.liquid personcode=prow.personcode personname=prow.personname %}
+        </div>
+
         <table>
         <tr>
             <th colspan="5" class="sectiontitle" style="background-color: #035">
