@@ -1,10 +1,10 @@
-projectindex,project,projectcolour,start,end,taskname,team,teamindex,id,blocked,dependencies,tags,devdays,resources,comments
-0,Webserver,"rgb(48, 18, 59)", 2 May 2022, 9 May 2022,Logins,Web,0,We.01,,,,10.00,Stu: 4.75  Mark: 5.25  ,
-0,Webserver,"rgb(48, 18, 59)",10 May 2022,17 May 2022,Security,Web,0,We.02,We.01,We.01 ,,5.00,Sarah C: 5.00  ,
-0,Webserver,"rgb(48, 18, 59)",10 May 2022, 1 Jun 2022,Home page,Web,0,We.03,We.01,We.01 ,,15.00,Mark: 15.00  ,
-0,Webserver,"rgb(48, 18, 59)", 2 Jun 2022, 7 Jun 2022,Management Component,Web,0,We.04,We.03,We.01 We.03 ,,5.00,Sarah C: 2.60  Stu: 2.40  ,Depends on both logins and home page.
-1,Android App,"rgb(62, 155, 254)", 2 May 2022, 2 May 2022,Release Milestone,Apps,1,Ap.02,,,,0.00,,
-1,Android App,"rgb(62, 155, 254)", 2 May 2022, 5 May 2022,Update App to Android 17,Apps,1,Ap.01,,,,10.00,Stephen: 2.93  Blair: 3.53  Carly: 3.54  ,
-2,iPhone App,"rgb(70, 248, 132)", 5 May 2022,26 May 2022,Port from Android,Apps,1,Ap.03,Blair,,,15.00,Blair: 15.00  ,
-3,Windows Desktop Client,"rgb(225, 221, 55)", 6 May 2022, 7 Jun 2022,Write whole desktop client,Apps,1,Ap.04,Ap.01,Ap.01 ,,22.00,Carly: 22.00  ,
-4,Enormous Concrete Sculpture,"rgb(240, 91, 18)",26 May 2022, 3 Jun 2022,Build a gorgeous sculpture,Apps,1,Ap.05,Blair,,,12.00,Stephen: 5.60  Blair: 6.40  Carly: 0.00  ,
+projectindex,project,projectcolour,start,end,startday,endday,taskname,team,teamindex,id,blocked,dependencies,tags,devdays,resources,comments
+0,Webserver,"rgb(48, 18, 59)", 2 May 2022, 9 May 2022,0,5,Logins,Web,0,We.01,,,,10.00,Stu: 4.75  Mark: 5.25  ,
+0,Webserver,"rgb(48, 18, 59)",10 May 2022,17 May 2022,6,11,Security,Web,0,We.02,We.01,We.01 ,,5.00,Sarah C: 5.00  ,
+0,Webserver,"rgb(48, 18, 59)",10 May 2022, 1 Jun 2022,6,22,Home page,Web,0,We.03,We.01,We.01 ,,15.00,Mark: 15.00  ,
+0,Webserver,"rgb(48, 18, 59)", 2 Jun 2022, 7 Jun 2022,23,26,Management Component,Web,0,We.04,We.03,We.01 We.03 ,,5.00,Sarah C: 2.60  Stu: 2.40  ,Depends on both logins and home page.
+1,Android App,"rgb(62, 155, 254)", 2 May 2022, 2 May 2022,0,0,Release Milestone,Apps,1,Ap.02,,,,0.00,,
+1,Android App,"rgb(62, 155, 254)", 2 May 2022, 5 May 2022,0,3,Update App to Android 17,Apps,1,Ap.01,,,,10.00,Stephen: 2.93  Blair: 3.53  Carly: 3.54  ,
+2,iPhone App,"rgb(70, 248, 132)", 5 May 2022,26 May 2022,3,18,Port from Android,Apps,1,Ap.03,Blair,,,15.00,Blair: 15.00  ,
+3,Windows Desktop Client,"rgb(225, 221, 55)", 6 May 2022, 7 Jun 2022,4,26,Write whole desktop client,Apps,1,Ap.04,Ap.01,Ap.01 ,,22.00,Carly: 22.00  ,
+4,Enormous Concrete Sculpture,"rgb(240, 91, 18)",26 May 2022, 3 Jun 2022,18,24,Build a gorgeous sculpture,Apps,1,Ap.05,Blair,,,12.00,Stephen: 5.60  Blair: 6.40  Carly: 0.00  ,

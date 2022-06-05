@@ -1,10 +1,10 @@
-PersonCode,PersonName
-Stu,Stu
-Mark,Mark
-SarahC,Sarah C
-Stephen,Stephen
-Blair,Blair
-Carly,Carly
-Fred,Fred
-SarahK,Sarah K
-Greg,Greg
+personcode,personname,numtasks
+Stu,Stu,2
+Mark,Mark,2
+Sarah C,Sarah C,2
+Stephen,Stephen,2
+Blair,Blair,3
+Carly,Carly,3
+Fred,Fred,0
+Sarah K,Sarah K,0
+Greg,Greg,0

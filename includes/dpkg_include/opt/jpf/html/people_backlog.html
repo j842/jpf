@@ -8,20 +8,17 @@ headincludes: |
     <script src="static/tabby.polyfills.min.js"></script>
 ---
 
-<!-- Table of contents. Loop through once for speed. -->
+{%- assign peoplewithtasks = site.data.people | where_exp: "item", "item.numtasks != '0'" -%}
 
-{% assign person = "blah" %}
+<!-- Table of contents. Loop through once for speed. -->
 <center>
     <ul data-tabs>
-        {% for row in site.data.peoplebacklog %}
-            {%- if person != row.personname -%}
-                {%- assign person = row.personname -%}
+        {%- for prow in peoplewithtasks -%}
                 <li><a 
                     {% if forloop.first %}
                     data-tabby-default
                     {% endif %}
-                    href="#person-{{row.personcode}}">{{person}}</a></li>
-            {% endif %}
+                    href="#person-{{prow.personcode}}">{{prow.personname}}</a></li>
         {%- endfor -%}
     </ul>
 </center>
@@ -29,32 +26,26 @@ headincludes: |
 
 <!-- tables of projects. -->
 <center>
-    <div>
+    {%- for prow in peoplewithtasks -%}
+        <div id="person-{{prow.personcode}}">
         <table>
-        {%- assign person = "blah" -%}
-        {%- for row in site.data.peoplebacklog -%}
-            {%- if person != row.personname -%}
-            {%- assign person = row.personname -%}
-            </table>
-            </div>
-            <div id="person-{{row.personcode}}">
-            <table>
-                <tr>
-                    <th colspan="5" class="sectiontitle" style="background-color: #035">
-                        <center>{{row.personname}}</center>
-                    </th>
-                </tr>
-                <tr>
-                    <th>Start</th>
-                    <th>End</th>
-                    <th>Project</th>
-                    <th>Task Name</th>
-                    <th>Max % Time</th>
-                </tr>
-            {%- endif -%}
+        <tr>
+            <th colspan="5" class="sectiontitle" style="background-color: #035">
+                <center>{{prow.personname}}</center>
+            </th>
+        </tr>
+        <tr>
+            <th>Start</th>
+            <th>End</th>
+            <th>Project</th>
+            <th>Task Name</th>
+            <th>Max % Time</th>
+        </tr>
 
+        {%- assign persondata = site.data.peoplebacklog | where: "personcode", prow.personcode | sort: 'startday' -%}
+        {%- for row in persondata -%}
             {%- if {{row.utilisation}} == "0" -%}
-                <tr class="row1" style="color:lightgrey;">
+                <tr class="row1" style="opacity: 0.25; ">
             {%- else -%}
                 <tr class="row1">
             {%- endif -%}
@@ -68,10 +59,9 @@ headincludes: |
             </tr>
         {%- endfor -%}
         </table>
-    </div>
+        </div>
+    {%- endfor -%}
 </center>
-
-
 
 <script>
     var tabs = new Tabby('[data-tabs]');

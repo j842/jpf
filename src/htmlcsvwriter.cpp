@@ -47,13 +47,16 @@ void HTMLCSVWriter::createHTMLFolder(const scheduler::scheduler &s) const
     s.CalculateDevDaysTally(DevDaysTally, ProjectInfo);
 
     write_basevars(s);
-    write_projectbacklog_csv(s);
     write_teams_csv(s);
-    write_projectgantt_csv(s);
-    write_peopleeffortbymonth_months_people_csvs(s);
-    write_peoplebacklog(s);
+    write_months_csv(s);
+    write_people_csv(s);
     write_settings(s);
     write_projects_csv(s);
+
+    write_projectbacklog_csv(s);
+    write_projectgantt_csv(s);
+    write_peopleeffortbymonth_csv(s);
+    write_peoplebacklog(s);
 
     // dashboard.html
     write_projecttypes(s, DevDaysTally, ProjectInfo);
@@ -401,13 +404,36 @@ void HTMLCSVWriter::run_jekyll() const
     loginfo(S() << "Jekyll Finished in " << tmr.stop() << " ms.");
 }
 
-void HTMLCSVWriter::write_peopleeffortbymonth_months_people_csvs(const scheduler::scheduler &s) const
+void HTMLCSVWriter::write_people_csv(const scheduler::scheduler &s) const
+    {
+        simpleDataCSV csv3("people");
+        csv3.addrow({"personcode", "personname", "numtasks"});
+
+        for (auto p : s.getPeople())
+        {
+            std::string pCode = p.mName;
+            makecode(pCode);
+            s.getNumTasks(p.mName);
+            csv3.addrow({pCode, p.mName, S()<<s.getNumTasks(p.mName)});
+        }
+    }
+void HTMLCSVWriter::write_months_csv(const scheduler::scheduler &s) const
+    {
+        simpleDataCSV csv2("months");
+        csv2.addrow({"MonthNum", "DateStr"});
+
+        unsigned long maxmonth = get_maxmonth(s);
+        for (unsigned int m = 0; m < maxmonth; ++m)
+            csv2.addrow({S() << m, monthIndex(m).getString()});
+    }
+
+void HTMLCSVWriter::write_peopleeffortbymonth_csv(const scheduler::scheduler &s) const
 {
     simpleDataCSV csv("peopleeffortbymonth");
 
     csv.addrow(
-        {"PersonCode",
-         "PersonName",
+        {"personcode",
+         "personname",
          "MonthNum",
          "DateStr",
          "ProjectName",
@@ -443,27 +469,6 @@ void HTMLCSVWriter::write_peopleeffortbymonth_months_people_csvs(const scheduler
                     ProjectInfo[i].mId,
                     S() << std::fixed << std::setprecision(1) << DevDaysTally[i][m]});
             }
-    }
-
-    {
-        simpleDataCSV csv2("months");
-        csv2.addrow({"MonthNum", "DateStr"});
-
-        unsigned long maxmonth = get_maxmonth(s);
-        for (unsigned int m = 0; m < maxmonth; ++m)
-            csv2.addrow({S() << m, monthIndex(m).getString()});
-    }
-
-    {
-        simpleDataCSV csv3("people");
-        csv3.addrow({"PersonCode", "PersonName"});
-
-        for (auto p : s.getPeople())
-        {
-            std::string pCode = p.mName;
-            removewhitespace(pCode);
-            csv3.addrow({pCode, p.mName});
-        }
     }
 }
 

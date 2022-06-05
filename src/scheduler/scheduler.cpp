@@ -184,6 +184,18 @@ namespace scheduler
         return mPeople[0];
     }
 
+    unsigned int scheduler::getNumTasks(std::string personName) const
+    {
+        unsigned int count=0;
+        for (const auto & t : mItems)
+            for (const auto & r : t.mResources)
+                if (iSame(r.mName,personName))
+                    count++;
+
+        return count;
+    }
+
+
     unsigned int scheduler::getPersonIndexFromName(const std::string name) const
     {
         for (unsigned int i = 0; i < mPeople.size(); ++i)

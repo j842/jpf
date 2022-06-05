@@ -1,12 +1,12 @@
 
 {% assign height=600 %}
 
-<div id="stackedbardevdays_{{include.PersonCode}}" style="width:auto;height:{{height}};"></div>
+<div id="stackedbardevdays_{{include.personcode}}" style="width:auto;height:{{height}};"></div>
 <script>
 
     {%- assign pep_project = "blah" -%}
 
-    {% assign pebm = site.data.peopleeffortbymonth | where: "PersonCode", include.PersonCode %}
+    {% assign pebm = site.data.peopleeffortbymonth | where: "personcode", include.personcode %}
 
     {%- for pep_row in pebm -%}
         {%- if pep_project!=pep_row.ProjectId -%}
@@ -14,7 +14,7 @@
 
             {% assign pebmp = pebm | where: "ProjectId", pep_project %}
 
-            var trace_{{include.PersonCode}}_{{pep_row.ProjectId | slugify | remove: "-" }} ={
+            var trace_{{include.personcode}}_{{pep_row.ProjectId | slugify | remove: "-" }} ={
                 name: '{{pep_row.ProjectName}}',
                 marker: { color: '{{pep_row.ProjectColour}}'},
                 type: 'bar',
@@ -45,19 +45,19 @@
         {%- endif -%}
     {% endfor %}
 
-    var data_{{include.PersonCode}} = [
+    var data_{{include.personcode}} = [
 
         {%- assign pep_project = "blah" -%}
         {%- for pep_row in pebm reversed -%}
             {%- if pep_project!=pep_row.ProjectId -%}
                 {% assign pep_project=pep_row.ProjectId %}
-                trace_{{include.PersonCode}}_{{pep_row.ProjectId | slugify | remove: "-" }},
+                trace_{{include.personcode}}_{{pep_row.ProjectId | slugify | remove: "-" }},
             {%- endif -%}
         {% endfor %}
     ];
 
-    var layout_{{include.PersonCode}} = { 
-            title: '{{include.PersonName}}\'s Projected Effort (days)',
+    var layout_{{include.personcode}} = { 
+            title: '{{include.personname}}\'s Projected Effort (days)',
             xaxis: {tickfont: {
                 size: 14,
                 color: 'rgb(107, 107, 107)'
@@ -79,9 +79,9 @@
         };
 
     Plotly.newPlot(
-        'stackedbardevdays_{{include.PersonCode}}', 
-        data_{{include.PersonCode}}, 
-        layout_{{include.PersonCode}}
+        'stackedbardevdays_{{include.personcode}}', 
+        data_{{include.personcode}}, 
+        layout_{{include.personcode}}
     );
 
 </script>

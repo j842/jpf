@@ -129,6 +129,7 @@ namespace scheduler
         ) const;
         std::string ItemType2String(tItemTypes i) const;
 
+        unsigned int getNumTasks(std::string personName) const;
 
     private:
         void create_output_directories() const;

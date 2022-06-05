@@ -1,4 +1,4 @@
-PersonCode,PersonName,MonthNum,DateStr,ProjectName,ProjectColour,ProjectId,Effort
+personcode,personname,MonthNum,DateStr,ProjectName,ProjectColour,ProjectId,Effort
 Stu,Stu,0,May 22,Webserver,"rgb(48, 18, 59)",Webserver,4.8
 Stu,Stu,1,Jun 22,Webserver,"rgb(48, 18, 59)",Webserver,2.4
 Stu,Stu,0,May 22,Holidays,"rgb(176, 82, 205)",Holidays,2.0
