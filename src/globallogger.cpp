@@ -10,6 +10,8 @@
 #include "colours.h"
 #include "utils.h"
 
+// LOGTOFILE LOGTOFILE LOGTOFILE LOGTOFILE LOGTOFILE LOGTOFILE LOGTOFILE LOGTOFILE LOGTOFILE LOGTOFILE LOGTOFILE LOGTOFILE LOGTOFILE LOGTOFILE 
+#ifdef LOGTOFILE
 class FileStreamer
 {
 public:
@@ -22,23 +24,23 @@ public:
 
     bool CheckLogFileOpen(std::string mainlogfile)
     {
-        if (!mCurrentStream.is_open())
-            mCurrentStream.open(mainlogfile, std::ios_base::app);
-        if (!mCurrentStream.is_open())
-        {
-            if (!mLogFailedMsgSent)
+            if (!mCurrentStream.is_open())
+                mCurrentStream.open(mainlogfile, std::ios_base::app);
+            if (!mCurrentStream.is_open())
             {
-                mLogFailedMsgSent = true;
-                logmsg(kLWARN, "Logging suspended - could not open log file: " + mainlogfile);
+                if (!mLogFailedMsgSent)
+                {
+                    mLogFailedMsgSent = true;
+                    logmsg(kLWARN, "Logging suspended - could not open log file: " + mainlogfile);
+                }
+                return false;
             }
-            return false;
-        }
 
-        if (mLogFailedMsgSent)
-        {
-            mLogFailedMsgSent = false;
-            logmsg(kLINFO, "Now logging to log file: " + mainlogfile);
-        }
+            if (mLogFailedMsgSent)
+            {
+                mLogFailedMsgSent = false;
+                logmsg(kLINFO, "Now logging to log file: " + mainlogfile);
+            }
 
         return true;
     }
@@ -64,7 +66,7 @@ private:
     const size_t mLimit = 1024 * 1024 * 5;
 };
 
-FileStreamer g_FileStreamer;
+    FileStreamer g_FileStreamer;
 
 void FileRotationLogSink(std::string s)
 {
@@ -127,6 +129,10 @@ void FileRotationLogSink(std::string s)
 
     g_FileStreamer.Append(s);
 }
+#endif
+// LOGTOFILE LOGTOFILE LOGTOFILE LOGTOFILE LOGTOFILE LOGTOFILE LOGTOFILE LOGTOFILE LOGTOFILE LOGTOFILE LOGTOFILE LOGTOFILE LOGTOFILE LOGTOFILE 
+
+
 
 eLogLevel getMinLevel()
 {
@@ -153,7 +159,9 @@ std::string levelname(eLogLevel level)
 
 void logverbatim(eLogLevel level, std::string s)
 {
-    FileRotationLogSink(s);
+    #ifdef LOGTOFILE
+        FileRotationLogSink(s);
+    #endif
 
     if (level < getMinLevel())
         return;

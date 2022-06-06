@@ -20,6 +20,7 @@
 #include "simplecsv.h"
 #include "colours.h"
 #include "htmlcsvwriter.h"
+#include "args.h"
 
 // --------------------------------------------------------------------
 
@@ -293,6 +294,8 @@ int cMain::showhelp()
 
       -c, -create     Create a skeleton working tree in the current directory, 
                       with example input files. 
+      
+      -h, -html       Output as HTML rather than Console format.
 
       -r, -refresh    Refresh the input files (read, tidy, write).
 
@@ -311,7 +314,15 @@ int cMain::showhelp()
 
 int main(int argc, char **argv)
 {
-    cMain m(argc, argv);
+    cArgs args(argc,argv);
+
+    if (!args.validate({"w","watch","c","create","h","html","r","refresh","a","advance","t","test"}))
+    {
+        logerror("One or more invalid arguments provided - exiting.");
+        return -1;
+    }
+
+    cMain m(args);
     return m.getrVal();
 }
 
@@ -320,48 +331,34 @@ int cMain::getrVal() const
     return mrVal;
 }
 
-cMain::cMain(int argc, char **argv) : mrVal(0)
+cMain::cMain(cArgs args) : mrVal(0)
 {
-    mrVal = go(argc, argv);
+    mrVal = go(args);
 }
 
-int cMain::go(int ac, char **av)
+int cMain::go(cArgs args)
 {
     cLocalSettings localsettings;
 
-    std::vector<std::string> argv(ac);
-    for (int z=0;z<ac;++z)
-        argv[z] = std::string(av[z]);
-    if (argv.size()>0)
-        argv.erase(argv.begin()); // drop exe name.
-
-    std::vector<char> opts;
-
-    for (auto & i : argv)
-        if (i.length()>1 && i[0]=='-')
-            opts.push_back(i[1]);
-
-    if (opts.size()>1)
-        showhelp();
-
     // no directory needed.
-    if (opts.size()>0 && opts[0]=='t')
+    if (args.hasOpt({"t","test"}))
         return runtests() ? 0 : 1;     
 
     // all other options need a root directory to be specified.
     
     std::string dir;
-    if (argv.size()>0 && argv.back().length() > 0 && argv.back()[0] != '-')
+    if (args.numArgs()>0)
     {
-        dir = argv.back();
+        if (args.numArgs()>1)
+            showhelp();
+
+        dir = args.getArg(0);
         if (dir.length() > 0 && std::filesystem::exists(dir))
             dir = std::filesystem::canonical(dir);
     }
     else
-    {
         if (localsettings.isLoaded() && localsettings.getSetting("input").length() > 0)
             dir = localsettings.getSetting("input");
-    }
 
     if (dir.length()==0)
         showhelp();
@@ -372,7 +369,7 @@ int cMain::go(int ac, char **av)
         localsettings.setSetting("input",gSettings().getRoot());
 
         // -c option needs root directory, but not loading settings!
-        if (opts.size()>0 && opts[0]=='c')
+        if (args.hasOpt({"c","create"}))
             return run_create_directories();
 
         if (!gSettings().RootExists())
@@ -387,39 +384,34 @@ int cMain::go(int ac, char **av)
         // Settings loaded. Let's go!
 
 
-        logdebug(S()<<"\n"+std::string(79,'-')<<"\n");
-        std::string aaa;
-        for (auto & a : argv)
-            aaa+=S()<<a<<" ";
-        logdebug(aaa);
-
+        logdebug(S()<<std::endl<<std::string(79,'-')<<std::endl);
         loginfo(S()<<"John's Project Forecaster " << gSettings().getJPFVersionStr() << "-" << gSettings().getJPFReleaseStr() << " - An auto-balancing forecasting tool.");
         logdebug(S()<<"Root directory: " << gSettings().getRoot());
         logdebug(S() << "Input file version is "<<gSettings().getInputVersion());
 
-
-        if (opts.size()==0)
-            return run_console();
-
-        switch (opts[0])
+        if (args.hasOpt({"w","watch"}))
+            {
+                catch_ctrl_c();
+                run_watch();
+                return 0;                
+            }
+            
+        if (args.hasOpt({"r","refresh"}))
         {
-        case 'w':
-        {
-            catch_ctrl_c();
-            run_watch();
-            return 0;
-        }
-        case 'a':
-            for (auto & i : argv)
-                if (i.length()>1 && i[0]=='-' && tolower(i[1])=='a')
-                    return run_advance(i);
-        case 'r':
             return run_refresh();
-
-        default:
-            TERMINATE("Bad option: -" + opts[0]);
         }
-    }
+
+        if (args.hasOpt({"a","advance"}))
+        {
+            std::string date = args.getValue({"a","advance"});
+            if (date.length()==0)
+                TERMINATE("You need to specify a date together with the -a option.");
+
+            return run_advance(date);
+        }
+
+        return run_console();
+    } // try
 
     catch (const ctrlcException &e)
     {

@@ -4,6 +4,8 @@
 #include <string>
 #include <memory>
 
+// #define LOGTOFILE
+
 enum eLogLevel
 {
    kLDEBUG=0,

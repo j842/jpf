@@ -1,6 +1,7 @@
 #ifndef __MAIN_H
 #define __MAIN_H
 
+#include "args.h"
 #include <map>
 
 class cLocalSettings
@@ -21,7 +22,7 @@ class cLocalSettings
 class cMain
 {
     public:
-        cMain(int argc, char **argv);
+        cMain(cArgs args);
 
         bool runtests();
         int run_console();
@@ -34,7 +35,7 @@ class cMain
         int getrVal() const;
 
     private:
-        int go(int argc, char **argv);
+        int go(cArgs args);
         void replace_all_input_CSV_files(inputfiles::inputset iset);
         void replace_settings_CSV();
     private:
