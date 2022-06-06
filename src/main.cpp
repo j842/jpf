@@ -322,18 +322,12 @@ int main(int argc, char **argv)
         return -1;
     }
 
-    cMain m(args);
-    return m.getrVal();
+    cMain m;
+    return m.go(args);
 }
 
-int cMain::getrVal() const
+cMain::cMain() 
 {
-    return mrVal;
-}
-
-cMain::cMain(cArgs args) : mrVal(0)
-{
-    mrVal = go(args);
 }
 
 int cMain::go(cArgs args)
@@ -367,6 +361,9 @@ int cMain::go(cArgs args)
     {
         gSettings().setRoot(dir);
         localsettings.setSetting("input",gSettings().getRoot());
+
+        if (args.hasOpt({"h","html"}))
+            gSettings().setOutputModeHTML(true);
 
         // -c option needs root directory, but not loading settings!
         if (args.hasOpt({"c","create"}))

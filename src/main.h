@@ -22,7 +22,8 @@ class cLocalSettings
 class cMain
 {
     public:
-        cMain(cArgs args);
+        cMain();
+        int go(cArgs args);
 
         bool runtests();
         int run_console();
@@ -35,11 +36,8 @@ class cMain
         int getrVal() const;
 
     private:
-        int go(cArgs args);
         void replace_all_input_CSV_files(inputfiles::inputset iset);
         void replace_settings_CSV();
-    private:
-        int mrVal;
 };
 
 int main(int argc, char **argv);

@@ -13,6 +13,8 @@ class settings
     public:
         settings();
         void setRoot(std::string path);
+        void setOutputModeHTML(bool output_as_HTML);
+        bool getOutputModeHTML() const;
         void load_settings();
         void save_settings_CSV(std::ostream & os) const;
         bool loaded() const {return mLoaded;}
@@ -62,6 +64,7 @@ class settings
         int mRequiredInputVersion;
         double mDailyDevCost;
         std::string mTitle;
+        bool mOutputModeHTML;
 
         std::vector<std::string> mValidSettings;
 };

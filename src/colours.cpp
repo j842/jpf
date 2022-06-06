@@ -1,4 +1,5 @@
 #include "colours.h"
+#include "settings.h"
 
 using namespace std;
 
@@ -110,4 +111,34 @@ namespace colours
         return;
     }
 
+
+const std::string & colourcode::_getstr() const 
+{
+    if (gSettings().getOutputModeHTML())
+        return html_code;
+    return console_code;    
+}
+
+std::ostream& operator<<(std::ostream& os, const colourcode& cc)
+{
+    os << static_cast<std::string>(cc);
+    return os;
+}
+
+std::string colours::colourcode::_cstart(std::string col) 
+{
+    return "<span style=\"color:" + col + ";\">"; 
+}
+
+colourcode::colourcode(std::string console, std::string html) : console_code(console), html_code(_cstart(html))
+{
+    
+}
+
+
 } // namespace
+
+
+
+
+
