@@ -70,7 +70,7 @@ $(BUILD_DIR)/$(JPF_NAME): SHOWVER $(VER_HEADER) $(OBJS)
 	@echo 
 
 # Build step for C++ source
-$(BUILD_DIR)/%.cpp.o: %.cpp
+$(BUILD_DIR)/%.cpp.o: %.cpp $(SUPSRC)
 	@printf "%b" "$(COM_COLOR)Compiling $(OBJ_COLOR)$(@)$(NO_COLOR)\n";
 	@mkdir -p $(dir $@)
 	@$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $< -o $@
