@@ -140,7 +140,8 @@ int cMain::run_console()
         HTMLCSVWriter hcw;
         hcw.createHTMLFolder(s);
 
-        s.displayprojects_Console();
+        if (!gSettings().getOutputModeHTML())
+            s.displayprojects_Console();
     }
     catch (TerminateRunException &pEx)
     {
