@@ -64,13 +64,13 @@ INC_FLAGS := $(addprefix -I,$(INC_DIRS))
 CPPFLAGS := $(INC_FLAGS) -MMD -MP
 
 # The final build step.
-$(BUILD_DIR)/$(JPF_NAME): SHOWVER $(VER_HEADER) $(OBJS) 
+$(BUILD_DIR)/$(JPF_NAME): SHOWVER $(OBJS) 
 	@printf "%b" "$(LIN_COLOR)Linking   $(OBJ_COLOR)$(@)$(NO_COLOR)\n";
 	@$(CXX) $(OBJS) -o $@ $(LDFLAGS) $(LDLIBS)
 	@echo 
 
 # Build step for C++ source
-$(BUILD_DIR)/%.cpp.o: %.cpp $(SUPSRC)
+$(BUILD_DIR)/%.cpp.o: %.cpp $(SUPSRC) $(VER_HEADER)
 	@printf "%b" "$(COM_COLOR)Compiling $(OBJ_COLOR)$(@)$(NO_COLOR)\n";
 	@mkdir -p $(dir $@)
 	@$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $< -o $@
