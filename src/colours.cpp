@@ -125,27 +125,27 @@ std::ostream& operator<<(std::ostream& os, const colourcode& cc)
     return os;
 }
 
-std::string colours::colourcode::_cstart(std::string col) 
+std::string _cstart(std::string col) 
 {
     return "<span style=\"color:" + col + ";\">"; 
 }
 
-colourcode::colourcode(std::string console, std::string html) : console_code(console), html_code(_cstart(html))
+colourcode::colourcode(std::string console, std::string html) : console_code(console), html_code(html)
 {
     
 }
 
-const colourcode cWhite("\e[38;5;253m", "black");
-const colourcode cLightOrange("\e[38;5;179m", "orange");
-const colourcode cBlue("\e[38;5;69m", "blue");
-const colourcode cLime("\e[38;5;150m", "green");
+const colourcode cWhite("\e[38;5;253m", _cstart("black"));
+const colourcode cLightOrange("\e[38;5;179m", _cstart("orange"));
+const colourcode cBlue("\e[38;5;69m", _cstart("blue"));
+const colourcode cLime("\e[38;5;150m", _cstart("green"));
 const colourcode cNoColour("\033[m", "</span>");
 
-const colourcode cInfo("\e[38;5;111m", "blue");
-const colourcode cDebug("\e[38;5;239m", "grey");
-const colourcode cWarning("\e[38;5;179m", "darkorange");
-const colourcode cError("\e[38;5;9m", "red");
-const colourcode cDefault("\e[38;5;118m", "black");
+const colourcode cInfo("\e[38;5;111m", _cstart("blue"));
+const colourcode cDebug("\e[38;5;239m", _cstart("grey"));
+const colourcode cWarning("\e[38;5;179m", _cstart("darkorange"));
+const colourcode cError("\e[38;5;9m", _cstart("red"));
+const colourcode cDefault("\e[38;5;118m", _cstart("black"));
 
 
 } // namespace

@@ -19,7 +19,6 @@ namespace colours
 
     private:
         const std::string &_getstr() const;
-        static std::string _cstart(std::string col);
 
         std::string console_code;
         std::string html_code;

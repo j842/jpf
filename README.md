@@ -22,7 +22,8 @@ Intended to work on Debian 11 (Bullseye), Ubuntu 20.04 (Focal) and Ubuntu 22.04 
 ### With Script
 
 ```
-wget https://raw.githubusercontent.com/j842/jpf/main/install.sh && chmod a+x install.sh && sudo ./install.sh
+wget https://raw.githubusercontent.com/j842/jpf/main/install.sh && chmod a+x install.sh && sudo ./install.sh && rm ./install.sh
+sudo apt install jpf
 ```
 
 ### Manually
