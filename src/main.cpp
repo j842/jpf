@@ -157,6 +157,7 @@ int cMain::run_watch()
 {
     webserver wserver(gSettings().getPort());
     watcher w({getInputPath(),getInputPath_Jekyll()});
+    int lastRunVal=-1;
 
     while (true)
     {
@@ -178,6 +179,7 @@ int cMain::run_watch()
             hcw.createHTMLFolder(s);
 
             logdebug(S() << "File output done in " << std::setprecision(3) << tmr.stop() << "ms.");
+            lastRunVal = 0;
         }
         catch (TerminateRunException &pEx)
         {            
@@ -193,13 +195,14 @@ int cMain::run_watch()
                 )
                 scheduler::scheduler::outputHTMLError(S()<<getOutputPath_Html() << x, pEx.what());
             logerror(pEx.what());
+            lastRunVal = -1;
         }
 
         loginfo("Watching for changes. Ctrl-c to exit.");
         w.waitforchange();
         loginfo("Files updated...recalculating!");
     }
-    return 0;
+    return lastRunVal;
 }
 
 
@@ -336,7 +339,13 @@ int main(int argc, char **argv)
     }
 
     cMain m;
-    return m.go(args);
+    int rval = m.go(args);
+    if (rval==0)
+    {
+        cLocalSettings localsettings;
+        localsettings.setSetting("input",gSettings().getRoot()); // only update on success!!
+    }
+    return rval;
 }
 
 cMain::cMain() 
@@ -373,7 +382,6 @@ int cMain::go(cArgs args)
     try
     {
         gSettings().setRoot(dir);
-        localsettings.setSetting("input",gSettings().getRoot());
 
         if (args.hasOpt({"h","html"}))
             gSettings().setOutputModeHTML(true);
@@ -402,8 +410,7 @@ int cMain::go(cArgs args)
         if (args.hasOpt({"w","watch"}))
             {
                 catch_ctrl_c();
-                run_watch();
-                return 0;                
+                return run_watch();
             }
             
         if (args.hasOpt({"r","refresh"}))
