@@ -24,6 +24,18 @@
 
 // --------------------------------------------------------------------
 
+void safeOutputError(std::string err)
+{
+    if (gSettings().getOutputModeHTML())
+        std::cerr << R"(
+            <div style="color: red">
+        )"
+        << err
+        << "</div>";
+    else
+        std::cerr << std::endl <<std::endl << colours::cError << err << colours::cNoColour << std::endl<< std::endl;
+}
+
 
 void cMain::replace_all_input_CSV_files(inputfiles::inputset iset)
 {
@@ -102,7 +114,7 @@ int cMain::run_refresh()
     }
     catch (TerminateRunException &pEx)
     {
-        std::cerr << pEx.what() << std::endl;
+        safeOutputError(pEx.what());
         return 1;
     }
     return 0;
@@ -132,7 +144,7 @@ int cMain::run_console()
     }
     catch (TerminateRunException &pEx)
     {
-        std::cerr << pEx.what() << std::endl;
+        safeOutputError(pEx.what());
         return 1;
     }
 
@@ -262,7 +274,7 @@ int cMain::run_advance(std::string s)
     }
     catch (TerminateRunException &pEx)
     {
-        std::cerr << pEx.what() << std::endl;
+        safeOutputError(pEx.what());
         return 1;
     }
 
@@ -412,12 +424,12 @@ int cMain::go(cArgs args)
 
     catch (const ctrlcException &e)
     {
-        loginfo(e.what());
+        safeOutputError(e.what());
         return 1;
     }
     catch (const TerminateRunException &e)
     {
-        logerror(e.what());
+        safeOutputError(e.what());
         return 1;
     }
 
