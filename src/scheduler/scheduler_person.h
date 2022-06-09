@@ -62,7 +62,6 @@ namespace scheduler
         unsigned long holidaysInMonth(unsigned long month) const;
 
     private:
-        void _registerHolidayString(std::string s);
         void _registerHoliday(leaverange dr);
 
     private:

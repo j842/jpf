@@ -99,20 +99,6 @@ namespace scheduler
             _registerHoliday(i);
     }
 
-    void scheduledperson::_registerHolidayString(std::string s)
-    {
-        if (s.length() > 0)
-        {
-            std::vector<std::string> items;
-            bool okay = simplecsv::splitcsv(s, items);
-            if (!okay)
-                TERMINATE("Couldn't parse leave for " + mName + " -- " + s);
-
-            for (auto &x : items) // parse leave string. Could be date, or date-date (inclusive). Closed interval.
-                _registerHoliday(leaverange(x));
-        }
-    }
-
     workdate scheduledperson::getEarliestStart(workdate fromstart)
     {
         return mIntervals.getEarliestStart(fromstart);

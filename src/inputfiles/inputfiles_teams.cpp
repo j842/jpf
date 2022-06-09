@@ -88,10 +88,14 @@ void teams::load_teams()
                 std::vector<std::string> items;
                 std::string ls = row[5];
                 removewhitespace(ls);
-                simplecsv::splitcsv(ls,items);
-                for (auto &i : items)
-                    if (!leaverange(i).isEmpty())
-                        leave.push_back(leaverange(i));
+                if (ls.length()>0)
+                {
+                    if (!simplecsv::splitcsv(ls,items))
+                        TERMINATE(S()<<"Could not parse leave string for "<<personname<<" : "<<ls);
+                    for (auto &i : items)
+                        if (!leaverange(i).isEmpty())
+                            leave.push_back(leaverange(i));
+                }
             }
 
             this->at(ndx).mMembers.push_back(teammember(personname, EFTProject, EFTBAU, EFTOverhead, leave));
