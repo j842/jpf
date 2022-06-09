@@ -381,6 +381,17 @@ leaverange::leaverange(std::string s)
         ASSERT(strs.size() == 2);
         mStart = simpledate(strs[0]);
         mEnd = simpledate(strs[1]);
+
+        if (mEnd<gSettings().startDate())
+        {
+            logwarning(S()<<"Leave range "<<s<<" is outside the scheduled period. It has been ignored.");
+            setEmpty();
+        }
+        else if (mStart<gSettings().startDate())
+        {
+            logwarning(S()<<"The leave range "<<s<<" is partly outside the scheduled period. It has been clipped.");
+            mStart=gSettings().startDate();
+        }
     }
 }
 

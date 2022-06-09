@@ -12,16 +12,17 @@ namespace inputfiles
     public:
         publicholidays();
 
-        std::string getStr() const;
+        const std::vector<leaverange> & getHolidays() const;
 
         void save_public_holidays_CSV(std::ostream &os) const;
 
         void advance(workdate newStart);
 
     private:
-        std::string load_public_holidays() const;
+        void _load_public_holidays();
 
-        std::string mPublicHolidaysString;
+    private:
+        std::vector<leaverange> mPublicHolidays;
     };
 
 } // namespace

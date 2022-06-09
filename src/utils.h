@@ -26,7 +26,7 @@ bool iSame(const std::string &s1, const std::string &s2);
 void trim(std::string & str);
 unsigned long str2L(std::string s);
 double str2positivedouble(std::string s);
-void advanceLeaveString(std::string & leaveStr, workdate newStart);
+// void advanceLeaveString(std::string & leaveStr, workdate newStart);
 std::string getDollars(double x);
 
 // a few globals

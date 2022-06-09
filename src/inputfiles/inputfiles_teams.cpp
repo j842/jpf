@@ -10,14 +10,34 @@
 namespace inputfiles
 {
 
-const std::string teammember::getLeave() const
+
+teammember::teammember(std::string n, tCentiDay project, tCentiDay bau, tCentiDay overhead, const std::vector<leaverange> & l) : 
+    mName(n), 
+    mEFTProject(project), 
+    mEFTBAU(bau),
+    mEFTOverhead(overhead),
+    mLeave(l)
+    {
+    }
+
+
+const std::vector<leaverange> & teammember::getLeave() const
 {
     return mLeave;
 }
 
 void teammember::advance(workdate newStart)
 {
-    advanceLeaveString(mLeave,newStart);
+    for (auto & i : mLeave)
+        i.advance(newStart);
+
+    mLeave.erase(std::remove_if(
+                     mLeave.begin(), mLeave.end(),
+                     [](const leaverange &x)
+                     {
+                         return x.isEmpty(); // remove if empty.
+                     }),
+                 mLeave.end());
 }
 
 
@@ -63,8 +83,16 @@ void teams::load_teams()
             if (EFTProject + EFTBAU + EFTOverhead > 100)
                 TERMINATE(S() << personname << " is assigned to work over 100\% of the time!");
 
-            std::string leave = row[5];
-            removewhitespace(leave);
+            std::vector<leaverange> leave;
+            {
+                std::vector<std::string> items;
+                std::string ls = row[5];
+                removewhitespace(ls);
+                simplecsv::splitcsv(ls,items);
+                for (auto &i : items)
+                    if (!leaverange(i).isEmpty())
+                        leave.push_back(leaverange(i));
+            }
 
             this->at(ndx).mMembers.push_back(teammember(personname, EFTProject, EFTBAU, EFTOverhead, leave));
         }
@@ -103,7 +131,11 @@ void teams::save_teams_CSV(std::ostream &os) const
         auto &t = this->at(teamNdx);
         for (auto &m : this->at(teamNdx).mMembers)
         {
-            std::vector<std::string> row = {t.mId, m.mName, S() << m.mEFTProject, S() << m.mEFTBAU, S() << m.mEFTOverhead, m.getLeave()}; // don't include holidays.
+            std::string leave;
+            for (auto & lv : m.getLeave())
+                leave += (leave.length()>0 ? ", " : "") + lv.getString();
+
+            std::vector<std::string> row = {t.mId, m.mName, S() << m.mEFTProject, S() << m.mEFTBAU, S() << m.mEFTOverhead, leave}; // don't include holidays.
             simplecsv::output(os, row);
             os << std::endl;
         }

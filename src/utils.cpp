@@ -314,30 +314,30 @@ double str2positivedouble(std::string s)
     return r;    
 }
 
-void advanceLeaveString(std::string & leaveStr, workdate newStart)
-{
-    std::vector<std::string> newLeave;
-    std::vector<std::string> items;
+// void advanceLeaveString(std::string & leaveStr, workdate newStart)
+// {
+//     std::vector<std::string> newLeave;
+//     std::vector<std::string> items;
 
-    simplecsv::splitcsv(leaveStr, items);
+//     simplecsv::splitcsv(leaveStr, items);
 
-    for (auto &d : items)
-    {
-        leaverange dr(d); // closed interval here.
-        dr.advance(newStart);
+//     for (auto &d : items)
+//     {
+//         leaverange dr(d); // closed interval here.
+//         dr.advance(newStart);
 
-        if (!dr.isEmpty())
-            newLeave.push_back(dr.getString());
-    }
+//         if (!dr.isEmpty())
+//             newLeave.push_back(dr.getString());
+//     }
 
-    leaveStr.erase();
-    for (auto &newl : newLeave)
-    {
-        if (leaveStr.length() > 0)
-            leaveStr += ",";
-        leaveStr += newl;
-    }
-}
+//     leaveStr.erase();
+//     for (auto &newl : newLeave)
+//     {
+//         if (leaveStr.length() > 0)
+//             leaveStr += ",";
+//         leaveStr += newl;
+//     }
+// }
 
 
 void streamReplace(std::string ifile, std::ostream &ofs, const std::map<std::string,std::string> & replacerules)

@@ -5,49 +5,62 @@
 namespace inputfiles
 {
 
-    publicholidays::publicholidays() : mPublicHolidaysString(load_public_holidays())
+    publicholidays::publicholidays()
     {
+        _load_public_holidays();
     }
 
-    std::string publicholidays::getStr() const
-    {
-        return mPublicHolidaysString;
-    }
+    // std::string publicholidays::getStr() const
+    // {
+    //     return mPublicHolidaysString;
+    // }
 
-    std::string publicholidays::load_public_holidays() const
+    void publicholidays::_load_public_holidays()
     {
         std::string phs;
         simplecsv ph("publicholidays.csv");
 
         if (!ph.openedOkay())
-        {
             logerror("Could not read the public holidays from publicholidays.csv");
-            return "";
-        }
-
-        std::vector<std::string> row;
-        while (ph.getline(row, 1))
+        else
         {
-            if (phs.length() > 0)
-                phs += ",";
-            phs += row[0];
+            std::vector<std::string> row;
+            while (ph.getline(row, 1))
+            {
+                leaverange dr(row[0]);
+                if (!dr.isEmpty())
+                    mPublicHolidays.push_back(dr);
+            }
         }
-        return phs;
     }
 
     void publicholidays::save_public_holidays_CSV(std::ostream &os) const
     {
         os << "Public Holdiay (Date or Range)" << std::endl;
 
-        std::vector<std::string> vd;
-        simplecsv::splitcsv(mPublicHolidaysString, vd);
-        for (auto d : vd)
-            os << simplecsv::makesafe(d) << std::endl;
+        for (auto & i : mPublicHolidays)
+            os << simplecsv::makesafe(i.getString()) << std::endl;
     }
 
     void publicholidays::advance(workdate newStart)
     {
-        advanceLeaveString(mPublicHolidaysString, newStart);
+        for (auto & i : mPublicHolidays)
+            i.advance(newStart);
+
+        mPublicHolidays.erase(std::remove_if(
+                                  mPublicHolidays.begin(), mPublicHolidays.end(),
+                                  [](const leaverange &x)
+                                  {
+                                      return x.isEmpty(); // remove if empty.
+                                  }),
+                              mPublicHolidays.end());
     }
 
+    const std::vector<leaverange> & inputfiles::publicholidays::getHolidays() const 
+    {
+        return mPublicHolidays;
+    }
+
+
 } // namespace
+

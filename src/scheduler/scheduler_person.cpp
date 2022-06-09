@@ -92,8 +92,11 @@ namespace scheduler
     scheduledperson::scheduledperson(const teammember &m, const inputfiles::publicholidays &pubh) : teammember(m.mName, m.mEFTProject, m.mEFTBAU, m.mEFTOverhead, m.getLeave()),
                                                                       mIntervals(m.mEFTProject)
     {
-        _registerHolidayString(getLeave());
-        _registerHolidayString(pubh.getStr());
+        for (auto & i : getLeave())
+            _registerHoliday(i);
+
+        for (auto & i : pubh.getHolidays())
+            _registerHoliday(i);
     }
 
     void scheduledperson::_registerHolidayString(std::string s)
@@ -105,15 +108,8 @@ namespace scheduler
             if (!okay)
                 TERMINATE("Couldn't parse leave for " + mName + " -- " + s);
 
-            for (auto &x : items)
-            { // parse leave string. Could be date, or date-date (inclusive). Closed interval.
-                leaverange dr(x);
-                if (!dr.isEmpty())
-                {
-                    _registerHoliday(dr);
-                    mHolidays.push_back(dr);
-                }
-            }
+            for (auto &x : items) // parse leave string. Could be date, or date-date (inclusive). Closed interval.
+                _registerHoliday(leaverange(x));
         }
     }
 
@@ -124,7 +120,11 @@ namespace scheduler
 
     void scheduledperson::_registerHoliday(leaverange dr)
     { // end is open interval.
-        mIntervals.registerHoliday(dr);
+        if (!dr.isEmpty())
+        {
+            mIntervals.registerHoliday(dr);
+            mHolidays.push_back(dr);
+        }
     }
 
     tCentiDay scheduledperson::getMaxAvialability() const
