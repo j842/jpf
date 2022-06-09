@@ -248,10 +248,9 @@ bool cMain::runtests()
     return wasSucessful;
 }
 
-int cMain::run_advance(std::string s)
-{ // s of format -a=dd/mm/yy
-    s.erase(s.begin(), s.begin() + 3);
-    workdate newStart(s);
+int cMain::run_advance(std::string date)
+{ // s of format dd/mm/yy
+    workdate newStart(date);
     loginfo(S()<<" Advancing start date " << workdate::countWorkDays(gSettings().startDate(),newStart) << " workdays --> " << newStart.getStr_nice_short());
 
     try
