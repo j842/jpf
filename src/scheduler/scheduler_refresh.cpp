@@ -21,66 +21,6 @@ namespace scheduler
             std::map<std::string,int> mC;
     };
 
-    // this version labels only items referenced by other items.
-    // void scheduler::refresh(inputfiles::inputset &iset)
-    // {
-    //     if (mScheduled)
-    //         TERMINATE("Error: refresh called on dirty scheduler. Items will be out of order.");
-
-    //     _prioritiseAndMergeTeams(); // merge the tasks from each team list together, based on project priorities and preserving team ordering.
-
-    //     lowercasecountedmap refMap;
-
-    //     { // 1. remove any unused refrences.
-    //         std::vector<unsigned int> teamitemcount(iset.mT.size(), 0);
-
-    //         unsigned int removedRefs = 0;
-    //         for (auto &i : mItems)
-    //             for (auto &j : i.mDependencies)
-    //                 refMap.addcount(j);
-
-    //         for (auto &i : mItems)
-    //             if (i.mId.length() > 0 && refMap.getcount(i.mId)==0)
-    //             {
-    //                 i.mId.clear();
-    //                 ++removedRefs;
-    //             }
-    //         if (removedRefs > 0)
-    //             loginfo(S()<< "Removed " << removedRefs << " unneeded reference" << (removedRefs > 1 ? "s." : "."));
-    //         else
-    //             loginfo("References are clean.");
-    //     }
-
-    //     { // 2. Renumber remaining Refs.
-    //         std::vector<int> teamItemCount(iset.mT.size(), 0);
-    //         for (auto &i : mItems)
-    //             if (i.mId.length() > 0)
-    //             {
-    //                 ASSERT(refMap.getcount(i.mId)>0);
-    //                 teamItemCount[i.mTeamNdx] += 1;
-    //                 refMap.set(
-    //                     i.mId, 
-    //                     S() << iset.mT[i.mTeamNdx].mRefCode << "." << std::setw(2) << std::setfill('0') << teamItemCount[i.mTeamNdx]
-    //                     );
-    //                 i.mId = refMap.get(i.mId);
-    //             }
-    //         for (auto &i : mItems)
-    //             for (auto &j : i.mDependencies)
-    //                 j = refMap.get(j);
-    //     }
-
-    //     { // 3. Fix the team backlogs now with the new references.
-    //         for (auto &t0 : iset.mB.mTeamItems)
-    //             for (auto &bl : t0)
-    //             {
-    //                 if (bl.mId.length() > 0)
-    //                     bl.mId = refMap.get(bl.mId);
-
-    //                 for (auto &dep : bl.mDependencies)
-    //                     dep = refMap.get(dep);
-    //             }
-    //     }
-    // }
 
 // this version renumbers everything.
 void scheduler::refresh(inputfiles::inputset &iset)
@@ -93,11 +33,11 @@ void scheduler::refresh(inputfiles::inputset &iset)
         std::vector<std::string> refMap(mItems.size(),"");
 
         { // 1. Determine new numbers.
-            std::vector<int> teamItemCount(iset.mT.size(), 0);
+            std::vector<int> teamItemCount(iset.mTeams.size(), 0);
             for (unsigned int i=0; i<mItems.size();++i)
             {
                 teamItemCount[mItems[i].mTeamNdx] += 1;
-                refMap[i] = S() << iset.mT[mItems[i].mTeamNdx].mRefCode << "." << std::setw(2) << std::setfill('0') << teamItemCount[mItems[i].mTeamNdx];
+                refMap[i] = S() << iset.mTeams[mItems[i].mTeamNdx].mRefCode << "." << std::setw(2) << std::setfill('0') << teamItemCount[mItems[i].mTeamNdx];
 
                 if (!iSame(refMap[i],mItems[i].mId))
                     logdebug(S()<<"Changing Task ID ["<<mItems[i].mId<<"] to ["<<refMap[i]<<"].");
@@ -122,7 +62,7 @@ void scheduler::refresh(inputfiles::inputset &iset)
             for (unsigned int i=0; i<mItems.size();++i)
                 {
                     auto & itm = mItems[i];
-                    auto & bli = iset.mB.mTeamItems[ itm.mTeamNdx ][  itm.mItemIndexInTeamBacklog ];
+                    auto & bli = iset.mTeamBacklogs.mTeamItems[ itm.mTeamNdx ][  itm.mItemIndexInTeamBacklog ];
                     bli.mId = refMap[i];
 
                     for (auto &dep : bli.mDependencies)
@@ -133,13 +73,13 @@ void scheduler::refresh(inputfiles::inputset &iset)
                     }
 
                     // also ensure we're using the project Id not full name.
-                    unsigned int ndx = iset.mP.getIndexByID(bli.mProjectName);
+                    unsigned int ndx = iset.mProjects.getIndexByID(bli.mProjectName);
                     if (ndx==eNotFound)
                     {
                         logerror(S()<<"Unable to find project ["+bli.mProjectName<<"]!");
                         ASSERT(ndx!=eNotFound);
                     }
-                    const std::string & realid = iset.mP[ ndx ].getId();
+                    const std::string & realid = iset.mProjects[ ndx ].getId();
                     if (!iSame(realid, bli.mProjectName))
                     {
                         logdebug(S()<<"Using project id ["<<realid<<"] instead of full project name for task "<<bli.mId );
@@ -180,7 +120,7 @@ void scheduler::refresh(inputfiles::inputset &iset)
             { // find item and update.
                 unsigned int teamndx = mItems[itemndx].mTeamNdx;
                 unsigned int teamitemndx = mItems[itemndx].mItemIndexInTeamBacklog;
-                auto & bli = iset.mB.mTeamItems[teamndx][teamitemndx];
+                auto & bli = iset.mTeamBacklogs.mTeamItems[teamndx][teamitemndx];
                 bli.mDevCentiDays -= itemDevCentiDone[itemndx];
 
                 if (mItems[itemndx].mActualStart < newStart)
@@ -200,9 +140,9 @@ void scheduler::refresh(inputfiles::inputset &iset)
             }
         }
 
-        iset.mH.advance(newStart); // just drops old holidays
-        iset.mP.advance(newStart); // does nothing at present
-        iset.mT.advance(newStart); // advances leave
+        iset.mHolidays.advance(newStart); // just drops old holidays
+        iset.mProjects.advance(newStart); // does nothing at present
+        iset.mTeams.advance(newStart); // advances leave
     }
 
 } // namespace

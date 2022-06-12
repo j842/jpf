@@ -3,7 +3,8 @@
         {
             "name": "Linux",
             "includePath": [
-                "${workspaceFolder}/**"
+                "${workspaceFolder}/src/**",
+                "/usr/include/c++/11/pstl"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/g++",

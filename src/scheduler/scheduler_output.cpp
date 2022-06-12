@@ -53,7 +53,7 @@ namespace scheduler
         for (auto &z : mItems)
         {
             ofs << std::setw(7) << z.mId << " ";
-            ofs << std::setw(12) << teams().at(z.mTeamNdx).mId << "  ";
+            ofs << std::setw(12) << mI.mTeams.at(z.mTeamNdx).mId << "  ";
             ofs << z.mActualStart.getStr_short() << " -> " << z.mActualEnd.getStr_short();
             ofs << std::setw(10) << z.mBlockedBy << " ";
             ofs << std::setw(4) << z.mPriority << "   ";
@@ -105,7 +105,7 @@ namespace scheduler
         unsigned int prevproj = UINT_MAX;
         //    unsigned int c=0;
 
-        unsigned int maxtitlew = std::max(teams().getMaxTeamNameWidth() + 22, projects().getMaxProjectNameWidth());
+        unsigned int maxtitlew = std::max(mI.mTeams.getMaxTeamNameWidth() + 22, mI.mProjects.getMaxProjectNameWidth());
         unsigned int maxnamew = mPeople.getMaxNameWidth();
         for (auto &x : v_sorted)
         {
@@ -125,7 +125,7 @@ namespace scheduler
             }
             // ofs << std::setw(7) << z.mId << " ";
 
-            ofs << RIGHTSTREAM(teams().at(z.mTeamNdx).mId, teams().getMaxTeamNameWidth()) << "  ";
+            ofs << RIGHTSTREAM(mI.mTeams[z.mTeamNdx].mId, mI.mTeams.getMaxTeamNameWidth()) << "  ";
             ofs << z.mActualStart.getStr() << " -> " << z.mActualEnd.getStr();
             ofs << "  " << RIGHTSTREAM(z.mBlockedBy, maxnamew) << "  ";
             ofs << z.mDescription << std::endl;

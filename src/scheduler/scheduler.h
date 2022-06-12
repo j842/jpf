@@ -104,7 +104,7 @@ namespace scheduler
     class scheduler
     {
     public:
-        scheduler(inputfiles::constinputset ifiles);
+        scheduler(const inputfiles::inputset & ifiles);
 
         void schedule();
         void refresh(inputfiles::inputset &iset);
@@ -180,18 +180,18 @@ namespace scheduler
         void resetSchedule();
 
     public:
-        const inputfiles::constinputset &getInputs() const { return mI; }
+        const inputfiles::inputset &getInputs() const { return mI; }
         const std::vector<scheduleditem> &getItems() const { return mItems; }
         const std::vector<scheduledproject> &getProjects() const { return mProjects; }
         const scheduledpeople &getPeople() const { return mPeople; }
         const std::vector<worklogitem> &getWorkLog() const { return mWorkLog; }
 
     private:
-        const inputfiles::constinputset mI;
-        const inputfiles::projects &projects() const { return mI.mP; }
-        const inputfiles::teams &teams() const { return mI.mT; }
-        const inputfiles::publicholidays &holidays() const { return mI.mH; }
-        const inputfiles::teambacklogs &teambacklogs() const { return mI.mB; }
+        const inputfiles::inputset mI;
+        // const inputfiles::projects &projects() const { return mI.mProjects; }
+        // const inputfiles::teams &teams() const { return mI.mTeams; }
+        // const inputfiles::publicholidays &holidays() const { return mI.mHolidays; }
+        // const inputfiles::teambacklogs &teambacklogs() const { return mI.mTeamBacklogs; }
     };
 
 } // namespace

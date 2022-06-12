@@ -1,6 +1,10 @@
 #ifndef __INPUTSET__H
 #define __INPUTSET__H
 
+#include "inputfiles_projects.h"
+#include "inputfiles_publicholidays.h"
+#include "inputfiles_teams.h"
+#include "inputfiles_teambacklogs.h"
 
 namespace inputfiles
 {
@@ -9,31 +13,19 @@ namespace inputfiles
     class teambacklogs;
     class publicholidays;
 
-
     class inputset
     {
         public:
-            inputset(projects & p, teams & t, publicholidays & h, teambacklogs & b) : mP(p), mT(t), mH(h), mB(b) {}
+            inputset();
+            void replaceInputFiles();
 
         public:
-            projects & mP;
-            teams & mT;
-            publicholidays & mH;
-            teambacklogs & mB;
+            projects mProjects;
+            teams mTeams;
+            publicholidays mHolidays;
+            teambacklogs mTeamBacklogs;
     };
 
-    class constinputset
-    {
-        public:
-            constinputset(const projects & p, const teams & t, const publicholidays & h, const teambacklogs & b) : mP(p), mT(t), mH(h), mB(b) {}
-            constinputset(const inputset & other) : mP(other.mP), mT(other.mT), mH(other.mH), mB(other.mB) {}
-
-        public:
-            const projects & mP;
-            const teams & mT;
-            const publicholidays & mH;
-            const teambacklogs & mB;
-    };
 }    
 
 

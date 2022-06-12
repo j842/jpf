@@ -36,8 +36,7 @@ class cMain
         int getrVal() const;
 
     private:
-        void replace_all_input_CSV_files(inputfiles::inputset iset);
-        void replace_settings_CSV();
+       void replace_settings_CSV();
 };
 
 int main(int argc, char **argv);

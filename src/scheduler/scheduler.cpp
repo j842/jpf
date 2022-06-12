@@ -80,7 +80,7 @@ namespace scheduler
 //-----------------------------------------------------------------------------------------
 
 
-    scheduler::scheduler(inputfiles::constinputset ifiles) : mScheduled(false), mI(ifiles)
+    scheduler::scheduler(const inputfiles::inputset & ifiles) : mScheduled(false), mI(ifiles)
     {
     }
 

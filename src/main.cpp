@@ -39,34 +39,6 @@ void safeOutputError(std::string err)
                   << std::endl;
 }
 
-void cMain::replace_all_input_CSV_files(inputfiles::inputset iset)
-{
-    for (unsigned int i = 0; i < iset.mB.mTeamItems.size(); ++i)
-    { // output backlog-X
-        std::ofstream ofs(simplecsv::filename2path(S() << "backlog-" << makelower(iset.mT[i].mId) << ".csv"));
-        iset.mB.save_team_CSV(ofs, i);
-        ofs.close();
-    }
-
-    {
-        std::ofstream ofs(simplecsv::filename2path("publicholidays.csv"));
-        iset.mH.save_public_holidays_CSV(ofs);
-        ofs.close();
-    }
-
-    {
-        std::ofstream ofs(simplecsv::filename2path("teams.csv"));
-        iset.mT.save_teams_CSV(ofs);
-        ofs.close();
-    }
-
-    {
-        std::ofstream ofs(simplecsv::filename2path("projects.csv"));
-        iset.mP.save_projects_CSV(ofs);
-        ofs.close();
-    }
-}
-
 void cMain::replace_settings_CSV()
 {
     std::ofstream ofs(simplecsv::filename2path("settings.csv"));
@@ -80,28 +52,20 @@ int cMain::run_refresh()
     {
         { // load and refresh
             loginfo("Loading files...");
-            inputfiles::projects p;
-            inputfiles::teams t;
-            inputfiles::publicholidays h;
-            inputfiles::teambacklogs b(t, p);
-            inputfiles::inputset iset(p, t, h, b);
+            inputfiles::inputset iset;
             scheduler::scheduler s(iset);
 
             loginfo("Recreating Ids as needed...");
             s.refresh(iset);
 
             loginfo("Saving updated input files...");
-            replace_all_input_CSV_files(iset);
+            iset.replaceInputFiles();
             replace_settings_CSV();
         }
 
         { // reload from disk and schedule.
             loginfo("Rescheduling...");
-            inputfiles::projects p;
-            inputfiles::teams t;
-            inputfiles::publicholidays h;
-            inputfiles::teambacklogs b(t, p);
-            inputfiles::inputset iset(p, t, h, b);
+            inputfiles::inputset iset;
             scheduler::scheduler s(iset);
 
             s.schedule();
@@ -127,11 +91,7 @@ int cMain::run_console()
 
     try
     {
-        inputfiles::projects p;
-        inputfiles::teams t;
-        inputfiles::publicholidays h;
-        inputfiles::teambacklogs b(t, p);
-        inputfiles::inputset iset(p, t, h, b);
+        inputfiles::inputset iset;
 
         scheduler::scheduler s(iset);
         s.schedule();
@@ -164,11 +124,7 @@ int cMain::run_watch()
     {
         try
         {
-            inputfiles::projects p;
-            inputfiles::teams t;
-            inputfiles::publicholidays h;
-            inputfiles::teambacklogs b(t, p);
-            inputfiles::inputset iset(p, t, h, b);
+            inputfiles::inputset iset;
 
             scheduler::scheduler s(iset);
             s.schedule();
@@ -254,11 +210,7 @@ int cMain::run_advance(std::string date)
     try
     {
         {
-            inputfiles::projects p;
-            inputfiles::teams t;
-            inputfiles::publicholidays h;
-            inputfiles::teambacklogs b(t, p);
-            inputfiles::inputset iset(p, t, h, b);
+            inputfiles::inputset iset;
             // advance and throw away scheduler.
             scheduler::scheduler s(iset);
             s.schedule();
@@ -267,7 +219,7 @@ int cMain::run_advance(std::string date)
 
             ASSERT(gSettings().startDate() == newStart);
 
-            replace_all_input_CSV_files(iset);
+            iset.replaceInputFiles();
             replace_settings_CSV();
 
             loginfo("Replaced input and output files.");

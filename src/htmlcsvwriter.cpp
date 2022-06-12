@@ -153,7 +153,7 @@ void HTMLCSVWriter::write_projectbacklog_csv(const scheduler::scheduler &s) cons
                     S()<<z.mActualStart.getDayAsIndex(),
                     S()<<z.getLastDayWorked().getDayAsIndex(),
                     z.mDescription,
-                    s.getInputs().mT.at(z.mTeamNdx).mId,
+                    s.getInputs().mTeams[z.mTeamNdx].mId,
                     S()<<z.mTeamNdx,
                     z.mId,
                     z.mBlockedBy,
@@ -171,8 +171,8 @@ void HTMLCSVWriter::write_teams_csv(const scheduler::scheduler &s) const
     {
         simpleDataCSV teams("teams");
         teams.addrow({"teamindex","teamcode","teamname"});
-        for (unsigned int t=0;t<s.getInputs().mT.size();++t)
-            teams.addrow({S()<<t,makecode(s.getInputs().mT[t].mId), s.getInputs().mT[t].mId});
+        for (unsigned int t=0;t<s.getInputs().mTeams.size();++t)
+            teams.addrow({S()<<t,makecode(s.getInputs().mTeams[t].mId), s.getInputs().mTeams[t].mId});
     }
 }
 
@@ -305,7 +305,7 @@ void HTMLCSVWriter::write_task_tag_file(const scheduler::scheduler &s, const std
                                   z.getLastDayWorked().getStr_nice_short(),
                                   z.getLastDayWorked().getStr_SafeMonth(),
                                   z.mDescription,
-                                  s.getInputs().mT.at(z.mTeamNdx).mId,
+                                  s.getInputs().mTeams[z.mTeamNdx].mId,
                                   z.mId,
                                   z.mBlockedBy,
                                   dependencies,

@@ -61,9 +61,9 @@ namespace scheduler
         ASSERT(mItems.size()==0);
 
         // copy to mItems in order respecting team and project priority.
-        std::vector<unsigned int> positions(mI.mB.mTeamItems.size(), 0);
+        std::vector<unsigned int> positions(mI.mTeamBacklogs.mTeamItems.size(), 0);
         unsigned int numItems = 0;
-        for (auto &t : mI.mB.mTeamItems)
+        for (auto &t : mI.mTeamBacklogs.mTeamItems)
             numItems += t.size();
         ASSERT(numItems > 0);
         ASSERT(mItems.size() == 0);
@@ -73,14 +73,14 @@ namespace scheduler
             unsigned int bestProjNdx = UINT_MAX;
             unsigned int bestTeam = UINT_MAX;
 
-            for (unsigned int x = 0; x < mI.mB.mTeamItems.size(); ++x)
+            for (unsigned int x = 0; x < mI.mTeamBacklogs.mTeamItems.size(); ++x)
             {
-                auto &t = mI.mB.mTeamItems[x];
+                auto &t = mI.mTeamBacklogs.mTeamItems[x];
                 if (t.size() > positions[x])
                 {
                     auto &tt = t.at(positions[x]);
 
-                    unsigned int projNdx = projects().getIndexByID(tt.mProjectName);
+                    unsigned int projNdx = mI.mProjects.getIndexByID(tt.mProjectName);
                     if (projNdx==eNotFound)
                         TERMINATE(S()<<"No project \""<<(tt.mProjectName)<<"\" ... referred to by \""<<tt.mDescription<<"\"");
                     if ((topt == NULL || projNdx < bestProjNdx))
@@ -340,12 +340,12 @@ namespace scheduler
     void scheduler::_prepare_to_schedule()
     {
         // copy people name/maxtime from the teams list into our people list.
-        for (const auto &x : mI.mT)
+        for (const auto &x : mI.mTeams)
             for (const auto &y : x.mMembers)
-                mPeople.push_back(scheduledperson(y, mI.mH));
+                mPeople.push_back(scheduledperson(y, mI.mHolidays));
 
         // copy projects
-        for (const auto &p : mI.mP)
+        for (const auto &p : mI.mProjects)
             mProjects.push_back(scheduledproject(p));
     }
 
@@ -407,7 +407,7 @@ namespace scheduler
         ASSERT(mItems.size() == 0);
         ASSERT(mProjects.size() == 0);
 
-        loginfo(S() << "Scheduling "<<mI.mB.getTotalNumItems()<<" backlog items across "<< mI.mT.size()<<" teams.");
+        loginfo(S() << "Scheduling "<<mI.mTeamBacklogs.getTotalNumItems()<<" backlog items across "<< mI.mTeams.size()<<" teams.");
         timer t;
 
         _prepare_to_schedule();
