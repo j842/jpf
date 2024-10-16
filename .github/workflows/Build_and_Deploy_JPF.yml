@@ -10,8 +10,14 @@ jobs:
     - uses: actions/checkout@v4
     - name: install .packagecloud
       run: cat <<< "{\"url\":\"https://packagecloud.io\", \"token\":\"${{ secrets.PACKAGE_CLOUD_TOKEN }}\"}" > ~/.packagecloud
+    - name: Setup Ruby
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: '3'
+    - name: Update Gem
+      run: gem update --system
     - name: install prereqs
-      run: sudo apt install build-essential libboost-date-time-dev libcppunit-dev podman ruby-full zlib1g-dev
+      run: sudo apt install build-essential libboost-date-time-dev libcppunit-dev podman zlib1g-dev
     - name: check jekyll
       run: sudo deps/dpkg/after-install.sh
     - name: make
