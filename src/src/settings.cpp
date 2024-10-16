@@ -292,17 +292,17 @@ const std::string getExePath()
 
 const std::string getInputPath_Jekyll()
 {
-    std::string opt_debug = makecanonicalslash(getExePath() + "../../data/template/"); // go up from build directory.
+
+    std::string opt_debug = makecanonicalslash(getExePath() + "../../example_data/template/"); // go up from build directory.
+    if (std::filesystem::exists(opt_debug))
+        return opt_debug;
+
     std::string opt_local = getLocalTemplatePath();
-    std::string opt_system = "/opt/jpf/html/";
-
-    std::string opt = opt_system;
     if (std::filesystem::exists(opt_local))
-        opt = opt_local;
-    else if (std::filesystem::exists(opt_debug))
-        opt = opt_debug;
+        return opt_local;
 
-    return opt;
+    std::string opt_system = "/opt/jpf/html/";
+    return opt_system;
 }
 
 const std::string getHomeDir()
