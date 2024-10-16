@@ -14,48 +14,6 @@ John's Project Forecaster
    - available capacity per person (max availability specified in teams.csv, based on BAU workload),
    - specified holiday periods
 
-## Installing Binary from Debian/Ubuntu Package
-
-
-Intended to work on Debian 11 (Bullseye), Ubuntu 20.04 (Focal) and Ubuntu 22.04 (Jammy). Does not work on Debian 10 (Buster) or Ubuntu 18.04 (Bionic) as g++ and libs are too old.
-
-### With Script
-
-```
-wget https://raw.githubusercontent.com/j842/jpf/main/install.sh && chmod a+x install.sh && sudo ./install.sh && rm ./install.sh
-sudo apt install jpf
-```
-
-### Manually
-
-```
-sudo apt update
-sudo apt install -y curl gnupg apt-transport-https
-```
-
-Installing the key seems to require being in a root shell (not sudo):
-```
-sudo su -
-curl -fsSL https://packagecloud.io/j842/main/gpgkey | gpg --dearmor > /usr/share/keyrings/j842_main-archive-keyring.gpg
-exit
-```
-
-Then create `/etc/apt/sources.list.d/j842_main.list` with content:
-```
-deb [signed-by=/usr/share/keyrings/j842_main-archive-keyring.gpg] https://packagecloud.io/j842/main/any/ any main
-deb-src [signed-by=/usr/share/keyrings/j842_main-archive-keyring.gpg] https://packagecloud.io/j842/main/any/ any main
-```
-Then `sudo apt update` again to get the new repo info.
-
-You should now be able to install and update using apt as you wish.  
-  
-Install:  
-`sudo apt install jpf`  
-  
-Upgrade:  
-`sudo apt install --only-upgrade jpf`
-
-
 
 ## Running jpf
 
@@ -64,18 +22,6 @@ Upgrade:
 `jpf .`
 
 Files are written to the output/ folder.
-
-### Watch for changes
-
-In this mode jpm starts a webserver (webfsd) on port 5000, displaying the HTML output of jpf. 
-It then watches the input folder and if any changes are made reschedules and recreates all outputs.
-The pages automatically update in most web browsers (you shouldn't need to refresh the page).
-
-```
-jpf -watch .
-```
-
-Connect to `http://localhost:5000`
 
 ## Related Software
 
@@ -102,18 +48,18 @@ Then edit the files in `template/`.
 On either Ubuntu 20.04 or Debian 11 (including via WSL2 under Windows):
 ```
 sudo apt install build-essential libboost-date-time-dev libcppunit-dev podman gh ruby-full zlib1g-dev
-sudo gem install jekyll bundler webrick
+
+echo '# Install Ruby Gems to ~/gems' >> ~/.bashrc
+echo 'export GEM_HOME="$HOME/gems"' >> ~/.bashrc
+echo 'export PATH="$HOME/gems/bin:$PATH"' >> ~/.bashrc
+source ~/.bashrc
+MAKE="make -j $(nproc)" gem install jekyll bundler --no-document
 ```
 
 Clone:
 ```
 git clone https://github.com/j842/jpf.git
 cd jpf
-```
-
-Build the podman images:
-```
-make images
 ```
 
 Then compile jpf itself:
@@ -176,3 +122,12 @@ https://clay-atlas.com/us/blog/2021/08/31/windows-en-wsl-2-memory/
 ## Github Actions
 
 This repo contains four github actions, which should be self explanatory.
+
+## Docker
+
+/jpf/includes/   <--  src/includes/
+
+
+/jpf/input       -->  ?
+/jpf/output      -->  ?
+
