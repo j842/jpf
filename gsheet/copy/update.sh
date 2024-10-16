@@ -48,6 +48,8 @@ echo " "
 mkdir -p ${TEMPDIR}
 mkdir -p ${INPUTDIR}
 
+cp -r /example_data/template ${TEMPDIR}
+
 echo "<div style=\"color:grey;\">"
 gs-to-csv --service-account-credential-file "${ACCTFILE}" "${SPREADSHEET}" '.*' "${INPUTDIR}"
 echo "</div>"

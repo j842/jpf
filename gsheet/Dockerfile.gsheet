@@ -22,6 +22,9 @@ RUN chmod -R 777 /var/www/html
 COPY copy/jpf /usr/bin/jpf
 RUN chmod 755 /usr/bin/jpf
 
+COPY copy/example_data /example_data
+RUN chmod 755 /example_data
+
 RUN mkdir /config && chmod 755 /config && mkdir /jpftemp && chmod 777 /jpftemp
 
 EXPOSE 80
