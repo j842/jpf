@@ -7,7 +7,7 @@ jobs:
   Build_and_Deploy_JPF_dpkg:
     runs-on: ubuntu-20.04
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout
     - name: install .packagecloud
       run: cat <<< "{\"url\":\"https://packagecloud.io\", \"token\":\"${{ secrets.PACKAGE_CLOUD_TOKEN }}\"}" > ~/.packagecloud
     - name: install prereqs
