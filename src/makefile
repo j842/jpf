@@ -80,25 +80,16 @@ SHOWVER:
 # errors to show up.
 -include $(DEPS)
 
+EXDATA_DIR=$(ROOT_DIR)/../example_data
+
 # run tests
 check: $(JPF_EXE)
 	$(JPF_EXE) -t
 	rm -rf ~/.jpf_test
 	mkdir ~/.jpf_test
-	cp -r $(ROOT_DIR)/../example_data/* ~/.jpf_test
+	cp -r $(EXDATA_DIR)/* ~/.jpf_test
 	$(JPF_EXE) ~/.jpf_test
 
-DATA_DIR := $(ROOT_DIR)/includes/html/_data
-
-.PHONY: data
-data:
-	rm -rf ~/.jpf_test
-	mkdir ~/.jpf_test
-	cp -r $(ROOT_DIR)/../example_data/* ~/.jpf_test
-	$(JPF_EXE) ~/.jpf_test
-	rm $(DATA_DIR)/*
-	cp ~/.jpf_test/output/.jekyll/_data/* $(DATA_DIR)
-	rm -rf ~/.jpf_test
 
 clean:
 	rm -rf $(BIN_DIR)
