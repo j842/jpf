@@ -12,7 +12,9 @@ fi
 
 if ! { [ -f "/usr/bin/jekyll" ] || [ -f "/usr/local/bin/jekyll" ]; }; then
     echo "Jekyll could not be found - installing (this will take several minutes)"
-    MAKE="make -j $(nproc)" gem install jekyll bundler --no-document
+    gem install ffi -v 1.17.0
+    gem install bundler -v 2.4.22
+    gem install jekyll --no-document
 fi
 
 if ! { [ -f "/usr/bin/jekyll" ] || [ -f "/usr/local/bin/jekyll" ]; }; then
