@@ -50,7 +50,7 @@ headincludes: |
 
         {%- assign persondata = site.data.peoplebacklog | where: "personcode", prow.personcode | sort: 'startday' -%}
         {%- for row in persondata -%}
-            {%- if {{row.utilisation}} == "0" -%}
+            {%- if row.utilisation == "0" -%}
                 <tr class="row1" style="opacity: 0.25; ">
             {%- else -%}
                 <tr class="row1">

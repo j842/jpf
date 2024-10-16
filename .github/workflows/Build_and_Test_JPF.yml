@@ -8,9 +8,16 @@ jobs:
   Build_and_Test_JPF:
     runs-on: ubuntu-20.04
     steps:
-    - uses: actions/checkout@v3
+    - name: Checkout
+      uses: actions/checkout@v4
+    - name: Setup Ruby
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: '3'
+    - name: Update Gem
+      run: gem update --system
     - name: install prereqs
-      run: sudo apt install build-essential libboost-date-time-dev libcppunit-dev ruby-full zlib1g-dev
+      run: sudo apt install build-essential libboost-date-time-dev libcppunit-dev zlib1g-dev
     - name: check jekyll
       run: sudo deps/dpkg/after-install.sh
     - name: make

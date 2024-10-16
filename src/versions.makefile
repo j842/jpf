@@ -1,5 +1,4 @@
 #---------------------------------
-
 JPF_VERSION   := 0.0.20
 JPF_RELEASE   := 1
 INPUT_VERSION := 15

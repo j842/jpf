@@ -79,6 +79,19 @@ And test:
 make deb
 ```
 
+
+## Deploy
+
+Builds everything as a Github Action.
+
+- add github token to `~/.github_token`
+- The minimum required scopes are 'repo', 'read:org', 'workflow'.
+- make deploy
+
+
+## OLD
+
+
 To upload, make sure ~/.packagecloud exsts with the correct token:
 ```
 {"url":"https://packagecloud.io", "token": "packagecloud_token"}
@@ -124,10 +137,9 @@ https://clay-atlas.com/us/blog/2021/08/31/windows-en-wsl-2-memory/
 This repo contains four github actions, which should be self explanatory.
 
 ## Docker
-
+```
 /jpf/includes/   <--  src/includes/
-
 
 /jpf/input       -->  ?
 /jpf/output      -->  ?
-
+```
