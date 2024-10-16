@@ -5,6 +5,7 @@
 .dep
 /deps/webfsd-jpf/bin
 .vscode/jpf-debug
+/gsheet/copy/jpf
 
 version.h
 /src/templates
