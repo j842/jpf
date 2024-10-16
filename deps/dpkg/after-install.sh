@@ -15,6 +15,11 @@ if ! { [ -f "/usr/bin/jekyll" ] || [ -f "/usr/local/bin/jekyll" ]; }; then
     MAKE="make -j $(nproc)" gem install jekyll bundler --no-document
 fi
 
+if ! { [ -f "/usr/bin/jekyll" ] || [ -f "/usr/local/bin/jekyll" ]; }; then
+    echo "Jekyll install failed!"
+    exit -1
+fi
+
 echo "Jekyll is available."
 
 #gem update jekyll

@@ -133,6 +133,19 @@ And test:
 make deb
 ```
 
+
+## Deploy
+
+Builds everything as a Github Action.
+
+- add github token to `~/.github_token`
+- The minimum required scopes are 'repo', 'read:org', 'workflow'.
+- make deploy
+
+
+## OLD
+
+
 To upload, make sure ~/.packagecloud exsts with the correct token:
 ```
 {"url":"https://packagecloud.io", "token": "packagecloud_token"}
