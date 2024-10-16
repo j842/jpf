@@ -31,7 +31,7 @@ HOMEDIR="$(myrealpath ~)"
 DIR=$(cd -P -- "$(dirname -- "$0")" && pwd -P)
 ACCTFILE="/config/jpf.credentials.json"
 SPREADSHEET=$(</config/jpf.spreadsheet)
-TEMPDIR="$HOMEDIR/.jpf_sheets_temp"
+TEMPDIR="/jpftemp"
 INPUTDIR="$TEMPDIR/input"
 
 echo -e 'HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n'
