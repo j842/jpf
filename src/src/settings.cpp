@@ -42,7 +42,7 @@ void settings::load_settings()
         if (isValid(row[0]))
             settings[row[0]] = row[1];
         else
-            TERMINATE(S() << "Unrecognised setting in settings.csv:  " << row[0]);
+            logwarning(S() << "Unrecognised setting in settings.csv:  " << row[0]);
     }
 
     mLoaded = true;
