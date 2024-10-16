@@ -44,8 +44,8 @@ echo " "
 #sudo /usr/bin/update_jpf.sh
 
 [[ ! -e ${TEMPDIR} ]] || rm -rf ${TEMPDIR}
-mkdir ${TEMPDIR}
-mkdir ${INPUTDIR}
+mkdir -p ${TEMPDIR}
+mkdir -p ${INPUTDIR}
 
 echo "<div style=\"color:grey;\">"
 gs-to-csv --service-account-credential-file "${ACCTFILE}" "${SPREADSHEET}" '.*' "${INPUTDIR}"
