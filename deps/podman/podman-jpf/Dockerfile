@@ -1,4 +1,4 @@
-FROM docker.io/library/ruby:2.4
+FROM docker.io/library/ruby
 
 RUN set -ex && \
     gem install fpm package_cloud

@@ -63,13 +63,14 @@ std::string simpledate::getStr_SafeMonth() const
 {
     using namespace boost::gregorian;
     date monthdate(mD);
-    if (monthdate.day()>15)
-    {
-        monthdate = boost::gregorian::date(monthdate.year(),monthdate.month(),1);
-        month_iterator m_itr(monthdate);
-        ++m_itr;
-        monthdate = *m_itr;
-    }
+    monthdate += boost::gregorian::days(7);
+    // if (monthdate.day()>15)
+    // {
+    //     monthdate = boost::gregorian::date(monthdate.year(),monthdate.month(),1);
+    //     month_iterator m_itr(monthdate);
+    //     ++m_itr;
+    //     monthdate = *m_itr;
+    // }
     const std::locale fmt(std::locale::classic(),
                           new boost::gregorian::date_facet("%b %Y"));    
     std::ostringstream oss;
@@ -176,6 +177,13 @@ workdate::workdate() : simpledate(gSettings().startDate())
 
 workdate::workdate(simpledate s) : simpledate(snapWorkDay_forward(s.getGregorian()))
 {
+    if (mD < gSettings().startDate().getGregorian())
+    {
+        std::string s = S() << getStr() << " is before " << gSettings().startDate().getStr();
+        logerror( S() << "Terminating due to date being before start date: " << s );
+        fatal( s );
+    }
+
     ASSERT(mD >= gSettings().startDate().getGregorian());    
     ASSERT(!isWeekend(mD));
 }
@@ -572,7 +580,6 @@ void itemdate_test::itemdate_test3()
 }
 void itemdate_test::itemdate_test4()
 {
-
 }
 void itemdate_test::itemdate_test5()
 {

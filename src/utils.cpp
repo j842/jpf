@@ -28,7 +28,7 @@ bool iSame(const std::string &s1, const std::string &s2)
 
 void _terminate(const std::string &s,const std::string &func, const std::string &file, int line)
 {
-    logdebug(
+    logerror(
         S() << "Terminating due to error:\n" << "   " << func << "\n   "<<file<<",  line "<<line
     );
 
@@ -119,6 +119,8 @@ void catch_ctrl_c()
 std::string customexec(const char* cmd) {
     std::array<char, 128> buffer;
     std::string result;
+
+    #pragma GCC diagnostic ignored "-Wignored-attributes"
     std::unique_ptr<FILE, decltype(&pclose)> pipe(popen(cmd, "r"), pclose);
     if (!pipe) {
         TERMINATE("Couldn't open pipe to external command.");
