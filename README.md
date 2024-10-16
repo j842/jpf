@@ -89,26 +89,6 @@ Builds everything as a Github Action.
 - make deploy
 
 
-## OLD
-
-
-To upload, make sure ~/.packagecloud exsts with the correct token:
-```
-{"url":"https://packagecloud.io", "token": "packagecloud_token"}
-```
-(Note this token is baked into the podman image, so do not make that image public)
-```
-make upload
-```
-
-### Make the webfsd-jpf debian package
-
-```
-make -C deps/webfsd-jpf
-make -C deps/webfsd-jpf upload
-```
-
-
 ## Project Tips
 
 - Put tasks assigned to a person in the team the person is in, not the team doing most of the project work.
@@ -116,7 +96,7 @@ make -C deps/webfsd-jpf upload
 - Team item lists should be updated on the same day and the date updated in settings.csv - e.g. once per week, or once per sprint.
 
 
-
+VER_HEADER
 ## Visual Studio Code C++
 ```
 Ctrl + Shift + P then select C/C++:Edit Configurations (JSON)
@@ -138,8 +118,8 @@ This repo contains four github actions, which should be self explanatory.
 
 ## Docker
 ```
-/jpf/includes/   <--  src/includes/
+/opt/jpf/includes/   <--  src/includes/
 
-/jpf/input       -->  ?
-/jpf/output      -->  ?
+/opt/jpf/input       -->  ?
+/opt/jpf/output      -->  ?
 ```

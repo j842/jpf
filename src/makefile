@@ -85,16 +85,7 @@ check: $(JPF_EXE)
 	rm -rf ~/.jpf_test
 	$(JPF_EXE) -t
 	$(JPF_EXE) -c ~/.jpf_test
-	$(JPF_EXE) ~/.jpf_test
-	$(JPF_EXE) -r ~/.jpf_test
-	rm -rf ~/.jpf_test
-
-# use a GitHub Action to build and upload the debian package to packagecloud on Ubuntu 20.04 (i.e. release to the world!)
-deploy:
-	@gh auth login --with-token < ~/.github_token
-	@gh workflow run Build_and_Deploy_JPF.yml
-
-
+	$(JPF_EXE) ~/.jpf_testVER_HEADER
 DATA_DIR := $(ROOT_DIR)/includes/html/_data
 .PHONY: data
 data:
