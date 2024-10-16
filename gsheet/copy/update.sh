@@ -36,6 +36,7 @@ INPUTDIR="$TEMPDIR/input"
 
 echo -e 'HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n'
 echo "<html>"
+echo '<div style="white-space: pre; font-family: monospace;">'
 
 echo "Temp Directory: [${TEMPDIR}]"
 echo "Spreadsheet Id: [${SPREADSHEET}]"
@@ -72,4 +73,5 @@ echo "</div><div style=\"color:darkgreen;\">"
 echo "All done!"
 echo "</div>"
 
+echo "</div>"
 echo "</html>"
