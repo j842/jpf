@@ -38,8 +38,11 @@ echo -e 'HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n'
 echo "<html>"
 echo '<div style="white-space: pre; font-family: monospace;">'
 
+USR="$(whoami)"
+
 echo "Temp Directory: [${TEMPDIR}]"
 echo "Spreadsheet Id: [${SPREADSHEET}]"
+echo "Running as:     [${USR}]"
 echo " "
 
 #sudo /usr/bin/update_jpf.sh
@@ -51,10 +54,12 @@ mkdir -p ${INPUTDIR}
 cp -r /example_data/template ${TEMPDIR}
 
 echo "<div style=\"color:grey;\">"
+echo "Downloading Google Sheet to CSV input files..."
 gs-to-csv --service-account-credential-file "${ACCTFILE}" "${SPREADSHEET}" '.*' "${INPUTDIR}"
 echo "</div>"
 
 echo "<div>"
+echo "Running JPF..."
 jpf --html "${TEMPDIR}" 2>&1
 
 if [ $? -ne 0 ]; then

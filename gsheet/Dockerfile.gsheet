@@ -17,6 +17,7 @@ RUN rm /etc/nginx/sites-enabled/default
 RUN mkdir /var/www/scripts
 COPY copy/update.sh /var/www/scripts/update.sh
 RUN chmod -R 755 /var/www/scripts 
+#RUN chown root /var/www/scripts/update.sh && chmod 4555 /var/www/scripts/update.sh
 RUN chmod -R 777 /var/www/html
 
 COPY copy/jpf /usr/bin/jpf
