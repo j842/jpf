@@ -93,3 +93,4 @@ check: $(JPF_EXE)
 
 clean:
 	rm -rf $(BIN_DIR)
+

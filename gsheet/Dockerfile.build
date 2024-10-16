@@ -1,0 +1,18 @@
+FROM ubuntu:24.04
+
+RUN echo 'APT::Install-Suggests "0";' >> /etc/apt/apt.conf.d/00-docker
+RUN echo 'APT::Install-Recommends "0";' >> /etc/apt/apt.conf.d/00-docker
+
+RUN apt-get -y update && \
+    apt-get install -y build-essential libboost-date-time-dev libcppunit-dev ruby-full zlib1g-dev && \
+    rm -rf /var/lib/apt/lists/*
+
+RUN echo '# Install Ruby Gems to ~/gems' >> ~/.bashrc
+RUN echo 'export GEM_HOME="$HOME/gems"' >> ~/.bashrc
+RUN echo 'export PATH="$HOME/gems/bin:$PATH"' >> ~/.bashrc
+RUN MAKE="make -j $(nproc)" gem install jekyll bundler --no-document
+
+COPY copy/docker-entrypoint-build.sh /docker-entrypoint.sh
+RUN chmod +x /docker-entrypoint.sh
+ENTRYPOINT ["/docker-entrypoint.sh"]
+
