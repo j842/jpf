@@ -85,8 +85,10 @@ check: $(JPF_EXE)
 	rm -rf ~/.jpf_test
 	$(JPF_EXE) -t
 	$(JPF_EXE) -c ~/.jpf_test
-	$(JPF_EXE) ~/.jpf_testVER_HEADER
+	$(JPF_EXE) ~/.jpf_test
+
 DATA_DIR := $(ROOT_DIR)/includes/html/_data
+
 .PHONY: data
 data:
 	rm -rf ~/.jpf_test

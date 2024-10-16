@@ -292,7 +292,7 @@ const std::string getExePath()
 
 const std::string getInputPath_Jekyll()
 {
-    std::string opt_debug = makecanonicalslash(getExePath() + "../includes/dpkg_include/opt/jpf/html/"); // go up from build directory.
+    std::string opt_debug = makecanonicalslash(getExePath() + "../../data/template/"); // go up from build directory.
     std::string opt_local = getLocalTemplatePath();
     std::string opt_system = "/opt/jpf/html/";
 
