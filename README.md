@@ -3,7 +3,7 @@
 John's Project Forecaster
 
 - Auto schedules *REMAINING* work for projects, from date specified in settings.csv
-- Does nothing for historical work or review.
+- Does nothing for historical work or review - this data is not kept in any way.
 - Constraints are:
    - resources (people) availability; can have multiple on a task (will finish as quickly as it can)
    - blocking resources will prevent a task starting until they are avaialable.
@@ -17,11 +17,8 @@ John's Project Forecaster
 
 ## Running jpf
 
-### Manually
-
-`jpf .`
-
-Files are written to the output/ folder.
+- Copy the example data to wherever you want to store your project data.
+- Run jpf on this directory.
 
 ## Related Software
 
@@ -35,13 +32,7 @@ https://www.ganttproject.biz/
 
 ## Your own graphs/themes
 
-You can modify the Jekyll templates to create your own look and feel for the HTML files generated, or to add new graphs or representations of the scheduled work. From your jpf project directory:
-
-```
-cp /opt/jpf/html ./template
-```
-
-Then edit the files in `template/`.
+You can modify the Jekyll templates to create your own look and feel for the HTML files generated, or to add new graphs or representations of the scheduled work. They are in the template folder.
 
 ## Development Setup (Compiling jpf from source)
 
@@ -62,32 +53,11 @@ git clone https://github.com/j842/jpf.git
 cd jpf
 ```
 
-Then compile jpf itself:
+Then compile jpf itself and test it:
 ```
 make
+make check
 ```
-And test:
-
-```
-./jpf -t
-./jpf .
-./jpf -w .
-```
-
-## Make the jpf debian package
-```
-make deb
-```
-
-
-## Deploy
-
-Builds everything as a Github Action.
-
-- add github token to `~/.github_token`
-- The minimum required scopes are 'repo', 'read:org', 'workflow'.
-- make deploy
-
 
 ## Project Tips
 
@@ -95,8 +65,6 @@ Builds everything as a Github Action.
 - The order of items in the team list is the items priority. This should be in line with the overall project priorities (but is not enforced).
 - Team item lists should be updated on the same day and the date updated in settings.csv - e.g. once per week, or once per sprint.
 
-
-VER_HEADER
 ## Visual Studio Code C++
 ```
 Ctrl + Shift + P then select C/C++:Edit Configurations (JSON)
@@ -114,12 +82,4 @@ https://clay-atlas.com/us/blog/2021/08/31/windows-en-wsl-2-memory/
 
 ## Github Actions
 
-This repo contains four github actions, which should be self explanatory.
-
-## Docker
-```
-/opt/jpf/includes/   <--  src/includes/
-
-/opt/jpf/input       -->  ?
-/opt/jpf/output      -->  ?
-```
+This repo contains four github actions in `.github/workflows`, which should be self explanatory.
