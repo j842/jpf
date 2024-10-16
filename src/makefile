@@ -26,7 +26,7 @@ LDFLAGS  := -g
 LDLIBS   := -l:libboost_date_time.a -l:libcppunit.a
 #DEPFLAGS = -MT $@ -MD -MP -MF $(DEP_DIR)/$*.Td
 
-VER_HEADER=src/version.h
+VER_HEADER=$(SRC_DIR)/version.h
 
 # Find all the C and C++ files we want to compile
 # Note the single quotes around the * expressions. Make will incorrectly expand these otherwise.
@@ -70,7 +70,8 @@ $(VER_HEADER): versions.makefile
 	@printf "%b" "$(CRE_COLOR)Creating  $(OBJ_COLOR)$(@)$(NO_COLOR)\n";
 	@echo "#define __JPF_VERSION \"${JPF_VERSION}\"" > $@
 	@echo "#define __JPF_RELEASE \"${JPF_RELEASE}\"" >> $@
-	@echo "#define __INPUT_VERSION (${INPUT_VERSION})" >> $@BUILD_DIR
+	@echo "#define __INPUT_VERSION (${INPUT_VERSION})" >> $@
+
 SHOWVER:
 	@printf "%b" "\n$(VER_COLOR)Building $(JPF_FULL_VER)$(NO_COLOR)\n";
 
@@ -103,4 +104,6 @@ data:
 	rm $(DATA_DIR)/*
 	cp ~/.jpf_test/output/.jekyll/_data/* $(DATA_DIR)
 	rm -rf ~/.jpf_test
-	
+
+clean:
+	rm -rf $(BIN_DIR)
