@@ -30,10 +30,7 @@ class cMain
         int run_watch();
         int run_refresh();
         int run_advance(std::string s);
-        int run_create_directories();
         int showhelp();
-
-        int getrVal() const;
 
     private:
        void replace_settings_CSV();

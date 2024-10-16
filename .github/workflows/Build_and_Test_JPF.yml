@@ -21,7 +21,7 @@ jobs:
     - name: Install Jekyll
       run: gem install jekyll bundler --no-document
     - name: make
-      run: src/make
+      run: make -C src
     - name: make check
-      run: src/make check
+      run: make -C src check
 

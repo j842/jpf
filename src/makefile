@@ -82,9 +82,10 @@ SHOWVER:
 
 # run tests
 check: $(JPF_EXE)
-	rm -rf ~/.jpf_test
 	$(JPF_EXE) -t
-	$(JPF_EXE) -c ~/.jpf_test
+	rm -rf ~/.jpf_test
+	mkdir ~/.jpf_test
+	cp -r $(ROOT_DIR)/../example_data/* ~/.jpf_test
 	$(JPF_EXE) ~/.jpf_test
 
 DATA_DIR := $(ROOT_DIR)/includes/html/_data
@@ -92,7 +93,8 @@ DATA_DIR := $(ROOT_DIR)/includes/html/_data
 .PHONY: data
 data:
 	rm -rf ~/.jpf_test
-	$(JPF_EXE) -c ~/.jpf_test
+	mkdir ~/.jpf_test
+	cp -r $(ROOT_DIR)/../example_data/* ~/.jpf_test
 	$(JPF_EXE) ~/.jpf_test
 	rm $(DATA_DIR)/*
 	cp ~/.jpf_test/output/.jekyll/_data/* $(DATA_DIR)

@@ -158,19 +158,6 @@ int cMain::run_watch()
     return lastRunVal;
 }
 
-int cMain::run_create_directories()
-{
-    std::string pr = gSettings().getRoot();
-    std::string pi = getInputPath();
-
-    checkcreatedirectory(pr);
-    checkcreatedirectory(pi);
-
-
-
-    return 0;
-}
-
 bool cMain::runtests()
 {
     gSettings().setMinLogLevel(kLDEBUG);
@@ -243,9 +230,6 @@ int cMain::showhelp()
   Mode:
       -w, -watch      Watch the folder for changes, and update all output files as needed.
 
-      -c, -create     Create a skeleton working tree in the current directory, 
-                      with example input files. 
-      
       -h, -html       Output as HTML rather than Console format.
 
       -r, -refresh    Refresh the input files (read, tidy, write).
@@ -320,10 +304,6 @@ int cMain::go(cArgs args)
 
         if (args.hasOpt({"h", "html"}))
             gSettings().setOutputModeHTML(true);
-
-        // -c option needs root directory, but not loading settings!
-        if (args.hasOpt({"c", "create"}))
-            return run_create_directories();
 
         if (!gSettings().RootExists())
             TERMINATE("Root directory " + gSettings().getRoot() + " does not exist.");
