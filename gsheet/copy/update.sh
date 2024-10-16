@@ -34,6 +34,9 @@ SPREADSHEET=$(</config/jpf.spreadsheet)
 TEMPDIR="$HOMEDIR/.jpf_sheets_temp"
 INPUTDIR="$TEMPDIR/input"
 
+echo -e 'HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n'
+echo "<html>"
+
 echo "Temp Directory: [${TEMPDIR}]"
 echo "Spreadsheet Id: [${SPREADSHEET}]"
 echo " "
@@ -69,3 +72,4 @@ echo "</div><div style=\"color:darkgreen;\">"
 echo "All done!"
 echo "</div>"
 
+echo "</html>"
