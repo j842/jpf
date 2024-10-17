@@ -14,6 +14,11 @@ RUN echo 'export GEM_HOME="$HOME/gems"' >> ~/.bashrc
 RUN echo 'export PATH="$HOME/gems/bin:$PATH"' >> ~/.bashrc
 RUN MAKE="make -j $(nproc)" gem install jekyll bundler --no-document
 
+COPY copy/sockexec /usr/bin/sockexec
+RUN chmod 755 /usr/bin/sockexec
+
+RUN luarocks install lua-resty-exec
+
 COPY copy/nginx-jpf.conf /etc/nginx/sites-available/nginx-jpf.conf
 RUN ln -s /etc/nginx/sites-available/nginx-jpf.conf /etc/nginx/sites-enabled/ 
 RUN rm /etc/nginx/sites-enabled/default
