@@ -10,11 +10,6 @@ function fatal()
     exit -1
 }
 
-flush() {
-    padding=4100
-    dd if=/dev/zero bs=$padding count=1 2>/dev/null
-}
-
 ACCTFILE="/config/jpf.credentials.json"
 SPREADSHEET=$(</config/jpf.spreadsheet)
 TEMPDIR="/jpftemp"
@@ -55,14 +50,10 @@ cp -r /example_data/template ${TEMPDIR}
 echo "<div style=\"color:grey;\">"
 echo "Downloading Google Sheet to CSV input files..."
 
-flush
-
 /root/.local/bin/gs-to-csv --service-account-credential-file "${ACCTFILE}" "${SPREADSHEET}" '.*' "${INPUTDIR}"
 echo "</div>"
 echo "<div>"
 echo "Running JPF..."
-
-flush
 
 jpf --html "${TEMPDIR}" 2>&1
 
@@ -76,8 +67,6 @@ echo "</div>"
 echo "<div>"
 echo "Copying folders..."
 
-flush
-
 rm -rf "/var/www/html/*"
 cp -r "${TEMPDIR}/output/html" "/var/www"
 
@@ -88,5 +77,3 @@ echo "</div>"
 
 echo "</div>"
 echo "</html>"
-
-flush
