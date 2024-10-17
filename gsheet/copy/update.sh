@@ -16,10 +16,6 @@ TEMPDIR="/jpftemp"
 INPUTDIR="$TEMPDIR/input"
 
 cat << ~~~
-HTTP/1.1 200 OK
-Content-Type: text/html
-Cache-Control: no-cache
-X-Accel-Buffering: no
 <html>
 <div style="white-space: pre; font-family: monospace;">
 
