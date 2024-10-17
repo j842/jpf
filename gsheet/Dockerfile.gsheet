@@ -4,7 +4,7 @@ RUN echo 'APT::Install-Suggests "0";' >> /etc/apt/apt.conf.d/00-docker
 RUN echo 'APT::Install-Recommends "0";' >> /etc/apt/apt.conf.d/00-docker
 
 RUN apt-get -y update && \
-    apt-get install -y python3 python3-pip nodejs nginx fcgiwrap spawn-fcgi pipx sudo ruby-full build-essential && \
+    apt-get install -y python3 python3-pip nodejs nginx pipx sudo ruby-full build-essential libnginx-mod-http-lua luarocks && \
     rm -rf /var/lib/apt/lists/*
 RUN pipx ensurepath
 RUN pipx install google-sheets-to-csv
@@ -19,8 +19,7 @@ RUN ln -s /etc/nginx/sites-available/nginx-jpf.conf /etc/nginx/sites-enabled/
 RUN rm /etc/nginx/sites-enabled/default
 
 RUN mkdir /var/www/scripts
-COPY copy/update.sh /var/www/scripts/update.sh
-COPY copy/update /var/www/scripts/update
+COPY copy/update.sh copy/update /var/www/scripts/
 RUN chmod -R 755 /var/www/scripts 
 #RUN chmod 4555 /root/.local/share/pipx/venvs/google-sheets-to-csv/bin/gs-to-csv
 
