@@ -1,21 +1,5 @@
 #!/bin/bash
 
-function myrealpath()
-{
-    f=$@
-    if [ -d "$f" ]; then
-        base=""
-        dir="$f"
-    else
-        base="/$(basename "$f")"
-        dir=$(dirname "$f")
-    fi
-    if [ -e "$dir" ]; then
-        dir=$(cd "$dir" && /bin/pwd)
-    fi
-    echo "$dir$base"
-}
-
 function fatal()
 {
     msg=$@
@@ -26,9 +10,6 @@ function fatal()
     exit -1
 }
 
-HOMEDIR="$(myrealpath ~)"
-
-DIR=$(cd -P -- "$(dirname -- "$0")" && pwd -P)
 ACCTFILE="/config/jpf.credentials.json"
 SPREADSHEET=$(</config/jpf.spreadsheet)
 TEMPDIR="/jpftemp"
@@ -45,6 +26,13 @@ echo "Spreadsheet Id: [${SPREADSHEET}]"
 echo "Running as:     [${USR}]"
 echo " "
 
+
+if [ "$(id -u)" -ne 0 ]; then
+        echo 'This script must be run by root' >&2
+        exit 1
+fi
+
+
 #sudo /usr/bin/update_jpf.sh
 
 [[ ! -e ${TEMPDIR} ]] || rm -rf ${TEMPDIR}
@@ -55,7 +43,7 @@ cp -r /example_data/template ${TEMPDIR}
 
 echo "<div style=\"color:grey;\">"
 echo "Downloading Google Sheet to CSV input files..."
-gs-to-csv --service-account-credential-file "${ACCTFILE}" "${SPREADSHEET}" '.*' "${INPUTDIR}"
+/root/.local/bin/gs-to-csv --service-account-credential-file "${ACCTFILE}" "${SPREADSHEET}" '.*' "${INPUTDIR}"
 echo "</div>"
 
 echo "<div>"
