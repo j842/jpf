@@ -80,7 +80,7 @@ SHOWVER:
 # errors to show up.
 -include $(DEPS)
 
-EXDATA_DIR=$(ROOT_DIR)/../example_data
+EXDATA_DIR=$(ROOT_DIR)/../website
 
 # run tests
 check: $(JPF_EXE)

@@ -292,10 +292,6 @@ const std::string getExePath()
 
 const std::string getInputPath_Jekyll()
 {
-    // std::string opt_debug = makecanonicalslash(getExePath() + "../../example_data/template/"); // go up from build directory.
-    // if (std::filesystem::exists(opt_debug))
-    //     return opt_debug;
-
     std::string opt_local = getLocalTemplatePath();
     if (std::filesystem::exists(opt_local))
         return opt_local;

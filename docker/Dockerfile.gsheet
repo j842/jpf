@@ -30,8 +30,8 @@ RUN  mkdir /config && chmod 755 /config && \
      chmod -R 777 /var/www/html && \
      chmod 777 /tmp
 
-COPY --chmod=755 copy/jpf /usr/bin/jpf
-COPY --chmod=755 copy/example_data /example_data
+COPY --chmod=755 copy/temp/jpf /usr/bin/jpf
+COPY --chmod=755 copy/temp/website /website
 
 EXPOSE 80
 

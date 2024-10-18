@@ -25,7 +25,7 @@ ngx.say('<hr/>')
 ngx.say('Copying Jekyll Template...')
 ngx.flush(true)
 prog('mkdir','-p','/jpftemp/input')
-prog('cp','-r','/example_data/template','/jpftemp')
+prog('cp','-r','/website/template','/jpftemp')
 
 -------------------------------------------------------------------------------
 
