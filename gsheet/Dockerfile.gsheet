@@ -14,29 +14,24 @@ RUN echo 'export GEM_HOME="$HOME/gems"' >> ~/.bashrc
 RUN echo 'export PATH="$HOME/gems/bin:$PATH"' >> ~/.bashrc
 RUN MAKE="make -j $(nproc)" gem install jekyll bundler --no-document
 
-COPY copy/sockexec /usr/bin/sockexec
-RUN chmod 755 /usr/bin/sockexec
-RUN chmod 777 /tmp
-
 RUN luarocks install lua-resty-exec
+
+COPY --chown=755 copy/sockexec /usr/bin/sockexec
 
 COPY copy/nginx-jpf.conf /etc/nginx/sites-available/nginx-jpf.conf
 RUN ln -s /etc/nginx/sites-available/nginx-jpf.conf /etc/nginx/sites-enabled/ 
 RUN rm /etc/nginx/sites-enabled/default
 
 RUN mkdir /lua
-COPY copy/update.lua /lua
-RUN chmod -R 755 /lua
+COPY --chmod=755 copy/update.lua /lua
 
-RUN chmod -R 777 /var/www/html
+RUN  mkdir /config && chmod 755 /config && \
+     mkdir /jpftemp && chmod 777 /jpftemp && \
+     chmod -R 777 /var/www/html && \
+     chmod 777 /tmp
 
-COPY copy/jpf /usr/bin/jpf
-RUN chmod 755 /usr/bin/jpf
-
-COPY copy/example_data /example_data
-RUN chmod 755 /example_data
-
-RUN mkdir /config && chmod 755 /config && mkdir /jpftemp && chmod 777 /jpftemp
+COPY --chmod=755 copy/jpf /usr/bin/jpf
+COPY --chmod=755 copy/example_data /example_data
 
 EXPOSE 80
 

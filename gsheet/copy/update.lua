@@ -17,15 +17,17 @@ function readAll(file)
     return content:gsub("%s+", "")
 end
 
--- prog('unbuffer','sudo','/var/www/scripts/update.sh')
-
 ngx.say('<html><div style="white-space: pre; font-family: monospace;">')
+
+-------------------------------------------------------------------------------
 
 ngx.say('<hr/>')
 ngx.say('Copying Jekyll Template...')
 ngx.flush(true)
 prog('mkdir','-p','/jpftemp/input')
 prog('cp','-r','/example_data/template','/jpftemp')
+
+-------------------------------------------------------------------------------
 
 ngx.say('<hr/>')
 ngx.say('<div style="color:grey;">')
@@ -37,16 +39,21 @@ ngx.flush(true)
 prog('/root/.local/bin/gs-to-csv','-f','--service-account-credential-file','/config/jpf.credentials.json',spreadsheet,'.*','/jpftemp/input')
 ngx.say('</div>')
 
+-------------------------------------------------------------------------------
+
 ngx.say('<hr/>')
 ngx.say('Running jpf...')
 ngx.flush(true)
 prog('jpf','--html','/jpftemp')
+
+-------------------------------------------------------------------------------
 
 ngx.say('<hr/>')
 ngx.say('Copying Output...')
 ngx.flush(true)
 prog('cp','-r','/jpftemp/output/html','/var/www')
 
+-------------------------------------------------------------------------------
 
 ngx.say('<p>Done!</p>')
 ngx.say('</div></html>')
