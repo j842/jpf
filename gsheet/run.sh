@@ -2,8 +2,8 @@
 
 echo "--- Stopping JPF"
 name="jpf"
-docker ps -q --filter "name=$name" | xargs -r docker stop
-until [ -n '$(docker ps -q --filter "name=$name")' ]
+docker ps -a -q --filter "name=$name" | xargs -r docker stop
+until [ -n '$(docker ps -a -q --filter "name=$name")' ]
 do
     echo "Container still exists... waiting..."
     sleep 0.5
