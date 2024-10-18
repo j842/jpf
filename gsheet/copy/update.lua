@@ -5,6 +5,10 @@ prog.stdout = function(v)
     ngx.print(v)
     ngx.flush(true)
 end
+prog.stderr = function(v)
+    ngx.print(v)
+    ngx.flush(true)
+end
 
 function readAll(file)
     local f = assert(io.open(file, "rb"))
