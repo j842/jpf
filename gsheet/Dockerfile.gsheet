@@ -16,6 +16,7 @@ RUN MAKE="make -j $(nproc)" gem install jekyll bundler --no-document
 
 COPY copy/sockexec /usr/bin/sockexec
 RUN chmod 755 /usr/bin/sockexec
+RUN chmod 777 /tmp
 
 RUN luarocks install lua-resty-exec
 
@@ -23,17 +24,9 @@ COPY copy/nginx-jpf.conf /etc/nginx/sites-available/nginx-jpf.conf
 RUN ln -s /etc/nginx/sites-available/nginx-jpf.conf /etc/nginx/sites-enabled/ 
 RUN rm /etc/nginx/sites-enabled/default
 
-#RUN mkdir /var/www/scripts
-#COPY copy/update.sh copy/update /var/www/scripts/
-#RUN chmod -R 755 /var/www/scripts 
-#RUN chmod 4555 /root/.local/share/pipx/venvs/google-sheets-to-csv/bin/gs-to-csv
-
 RUN mkdir /lua
 COPY copy/update.lua /lua
 RUN chmod -R 755 /lua
-
-RUN echo 'www-data ALL=(ALL) !ALL'
-RUN echo 'www-data ALL=NOPASSWD: /var/www/scripts/update.sh' >> /etc/sudoers
 
 RUN chmod -R 777 /var/www/html
 

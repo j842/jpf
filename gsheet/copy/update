@@ -1,5 +1,0 @@
-#!/bin/bash
-SCRIPTDIR=$( dirname "$(readlink -f "$0")" )
-
-unbuffer sudo ${SCRIPTDIR}/update.sh
-
