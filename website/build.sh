@@ -1,10 +1,12 @@
 #!/bin/bash
 SCRIPTDIR=$( dirname "$(readlink -f "$0")" )
 
-if ! command -v jokyl 2>&1 >/dev/null
+if ! command -v jekyll 2>&1 >/dev/null
 then
     cat << EOF
-Could not find Jekyll in the current path.
+------------------------------------------------------------------
+------------------------------------------------------------------
+ERROR: Could not find Jekyll in the current path.
 
 To install:
 echo '# Install Ruby Gems to ~/gems' >> ~/.bashrc
@@ -16,9 +18,21 @@ MAKE="make -j $(nproc)" gem install jekyll bundler --no-document
 See:
    https://jekyllrb.com/docs/installation/ubuntu/
 
-    EOF
+------------------------------------------------------------------
+EOF
     exit 1
 fi
 
-rf -rf ${SCRIPTDDIR}/output && mkdir ${SCRIPTIDR}/output
-cd ${SCRIPTDIR} ; jekyll b
+JEKYLLDIR="${SCRIPTDIR}/output/.jekyll"
+TARGETDIR="${SCRIPTDIR}/output"
+echo "Jekyll temporary output: ${JEKYLLDIR}"
+
+rm -rf ${TARGETDIR}
+mkdir -p ${JEKYLLDIR}
+
+cp -r ${SCRIPTDIR}/template/* ${JEKYLLDIR}
+
+cd ${JEKYLLDIR} ; jekyll b
+
+mv ${JEKYLLDIR}/_site ${TARGETDIR}/html
+# "${TARGETDIR}/_site" "${TARGETDIR}/html"
