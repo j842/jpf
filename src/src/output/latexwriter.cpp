@@ -12,9 +12,10 @@ LatexWriter::LatexWriter() : mBaseName("report")
 void LatexWriter::createPDFReport(const scheduler::scheduler &s) const
 {
     recreate_Directory( getOutputPath_PDF() );
+    runLatex();
 }
 
-void LatexWriter::runLatex()
+void LatexWriter::runLatex() const
 {
     timer tmr;
     loginfo("Running PDFLatex build to " + getOutputPath_PDF());
