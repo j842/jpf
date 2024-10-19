@@ -71,7 +71,7 @@ int cMain::run_refresh()
             s.createAllOutputFiles();
 
             HTMLCSVWriter hcw;
-            hcw.createHTMLFolder(s);
+            hcw.createCSVandWebsite(s);
 
             s.displayprojects_Console();
         }
@@ -98,7 +98,7 @@ int cMain::run_console()
         s.createAllOutputFiles();
 
         HTMLCSVWriter hcw;
-        hcw.createHTMLFolder(s);
+        hcw.createCSVandWebsite(s);
 
         if (!gSettings().getOutputModeHTML())
             s.displayprojects_Console();
@@ -131,7 +131,7 @@ int cMain::run_watch()
             s.createAllOutputFiles();
 
             HTMLCSVWriter hcw;
-            hcw.createHTMLFolder(s);
+            hcw.createCSVandWebsite(s);
 
             logdebug(S() << "File output done in " << std::setprecision(3) << tmr.stop() << "ms.");
             lastRunVal = 0;

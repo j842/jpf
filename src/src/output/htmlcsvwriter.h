@@ -20,7 +20,7 @@ class HTMLCSVWriter
 {
     public:
         HTMLCSVWriter();
-        void createHTMLFolder(const scheduler::scheduler & s) const;
+        void createCSVandWebsite(const scheduler::scheduler & s) const;
 
     private:
         void CopyHTMLFolder() const;

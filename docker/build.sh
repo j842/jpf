@@ -11,7 +11,7 @@ echo "------------------------------------------------------------------"
 echo "                    BUILDING build image"
 echo "------------------------------------------------------------------"
 
-docker build -f Dockerfile.build ${SCRIPTDIR} -t j842/jpfbuild
+docker build -f Dockerfile.jpfbuild ${SCRIPTDIR} -t j842/jpfbuild
 
 echo "------------------------------------------------------------------"
 echo "                    COMPILING jpf ${JPF_VERSION}"
@@ -29,6 +29,6 @@ echo "------------------------------------------------------------------"
 echo "                    BUILDING jpf image ${JPF_VERSION}"
 echo "------------------------------------------------------------------"
 
-docker build -f Dockerfile.gsheet ${SCRIPTDIR} -t j842/jpf:latest -t "j842/jpf:${JPF_VERSION}"
+docker build -f Dockerfile.jpf ${SCRIPTDIR} -t j842/jpf:latest -t "j842/jpf:${JPF_VERSION}"
 
 rm -rf "${SCRIPTDIR}/copy/temp"

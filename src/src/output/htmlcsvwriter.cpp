@@ -35,7 +35,7 @@ void HTMLCSVWriter::recreate_Directory(std::string path) const
     logdebug(S() << "Created directory: " << path);
 }
 
-void HTMLCSVWriter::createHTMLFolder(const scheduler::scheduler &s) const
+void HTMLCSVWriter::createCSVandWebsite(const scheduler::scheduler &s) const
 {
     recreate_Directory(getOutputPath_Html());
     recreate_Directory(getOutputPath_Jekyll());

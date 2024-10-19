@@ -161,11 +161,10 @@ namespace scheduler
         unsigned int getPersonIndexFromName(const std::string name) const;
 
         // HTML helper routines.
-
-        void Graph_Project_Cost(std::ostream &ofs) const;
-        void Graph_Person_Project_Cost(std::ostream &ofs, tNdx personNdx) const;
-        void Graph_Total_Project_Cost(std::ostream &ofs) const;
-        void Graph_BAU(std::ostream &ofs) const;
+        // void Graph_Project_Cost(std::ostream &ofs) const;
+        // void Graph_Person_Project_Cost(std::ostream &ofs, tNdx personNdx) const;
+        // void Graph_Total_Project_Cost(std::ostream &ofs) const;
+        // void Graph_BAU(std::ostream &ofs) const;
 
         static std::string __protect(std::string s); // remove half quotes.
         static void writelist(std::ostream &oss, const std::vector<std::string> &v);
