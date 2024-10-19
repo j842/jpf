@@ -26,15 +26,6 @@ HTMLCSVWriter::HTMLCSVWriter()
 {
 }
 
-void HTMLCSVWriter::recreate_Directory(std::string path) const
-{
-    if (std::filesystem::exists(path))
-        std::filesystem::remove_all(path);
-    if (!std::filesystem::create_directory(path))
-        TERMINATE(S() << "Could not create directory: " << path);
-    logdebug(S() << "Created directory: " << path);
-}
-
 void HTMLCSVWriter::createCSVandWebsite(const scheduler::scheduler &s) const
 {
     recreate_Directory(getOutputPath_Html());

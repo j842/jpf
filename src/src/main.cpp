@@ -19,6 +19,7 @@
 #include "simplecsv.h"
 #include "colours.h"
 #include "htmlcsvwriter.h"
+#include "latexwriter.h"
 #include "args.h"
 
 // --------------------------------------------------------------------
@@ -73,6 +74,9 @@ int cMain::run_refresh()
             HTMLCSVWriter hcw;
             hcw.createCSVandWebsite(s);
 
+            LatexWriter lw;
+            lw.createPDFReport(s);
+
             s.displayprojects_Console();
         }
     }
@@ -99,6 +103,9 @@ int cMain::run_console()
 
         HTMLCSVWriter hcw;
         hcw.createCSVandWebsite(s);
+
+        LatexWriter lw;
+        lw.createPDFReport(s);
 
         if (!gSettings().getOutputModeHTML())
             s.displayprojects_Console();
@@ -132,6 +139,9 @@ int cMain::run_watch()
 
             HTMLCSVWriter hcw;
             hcw.createCSVandWebsite(s);
+
+            LatexWriter lw;
+            lw.createPDFReport(s);
 
             logdebug(S() << "File output done in " << std::setprecision(3) << tmr.stop() << "ms.");
             lastRunVal = 0;

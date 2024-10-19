@@ -116,12 +116,12 @@ class monthIndex
         unsigned long mN;
 };
 
-// simple class for coordinate transformation from calendar date (local timezone) to number of working days from today.
+// simple class for coordinate transformation from calendar date (local timezone) to number of working days from start date.
 // can only hold dates that are workdays (not weekends).
 class workdate : public simpledate
 {
     public:
-        workdate();                     // set the date as today.
+        workdate();                     // set the date as start date from settings.
         workdate(simpledate s);
         workdate(std::string datestr);  // set the date based on a dd/mm/yy string.
         workdate(const workdate &obj);  // copy ctor

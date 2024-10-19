@@ -297,7 +297,7 @@ unsigned long workdate::Date2WorkDays(simpledate d0)
     return countWorkDays(gSettings().startDate(), d0);
 }
 
-// convert back to the correct workday, mDay days from today (next workday from today is day 0).
+// convert back to the correct workday, mDay days from start date (next workday from start date is day 0).
 simpledate workdate::WorkDays2Date(unsigned long ndays)
 {
     boost::gregorian::date d0 = gSettings().startDate().getGregorian();

@@ -60,9 +60,6 @@ class HTMLCSVWriter
             const std::vector<scheduler::tProjectInfo> &ProjectInfo
             ) const;
 
-        void recreate_Directory(std::string path) const;
-
-
         void run_jekyll() const;
 
         unsigned long get_maxmonth(const scheduler::scheduler & s) const;
@@ -71,6 +68,9 @@ class HTMLCSVWriter
         void write_task_tag_file(const scheduler::scheduler &s, const std::string tag) const;
         void write_project_tag_file(const scheduler::scheduler &s, const std::string tag) const;
 };
+
+void recreate_Directory(std::string path);
+
 
 
 #endif

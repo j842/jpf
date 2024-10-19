@@ -150,4 +150,7 @@ void replace(std::string & s,  const std::map<std::string,std::string> & replace
 std::string replacestring(std::string subject, const std::string &search, const std::string &replace);
 std::string makecanonicalslash(const std::string & s);
 
+void recreate_Directory(std::string path);
+
+
 #endif

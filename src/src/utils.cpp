@@ -366,3 +366,13 @@ std::string makecanonicalslash(const std::string &s)
         ss.push_back('/');
     return ss;
 }
+
+void recreate_Directory(std::string path) 
+{
+    if (std::filesystem::exists(path))
+        std::filesystem::remove_all(path);
+    if (!std::filesystem::create_directory(path))
+        TERMINATE(S() << "Could not create directory: " << path);
+    logdebug(S() << "Created directory: " << path);
+}
+
