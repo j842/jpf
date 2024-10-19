@@ -77,9 +77,10 @@ ofs << gSettings().startDate().getStr();
 
 ofs <<
 R"END(
-\end{longtblr}
 \end{document}
 )END";
+
+    ofs.close();
 
 }
 
@@ -126,6 +127,4 @@ void LatexWriter::endtable(std::ofstream &ofs) const
 R"END(
 \end{longtblr}
 )END";
-
-    ofs.close();
 }
