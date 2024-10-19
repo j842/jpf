@@ -5,14 +5,13 @@ John's Project Forecaster
 - Auto schedules *REMAINING* work for projects, from date specified in settings.csv
 - Does nothing for historical work or review - this data is not kept in any way.
 - Constraints are:
-   - resources (people) availability; can have multiple on a task (will finish as quickly as it can)
-   - blocking resources will prevent a task starting until they are avaialable.
-   - contributing resources will help if they are free, but are not essential to start.
-   - number of dev days per task total (at full capacity),
-   - minimum calendar days to complete a task,
-   - multiple cross-team dependencies on other tasks,
-   - available capacity per person (max availability specified in teams.csv, based on BAU workload),
-   - specified holiday periods
+   - resources (people) availability; can have multiple on a task (will finish as quickly as it can).
+   - blocking resources will prevent a task starting until they are available.
+   - contributing resources will help if they are free, but are not essential to progress the task.
+   - minimum calendar days to complete a task.
+   - any cross-team dependencies on other tasks.
+   - available capacity per person (max availability specified in teams.csv, based on BAU workload).
+   - specified holiday periods.
 
 
 ## Running jpf
@@ -32,7 +31,11 @@ https://www.ganttproject.biz/
 
 ## Your own graphs/themes
 
-You can modify the Jekyll templates to create your own look and feel for the HTML files generated, or to add new graphs or representations of the scheduled work. They are in the template folder.
+You can modify the Jekyll templates to create your own look and feel for the HTML files generated, or to add new graphs or representations of the scheduled work.
+
+In the `website` folder, all the Jekyll (liquid) files are in `template`. There is example data in `input`, and you can 
+build the website using Jekyll with the `build.sh` script.
+
 
 ## Development Setup (Compiling jpf from source)
 
