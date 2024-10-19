@@ -10,5 +10,5 @@ function showvar {
 JPF_VERSION="$(showvar JPF_VERSION)-$(showvar JPF_RELEASE)"
 
 
-docker push j842/jpf:latest
 docker push "j842/jpf:${JPF_VERSION}"
+docker push j842/jpf:latest
