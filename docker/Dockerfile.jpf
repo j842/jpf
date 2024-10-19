@@ -4,10 +4,18 @@ RUN echo 'APT::Install-Suggests "0";' >> /etc/apt/apt.conf.d/00-docker
 RUN echo 'APT::Install-Recommends "0";' >> /etc/apt/apt.conf.d/00-docker
 
 RUN apt-get -y update && \
-    apt-get install -y python3 python3-pip nodejs nginx pipx sudo ruby-full \
-            build-essential libnginx-mod-http-lua luarocks expect \
-            texlive-latex-base texlive-latex-extra && \
+    apt-get install -y wget gnupg ca-certificates
+
+RUN wget -O - https://openresty.org/package/pubkey.gpg | gpg --dearmor -o /usr/share/keyrings/openresty.gpg
+RUN echo "deb [arch=amd64 signed-by=/usr/share/keyrings/openresty.gpg] http://openresty.org/package/ubuntu noble main" | tee /etc/apt/sources.list.d/openresty.list > /dev/null
+
+RUN apt-get -y update && \
+    apt-get install -y python3 python3-pip nodejs pipx sudo ruby-full \
+            build-essential expect \
+            texlive-latex-base texlive-latex-extra \
+            openresty openresty-resty luarocks && \
     rm -rf /var/lib/apt/lists/*
+
 RUN pipx ensurepath
 RUN pipx install google-sheets-to-csv
 
@@ -20,22 +28,20 @@ RUN luarocks install lua-resty-exec
 
 COPY --chown=755 copy/sockexec /usr/bin/sockexec
 
-COPY copy/nginx-jpf.conf /etc/nginx/sites-available/nginx-jpf.conf
-RUN ln -s /etc/nginx/sites-available/nginx-jpf.conf /etc/nginx/sites-enabled/ 
-RUN rm /etc/nginx/sites-enabled/default
+COPY copy/nginx-jpf.conf /usr/local/openresty/nginx/conf/nginx.conf
+#RUN ln -s /etc/nginx/sites-available/nginx-jpf.conf /etc/nginx/sites-enabled/ 
+#RUN rm /etc/nginx/sites-enabled/default
 
 RUN mkdir /lua
 COPY --chmod=755 copy/update.lua /lua
 
 RUN  mkdir /config && chmod 755 /config && \
      mkdir /jpftemp && chmod 777 /jpftemp && \
-     chmod -R 777 /var/www/html && \
+     mkdir -p /var/www && chmod -R 777 /var/www && \
      chmod 777 /tmp
 
 COPY --chmod=755 copy/temp/jpf /usr/bin/jpf
 COPY --chmod=755 copy/temp/website /website
-COPY --chmod=644 --chown=www-data:www-data /copy/index_default.html /var/www/output/html/index_default.html
-RUN rm -rf /var/www/html
 
 EXPOSE 80
 

@@ -1,4 +1,4 @@
-ngx.header.content_type = "text/html"
+--ngx.header.content_type = "text/html"
 
 local prog = require'resty.exec'.new('/tmp/exec.sock')
 prog.stdout = function(v)
@@ -10,7 +10,7 @@ prog.stderr = function(v)
     ngx.flush(true)
 end
 
-function readAll(file)
+local function readAll(file)
     local f = assert(io.open(file, "rb"))
     local content = f:read("*all")
     f:close()

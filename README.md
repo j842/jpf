@@ -34,7 +34,7 @@ https://www.ganttproject.biz/
 You can modify the Jekyll templates to create your own look and feel for the HTML files generated, or to add new graphs or representations of the scheduled work.
 
 In the `website` folder, all the Jekyll (liquid) files are in `template`. There is example data in `input`, and you can 
-build the website using Jekyll with the `build.sh` script.
+build the website using Jekyll with the `build.sh` script.                                                  
 
 
 ## Development Setup (Compiling jpf from source)
