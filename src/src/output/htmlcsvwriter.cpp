@@ -202,13 +202,13 @@ void HTMLCSVWriter::write_all_tag_files(const scheduler::scheduler &s) const
 
         simpleDataCSV csv("project_tags");
         csv.addrow({"tag"});
+        csv.addrow({"All_Projects"});
         for (const auto & i : tagslist)
             csv.addrow({i});
-        csv.addrow({"All_Projects"});
 
+        write_project_tag_file(s,"All_Projects");
         for (auto t : tagslist)
             write_project_tag_file(s,t);
-        write_project_tag_file(s,"All_Projects");
     }
 }
 

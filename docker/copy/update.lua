@@ -51,7 +51,7 @@ prog('jpf','--html','/jpftemp')
 ngx.say('<hr/>')
 ngx.say('Copying Output...')
 ngx.flush(true)
-prog('cp','-r','/jpftemp/output/html','/var/www')
+prog('cp','-r','/jpftemp/output','/var/www')
 
 -------------------------------------------------------------------------------
 

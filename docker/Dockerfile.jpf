@@ -32,6 +32,8 @@ RUN  mkdir /config && chmod 755 /config && \
 
 COPY --chmod=755 copy/temp/jpf /usr/bin/jpf
 COPY --chmod=755 copy/temp/website /website
+COPY --chmod=644 --chown=www-data:www-data /copy/index.html /var/www/output/html/index.html
+RUN rm -rf /var/www/html
 
 EXPOSE 80
 
