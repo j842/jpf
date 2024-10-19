@@ -75,6 +75,7 @@ const std::string getOutputPath_Txt();
 const std::string getOutputPath_Html();
 const std::string getOutputPath_Csv();
 const std::string getOutputPath_Log();
+const std::string getOutputPath_PDF();
 
 const std::string getLocalTemplatePath();
 const std::string getOutputPath_Jekyll();

@@ -3,6 +3,8 @@
 
 #include <fstream>
 #include "scheduler.h"
+#include "command.h"
+
 
 class simpleDataCSV
 {

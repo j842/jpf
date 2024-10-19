@@ -258,6 +258,7 @@ const std::string getOutputPath_Html() { return gSettings().getRoot() + "output/
 const std::string getOutputPath_Jekyll() { return gSettings().getRoot() + "output/.jekyll/"; }
 const std::string getOutputPath_Csv() { return gSettings().getRoot() + "output/csv/"; }
 const std::string getOutputPath_Log() { return gSettings().getRoot() + "output/log/"; }
+const std::string getOutputPath_PDF() { return gSettings().getRoot() + "output/pdf/";}
 const std::string getLocalTemplatePath() { return gSettings().getRoot() + "template/"; }
 
 const std::string getExePath()
