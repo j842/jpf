@@ -49,31 +49,44 @@ R"END(
 
 \begin{document}
 
-Projects approved for development, as of ")END";
-ofs << gSettings().startDate().getStr();
+Projects approved for development, as of )END";
+ofs << gSettings().startDate().getStr_nice_long() << "." << std::endl;
 
     std::vector<scheduler::tProjectInfo> ProjectInfo;
     s.getProjectExtraInfo(ProjectInfo);
 
-
-    starttable("Active Projects Now",ofs);
+    int ap=0;
     for (unsigned int i=0;i< s.getProjects().size();++i)
     {
         auto & z = s.getProjects().at(i);
         if (z.mActualStart.getGregorian() <= simpledate().getGregorian())
+        {
+            if (ap==0)
+                starttable("Development Started",ofs);
             outputrow(z,ofs);
+            ++ap;
+        }
     }
-    endtable(ofs);
+    if (ap>0)
+        endtable(ofs);
+    loginfo(S()<<"Outputted "<<ap<<" active projects.");
+    
 
-
-    starttable("Scheduled Projects",ofs);
+    int sp=0;
     for (unsigned int i=0;i< s.getProjects().size();++i)
     {
         auto & z = s.getProjects().at(i);
         if (z.mActualStart.getGregorian() > simpledate().getGregorian())
+        {
+            if (sp==0)
+                starttable("Scheduled Projects",ofs);
             outputrow(z,ofs);
+            ++sp;
+        }
     }
-    endtable(ofs);
+    if (sp>0)
+        endtable(ofs);
+    loginfo(S()<<"Outputted "<<sp<<" scheduled projects.");
 
 ofs <<
 R"END(
@@ -81,7 +94,6 @@ R"END(
 )END";
 
     ofs.close();
-
 }
 
 void LatexWriter::outputrow(const scheduler::scheduledproject &z, std::ofstream &ofs) const
@@ -111,13 +123,13 @@ R"END(
   caption = {)END" << title << R"END(},
   label = {tab:proj},
 ]{
-  colspec = {|p{0.08\linewidth} | p{0.08\linewidth} | p{0.2\linewidth} | p{0.2\linewidth} | p{0.3\linewidth}|},
+  colspec = {|p{0.1\linewidth} | p{0.1\linewidth} | p{0.2\linewidth} | p{0.16\linewidth} | p{0.3\linewidth}|},
   rowhead = 1,
   hlines,
   row{even} = {gray9},
   row{1} = {blue!30, font=\small\bfseries, c},
 } 
-Release & Code Complete & Project & Status/Notes & Decription \\
+Release & Code Complete & Project & Status/Notes & Description \\
 )END";
 }
 
