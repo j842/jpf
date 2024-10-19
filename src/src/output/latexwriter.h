@@ -15,7 +15,7 @@ class LatexWriter
         void runLatex() const;
 
         void createTex(const scheduler::scheduler & s) const;
-        void outputrow(const scheduler::scheduledproject & z, std::ofstream & ofs) const;
+        void outputrow(int n, const scheduler::scheduledproject & z, std::ofstream & ofs) const;
 
         void starttable(const std::string title, std::ofstream & ofs) const;
         void endtable(std::ofstream & ofs) const;

@@ -39,21 +39,24 @@ void LatexWriter::createTex(const scheduler::scheduler &s) const
     if (!ofs.is_open())
         TERMINATE("Unable to open file " + ofs_name + " for writing.");
 
+    std::vector<scheduler::tProjectInfo> ProjectInfo;
+    s.getProjectExtraInfo(ProjectInfo);
+
+
     ofs <<
 R"END(
 \documentclass[8pt]{extarticle}
-\usepackage[a4paper,margin=20mm,left=12mm,right=12mm]{geometry}
+\usepackage[a4paper,landscape,margin=12mm,top=18mm]{geometry}
 
 \usepackage{tabularray}
 \usepackage{xcolor}
+\usepackage{needspace}
 
 \begin{document}
 
-Projects approved for development, as of )END";
-ofs << gSettings().startDate().getStr_nice_long() << "." << std::endl;
-
-    std::vector<scheduler::tProjectInfo> ProjectInfo;
-    s.getProjectExtraInfo(ProjectInfo);
+This document lists projects approved for development and in the tech team scheduling system, as of \textbf{)END";
+ofs << gSettings().startDate().getStr_nice_long() << "}. " << std::endl;
+ofs << "Total projects included: "<<s.getProjects().size()<<".\\\\"<<std::endl;
 
     int ap=0;
     for (unsigned int i=0;i< s.getProjects().size();++i)
@@ -63,8 +66,8 @@ ofs << gSettings().startDate().getStr_nice_long() << "." << std::endl;
         {
             if (ap==0)
                 starttable("Development Started",ofs);
-            outputrow(z,ofs);
             ++ap;
+            outputrow(ap,z,ofs);
         }
     }
     if (ap>0)
@@ -80,8 +83,8 @@ ofs << gSettings().startDate().getStr_nice_long() << "." << std::endl;
         {
             if (sp==0)
                 starttable("Scheduled Projects",ofs);
-            outputrow(z,ofs);
             ++sp;
+            outputrow(ap+sp,z,ofs);
         }
     }
     if (sp>0)
@@ -96,9 +99,11 @@ R"END(
     ofs.close();
 }
 
-void LatexWriter::outputrow(const scheduler::scheduledproject &z, std::ofstream &ofs) const
+void LatexWriter::outputrow(int n, const scheduler::scheduledproject &z, std::ofstream &ofs) const
 {
     ofs 
+        << n
+        << " & "
         << simpledate(z.mActualEnd.getGregorian()+ boost::gregorian::days(7)).getStr_nice_short() 
         << " & "
         << z.mActualEnd.getStr_nice_short()
@@ -117,19 +122,21 @@ void LatexWriter::starttable(const std::string title, std::ofstream &ofs) const
 ofs <<
 R"END(
 
+\Needspace{15\baselineskip}
 \section{)END" << title << R"END(}
 
 \begin{longtblr}[
   caption = {)END" << title << R"END(},
   label = {tab:proj},
 ]{
-  colspec = {|p{0.1\linewidth} | p{0.1\linewidth} | p{0.2\linewidth} | p{0.16\linewidth} | p{0.3\linewidth}|},
+  colspec = {|p{0.025\linewidth} | p{0.1\linewidth} | p{0.1\linewidth} | p{0.2\linewidth} | p{0.16\linewidth} | p{0.275\linewidth}|},
   rowhead = 1,
   hlines,
   row{even} = {gray9},
   row{1} = {blue!30, font=\small\bfseries, c},
+  column{1} = {r},
 } 
-Release & Code Complete & Project & Status/Notes & Description \\
+\# & Release & Code Complete & Project & Status/Notes & Description \\
 )END";
 }
 
