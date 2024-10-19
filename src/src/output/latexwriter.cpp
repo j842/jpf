@@ -12,6 +12,7 @@ LatexWriter::LatexWriter() : mBaseName("report")
 void LatexWriter::createPDFReport(const scheduler::scheduler &s) const
 {
     recreate_Directory( getOutputPath_PDF() );
+    createTex(s);
     runLatex();
 }
 
@@ -20,7 +21,7 @@ void LatexWriter::runLatex() const
     timer tmr;
     loginfo("Running PDFLatex build to " + getOutputPath_PDF());
 
-    std::string cmd = "cd "+getOutputPath_Base()+" && pdflatex -interaction=nonstopmode "+mBaseName+".tex 2>&1";
+    std::string cmd = "cd "+getOutputPath_PDF()+" && pdflatex -interaction=nonstopmode "+mBaseName+".tex 2>&1";
 
     raymii::Command c;
 
@@ -33,7 +34,7 @@ void LatexWriter::runLatex() const
 
 void LatexWriter::createTex(const scheduler::scheduler &s) const
 {
-    std::string ofs_name = getOutputPath_Base()+mBaseName+".tex";
+    std::string ofs_name = getOutputPath_PDF()+mBaseName+".tex";
     std::ofstream ofs(ofs_name);
     if (!ofs.is_open())
         TERMINATE("Unable to open file " + ofs_name + " for writing.");
@@ -125,4 +126,6 @@ void LatexWriter::endtable(std::ofstream &ofs) const
 R"END(
 \end{longtblr}
 )END";
+
+    ofs.close();
 }
