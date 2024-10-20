@@ -267,11 +267,6 @@ int main(int argc, char **argv)
 
     cMain m;
     int rval = m.go(args);
-    if (rval == 0)
-    {
-        cLocalSettings localsettings;
-        localsettings.setSetting("input", gSettings().getRoot()); // only update on success!!
-    }
     return rval;
 }
 
@@ -283,8 +278,6 @@ int cMain::go(cArgs args)
 {
     try
     {
-        cLocalSettings localsettings;
-
         // no directory needed.
         if (args.hasOpt({"t", "test"}))
             return runtests() ? 0 : 1;
@@ -301,8 +294,6 @@ int cMain::go(cArgs args)
             if (dir.length() > 0 && std::filesystem::exists(dir))
                 dir = std::filesystem::canonical(dir);
         }
-        else if (localsettings.isLoaded() && localsettings.getSetting("input").length() > 0)
-            dir = localsettings.getSetting("input");
 
         if (dir.length() == 0)
         {
@@ -367,44 +358,4 @@ int cMain::go(cArgs args)
     }
 
     return 0;
-}
-
-cLocalSettings::cLocalSettings() : mFilePath(S() << getHomeDir() << ".jpf_settings"),
-                                   mLoaded(false)
-{
-    if (std::filesystem::exists(mFilePath))
-    {
-        simplecsv csv(mFilePath, 2);
-        if (!csv.openedOkay())
-            TERMINATE("Could not open " + mFilePath);
-        std::vector<std::string> line;
-        while (csv.getline(line, 2))
-            mSettings[line[0]] = line[1];
-        mLoaded = true;
-    }
-}
-bool cLocalSettings::isLoaded() const
-{
-    return mLoaded;
-}
-void cLocalSettings::setSetting(std::string key, std::string value)
-{
-    mSettings[key] = value;
-    save();
-}
-std::string cLocalSettings::getSetting(std::string key) const
-{
-    for (auto &s : mSettings)
-        if (iSame(s.first, key))
-            return s.second;
-    return "";
-}
-void cLocalSettings::save() const
-{
-    std::ofstream ofs(mFilePath);
-    if (!ofs.is_open())
-        TERMINATE("Could not open settings file for writing: " + mFilePath);
-    simplecsv::outputr(ofs, {"key", "value"});
-    for (auto &s : mSettings)
-        simplecsv::outputr(ofs, {s.first, s.second});
 }

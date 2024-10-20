@@ -1,0 +1,19 @@
+
+<center>
+<table>
+    <tr id="project-{{include.tag}}-{{projectnum}}"><th colspan="4" class="sectiontitle" style="background-color: #842;" ><center><a href="#topofpage">Dates for: {{include.tag}}</a></center></th></tr>
+    <tr class="spacer"><td colspan="4">&nbsp;</td></tr>
+    <tr><th>Date</th><th>Project</th><th>Task Name</th><th>Team</th></tr>
+
+    {% capture thefile %}task_tag_{{ include.tag }}{% endcapture %}
+    {%- for row in site.data[thefile] -%}
+        <tr class="row1">
+            <td class="col1">{{row.safeendmonth}}</td>
+            <td class="col2"><span class="dot" style="background-color: {{row.projectcolour}};"></span>{{row.project}}</td>
+            <td class="col3">{{row.taskname}}</td>
+<!--            <td class="col3"><a onmouseover="nhpup.popup(' {{row.taskname| escape}}<pre>project:      {{row.project| escape}}<br/></pre>{{row.comments| escape}}',{'width': 400});">{{row.taskname}}</a> -->
+            <td class="col4">{{row.team}}</td>
+        </td>
+    {%- endfor -%}
+</table>
+</center>

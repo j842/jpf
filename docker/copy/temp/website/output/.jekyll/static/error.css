@@ -1,0 +1,23 @@
+h1 {
+    font-size: 70px;
+    font-weight: 600;
+    background-image: url(/static/fire.jpg);
+    background-size: 250px;
+    background-repeat: repeat;
+    color: transparent;
+    -webkit-background-clip: text;
+    background-clip: text;
+    margin-bottom:3cm;
+  }
+
+h2 {
+    font-size: 20px;
+    margin-bottom:3cm;
+    white-space: pre;
+    color: darkred;
+}
+
+h3 {
+    font-size: 12px;
+    color:darkslategray;
+}

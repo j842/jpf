@@ -1,0 +1,8 @@
+services:
+  jpf:
+    image: "j842/jpf:latest"
+    container_name: jpf
+    ports:
+      - 80:80
+    volumes:
+      - /usr/local/jpf_config:/config

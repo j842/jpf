@@ -1,0 +1,129 @@
+<!doctype html>
+<html>
+  <head>
+    <script type="text/javascript" src="https://livejs.com/live.js"></script>
+
+    <meta charset="utf-8">
+    <title>Project Backlog</title>
+    <script src="static/jquery-3.6.0.min.js"></script>
+<script type="text/javascript" src="static/nhpup_1.1.js"></script>
+<link rel="stylesheet" href="static/nicetable.css">
+
+
+    <style>
+      body {  background-image: url('static/background.jpg'); }
+    </style>
+</head>
+
+<!----------------  HEADER ------------------------------->
+<h1 id="topofpage"><center>Project Backlog</center></h1>
+
+<center>
+<p style="margin-bottom:0.5cm;">
+  <a href="project_backlog.html">Project Backlog</a>&nbsp;&nbsp;
+  <a href="gantt_projects.html">Project Gantt</a>&nbsp;&nbsp;
+  <a href="team_backlog.html">Team Backlog</a>&nbsp;&nbsp;
+  <a href="people_backlog.html">Individual Backlogs</a>&nbsp;&nbsp;
+  <a href="dashboard.html">Cost Dashboard</a>&nbsp;&nbsp;
+  <a href="tags_projects.html">Tags: Projects</a>&nbsp;&nbsp;
+  <a href="tags_details.html">Tags: Details</a>&nbsp;&nbsp;
+</p>
+</center>
+<hr/>
+<p style="margin-bottom:0.8cm;"/>
+
+<!---------------- /HEADER ------------------------------->
+
+<!---------------- BODY    ------------------------------->
+<body>
+
+    <!-- Table of contents. Loop through once for speed. -->
+
+
+<center>
+<div id="toc" style="width:90%; margin: 0 auto; white-space: normal;">
+    <a href="#project-0"  style="color: rgb(48, 18, 59); margin-right:15px; white-space: nowrap;">Webserver</a>
+        <a href="#project-1"  style="color: rgb(62, 155, 254); margin-right:15px; white-space: nowrap;">Android App</a>
+        <a href="#project-2"  style="color: rgb(70, 248, 132); margin-right:15px; white-space: nowrap;">iPhone App</a>
+        <a href="#project-3"  style="color: rgb(225, 221, 55); margin-right:15px; white-space: nowrap;">Windows Desktop Client</a>
+        <a href="#project-4"  style="color: rgb(240, 91, 18); margin-right:15px; white-space: nowrap;">Enormous Concrete Sculpture</a>
+        </div>
+</center>
+<br/>
+
+<!-- tables of projects. --><center>
+<table><tr class="spacer"><td colspan="4">&nbsp;</td></tr>
+        <tr id="project-0"><th colspan="6" class="sectiontitle" style="background-color: rgb(48, 18, 59)"><center><a href="#topofpage">Webserver</a></center></th></tr>
+        <tr><th>Start</th><th>End</th><th>Task Name</th><th>Team</th><th>Id</th></tr><tr class="row1">
+    <td class="col1"> 2 May 2022</td>
+    <td class="col2"> 9 May 2022</td>
+    <td class="col3"><a onmouseover="nhpup.popup(' Logins<pre>project:      Webserver<br/>id:           We.01<br/>dependencies: <br/>tags:         <br/>devdays:      10.00<br/>blocked:      <br/>resources:    Stu: 4.75  Mark: 5.25  <br/></pre>',{'width': 500});">Logins</a>
+    <td class="col4">Web</td>
+    <td class="col5">We.01</td><tr class="row1">
+    <td class="col1">10 May 2022</td>
+    <td class="col2">17 May 2022</td>
+    <td class="col3"><a onmouseover="nhpup.popup(' Security<pre>project:      Webserver<br/>id:           We.02<br/>dependencies: We.01 <br/>tags:         <br/>devdays:      5.00<br/>blocked:      We.01<br/>resources:    Sarah C: 5.00  <br/></pre>',{'width': 500});">Security</a>
+    <td class="col4">Web</td>
+    <td class="col5">We.02</td><tr class="row1">
+    <td class="col1">10 May 2022</td>
+    <td class="col2"> 1 Jun 2022</td>
+    <td class="col3"><a onmouseover="nhpup.popup(' Home page<pre>project:      Webserver<br/>id:           We.03<br/>dependencies: We.01 <br/>tags:         <br/>devdays:      15.00<br/>blocked:      We.01<br/>resources:    Mark: 15.00  <br/></pre>',{'width': 500});">Home page</a>
+    <td class="col4">Web</td>
+    <td class="col5">We.03</td><tr class="row1">
+    <td class="col1"> 2 Jun 2022</td>
+    <td class="col2"> 7 Jun 2022</td>
+    <td class="col3"><a onmouseover="nhpup.popup(' Management Component<pre>project:      Webserver<br/>id:           We.04<br/>dependencies: We.01 We.03 <br/>tags:         <br/>devdays:      5.00<br/>blocked:      We.03<br/>resources:    Sarah C: 2.60  Stu: 2.40  <br/></pre>Depends on both logins and home page.',{'width': 500});">Management Component</a>
+    <td class="col4">Web</td>
+    <td class="col5">We.04</td><tr class="spacer"><td colspan="4">&nbsp;</td></tr>
+        <tr id="project-1"><th colspan="6" class="sectiontitle" style="background-color: rgb(62, 155, 254)"><center><a href="#topofpage">Android App</a></center></th></tr>
+        <tr><th>Start</th><th>End</th><th>Task Name</th><th>Team</th><th>Id</th></tr><tr class="row1">
+    <td class="col1"> 2 May 2022</td>
+    <td class="col2"> 2 May 2022</td>
+    <td class="col3"><a onmouseover="nhpup.popup(' Release Milestone<pre>project:      Android App<br/>id:           Ap.02<br/>dependencies: <br/>tags:         <br/>devdays:      0.00<br/>blocked:      <br/>resources:    <br/></pre>',{'width': 500});">Release Milestone</a>
+    <td class="col4">Apps</td>
+    <td class="col5">Ap.02</td><tr class="row1">
+    <td class="col1"> 2 May 2022</td>
+    <td class="col2"> 5 May 2022</td>
+    <td class="col3"><a onmouseover="nhpup.popup(' Update App to Android 17<pre>project:      Android App<br/>id:           Ap.01<br/>dependencies: <br/>tags:         <br/>devdays:      10.00<br/>blocked:      <br/>resources:    Stephen: 2.93  Blair: 3.53  Carly: 3.54  <br/></pre>',{'width': 500});">Update App to Android 17</a>
+    <td class="col4">Apps</td>
+    <td class="col5">Ap.01</td><tr class="spacer"><td colspan="4">&nbsp;</td></tr>
+        <tr id="project-2"><th colspan="6" class="sectiontitle" style="background-color: rgb(70, 248, 132)"><center><a href="#topofpage">iPhone App</a></center></th></tr>
+        <tr><th>Start</th><th>End</th><th>Task Name</th><th>Team</th><th>Id</th></tr><tr class="row1">
+    <td class="col1"> 5 May 2022</td>
+    <td class="col2">26 May 2022</td>
+    <td class="col3"><a onmouseover="nhpup.popup(' Port from Android<pre>project:      iPhone App<br/>id:           Ap.03<br/>dependencies: <br/>tags:         <br/>devdays:      15.00<br/>blocked:      Blair<br/>resources:    Blair: 15.00  <br/></pre>',{'width': 500});">Port from Android</a>
+    <td class="col4">Apps</td>
+    <td class="col5">Ap.03</td><tr class="spacer"><td colspan="4">&nbsp;</td></tr>
+        <tr id="project-3"><th colspan="6" class="sectiontitle" style="background-color: rgb(225, 221, 55)"><center><a href="#topofpage">Windows Desktop Client</a></center></th></tr>
+        <tr><th>Start</th><th>End</th><th>Task Name</th><th>Team</th><th>Id</th></tr><tr class="row1">
+    <td class="col1"> 6 May 2022</td>
+    <td class="col2"> 7 Jun 2022</td>
+    <td class="col3"><a onmouseover="nhpup.popup(' Write whole desktop client<pre>project:      Windows Desktop Client<br/>id:           Ap.04<br/>dependencies: Ap.01 <br/>tags:         <br/>devdays:      22.00<br/>blocked:      Ap.01<br/>resources:    Carly: 22.00  <br/></pre>',{'width': 500});">Write whole desktop client</a>
+    <td class="col4">Apps</td>
+    <td class="col5">Ap.04</td><tr class="spacer"><td colspan="4">&nbsp;</td></tr>
+        <tr id="project-4"><th colspan="6" class="sectiontitle" style="background-color: rgb(240, 91, 18)"><center><a href="#topofpage">Enormous Concrete Sculpture</a></center></th></tr>
+        <tr><th>Start</th><th>End</th><th>Task Name</th><th>Team</th><th>Id</th></tr><tr class="row1">
+    <td class="col1">26 May 2022</td>
+    <td class="col2"> 3 Jun 2022</td>
+    <td class="col3"><a onmouseover="nhpup.popup(' Build a gorgeous sculpture<pre>project:      Enormous Concrete Sculpture<br/>id:           Ap.05<br/>dependencies: <br/>tags:         <br/>devdays:      12.00<br/>blocked:      Blair<br/>resources:    Stephen: 5.60  Blair: 6.40  Carly: 0.00  <br/></pre>',{'width': 500});">Build a gorgeous sculpture</a>
+    <td class="col4">Apps</td>
+    <td class="col5">Ap.05</td></table>
+</center>
+
+
+    <!---------------- (FOOTER)------------------------------->
+
+    <p style="margin-bottom:1cm;"/>
+    <hr>
+    <footer>
+    <center>
+        <font size="-1">jpf version 0.0.20-002, files generated Sat Oct 19 04:51:01 2024.
+        </font>
+    </center>
+    </footer>
+
+    <!---------------- /BODY   ------------------------------->
+
+  </body>
+</html>
+

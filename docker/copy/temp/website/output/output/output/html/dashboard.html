@@ -1,0 +1,326 @@
+<!doctype html>
+<html>
+  <head>
+    <script type="text/javascript" src="https://livejs.com/live.js"></script>
+
+    <meta charset="utf-8">
+    <title>Cost Dashboard</title>
+    <script src="https://cdn.plot.ly/plotly-2.11.1.min.js"></script>
+
+
+    <style>
+      body {  background-image: url('static/background.jpg'); }
+    </style>
+</head>
+
+<!----------------  HEADER ------------------------------->
+<h1 id="topofpage"><center>Cost Dashboard</center></h1>
+
+<center>
+<p style="margin-bottom:0.5cm;">
+  <a href="project_backlog.html">Project Backlog</a>&nbsp;&nbsp;
+  <a href="gantt_projects.html">Project Gantt</a>&nbsp;&nbsp;
+  <a href="team_backlog.html">Team Backlog</a>&nbsp;&nbsp;
+  <a href="people_backlog.html">Individual Backlogs</a>&nbsp;&nbsp;
+  <a href="dashboard.html">Cost Dashboard</a>&nbsp;&nbsp;
+  <a href="tags_projects.html">Tags: Projects</a>&nbsp;&nbsp;
+  <a href="tags_details.html">Tags: Details</a>&nbsp;&nbsp;
+</p>
+</center>
+<hr/>
+<p style="margin-bottom:0.8cm;"/>
+
+<!---------------- /HEADER ------------------------------->
+
+<!---------------- BODY    ------------------------------->
+<body>
+
+    
+
+<div id="pwt_totalprojectcostpie" style="width:auto;height:800;"></div>    
+<script>
+
+var pwt_colorlist = ['rgb(48, 18, 59)','rgb(62, 155, 254)','rgb(70, 248, 132)','rgb(225, 221, 55)','rgb(240, 91, 18)','rgb(176, 82, 205)','rgb(210, 180, 140)','rgb(100, 100, 100)','rgb(200, 200, 200)'];
+
+var pwt_datapie = [{
+
+    values: [17500,5000,7500,11000,6000,10000,128600,8300,4100],
+
+    labels: ['Webserver','Android App','iPhone App','Windows Desktop Client','Enormous Concrete Sculpture','Holidays','Unscheduled Time','Non-project BAU work','New Project Overhead'],
+
+    text: ['Webserver   $17,000','Android App   $5,000','iPhone App   $7,000','Desktop Client   $11,000','Concrete Sculpture   $6,000','Holidays   $10,000','Unscheduled   $129,000','Other BAU   $8,000','Overhead   $4,000'],
+
+    type: 'pie',
+    textinfo: "text",
+    <!--hoverinfo: "label+value+percent",-->
+    hovertemplate: '<b>%{label}</b><br>'+
+        '%{value:$,.0f}<br>'+
+        '%{percent}',
+    automargin: true,
+    marker: {
+        colors: pwt_colorlist
+    }
+}];
+
+var pwt_layoutpie = {
+    title: 'Projected Salary Cost Remaining ($)',
+    margin: {"t": 100, "b": 100, "l": 100, "r": 100},
+    height: 800,
+};
+
+Plotly.newPlot('pwt_totalprojectcostpie',pwt_datapie,pwt_layoutpie);
+</script>
+
+
+
+
+<h2>Projected Salary Costs by Month</h2>
+<div id="stackedbardevdays" style="width:auto;height:600;"></div>    
+<script>var trace_webserver ={
+        
+
+        x: ['May 22','Jun 22'],
+
+        y: [14700,2800],
+
+        name: 'Webserver',
+        marker: { color: 'rgb(48, 18, 59)'},
+        type: 'bar',
+
+    };
+    var trace_androidapp ={
+        
+
+        x: ['May 22','Jun 22'],
+
+        y: [5000,0],
+
+        name: 'Android App',
+        marker: { color: 'rgb(62, 155, 254)'},
+        type: 'bar',
+
+    };
+    var trace_iphoneapp ={
+        
+
+        x: ['May 22','Jun 22'],
+
+        y: [7500,0],
+
+        name: 'iPhone App',
+        marker: { color: 'rgb(70, 248, 132)'},
+        type: 'bar',
+
+    };
+    var trace_desktopclient ={
+        
+
+        x: ['May 22','Jun 22'],
+
+        y: [9000,2000],
+
+        name: 'Windows Desktop Client',
+        marker: { color: 'rgb(225, 221, 55)'},
+        type: 'bar',
+
+    };
+    var trace_concretesculpture ={
+        
+
+        x: ['May 22','Jun 22'],
+
+        y: [3335,2665],
+
+        name: 'Enormous Concrete Sculpture',
+        marker: { color: 'rgb(240, 91, 18)'},
+        type: 'bar',
+
+    };
+    var trace_holidays ={
+        
+
+        x: ['May 22','Jun 22'],
+
+        y: [1000,9000],
+
+        name: 'Holidays',
+        marker: { color: 'rgb(176, 82, 205)'},
+        type: 'bar',
+
+    };
+    var trace_unscheduled ={
+        
+
+        x: ['May 22','Jun 22'],
+
+        y: [52065,76535],
+
+        name: 'Unscheduled Time',
+        marker: { color: 'rgb(210, 180, 140)'},
+        type: 'bar',
+
+    };
+    var trace_otherbau ={
+        
+
+        x: ['May 22','Jun 22'],
+
+        y: [4300,4000],
+
+        name: 'Non-project BAU work',
+        marker: { color: 'rgb(100, 100, 100)'},
+        type: 'bar',
+
+    };
+    var trace_overhead ={
+        
+
+        x: ['May 22','Jun 22'],
+
+        y: [2100,2000],
+
+        name: 'New Project Overhead',
+        marker: { color: 'rgb(200, 200, 200)'},
+        type: 'bar',
+
+    };
+    
+
+    var data = [trace_overhead,trace_otherbau,trace_unscheduled,trace_holidays,trace_concretesculpture,trace_desktopclient,trace_iphoneapp,trace_androidapp,trace_webserver];
+
+
+    var layout = {
+            title: 'Projected Salary Costs ($)',
+        xaxis: {tickfont: {
+            size: 14,
+            color: 'rgb(107, 107, 107)'
+            }},
+        yaxis: {
+            title: 'NZD',
+            titlefont: {
+            size: 16,
+            color: 'rgb(107, 107, 107)'
+            },
+            tickfont: {
+            size: 14,
+            color: 'rgb(107, 107, 107)'
+            },
+        
+        },
+        barmode: 'stack',
+        height: 600,
+    };
+    Plotly.newPlot('stackedbardevdays', data, layout);
+</script>
+
+
+
+<div id="stackedbarBAU" style="width:auto;height:600;"></div>    
+<script>
+
+
+    
+
+    var BAU_trace_0 ={
+        type: 'bar',
+        marker: {color: 'rgb(190, 30, 50)'},
+        name: 'BAU',
+
+        x: ['May 22','Jun 22'],
+
+        y: [24.2,6.87],
+
+        text: ['BAU - 24%','BAU - 7%'],
+
+    };
+
+    
+
+    var BAU_trace_1 ={
+        type: 'bar',
+        marker: {color: 'rgb(30, 190, 30)'},
+        name: 'New',
+
+        x: ['May 22','Jun 22'],
+
+        y: [22.2,6.73],
+
+        text: ['New - 22%','New - 7%'],
+
+    };
+
+    
+
+    var BAU_trace_2 ={
+        type: 'bar',
+        marker: {color: 'rgb(210, 180, 140)'},
+        name: 'Slack',
+
+        x: ['May 22','Jun 22'],
+
+        y: [52.6,77.3],
+
+        text: ['Slack - 53%','Slack - 77%'],
+
+    };
+
+    
+
+    var BAU_trace_3 ={
+        type: 'bar',
+        marker: {color: 'rgb(176, 82, 205)'},
+        name: 'Holiday',
+
+        x: ['May 22','Jun 22'],
+
+        y: [1.01,9.09],
+
+        text: ['Holiday - 1%','Holiday - 9%'],
+
+    };
+
+
+var BAU_data = [BAU_trace_0,BAU_trace_1,BAU_trace_2,BAU_trace_3];
+
+var BAU_layout = {
+    title: 'Projected BAU versus New',
+    xaxis: {tickfont: {
+        size: 14,
+        color: 'rgb(107, 107, 107)'
+        }},
+    yaxis: {
+        title: 'Percent',
+        titlefont: {
+            size: 16,
+            color: 'rgb(107, 107, 107)'
+            },
+        tickfont: {
+            size: 14,
+            color: 'rgb(107, 107, 107)'
+            },
+        },
+    barmode: 'stack',
+    height: 600,
+};
+Plotly.newPlot('stackedbarBAU', BAU_data, BAU_layout);
+</script>
+
+
+
+
+    <!---------------- (FOOTER)------------------------------->
+
+    <p style="margin-bottom:1cm;"/>
+    <hr>
+    <footer>
+    <center>
+        <font size="-1">jpf version 0.0.21-001, files generated Sat Oct 19 21:43:39 2024.
+        </font>
+    </center>
+    </footer>
+
+    <!---------------- /BODY   ------------------------------->
+
+  </body>
+</html>
+

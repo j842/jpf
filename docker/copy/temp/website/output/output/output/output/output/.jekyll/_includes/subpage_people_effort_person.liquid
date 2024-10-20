@@ -1,0 +1,112 @@
+
+{% assign height=600 %}
+
+<div id="stackedbardevdays_{{include.personcode}}" style="width:auto;height:{{height}};"></div>
+<script>
+
+    {%- assign pep_project = "blah" -%}
+
+    {% assign pebm = site.data.peopleeffortbymonth | where: "personcode", include.personcode %}
+
+    {%- for pep_row in pebm -%}
+        {%- if pep_project!=pep_row.ProjectId -%}
+            {% assign pep_project=pep_row.ProjectId %}
+
+            {% assign pebmp = pebm | where: "ProjectId", pep_project %}
+
+            var trace_{{include.personcode}}_{{pep_row.ProjectId | slugify | remove: "-" }} ={
+                name: '{{pep_row.ProjectName}}',
+                marker: { color: '{{pep_row.ProjectColour}}'},
+                type: 'bar',
+
+                x: [
+                    {%- for pep_mrow in site.data.months -%}
+                        '{{pep_mrow.DateStr}}'
+                        {%- if forloop.last==false -%},{%- endif -%}
+                    {%- endfor -%}
+                ],
+
+                y: [
+                    {%- for pep_yrow in pebmp -%}
+                        {{pep_yrow.Effort}}
+                        {%- if forloop.last==false -%},{%- endif -%}
+                    {%- endfor -%}
+                    ],
+
+                text: [
+                    {%- for pep_textrow in pebmp -%}
+                        '{{pep_textrow.ProjectId}}'
+                        {%- if forloop.last==false -%},{%- endif -%}
+                    {%- endfor -%}
+                ],
+
+                hovertext: [
+                    {%- for pep_textrow in pebmp -%}
+                        '{{pep_textrow.ProjectName}}'
+                        {%- if forloop.last==false -%},{%- endif -%}
+                    {%- endfor -%}
+                ],
+
+                hovertemplate: '<b>%{hovertext}</b><br>'+
+                        '<i>Effort</i>: %{y:.1f} days',
+            };
+
+        {%- endif -%}
+    {% endfor %}
+
+    var data_{{include.personcode}} = [
+
+        {%- assign pep_project = "blah" -%}
+        {%- for pep_row in pebm reversed -%}
+            {%- if pep_project!=pep_row.ProjectId -%}
+                {% assign pep_project=pep_row.ProjectId %}
+                trace_{{include.personcode}}_{{pep_row.ProjectId | slugify | remove: "-" }},
+            {%- endif -%}
+        {% endfor %}
+    ];
+
+    var layout_{{include.personcode}} = { 
+            xaxis: {tickfont: {
+                size: 14,
+                color: 'rgb(107, 107, 107)'
+                }},
+            yaxis: {
+                title: 'Effort (days)',
+                titlefont: {
+                size: 16,
+                color: 'rgb(107, 107, 107)'
+                },
+                tickfont: {
+                size: 14,
+                color: 'rgb(107, 107, 107)'
+                },
+                range: [0, 25]
+            },
+            barmode: 'stack',
+            height: {{height}},
+            plot_bgcolor: 'rgba(0, 0, 0, 0)',
+            paper_bgcolor: 'rgba(0, 0, 0, 0)',
+             margin: {
+    l: 50,
+    r: 50,
+    b: 100,
+    t: 50,
+    pad: 4
+  },
+  showlegend: false,
+  <!--
+  legend: {"orientation": "h"},
+    legend: {
+    x: 0.5,
+    y: 0
+  }
+  -->
+        };
+
+    Plotly.newPlot(
+        'stackedbardevdays_{{include.personcode}}', 
+        data_{{include.personcode}}, 
+        layout_{{include.personcode}}
+    );
+
+</script>

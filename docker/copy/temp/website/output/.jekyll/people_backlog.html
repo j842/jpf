@@ -1,0 +1,74 @@
+---
+layout: default
+title: Backlog by Person
+headincludes: |
+    <link rel="stylesheet" type="text/css" href="static/nicetable.css">
+    <link rel="stylesheet" type="text/css" href="static/dot.css">
+    <link rel="stylesheet" type="text/css" href="static/tabby-ui.min.css">
+    <script src="static/tabby.polyfills.min.js"></script>
+    <script src="https://cdn.plot.ly/plotly-2.11.1.min.js"></script>
+---
+
+{%- assign peoplewithtasks = site.data.people | where_exp: "item", "item.numtasks != '0'" -%}
+
+<!-- Table of contents. Loop through once for speed. -->
+<center>
+    <ul data-tabs>
+        {%- for prow in peoplewithtasks -%}
+                <li><a 
+                    {% if forloop.first %}
+                    data-tabby-default
+                    {% endif %}
+                    href="#person-{{prow.personcode}}">{{prow.personname}}</a></li>
+        {%- endfor -%}
+    </ul>
+</center>
+<br />
+
+<!-- tables of projects. -->
+<center>
+    {%- for prow in peoplewithtasks -%}
+        <div id="person-{{prow.personcode}}">
+
+        <div style="width: 95%";>
+        {% include subpage_people_effort_person.liquid personcode=prow.personcode personname=prow.personname %}
+        </div>
+
+        <table>
+        <tr>
+            <th colspan="5" class="sectiontitle" style="background-color: #035">
+                <center>{{prow.personname}}</center>
+            </th>
+        </tr>
+        <tr>
+            <th>Start</th>
+            <th>End</th>
+            <th>Project</th>
+            <th>Task Name</th>
+            <th>Max % Time</th>
+        </tr>
+
+        {%- assign persondata = site.data.peoplebacklog | where: "personcode", prow.personcode | sort: 'startday' -%}
+        {%- for row in persondata -%}
+            {%- if row.utilisation == "0" -%}
+                <tr class="row1" style="opacity: 0.25; ">
+            {%- else -%}
+                <tr class="row1">
+            {%- endif -%}
+            <td class="col1">{{row.start}}</td>
+            <td class="col2">{{row.end}}</td>
+            <td class="col3">
+                <span class="dot" style="background-color: {{row.projectcolour}};"></span>
+                {{row.project}}</td>        
+            <td class="col4">{{row.taskname}}</td>
+            <td class="col5">{{row.utilisation}}</td>
+            </tr>
+        {%- endfor -%}
+        </table>
+        </div>
+    {%- endfor -%}
+</center>
+
+<script>
+    var tabs = new Tabby('[data-tabs]');
+</script>

@@ -30,8 +30,6 @@ RUN luarocks install lua-resty-exec
 COPY --chown=755 copy/sockexec /usr/bin/sockexec
 
 COPY copy/nginx-jpf.conf /usr/local/openresty/nginx/conf/nginx.conf
-#RUN ln -s /etc/nginx/sites-available/nginx-jpf.conf /etc/nginx/sites-enabled/ 
-#RUN rm /etc/nginx/sites-enabled/default
 
 RUN mkdir /lua
 COPY --chmod=755 copy/update.lua /lua
@@ -51,5 +49,3 @@ STOPSIGNAL SIGQUIT
 COPY copy/docker-entrypoint-jpf.sh /docker-entrypoint.sh
 RUN chmod +x /docker-entrypoint.sh
 ENTRYPOINT ["/docker-entrypoint.sh"]
-
-#CMD ["nginx", "-g", "daemon off;"]

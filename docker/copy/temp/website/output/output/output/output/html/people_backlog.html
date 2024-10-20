@@ -1,0 +1,1086 @@
+<!doctype html>
+<html>
+  <head>
+    <script type="text/javascript" src="https://livejs.com/live.js"></script>
+
+    <meta charset="utf-8">
+    <title>Backlog by Person</title>
+    <link rel="stylesheet" type="text/css" href="static/nicetable.css">
+<link rel="stylesheet" type="text/css" href="static/dot.css">
+<link rel="stylesheet" type="text/css" href="static/tabby-ui.min.css">
+<script src="static/tabby.polyfills.min.js"></script>
+<script src="https://cdn.plot.ly/plotly-2.11.1.min.js"></script>
+
+
+    <style>
+      body {  background-image: url('static/background.jpg'); }
+    </style>
+</head>
+
+<!----------------  HEADER ------------------------------->
+<h1 id="topofpage"><center>Backlog by Person</center></h1>
+
+<center>
+<p style="margin-bottom:0.5cm;">
+  <a href="project_backlog.html">Project Backlog</a>&nbsp;&nbsp;
+  <a href="gantt_projects.html">Project Gantt</a>&nbsp;&nbsp;
+  <a href="team_backlog.html">Team Backlog</a>&nbsp;&nbsp;
+  <a href="people_backlog.html">Individual Backlogs</a>&nbsp;&nbsp;
+  <a href="dashboard.html">Cost Dashboard</a>&nbsp;&nbsp;
+  <a href="tags_projects.html">Tags: Projects</a>&nbsp;&nbsp;
+  <a href="tags_details.html">Tags: Details</a>&nbsp;&nbsp;
+</p>
+</center>
+<hr/>
+<p style="margin-bottom:0.8cm;"/>
+
+<!---------------- /HEADER ------------------------------->
+
+<!---------------- BODY    ------------------------------->
+<body>
+
+    <!-- Table of contents. Loop through once for speed. -->
+<center>
+    <ul data-tabs><li><a 
+                    
+                    data-tabby-default
+                    
+                    href="#person-Stu">Stu</a></li><li><a 
+                    
+                    href="#person-Mark">Mark</a></li><li><a 
+                    
+                    href="#person-Sarah C">Sarah C</a></li><li><a 
+                    
+                    href="#person-Stephen">Stephen</a></li><li><a 
+                    
+                    href="#person-Blair">Blair</a></li><li><a 
+                    
+                    href="#person-Carly">Carly</a></li></ul>
+</center>
+<br />
+
+<!-- tables of projects. -->
+<center><div id="person-Stu">
+
+        <div style="width: 95%";>
+        
+
+
+<div id="stackedbardevdays_Stu" style="width:auto;height:600;"></div>
+<script>
+
+            
+
+            var trace_Stu_webserver ={
+                name: 'Webserver',
+                marker: { color: 'rgb(48, 18, 59)'},
+                type: 'bar',
+
+                x: ['May 22','Jun 22'],
+
+                y: [4.8,2.4],
+
+                text: ['Webserver','Webserver'],
+
+                hovertext: ['Webserver','Webserver'],
+
+                hovertemplate: '<b>%{hovertext}</b><br>'+
+                        '<i>Effort</i>: %{y:.1f} days',
+            };
+
+            
+
+            var trace_Stu_holidays ={
+                name: 'Holidays',
+                marker: { color: 'rgb(176, 82, 205)'},
+                type: 'bar',
+
+                x: ['May 22','Jun 22'],
+
+                y: [2.0,2.0],
+
+                text: ['Holidays','Holidays'],
+
+                hovertext: ['Holidays','Holidays'],
+
+                hovertemplate: '<b>%{hovertext}</b><br>'+
+                        '<i>Effort</i>: %{y:.1f} days',
+            };
+
+            
+
+            var trace_Stu_unscheduled ={
+                name: 'Unscheduled Time',
+                marker: { color: 'rgb(210, 180, 140)'},
+                type: 'bar',
+
+                x: ['May 22','Jun 22'],
+
+                y: [11.2,13.6],
+
+                text: ['Unscheduled','Unscheduled'],
+
+                hovertext: ['Unscheduled Time','Unscheduled Time'],
+
+                hovertemplate: '<b>%{hovertext}</b><br>'+
+                        '<i>Effort</i>: %{y:.1f} days',
+            };
+
+            
+
+            var trace_Stu_otherbau ={
+                name: 'Non-project BAU work',
+                marker: { color: 'rgb(100, 100, 100)'},
+                type: 'bar',
+
+                x: ['May 22','Jun 22'],
+
+                y: [2.0,2.0],
+
+                text: ['Other BAU','Other BAU'],
+
+                hovertext: ['Non-project BAU work','Non-project BAU work'],
+
+                hovertemplate: '<b>%{hovertext}</b><br>'+
+                        '<i>Effort</i>: %{y:.1f} days',
+            };
+
+            
+
+            var trace_Stu_overhead ={
+                name: 'New Project Overhead',
+                marker: { color: 'rgb(200, 200, 200)'},
+                type: 'bar',
+
+                x: ['May 22','Jun 22'],
+
+                y: [2.0,2.0],
+
+                text: ['Overhead','Overhead'],
+
+                hovertext: ['New Project Overhead','New Project Overhead'],
+
+                hovertemplate: '<b>%{hovertext}</b><br>'+
+                        '<i>Effort</i>: %{y:.1f} days',
+            };
+
+    var data_Stu = [
+                trace_Stu_overhead,
+                trace_Stu_otherbau,
+                trace_Stu_unscheduled,
+                trace_Stu_holidays,
+                trace_Stu_webserver,
+    ];
+
+    var layout_Stu = { 
+            xaxis: {tickfont: {
+                size: 14,
+                color: 'rgb(107, 107, 107)'
+                }},
+            yaxis: {
+                title: 'Effort (days)',
+                titlefont: {
+                size: 16,
+                color: 'rgb(107, 107, 107)'
+                },
+                tickfont: {
+                size: 14,
+                color: 'rgb(107, 107, 107)'
+                },
+                range: [0, 25]
+            },
+            barmode: 'stack',
+            height: 600,
+            plot_bgcolor: 'rgba(0, 0, 0, 0)',
+            paper_bgcolor: 'rgba(0, 0, 0, 0)',
+             margin: {
+    l: 50,
+    r: 50,
+    b: 100,
+    t: 50,
+    pad: 4
+  },
+  showlegend: false,
+  <!--
+  legend: {"orientation": "h"},
+    legend: {
+    x: 0.5,
+    y: 0
+  }
+  -->
+        };
+
+    Plotly.newPlot(
+        'stackedbardevdays_Stu', 
+        data_Stu, 
+        layout_Stu
+    );
+
+</script>
+
+        </div>
+
+        <table>
+        <tr>
+            <th colspan="5" class="sectiontitle" style="background-color: #035">
+                <center>Stu</center>
+            </th>
+        </tr>
+        <tr>
+            <th>Start</th>
+            <th>End</th>
+            <th>Project</th>
+            <th>Task Name</th>
+            <th>Max % Time</th>
+        </tr><tr class="row1"><td class="col1">02/05/22</td>
+            <td class="col2">09/05/22</td>
+            <td class="col3">
+                <span class="dot" style="background-color: rgb(48, 18, 59);"></span>
+                Webserver</td>        
+            <td class="col4">Logins</td>
+            <td class="col5">80</td>
+            </tr><tr class="row1"><td class="col1">02/06/22</td>
+            <td class="col2">07/06/22</td>
+            <td class="col3">
+                <span class="dot" style="background-color: rgb(48, 18, 59);"></span>
+                Webserver</td>        
+            <td class="col4">Management Component</td>
+            <td class="col5">80</td>
+            </tr></table>
+        </div><div id="person-Mark">
+
+        <div style="width: 95%";>
+        
+
+
+<div id="stackedbardevdays_Mark" style="width:auto;height:600;"></div>
+<script>
+
+            
+
+            var trace_Mark_webserver ={
+                name: 'Webserver',
+                marker: { color: 'rgb(48, 18, 59)'},
+                type: 'bar',
+
+                x: ['May 22','Jun 22'],
+
+                y: [19.6,0.6],
+
+                text: ['Webserver','Webserver'],
+
+                hovertext: ['Webserver','Webserver'],
+
+                hovertemplate: '<b>%{hovertext}</b><br>'+
+                        '<i>Effort</i>: %{y:.1f} days',
+            };
+
+            
+
+            var trace_Mark_holidays ={
+                name: 'Holidays',
+                marker: { color: 'rgb(176, 82, 205)'},
+                type: 'bar',
+
+                x: ['May 22','Jun 22'],
+
+                y: [0.0,2.0],
+
+                text: ['Holidays','Holidays'],
+
+                hovertext: ['Holidays','Holidays'],
+
+                hovertemplate: '<b>%{hovertext}</b><br>'+
+                        '<i>Effort</i>: %{y:.1f} days',
+            };
+
+            
+
+            var trace_Mark_unscheduled ={
+                name: 'Unscheduled Time',
+                marker: { color: 'rgb(210, 180, 140)'},
+                type: 'bar',
+
+                x: ['May 22','Jun 22'],
+
+                y: [0.2,17.4],
+
+                text: ['Unscheduled','Unscheduled'],
+
+                hovertext: ['Unscheduled Time','Unscheduled Time'],
+
+                hovertemplate: '<b>%{hovertext}</b><br>'+
+                        '<i>Effort</i>: %{y:.1f} days',
+            };
+
+            
+
+            var trace_Mark_otherbau ={
+                name: 'Non-project BAU work',
+                marker: { color: 'rgb(100, 100, 100)'},
+                type: 'bar',
+
+                x: ['May 22','Jun 22'],
+
+                y: [2.2,2.0],
+
+                text: ['Other BAU','Other BAU'],
+
+                hovertext: ['Non-project BAU work','Non-project BAU work'],
+
+                hovertemplate: '<b>%{hovertext}</b><br>'+
+                        '<i>Effort</i>: %{y:.1f} days',
+            };
+
+    var data_Mark = [
+                trace_Mark_otherbau,
+                trace_Mark_unscheduled,
+                trace_Mark_holidays,
+                trace_Mark_webserver,
+    ];
+
+    var layout_Mark = { 
+            xaxis: {tickfont: {
+                size: 14,
+                color: 'rgb(107, 107, 107)'
+                }},
+            yaxis: {
+                title: 'Effort (days)',
+                titlefont: {
+                size: 16,
+                color: 'rgb(107, 107, 107)'
+                },
+                tickfont: {
+                size: 14,
+                color: 'rgb(107, 107, 107)'
+                },
+                range: [0, 25]
+            },
+            barmode: 'stack',
+            height: 600,
+            plot_bgcolor: 'rgba(0, 0, 0, 0)',
+            paper_bgcolor: 'rgba(0, 0, 0, 0)',
+             margin: {
+    l: 50,
+    r: 50,
+    b: 100,
+    t: 50,
+    pad: 4
+  },
+  showlegend: false,
+  <!--
+  legend: {"orientation": "h"},
+    legend: {
+    x: 0.5,
+    y: 0
+  }
+  -->
+        };
+
+    Plotly.newPlot(
+        'stackedbardevdays_Mark', 
+        data_Mark, 
+        layout_Mark
+    );
+
+</script>
+
+        </div>
+
+        <table>
+        <tr>
+            <th colspan="5" class="sectiontitle" style="background-color: #035">
+                <center>Mark</center>
+            </th>
+        </tr>
+        <tr>
+            <th>Start</th>
+            <th>End</th>
+            <th>Project</th>
+            <th>Task Name</th>
+            <th>Max % Time</th>
+        </tr><tr class="row1"><td class="col1">02/05/22</td>
+            <td class="col2">09/05/22</td>
+            <td class="col3">
+                <span class="dot" style="background-color: rgb(48, 18, 59);"></span>
+                Webserver</td>        
+            <td class="col4">Logins</td>
+            <td class="col5">90</td>
+            </tr><tr class="row1"><td class="col1">10/05/22</td>
+            <td class="col2">01/06/22</td>
+            <td class="col3">
+                <span class="dot" style="background-color: rgb(48, 18, 59);"></span>
+                Webserver</td>        
+            <td class="col4">Home page</td>
+            <td class="col5">90</td>
+            </tr></table>
+        </div><div id="person-Sarah C">
+
+        <div style="width: 95%";>
+        
+
+
+<div id="stackedbardevdays_Sarah C" style="width:auto;height:600;"></div>
+<script>
+
+    var data_Sarah C = [
+    ];
+
+    var layout_Sarah C = { 
+            xaxis: {tickfont: {
+                size: 14,
+                color: 'rgb(107, 107, 107)'
+                }},
+            yaxis: {
+                title: 'Effort (days)',
+                titlefont: {
+                size: 16,
+                color: 'rgb(107, 107, 107)'
+                },
+                tickfont: {
+                size: 14,
+                color: 'rgb(107, 107, 107)'
+                },
+                range: [0, 25]
+            },
+            barmode: 'stack',
+            height: 600,
+            plot_bgcolor: 'rgba(0, 0, 0, 0)',
+            paper_bgcolor: 'rgba(0, 0, 0, 0)',
+             margin: {
+    l: 50,
+    r: 50,
+    b: 100,
+    t: 50,
+    pad: 4
+  },
+  showlegend: false,
+  <!--
+  legend: {"orientation": "h"},
+    legend: {
+    x: 0.5,
+    y: 0
+  }
+  -->
+        };
+
+    Plotly.newPlot(
+        'stackedbardevdays_Sarah C', 
+        data_Sarah C, 
+        layout_Sarah C
+    );
+
+</script>
+
+        </div>
+
+        <table>
+        <tr>
+            <th colspan="5" class="sectiontitle" style="background-color: #035">
+                <center>Sarah C</center>
+            </th>
+        </tr>
+        <tr>
+            <th>Start</th>
+            <th>End</th>
+            <th>Project</th>
+            <th>Task Name</th>
+            <th>Max % Time</th>
+        </tr></table>
+        </div><div id="person-Stephen">
+
+        <div style="width: 95%";>
+        
+
+
+<div id="stackedbardevdays_Stephen" style="width:auto;height:600;"></div>
+<script>
+
+            
+
+            var trace_Stephen_androidapp ={
+                name: 'Android App',
+                marker: { color: 'rgb(62, 155, 254)'},
+                type: 'bar',
+
+                x: ['May 22','Jun 22'],
+
+                y: [2.9,0.0],
+
+                text: ['Android App','Android App'],
+
+                hovertext: ['Android App','Android App'],
+
+                hovertemplate: '<b>%{hovertext}</b><br>'+
+                        '<i>Effort</i>: %{y:.1f} days',
+            };
+
+            
+
+            var trace_Stephen_concretesculpture ={
+                name: 'Enormous Concrete Sculpture',
+                marker: { color: 'rgb(240, 91, 18)'},
+                type: 'bar',
+
+                x: ['May 22','Jun 22'],
+
+                y: [3.2,2.4],
+
+                text: ['Concrete Sculpture','Concrete Sculpture'],
+
+                hovertext: ['Enormous Concrete Sculpture','Enormous Concrete Sculpture'],
+
+                hovertemplate: '<b>%{hovertext}</b><br>'+
+                        '<i>Effort</i>: %{y:.1f} days',
+            };
+
+            
+
+            var trace_Stephen_holidays ={
+                name: 'Holidays',
+                marker: { color: 'rgb(176, 82, 205)'},
+                type: 'bar',
+
+                x: ['May 22','Jun 22'],
+
+                y: [0.0,2.0],
+
+                text: ['Holidays','Holidays'],
+
+                hovertext: ['Holidays','Holidays'],
+
+                hovertemplate: '<b>%{hovertext}</b><br>'+
+                        '<i>Effort</i>: %{y:.1f} days',
+            };
+
+            
+
+            var trace_Stephen_unscheduled ={
+                name: 'Unscheduled Time',
+                marker: { color: 'rgb(210, 180, 140)'},
+                type: 'bar',
+
+                x: ['May 22','Jun 22'],
+
+                y: [11.5,13.6],
+
+                text: ['Unscheduled','Unscheduled'],
+
+                hovertext: ['Unscheduled Time','Unscheduled Time'],
+
+                hovertemplate: '<b>%{hovertext}</b><br>'+
+                        '<i>Effort</i>: %{y:.1f} days',
+            };
+
+            
+
+            var trace_Stephen_otherbau ={
+                name: 'Non-project BAU work',
+                marker: { color: 'rgb(100, 100, 100)'},
+                type: 'bar',
+
+                x: ['May 22','Jun 22'],
+
+                y: [2.2,2.0],
+
+                text: ['Other BAU','Other BAU'],
+
+                hovertext: ['Non-project BAU work','Non-project BAU work'],
+
+                hovertemplate: '<b>%{hovertext}</b><br>'+
+                        '<i>Effort</i>: %{y:.1f} days',
+            };
+
+            
+
+            var trace_Stephen_overhead ={
+                name: 'New Project Overhead',
+                marker: { color: 'rgb(200, 200, 200)'},
+                type: 'bar',
+
+                x: ['May 22','Jun 22'],
+
+                y: [2.2,2.0],
+
+                text: ['Overhead','Overhead'],
+
+                hovertext: ['New Project Overhead','New Project Overhead'],
+
+                hovertemplate: '<b>%{hovertext}</b><br>'+
+                        '<i>Effort</i>: %{y:.1f} days',
+            };
+
+    var data_Stephen = [
+                trace_Stephen_overhead,
+                trace_Stephen_otherbau,
+                trace_Stephen_unscheduled,
+                trace_Stephen_holidays,
+                trace_Stephen_concretesculpture,
+                trace_Stephen_androidapp,
+    ];
+
+    var layout_Stephen = { 
+            xaxis: {tickfont: {
+                size: 14,
+                color: 'rgb(107, 107, 107)'
+                }},
+            yaxis: {
+                title: 'Effort (days)',
+                titlefont: {
+                size: 16,
+                color: 'rgb(107, 107, 107)'
+                },
+                tickfont: {
+                size: 14,
+                color: 'rgb(107, 107, 107)'
+                },
+                range: [0, 25]
+            },
+            barmode: 'stack',
+            height: 600,
+            plot_bgcolor: 'rgba(0, 0, 0, 0)',
+            paper_bgcolor: 'rgba(0, 0, 0, 0)',
+             margin: {
+    l: 50,
+    r: 50,
+    b: 100,
+    t: 50,
+    pad: 4
+  },
+  showlegend: false,
+  <!--
+  legend: {"orientation": "h"},
+    legend: {
+    x: 0.5,
+    y: 0
+  }
+  -->
+        };
+
+    Plotly.newPlot(
+        'stackedbardevdays_Stephen', 
+        data_Stephen, 
+        layout_Stephen
+    );
+
+</script>
+
+        </div>
+
+        <table>
+        <tr>
+            <th colspan="5" class="sectiontitle" style="background-color: #035">
+                <center>Stephen</center>
+            </th>
+        </tr>
+        <tr>
+            <th>Start</th>
+            <th>End</th>
+            <th>Project</th>
+            <th>Task Name</th>
+            <th>Max % Time</th>
+        </tr><tr class="row1"><td class="col1">02/05/22</td>
+            <td class="col2">05/05/22</td>
+            <td class="col3">
+                <span class="dot" style="background-color: rgb(62, 155, 254);"></span>
+                Android App</td>        
+            <td class="col4">Update App to Android 17</td>
+            <td class="col5">80</td>
+            </tr><tr class="row1"><td class="col1">26/05/22</td>
+            <td class="col2">03/06/22</td>
+            <td class="col3">
+                <span class="dot" style="background-color: rgb(240, 91, 18);"></span>
+                Concrete Sculpture</td>        
+            <td class="col4">Build a gorgeous sculpture</td>
+            <td class="col5">80</td>
+            </tr></table>
+        </div><div id="person-Blair">
+
+        <div style="width: 95%";>
+        
+
+
+<div id="stackedbardevdays_Blair" style="width:auto;height:600;"></div>
+<script>
+
+            
+
+            var trace_Blair_androidapp ={
+                name: 'Android App',
+                marker: { color: 'rgb(62, 155, 254)'},
+                type: 'bar',
+
+                x: ['May 22','Jun 22'],
+
+                y: [3.5,0.0],
+
+                text: ['Android App','Android App'],
+
+                hovertext: ['Android App','Android App'],
+
+                hovertemplate: '<b>%{hovertext}</b><br>'+
+                        '<i>Effort</i>: %{y:.1f} days',
+            };
+
+            
+
+            var trace_Blair_iphoneapp ={
+                name: 'iPhone App',
+                marker: { color: 'rgb(70, 248, 132)'},
+                type: 'bar',
+
+                x: ['May 22','Jun 22'],
+
+                y: [15.0,0.0],
+
+                text: ['iPhone App','iPhone App'],
+
+                hovertext: ['iPhone App','iPhone App'],
+
+                hovertemplate: '<b>%{hovertext}</b><br>'+
+                        '<i>Effort</i>: %{y:.1f} days',
+            };
+
+            
+
+            var trace_Blair_concretesculpture ={
+                name: 'Enormous Concrete Sculpture',
+                marker: { color: 'rgb(240, 91, 18)'},
+                type: 'bar',
+
+                x: ['May 22','Jun 22'],
+
+                y: [3.5,2.9],
+
+                text: ['Concrete Sculpture','Concrete Sculpture'],
+
+                hovertext: ['Enormous Concrete Sculpture','Enormous Concrete Sculpture'],
+
+                hovertemplate: '<b>%{hovertext}</b><br>'+
+                        '<i>Effort</i>: %{y:.1f} days',
+            };
+
+            
+
+            var trace_Blair_holidays ={
+                name: 'Holidays',
+                marker: { color: 'rgb(176, 82, 205)'},
+                type: 'bar',
+
+                x: ['May 22','Jun 22'],
+
+                y: [0.0,2.0],
+
+                text: ['Holidays','Holidays'],
+
+                hovertext: ['Holidays','Holidays'],
+
+                hovertemplate: '<b>%{hovertext}</b><br>'+
+                        '<i>Effort</i>: %{y:.1f} days',
+            };
+
+            
+
+            var trace_Blair_unscheduled ={
+                name: 'Unscheduled Time',
+                marker: { color: 'rgb(210, 180, 140)'},
+                type: 'bar',
+
+                x: ['May 22','Jun 22'],
+
+                y: [0.0,17.1],
+
+                text: ['Unscheduled','Unscheduled'],
+
+                hovertext: ['Unscheduled Time','Unscheduled Time'],
+
+                hovertemplate: '<b>%{hovertext}</b><br>'+
+                        '<i>Effort</i>: %{y:.1f} days',
+            };
+
+    var data_Blair = [
+                trace_Blair_unscheduled,
+                trace_Blair_holidays,
+                trace_Blair_concretesculpture,
+                trace_Blair_iphoneapp,
+                trace_Blair_androidapp,
+    ];
+
+    var layout_Blair = { 
+            xaxis: {tickfont: {
+                size: 14,
+                color: 'rgb(107, 107, 107)'
+                }},
+            yaxis: {
+                title: 'Effort (days)',
+                titlefont: {
+                size: 16,
+                color: 'rgb(107, 107, 107)'
+                },
+                tickfont: {
+                size: 14,
+                color: 'rgb(107, 107, 107)'
+                },
+                range: [0, 25]
+            },
+            barmode: 'stack',
+            height: 600,
+            plot_bgcolor: 'rgba(0, 0, 0, 0)',
+            paper_bgcolor: 'rgba(0, 0, 0, 0)',
+             margin: {
+    l: 50,
+    r: 50,
+    b: 100,
+    t: 50,
+    pad: 4
+  },
+  showlegend: false,
+  <!--
+  legend: {"orientation": "h"},
+    legend: {
+    x: 0.5,
+    y: 0
+  }
+  -->
+        };
+
+    Plotly.newPlot(
+        'stackedbardevdays_Blair', 
+        data_Blair, 
+        layout_Blair
+    );
+
+</script>
+
+        </div>
+
+        <table>
+        <tr>
+            <th colspan="5" class="sectiontitle" style="background-color: #035">
+                <center>Blair</center>
+            </th>
+        </tr>
+        <tr>
+            <th>Start</th>
+            <th>End</th>
+            <th>Project</th>
+            <th>Task Name</th>
+            <th>Max % Time</th>
+        </tr><tr class="row1"><td class="col1">02/05/22</td>
+            <td class="col2">05/05/22</td>
+            <td class="col3">
+                <span class="dot" style="background-color: rgb(62, 155, 254);"></span>
+                Android App</td>        
+            <td class="col4">Update App to Android 17</td>
+            <td class="col5">100</td>
+            </tr><tr class="row1"><td class="col1">05/05/22</td>
+            <td class="col2">26/05/22</td>
+            <td class="col3">
+                <span class="dot" style="background-color: rgb(70, 248, 132);"></span>
+                iPhone App</td>        
+            <td class="col4">Port from Android</td>
+            <td class="col5">100</td>
+            </tr><tr class="row1"><td class="col1">26/05/22</td>
+            <td class="col2">03/06/22</td>
+            <td class="col3">
+                <span class="dot" style="background-color: rgb(240, 91, 18);"></span>
+                Concrete Sculpture</td>        
+            <td class="col4">Build a gorgeous sculpture</td>
+            <td class="col5">100</td>
+            </tr></table>
+        </div><div id="person-Carly">
+
+        <div style="width: 95%";>
+        
+
+
+<div id="stackedbardevdays_Carly" style="width:auto;height:600;"></div>
+<script>
+
+            
+
+            var trace_Carly_androidapp ={
+                name: 'Android App',
+                marker: { color: 'rgb(62, 155, 254)'},
+                type: 'bar',
+
+                x: ['May 22','Jun 22'],
+
+                y: [3.5,0.0],
+
+                text: ['Android App','Android App'],
+
+                hovertext: ['Android App','Android App'],
+
+                hovertemplate: '<b>%{hovertext}</b><br>'+
+                        '<i>Effort</i>: %{y:.1f} days',
+            };
+
+            
+
+            var trace_Carly_desktopclient ={
+                name: 'Windows Desktop Client',
+                marker: { color: 'rgb(225, 221, 55)'},
+                type: 'bar',
+
+                x: ['May 22','Jun 22'],
+
+                y: [18.0,4.0],
+
+                text: ['Desktop Client','Desktop Client'],
+
+                hovertext: ['Windows Desktop Client','Windows Desktop Client'],
+
+                hovertemplate: '<b>%{hovertext}</b><br>'+
+                        '<i>Effort</i>: %{y:.1f} days',
+            };
+
+            
+
+            var trace_Carly_holidays ={
+                name: 'Holidays',
+                marker: { color: 'rgb(176, 82, 205)'},
+                type: 'bar',
+
+                x: ['May 22','Jun 22'],
+
+                y: [0.0,2.0],
+
+                text: ['Holidays','Holidays'],
+
+                hovertext: ['Holidays','Holidays'],
+
+                hovertemplate: '<b>%{hovertext}</b><br>'+
+                        '<i>Effort</i>: %{y:.1f} days',
+            };
+
+            
+
+            var trace_Carly_unscheduled ={
+                name: 'Unscheduled Time',
+                marker: { color: 'rgb(210, 180, 140)'},
+                type: 'bar',
+
+                x: ['May 22','Jun 22'],
+
+                y: [0.5,16.0],
+
+                text: ['Unscheduled','Unscheduled'],
+
+                hovertext: ['Unscheduled Time','Unscheduled Time'],
+
+                hovertemplate: '<b>%{hovertext}</b><br>'+
+                        '<i>Effort</i>: %{y:.1f} days',
+            };
+
+    var data_Carly = [
+                trace_Carly_unscheduled,
+                trace_Carly_holidays,
+                trace_Carly_desktopclient,
+                trace_Carly_androidapp,
+    ];
+
+    var layout_Carly = { 
+            xaxis: {tickfont: {
+                size: 14,
+                color: 'rgb(107, 107, 107)'
+                }},
+            yaxis: {
+                title: 'Effort (days)',
+                titlefont: {
+                size: 16,
+                color: 'rgb(107, 107, 107)'
+                },
+                tickfont: {
+                size: 14,
+                color: 'rgb(107, 107, 107)'
+                },
+                range: [0, 25]
+            },
+            barmode: 'stack',
+            height: 600,
+            plot_bgcolor: 'rgba(0, 0, 0, 0)',
+            paper_bgcolor: 'rgba(0, 0, 0, 0)',
+             margin: {
+    l: 50,
+    r: 50,
+    b: 100,
+    t: 50,
+    pad: 4
+  },
+  showlegend: false,
+  <!--
+  legend: {"orientation": "h"},
+    legend: {
+    x: 0.5,
+    y: 0
+  }
+  -->
+        };
+
+    Plotly.newPlot(
+        'stackedbardevdays_Carly', 
+        data_Carly, 
+        layout_Carly
+    );
+
+</script>
+
+        </div>
+
+        <table>
+        <tr>
+            <th colspan="5" class="sectiontitle" style="background-color: #035">
+                <center>Carly</center>
+            </th>
+        </tr>
+        <tr>
+            <th>Start</th>
+            <th>End</th>
+            <th>Project</th>
+            <th>Task Name</th>
+            <th>Max % Time</th>
+        </tr><tr class="row1"><td class="col1">02/05/22</td>
+            <td class="col2">05/05/22</td>
+            <td class="col3">
+                <span class="dot" style="background-color: rgb(62, 155, 254);"></span>
+                Android App</td>        
+            <td class="col4">Update App to Android 17</td>
+            <td class="col5">100</td>
+            </tr><tr class="row1"><td class="col1">06/05/22</td>
+            <td class="col2">07/06/22</td>
+            <td class="col3">
+                <span class="dot" style="background-color: rgb(225, 221, 55);"></span>
+                Desktop Client</td>        
+            <td class="col4">Write whole desktop client</td>
+            <td class="col5">100</td>
+            </tr><tr class="row1" style="opacity: 0.25; "><td class="col1">26/05/22</td>
+            <td class="col2">03/06/22</td>
+            <td class="col3">
+                <span class="dot" style="background-color: rgb(240, 91, 18);"></span>
+                Concrete Sculpture</td>        
+            <td class="col4">Build a gorgeous sculpture</td>
+            <td class="col5">0</td>
+            </tr></table>
+        </div></center>
+
+<script>
+    var tabs = new Tabby('[data-tabs]');
+</script>
+
+    <!---------------- (FOOTER)------------------------------->
+
+    <p style="margin-bottom:1cm;"/>
+    <hr>
+    <footer>
+    <center>
+        <font size="-1">jpf version 0.0.20-002, files generated Sat Oct 19 04:55:37 2024.
+        </font>
+    </center>
+    </footer>
+
+    <!---------------- /BODY   ------------------------------->
+
+  </body>
+</html>
+

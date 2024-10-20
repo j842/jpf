@@ -8,6 +8,7 @@
 /gsheet/copy/jpf
 /src/build/jpf
 /website/output
+/copy/temp
 
 version.h
 /src/templates

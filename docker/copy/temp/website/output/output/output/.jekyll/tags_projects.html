@@ -1,0 +1,36 @@
+---
+layout: default
+title: Project Tags
+headincludes: |
+    <link rel="stylesheet" type="text/css" href="static/dot.css">
+    <link rel="stylesheet" type="text/css" href="static/nicetable.css">
+    <link rel="stylesheet" type="text/css" href="static/tabby-ui.min.css">
+    <script src="static/tabby.polyfills.min.js"></script>
+---
+
+<center>
+
+    <ul data-tabs>
+        {% for row in site.data.project_tags %}
+        {% capture tabname %}tab_{{ forloop.index }}{% endcapture %}
+        <li><a 
+            {% if forloop.first %}
+            data-tabby-default
+            {% endif %}
+            href="#{{tabname}}">{{row.tag}}</a></li>
+        {% endfor %}
+    </ul>
+
+    {% for row in site.data.project_tags %}
+    {% capture tabname %}tab_{{ forloop.index }}{% endcapture %}
+    <div id="{{tabname}}">
+        <p/>
+        {% include subpage_projecttagfile.liquid tag=row.tag %}
+    </div>
+    {% endfor %}
+
+</center>
+
+<script>
+    var tabs = new Tabby('[data-tabs]');
+</script>

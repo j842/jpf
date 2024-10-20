@@ -1,0 +1,38 @@
+
+\documentclass[8pt]{extarticle}
+\usepackage[a4paper,landscape,margin=12mm,top=18mm]{geometry}
+
+\usepackage{tabularray}
+\usepackage{xcolor}
+\usepackage{needspace}
+
+\begin{document}
+
+This document lists projects approved for development and in the tech team scheduling system, as of \textbf{Monday May 02, 2022}. 
+Total projects included: 5.\\
+
+
+\Needspace{15\baselineskip}
+\section{Development Started}
+
+\begin{longtblr}[
+  caption = {Development Started},
+  label = {tab:proj},
+]{
+  colspec = {|p{0.025\linewidth} | p{0.1\linewidth} | p{0.1\linewidth} | p{0.2\linewidth} | p{0.16\linewidth} | p{0.275\linewidth}|},
+  rowhead = 1,
+  hlines,
+  row{even} = {gray9},
+  row{1} = {blue!30, font=\small\bfseries, c},
+  column{1} = {r},
+} 
+\# & Release & Code Complete & Project & Status/Notes & Description \\
+1 & 15 Jun 2022 &  8 Jun 2022 & Webserver &  & Create a new webserver \\ 
+2 & 13 May 2022 &  6 May 2022 & Android App &  & Android App to manage accounts \\ 
+3 &  3 Jun 2022 & 27 May 2022 & iPhone App &  & iPhone port of the Android app \\ 
+4 & 15 Jun 2022 &  8 Jun 2022 & Windows Desktop Client & Needed Dave from Taranaki & Desktop client for managing accounts \\ 
+5 & 13 Jun 2022 &  6 Jun 2022 & Enormous Concrete Sculpture &  & Support for customers who like concrete \\ 
+
+\end{longtblr}
+
+\end{document}
