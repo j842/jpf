@@ -1,7 +1,0 @@
-          Project Id |   Start Date |   End Date |   Remaining Cost
--------------------- | ------------ | ---------- | ----------------
-           Webserver |     02/05/22 |   08/06/22 |          $18,000
-         Android App |     02/05/22 |   06/05/22 |           $5,000
-          iPhone App |     05/05/22 |   27/05/22 |           $8,000
-      Desktop Client |     06/05/22 |   08/06/22 |          $11,000
-  Concrete Sculpture |     26/05/22 |   06/06/22 |           $6,000

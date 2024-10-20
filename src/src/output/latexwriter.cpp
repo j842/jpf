@@ -34,6 +34,9 @@ void LatexWriter::runLatex() const
 
 void LatexWriter::createTex(const scheduler::scheduler &s) const
 {
+    using boost::gregorian::date;
+    typedef boost::gregorian::gregorian_calendar::date_int_type date_int_type;
+
     std::string ofs_name = getOutputPath_PDF()+mBaseName+".tex";
     std::ofstream ofs(ofs_name);
     if (!ofs.is_open())
@@ -46,7 +49,8 @@ void LatexWriter::createTex(const scheduler::scheduler &s) const
     ofs <<
 R"END(
 \documentclass[8pt]{extarticle}
-\usepackage[a4paper,landscape,margin=12mm,top=18mm]{geometry}
+\usepackage[a4paper,landscape,margin=12mm,top=18mm,bottom=18mm]{geometry}
+\usepackage[nodayofweek]{datetime}
 
 \usepackage{tabularray}
 \usepackage{xcolor}
@@ -55,17 +59,19 @@ R"END(
 \begin{document}
 
 This document lists projects approved for development and in the tech team scheduling system, as of \textbf{)END";
-ofs << gSettings().startDate().getStr_nice_long() << "}. " << std::endl;
+ofs << gSettings().startDate().getStr_nice_long() << "} (generated \\shortdate \\today)." << std::endl << std::endl;
 ofs << "Total projects included: "<<s.getProjects().size()<<".\\\\"<<std::endl;
+
+    date_int_type today(boost::gregorian::day_clock::local_day().day_number());
 
     int ap=0;
     for (unsigned int i=0;i< s.getProjects().size();++i)
     {
         auto & z = s.getProjects().at(i);
-        if (z.mActualStart.getGregorian() <= simpledate().getGregorian())
+        if (z.mActualStart.getGregorian().day_number() <= today)
         {
             if (ap==0)
-                starttable("Development Started",ofs);
+                starttable("Projects in Active Development",ofs);
             ++ap;
             outputrow(ap,z,ofs);
         }
@@ -82,7 +88,7 @@ ofs << "Total projects included: "<<s.getProjects().size()<<".\\\\"<<std::endl;
         if (z.mActualStart.getGregorian() > simpledate().getGregorian())
         {
             if (sp==0)
-                starttable("Scheduled Projects",ofs);
+                starttable("Planned Projects",ofs);
             ++sp;
             outputrow(ap+sp,z,ofs);
         }
@@ -129,7 +135,7 @@ R"END(
   caption = {)END" << title << R"END(},
   label = {tab:proj},
 ]{
-  colspec = {|p{0.025\linewidth} | p{0.1\linewidth} | p{0.1\linewidth} | p{0.2\linewidth} | p{0.16\linewidth} | p{0.275\linewidth}|},
+  colspec = {|p{0.025\linewidth} | p{0.08\linewidth} | p{0.08\linewidth} | p{0.2\linewidth} | p{0.2\linewidth} | p{0.275\linewidth}|},
   rowhead = 1,
   hlines,
   row{even} = {gray9},

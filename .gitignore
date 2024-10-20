@@ -1,22 +1,18 @@
 # output
-/output
-/build
 .obj
 .dep
-/deps/webfsd-jpf/bin
 .vscode/jpf-debug
-/gsheet/copy/jpf
-/src/build/jpf
-/website/output
-/copy/temp
 
-version.h
-/src/templates
-/src/support_files
-
+src/build/jpf
+output/
+temp/
+build/
 _site/
 node_modules/
 .jekyll-cache
+
+version.h
+
 
 # Prerequisites
 *.d
