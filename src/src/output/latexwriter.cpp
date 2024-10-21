@@ -34,8 +34,7 @@ void LatexWriter::runLatex() const
 
 void LatexWriter::createTex(const scheduler::scheduler &s) const
 {
-    using boost::gregorian::date;
-    typedef boost::gregorian::gregorian_calendar::date_int_type date_int_type;
+    simpledate today;
 
     std::string ofs_name = getOutputPath_PDF()+mBaseName+".tex";
     std::ofstream ofs(ofs_name);
@@ -50,7 +49,6 @@ void LatexWriter::createTex(const scheduler::scheduler &s) const
 R"END(
 \documentclass[8pt]{extarticle}
 \usepackage[a4paper,landscape,margin=12mm,top=18mm,bottom=18mm]{geometry}
-\usepackage[nodayofweek]{datetime}
 
 \usepackage{tabularray}
 \usepackage{xcolor}
@@ -59,16 +57,14 @@ R"END(
 \begin{document}
 
 This document lists projects approved for development and in the tech team scheduling system, as of \textbf{)END";
-ofs << gSettings().startDate().getStr_nice_long() << "} (generated \\shortdate \\today)." << std::endl << std::endl;
+ofs << gSettings().startDate().getStr_nice_long() << "} (generated " << today.getStr_nice_short() <<")." << std::endl << std::endl;
 ofs << "Total projects included: "<<s.getProjects().size()<<".\\\\"<<std::endl;
-
-    date_int_type today(boost::gregorian::day_clock::local_day().day_number());
-
+    
     int ap=0;
     for (unsigned int i=0;i< s.getProjects().size();++i)
     {
         auto & z = s.getProjects().at(i);
-        if (z.mActualStart.getGregorian().day_number() <= today)
+        if (z.mActualStart <= today)
         {
             if (ap==0)
                 starttable("Projects in Active Development",ofs);

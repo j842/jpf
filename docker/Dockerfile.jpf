@@ -14,7 +14,8 @@ RUN apt-get -y update && \
     apt-get install -y python3 python3-pip pipx ruby-full \
             build-essential expect \
             texlive-latex-base texlive-latex-extra \
-            openresty openresty-resty luarocks && \
+            openresty openresty-resty luarocks \
+            tzdata && \
     rm -rf /var/lib/apt/lists/*
 
 RUN pipx ensurepath
@@ -41,6 +42,9 @@ RUN  mkdir /config && chmod 755 /config && \
 
 COPY --chmod=755 copy/temp/jpf /usr/bin/jpf
 COPY --chmod=755 copy/temp/website /website
+
+ENV TZ=Pacific/Auckland
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 EXPOSE 80
 
