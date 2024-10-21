@@ -217,7 +217,7 @@ void HTMLCSVWriter::write_project_tag_file(const scheduler::scheduler &s, const 
                 "id",
                 "devdays",
                 "description",
-                "comments",
+                "status",
                 "team",
                 "projectindex",
                 "endparsy"});
@@ -251,7 +251,7 @@ void HTMLCSVWriter::write_project_tag_file(const scheduler::scheduler &s, const 
                     z.getId(),
                     S()<<(int)(0.5+(double)z.mTotalDevCentiDays/100.0),
                     z.getDesc(),
-                    z.getmComments(),
+                    z.getStatus(),
                     team.getAsString(),
                     S()<<i,
                     end.getStr()

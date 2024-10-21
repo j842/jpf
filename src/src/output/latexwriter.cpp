@@ -106,13 +106,13 @@ void LatexWriter::outputrow(int n, const scheduler::scheduledproject &z, std::of
     ofs 
         << n
         << " & "
-        << simpledate(z.mActualEnd.getGregorian()+ boost::gregorian::days(7)).getStr_nice_short() 
+        <<  (z.getTargetDate().isForever() ? "" :  z.getTargetDate().getStr_nice_short())
         << " & "
         << z.mActualEnd.getStr_nice_short()
         << " & "
         << z.getName()
         << " & "
-        << z.getmComments()
+        << z.getStatus()
         << " & "
         << z.getDesc()
         << " \\\\ " 

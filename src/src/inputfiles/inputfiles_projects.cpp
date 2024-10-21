@@ -9,8 +9,8 @@
 namespace inputfiles
 {
 
-    project::project(std::string id, std::string name, std::string desc, bool BAU, std::string comments, const cTags & tags) : 
-        mId(id), mName(name), mDescription(desc), mBAU(BAU), mComments(comments), mTags(tags)
+    project::project(std::string id, std::string name, std::string desc, bool BAU, std::string status, const cTags & tags, simpledate targetd) : 
+        mId(id), mName(name), mDescription(desc), mBAU(BAU), mStatus(status), mTags(tags), mTargetDate(targetd)
     {
     }
 
@@ -18,7 +18,7 @@ namespace inputfiles
     {
         if (s.length() == 0)
         {
-            logwarning("Empty string passed to isBAU.");
+            logwarning("Empty string passed to isBAU. Assuming business as usual.");
             return true;
         }
         return (tolower(s[0]) == 'b');
@@ -38,16 +38,22 @@ namespace inputfiles
             TERMINATE("Could not open projects.csv!");
 
         std::vector<std::string> row;
-        while (c.getline(row, 6))
+        while (c.getline(row, 7))
         {
-            project p(row[0], row[1], row[2], isBAU(row[3]), row[4], cTags(row[5]));
+            simpledate sd;
+            if (row[6].length()==0) sd.setForever(); 
+            else sd = simpledate(row[6]);
+
+            project p(row[0], row[1], row[2], isBAU(row[3]), row[4], cTags(row[5]), sd);
+
             mMaxProjectNameWidth = std::max(mMaxProjectNameWidth, (unsigned int)p.getId().length());
             this->push_back(p);
         }
     }
+
     void projects::save_projects_CSV(std::ostream &os) const
     {
-        os << R"(Project ID,Project Name,Description,BAU or New,Comments,Tags)" << std::endl;
+        os << R"(Project ID,Project Name,Description,BAU or New,Status,Tags,TargetDate)" << std::endl;
 
         for (const auto &i : *this)
         {
@@ -56,8 +62,10 @@ namespace inputfiles
                 i.getName(),
                 i.getDesc(),
                 i.getBAU() ? "BAU" : "New",
-                i.getmComments(),
-                i.getTags().getAsString()};
+                i.getStatus(),
+                i.getTags().getAsString(),
+                i.getTargetDate().getStr()
+                };
             simplecsv::output(os, row);
             os << std::endl;
         }

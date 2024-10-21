@@ -13,22 +13,24 @@ namespace inputfiles
 class project
 {
     public: 
-        project(std::string id, std::string name, std::string desc, bool BAU, std::string comments, const cTags & tags);
+        project(std::string id, std::string name, std::string desc, bool BAU, std::string status, const cTags & tags, simpledate targetd);
 
         const std::string & getId() const {return mId;}
         const std::string & getName() const {return mName;}
         const std::string & getDesc() const {return mDescription;}
         bool getBAU() const {return mBAU;}
-        const std::string & getmComments() const {return mComments;}
+        const std::string & getStatus() const {return mStatus;}
         const cTags & getTags() const {return mTags;}
+        const simpledate getTargetDate() const {return mTargetDate;}
 
     private:
         const std::string mId;
         const std::string mName;
         const std::string mDescription;
         const bool mBAU;
-        const std::string mComments;
+        const std::string mStatus;
         const cTags mTags;
+        const simpledate mTargetDate;
 };
 
 class projects : public std::vector<project>
