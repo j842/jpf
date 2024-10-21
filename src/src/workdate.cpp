@@ -10,6 +10,8 @@ simpledate::simpledate() : mD(boost::gregorian::day_clock::local_day()) {}
 simpledate::simpledate(std::string datestr) : mD(parseDateStringDDMMYY(datestr).getGregorian()) {}
 simpledate::simpledate(const boost::gregorian::date &d) : mD(d) {}
 
+const std::string kForever = "Forever";
+
 std::string simpledate::getStr() const
 {
     // https://www.boost.org/doc/libs/1_79_0/doc/html/date_time/date_time_io.html
@@ -51,6 +53,9 @@ std::string simpledate::getStr_nice_long() const
 
 std::string simpledate::getStr_nice_short() const
 {
+    if (isForever())
+        return kForever;
+
     const std::locale fmt(std::locale::classic(),
                           new boost::gregorian::date_facet("%e %b %Y"));
     std::ostringstream oss;
@@ -61,16 +66,12 @@ std::string simpledate::getStr_nice_short() const
 
 std::string simpledate::getStr_SafeMonth() const
 {
+    ASSERT(!isForever());
+
     using namespace boost::gregorian;
     date monthdate(mD);
     monthdate += boost::gregorian::days(7);
-    // if (monthdate.day()>15)
-    // {
-    //     monthdate = boost::gregorian::date(monthdate.year(),monthdate.month(),1);
-    //     month_iterator m_itr(monthdate);
-    //     ++m_itr;
-    //     monthdate = *m_itr;
-    // }
+
     const std::locale fmt(std::locale::classic(),
                           new boost::gregorian::date_facet("%b %Y"));    
     std::ostringstream oss;
@@ -84,6 +85,12 @@ std::string simpledate::getStr_SafeMonth() const
 simpledate simpledate::parseDateStringDDMMYY(std::string datestr) const
 {
     removewhitespace(datestr);
+    if (iSame(datestr,kForever))
+        {
+            simpledate sd;
+            sd.setForever();
+            return sd;
+        }
 
     if (datestr.length()==0)
         return gSettings().startDate().getGregorian();
@@ -104,15 +111,23 @@ simpledate simpledate::parseDateStringDDMMYY(std::string datestr) const
     if (v[2] < 2000)
         v[2] += 2000;
 
-    boost::gregorian::date d1(v[2], v[1], v[0]);
-    return d1;
+    try
+    {
+        boost::gregorian::date d1(v[2], v[1], v[0]);
+        return d1;
+    }
+    catch(const std::exception& e)
+    {
+        logerror(S()<<"Unable to parse date string '"<<datestr<<"' ! Can't create date object, defaulting to start date.");
+    }
+    return gSettings().startDate().getGregorian();
 }
 
 // private.
 std::string simpledate::_getstr(const std::locale &fmt) const
 {
     if (isForever())
-        return "forever";
+        return kForever;
 
     std::ostringstream oss;
 
@@ -123,6 +138,8 @@ std::string simpledate::_getstr(const std::locale &fmt) const
 
 std::string simpledate::getAsGoogleNewDate() const
 {
+    ASSERT(!isForever());
+
     return S() << "new Date(" << mD.year() << ", " << mD.month() - 1 << ", " << mD.day() - 1 << ")";
 }
 
@@ -155,16 +172,22 @@ bool simpledate::isForever() const
 
 monthIndex simpledate::getMonthIndex() const
 {
+    ASSERT(!isForever());
+
     return monthIndex(getGregorian());
 }
 
 simpledate simpledate::getEndofMonth() const
 {
+    ASSERT(!isForever());
+
     return getGregorian().end_of_month();
 }
 
 bool simpledate::isWeekend(const simpledate d)
 {
+    ASSERT(!d.isForever());
+
     return (d.getGregorian().day_of_week()== boost::date_time::Saturday || d.getGregorian().day_of_week()== boost::date_time::Sunday);
 }
 

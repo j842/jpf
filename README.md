@@ -39,9 +39,9 @@ build the website using Jekyll with the `build.sh` script.
 
 ## Development Setup (Compiling jpf from source)
 
-On either Ubuntu 20.04 or Debian 11 (including via WSL2 under Windows):
+On Ubuntu 24.04:
 ```
-sudo apt install build-essential libboost-date-time-dev libcppunit-dev podman gh ruby-full zlib1g-dev
+sudo apt install build-essential libboost-date-time-dev libcppunit-dev podman gh ruby-full zlib1g-dev texlive-latex-base texlive-latex-extra
 
 echo '# Install Ruby Gems to ~/gems' >> ~/.bashrc
 echo 'export GEM_HOME="$HOME/gems"' >> ~/.bashrc

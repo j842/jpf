@@ -9,8 +9,8 @@
 namespace inputfiles
 {
 
-    project::project(std::string id, std::string name, std::string desc, bool BAU, std::string status, const cTags & tags, simpledate targetd) : 
-        mId(id), mName(name), mDescription(desc), mBAU(BAU), mStatus(status), mTags(tags), mTargetDate(targetd)
+    project::project(std::string id, simpledate targetd, std::string status, std::string name, std::string desc, bool BAU, const cTags & tags) : 
+        mId(id), mTargetDate(targetd), mStatus(status), mName(name), mDescription(desc), mBAU(BAU), mTags(tags)
     {
     }
 
@@ -41,10 +41,10 @@ namespace inputfiles
         while (c.getline(row, 7))
         {
             simpledate sd;
-            if (row[6].length()==0) sd.setForever(); 
-            else sd = simpledate(row[6]);
+            if (row[1].length()==0) sd.setForever(); 
+            else sd = simpledate(row[1]);
 
-            project p(row[0], row[1], row[2], isBAU(row[3]), row[4], cTags(row[5]), sd);
+            project p(row[0], sd, row[2], row[3], row[4], isBAU(row[5]), cTags(row[6]));
 
             mMaxProjectNameWidth = std::max(mMaxProjectNameWidth, (unsigned int)p.getId().length());
             this->push_back(p);
@@ -53,18 +53,18 @@ namespace inputfiles
 
     void projects::save_projects_CSV(std::ostream &os) const
     {
-        os << R"(Project ID,Project Name,Description,BAU or New,Status,Tags,TargetDate)" << std::endl;
+        os << R"(Project ID,TargetDate,Status,Project Name,Description,BAU or New,Tags)" << std::endl;
 
         for (const auto &i : *this)
         {
             std::vector<std::string> row = {
                 i.getId(),
+                i.getTargetDate().getStr(),
+                i.getStatus(),
                 i.getName(),
                 i.getDesc(),
                 i.getBAU() ? "BAU" : "New",
-                i.getStatus(),
                 i.getTags().getAsString(),
-                i.getTargetDate().getStr()
                 };
             simplecsv::output(os, row);
             os << std::endl;

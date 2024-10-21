@@ -298,7 +298,11 @@ const std::string getInputPath_Jekyll()
         return opt_local;
 
     std::string opt_system = "/opt/jpf/html/";
-    return opt_system;
+    if (std::filesystem::exists(opt_system))
+        return opt_system;
+
+    TERMINATE(S()<<"Could not find Template directory at "<<opt_local);
+    return "";
 }
 
 const std::string getHomeDir()
