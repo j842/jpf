@@ -85,8 +85,11 @@ R"END(
 
 \begin{document}
 
-This document lists projects approved for development and in the tech team scheduling system, as of \textbf{)END";
-ofs << gSettings().startDate().getStr_nice_long() << "} (generated " << today.getStr_nice_short() <<")." << std::endl << std::endl;
+{\Huge\textbf{\textsf{Active Development - )END" << today.getStr_nice_short() << R"END( }}}
+\par $_{ }$ \par
+
+This document lists projects approved for development and in the tech team scheduling system, from \textbf{)END";
+ofs << gSettings().startDate().getStr_nice_long() << "}." << std::endl << std::endl;
 ofs << "Total projects included: "<<s.getProjects().size()<<".\\\\"<<std::endl;
     
 
@@ -148,7 +151,7 @@ void LatexWriter::starttable(const std::string title, std::ofstream &ofs) const
 ofs <<
 R"END(
 
-\Needspace{15\baselineskip}
+\Needspace{30\baselineskip}
 \section{)END" << title << R"END(}
 
 \begin{longtblr}[

@@ -1,4 +1,4 @@
-Project ID,TargetDate,Status,Project Name,Description,BAU or New,Tags
+Project ID,TargetDate,Status,Project Name,Description,Type,Tags
 Webserver,23/9/2025,Not started,Webserver,Create a new webserver,BAU,Maintenance
 Android App,30/11/2025,In Progress,Android App,Android App to manage accounts,BAU,"Android,Maintenance"
 iPhone App,,Blocked on marketing,iPhone App,iPhone port of the Android app,New,Apple
