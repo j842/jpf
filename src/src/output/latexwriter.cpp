@@ -32,6 +32,35 @@ void LatexWriter::runLatex() const
     loginfo(S() << "PDFLatex Finished in " << tmr.stop() << " ms.");
 }
 
+std::string _title(unsigned int tablenum)
+{
+    switch (tablenum)
+    {
+        case 0:
+            return "Customer Facing Defects and Bugs";
+        case 1:
+            return "Projects in Active Development";
+        default:
+            ;
+    }
+    return "Planned Projects";
+}
+bool _include(unsigned int tablenum, const scheduler::scheduledproject & z )
+{
+    static simpledate today;
+
+    switch (tablenum)
+    {
+        case 0:
+            return z.getType()==kPTBug;
+        case 1:
+            return z.mActualStart <= today;
+        default:
+            ;
+    }
+    return z.mActualStart > today;
+}
+
 void LatexWriter::createTex(const scheduler::scheduler &s) const
 {
     simpledate today;
@@ -60,38 +89,25 @@ This document lists projects approved for development and in the tech team sched
 ofs << gSettings().startDate().getStr_nice_long() << "} (generated " << today.getStr_nice_short() <<")." << std::endl << std::endl;
 ofs << "Total projects included: "<<s.getProjects().size()<<".\\\\"<<std::endl;
     
-    int ap=0;
-    for (unsigned int i=0;i< s.getProjects().size();++i)
-    {
-        auto & z = s.getProjects().at(i);
-        if (z.mActualStart <= today)
-        {
-            if (ap==0)
-                starttable("Projects in Active Development",ofs);
-            ++ap;
-            outputrow(ap,z,ofs);
-        }
-    }
-    if (ap>0)
-        endtable(ofs);
-    loginfo(S()<<"Outputted "<<ap<<" active projects.");
-    
 
-    int sp=0;
-    for (unsigned int i=0;i< s.getProjects().size();++i)
+    for (unsigned int tablenum=0;tablenum<3;tablenum++)
     {
-        auto & z = s.getProjects().at(i);
-        if (z.mActualStart.getGregorian() > simpledate().getGregorian())
+        int count=0;
+        for (unsigned int i=0;i< s.getProjects().size();++i)
         {
-            if (sp==0)
-                starttable("Planned Projects",ofs);
-            ++sp;
-            outputrow(ap+sp,z,ofs);
+            auto & z = s.getProjects().at(i);
+            if (_include(tablenum,z))
+            {
+                if (count==0)
+                    starttable(_title(tablenum),ofs);
+                ++count;
+                outputrow(count,z,ofs);
+            }
         }
+        if (count>0)
+            endtable(ofs);
+        loginfo(S()<<"Outputted "<<count<<" for "<<_title(tablenum));
     }
-    if (sp>0)
-        endtable(ofs);
-    loginfo(S()<<"Outputted "<<sp<<" scheduled projects.");
 
 ofs <<
 R"END(
@@ -102,13 +118,21 @@ R"END(
 }
 
 void LatexWriter::outputrow(int n, const scheduler::scheduledproject &z, std::ofstream &ofs) const
-{
+{   
+    bool late = false;
+    if (!z.getTargetDate().isForever())
+        if (z.mActualEnd > z.getTargetDate())
+            late = true;
+
+
     ofs 
         << n
         << " & "
-        <<  (z.getTargetDate().isForever() ? "" :  z.getTargetDate().getStr_nice_short())
+        << (z.getTargetDate().isForever() ? "" :  z.getTargetDate().getStr_nice_short())
         << " & "
+        << (late ? "\\textcolor{red}{" : "")
         << z.mActualEnd.getStr_nice_short()
+        << (late ? "}" : "")
         << " & "
         << z.getName()
         << " & "
@@ -138,7 +162,7 @@ R"END(
   row{1} = {blue!30, font=\small\bfseries, c},
   column{1} = {r},
 } 
-\# & Release & Code Complete & Project & Status/Notes & Description \\
+\# & Business Target & Tech Complete & Project & Status/Notes & Description \\
 )END";
 }
 

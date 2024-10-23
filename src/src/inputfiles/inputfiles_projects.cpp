@@ -9,19 +9,10 @@
 namespace inputfiles
 {
 
-    project::project(std::string id, simpledate targetd, std::string status, std::string name, std::string desc, bool BAU, const cTags & tags) : 
-        mId(id), mTargetDate(targetd), mStatus(status), mName(name), mDescription(desc), mBAU(BAU), mTags(tags)
+    project::project(std::string id, simpledate targetd, std::string status, std::string name, std::string desc, 
+                        eProjectType type, const cTags & tags) : 
+        mId(id), mTargetDate(targetd), mStatus(status), mName(name), mDescription(desc), mType(type), mTags(tags)
     {
-    }
-
-    bool isBAU(std::string s)
-    {
-        if (s.length() == 0)
-        {
-            logwarning("Empty string passed to isBAU. Assuming business as usual.");
-            return true;
-        }
-        return (tolower(s[0]) == 'b');
     }
 
     projects::projects() : mMaxProjectNameWidth(0)
@@ -44,7 +35,7 @@ namespace inputfiles
             if (row[1].length()==0) sd.setForever(); 
             else sd = simpledate(row[1]);
 
-            project p(row[0], sd, row[2], row[3], row[4], isBAU(row[5]), cTags(row[6]));
+            project p(row[0], sd, row[2], row[3], row[4], ProjectTypefromString(row[5]), cTags(row[6]));
 
             mMaxProjectNameWidth = std::max(mMaxProjectNameWidth, (unsigned int)p.getId().length());
             this->push_back(p);
@@ -53,7 +44,7 @@ namespace inputfiles
 
     void projects::save_projects_CSV(std::ostream &os) const
     {
-        os << R"(Project ID,TargetDate,Status,Project Name,Description,BAU or New,Tags)" << std::endl;
+        os << R"(Project ID,TargetDate,Status,Project Name,Description,Type,Tags)" << std::endl;
 
         for (const auto &i : *this)
         {
@@ -63,7 +54,7 @@ namespace inputfiles
                 i.getStatus(),
                 i.getName(),
                 i.getDesc(),
-                i.getBAU() ? "BAU" : "New",
+                ProjectTypetoString(i.getType()),
                 i.getTags().getAsString(),
                 };
             simplecsv::output(os, row);
@@ -99,3 +90,29 @@ namespace inputfiles
     }
 
 } // namespace
+
+std::string ProjectTypetoString(eProjectType t)
+{
+    switch (t)
+    {
+        case kPTBug: 
+            return "Bug";
+        case kPTBAU:
+            return "BAU";
+        case kPTNew:
+            return "New";
+        default:
+            ;
+    }
+    return ""; // kNone
+}
+
+eProjectType ProjectTypefromString(const std::string &s)
+{
+    if (iSame(s,"bug")) return kPTBug;
+    if (iSame(s,"BAU")) return kPTBAU;
+    if (iSame(s,"New")) return kPTNew;
+
+    logwarning(S()<<"Invalid Project Type: "<<s);
+    return kPTNone;
+}

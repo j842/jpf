@@ -7,20 +7,32 @@
 #include "workdate.h"
 #include "ctags.h"
 
+typedef enum eProjectType
+{
+    kPTNone,
+    kPTBug,
+    kPTBAU,
+    kPTNew,
+} eProjectType;
+
+std::string ProjectTypetoString(eProjectType t);
+eProjectType ProjectTypefromString(const std::string & s);
+
 namespace inputfiles
 {
 
 class project
 {
     public: 
-        project(std::string id, simpledate targetd, std::string status, std::string name, std::string desc, bool BAU, const cTags & tags);
+        project(std::string id, simpledate targetd, std::string status, std::string name, std::string desc, 
+                eProjectType type, const cTags & tags);
 
         const std::string & getId() const {return mId;}
         const simpledate getTargetDate() const {return mTargetDate;}
         const std::string & getStatus() const {return mStatus;}
         const std::string & getName() const {return mName;}
         const std::string & getDesc() const {return mDescription;}
-        bool getBAU() const {return mBAU;}
+        const eProjectType & getType() const {return mType;}
         const cTags & getTags() const {return mTags;}
 
     private:
@@ -29,7 +41,7 @@ class project
         const std::string mStatus;
         const std::string mName;
         const std::string mDescription;
-        const bool mBAU;
+        const eProjectType mType;
         const cTags mTags;
 };
 

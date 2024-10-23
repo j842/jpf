@@ -42,7 +42,18 @@ namespace scheduler
         {
             unsigned int pi = 0;
             for (pi=0; pi < mProjects.size(); ++pi)
-                ProjectInfo[pi].mType = mProjects[pi].getBAU() ? kBAU : kNew;
+            {
+                switch (mProjects[pi].getType())
+                {
+                    case kPTBug:
+                    case kPTBAU:
+                        ProjectInfo[pi].mType = kBAU;
+                        break;
+                    default: // kPTNew, kPTNone
+                        ProjectInfo[pi].mType = kNew;
+                }
+                //ProjectInfo[pi].mType = mProjects[pi].getBAU() ? kBAU : kNew;
+            }
             ProjectInfo[pi+0].mType=kHol; // holidays 
             ProjectInfo[pi+1].mType=kUna; // slack - assume new projects.
             ProjectInfo[pi+2].mType=kBAU; // BAU.

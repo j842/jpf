@@ -1,7 +1,7 @@
 #---------------------------------
-JPF_VERSION   := 0.0.22
-JPF_RELEASE   := 002
-INPUT_VERSION := 16
+JPF_VERSION   := 0.0.23
+JPF_RELEASE   := 001
+INPUT_VERSION := 17
 #---------------------------------
 
 JPF_NAME:= jpf
