@@ -40,25 +40,40 @@ std::string _title(unsigned int tablenum)
             return "Customer Facing Defects and Bugs";
         case 1:
             return "Projects in Active Development";
+        case 2:
+            return "Planned Projects";
+        case 3:
+            return "No Assigned Estimates";
         default:
             ;
     }
-    return "Planned Projects";
+    TERMINATE("Programming error: Bad tablenum to _title.");
+    return "";
 }
+
 bool _include(unsigned int tablenum, const scheduler::scheduledproject & z )
 {
     static simpledate today;
 
+    bool bug = z.getType()==kPTBug;
+    bool started = z.mActualStart <= today;
+    bool scheduled = z.mTotalDevCentiDays > 0.0;
+
     switch (tablenum)
     {
         case 0:
-            return z.getType()==kPTBug;
+            return bug;
         case 1:
-            return z.mActualStart <= today;
+            return !bug && started && scheduled;
+        case 2:     
+            return !bug && !started && scheduled;
+        case 3:
+            return !bug && !scheduled;
         default:
             ;
     }
-    return z.mActualStart > today;
+    TERMINATE("Programming error: Bad tablenum to _include.");
+    return true;
 }
 
 void LatexWriter::createTex(const scheduler::scheduler &s) const
@@ -93,7 +108,7 @@ ofs << gSettings().startDate().getStr_nice_long() << "}." << std::endl << std::e
 ofs << "Total projects included: "<<s.getProjects().size()<<".\\\\"<<std::endl;
     
 
-    for (unsigned int tablenum=0;tablenum<3;tablenum++)
+    for (unsigned int tablenum=0;tablenum<4;tablenum++)
     {
         int count=0;
         for (unsigned int i=0;i< s.getProjects().size();++i)
@@ -127,15 +142,16 @@ void LatexWriter::outputrow(int n, const scheduler::scheduledproject &z, std::of
         if (z.mActualEnd > z.getTargetDate())
             late = true;
 
+    bool scheduled = z.mTotalDevCentiDays > 0.0;
 
     ofs 
         << n
         << " & "
         << (z.getTargetDate().isForever() ? "" :  z.getTargetDate().getStr_nice_short())
         << " & "
-        << (late ? "\\textcolor{red}{" : "")
-        << z.mActualEnd.getStr_nice_short()
-        << (late ? "}" : "")
+        << (late && scheduled ? "\\textcolor{red}{" : "")
+        << (scheduled ? z.mActualEnd.getStr_nice_short() : "")
+        << (late && scheduled ? "}" : "")
         << " & "
         << z.getName()
         << " & "
