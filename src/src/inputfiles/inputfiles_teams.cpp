@@ -11,12 +11,13 @@ namespace inputfiles
 {
 
 
-teammember::teammember(std::string n, tCentiDay project, tCentiDay bau, tCentiDay overhead, const std::vector<leaverange> & l) : 
+teammember::teammember(std::string n, tCentiDay project, tCentiDay bau, tCentiDay overhead, const std::vector<leaverange> & l, const std::string c) : 
     mName(n), 
     mEFTProject(project), 
     mEFTBAU(bau),
     mEFTOverhead(overhead),
-    mLeave(l)
+    mLeave(l),
+    mComments(c)
     {
     }
 
@@ -55,7 +56,7 @@ void teams::load_teams()
 
     mMaxNameWidth = 0;
     std::vector<std::string> row;
-    while (c.getline(row, 6))
+    while (c.getline(row, 7))
         if (row[0].length() > 0)
         {
             unsigned int ndx = get_index_by_name(row[0]);
@@ -98,7 +99,9 @@ void teams::load_teams()
                 }
             }
 
-            this->at(ndx).mMembers.push_back(teammember(personname, EFTProject, EFTBAU, EFTOverhead, leave));
+            std::string comments = row[6];
+
+            this->at(ndx).mMembers.push_back(teammember(personname, EFTProject, EFTBAU, EFTOverhead, leave, comments));
         }
 
     // auto generate reference codes for the teams...
@@ -128,7 +131,7 @@ void teams::load_teams()
 
 void teams::save_teams_CSV(std::ostream &os) const
 {
-    os << R"-(Team,Person,"%EFT Projects","%EFT Other BAU","%EFT Overhead for Projects (mgmt, test)","Upcoming Leave (first + last day on leave)")-" << std::endl;
+    os << R"-(Team,Person,"%EFT Projects","%EFT Other BAU","%EFT Overhead for Projects (mgmt, test)","Upcoming Leave (first + last day on leave)","Commments")-" << std::endl;
 
     for (unsigned int teamNdx=0 ; teamNdx < this->size() ; ++teamNdx)
     {
@@ -139,7 +142,7 @@ void teams::save_teams_CSV(std::ostream &os) const
             for (auto & lv : m.getLeave())
                 leave += (leave.length()>0 ? ", " : "") + lv.getString();
 
-            std::vector<std::string> row = {t.mId, m.mName, S() << m.mEFTProject, S() << m.mEFTBAU, S() << m.mEFTOverhead, leave}; // don't include holidays.
+            std::vector<std::string> row = {t.mId, m.mName, S() << m.mEFTProject, S() << m.mEFTBAU, S() << m.mEFTOverhead, leave, m.mComments}; // don't include holidays.
             simplecsv::output(os, row);
             os << std::endl;
         }

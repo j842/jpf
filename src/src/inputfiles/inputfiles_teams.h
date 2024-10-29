@@ -13,10 +13,11 @@ namespace inputfiles
 class teammember
 {
     public:
-        teammember(std::string n, tCentiDay project, tCentiDay bau, tCentiDay overhead,const std::vector<leaverange> &  l);
+        teammember(std::string n, tCentiDay project, tCentiDay bau, tCentiDay overhead,const std::vector<leaverange> &  l, const std::string c);
             
         const std::string mName;
         const tCentiDay mEFTProject, mEFTBAU, mEFTOverhead;
+        const std::string mComments;
 
         const std::vector<leaverange> & getLeave() const;
         void advance(workdate newStart);
