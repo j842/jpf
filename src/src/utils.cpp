@@ -350,3 +350,63 @@ void recreate_Directory(std::string path)
     logdebug(S() << "Created directory: " << path);
 }
 
+
+
+
+///-------------------------
+/*
+Code below here is copyrighted:
+
+Copyright © Volker Diels-Grabsch
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+*/
+
+
+/* Escape a single character for LaTeX.
+ *      returns a string constant (not to be freed)
+ *      containing the character's replacement,
+ *      or NULL if the character doesn't need to be replaced.
+ */
+static const char *escape_latex_char(char c)
+{
+    switch (c) {
+        case '$':  return "\\$";
+        case '%':  return "\\%";
+        case '&':  return "\\&";
+        case '#':  return "\\#";
+        case '_':  return "\\_";
+        case '{':  return "\\{";
+        case '}':  return "\\}";
+        case '[':  return "{[}";
+        case ']':  return "{]}";
+        case '"':  return "{''}";
+        case '\\': return "\\textbackslash{}";
+        case '~':  return "\\textasciitilde{}";
+        case '<':  return "\\textless{}";
+        case '>':  return "\\textgreater{}";
+        case '^':  return "\\textasciicircum{}";
+        case '`':  return "{}`"; /* avoid ?` and !` */
+        case '\n': return "\\\\";
+        default:   return NULL;
+    }
+}
+
+/*! Escape a string for direct use in LaTeX.
+ */
+std::string latexesc(const std::string & istr)
+{
+    std::ostringstream oss;
+
+    /* calculate result length */
+    for (unsigned int i = 0; i<istr.length(); i++) {
+        const char *escaped_char = escape_latex_char(istr[i]);
+        if (escaped_char == NULL) {
+            oss << istr[i];
+        } else {
+            oss << escaped_char;
+        }
+    }
+    return oss.str();
+}

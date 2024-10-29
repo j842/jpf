@@ -152,5 +152,6 @@ std::string makecanonicalslash(const std::string & s);
 
 void recreate_Directory(std::string path);
 
+std::string latexesc(const std::string & istr);
 
 #endif

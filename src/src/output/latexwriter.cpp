@@ -153,17 +153,17 @@ void LatexWriter::outputrow(int n, const scheduler::scheduledproject &z, std::of
         << " & "
         << age
         << " & "
-        << (z.getTargetDate().isForever() ? "" :  z.getTargetDate().getStr_nice_short())
+        << latexesc(z.getTargetDate().isForever() ? "" :  z.getTargetDate().getStr_nice_short())
         << " & "
         << (late && scheduled ? "\\textcolor{red}{" : "")
-        << (scheduled ? z.mActualEnd.getStr_nice_short() : "")
+        << latexesc(scheduled ? z.mActualEnd.getStr_nice_short() : "")
         << (late && scheduled ? "}" : "")
         << " & "
-        << z.getName()
+        << latexesc(z.getName())
         << " & "
-        << z.getStatus()
+        << latexesc(z.getStatus())
         << " & "
-        << z.getDesc()
+        << latexesc(z.getDesc())
         << " \\\\ " 
         << std::endl;
 }
