@@ -4,7 +4,7 @@
 
 echo "--- Stopping JPF"
 name="jpf"
-docker ps -q --filter "name=$name" | xargs -r docker stop
+docker ps -q --filter "name=$name" | xargs -r docker kill
 until [ -n '$(docker ps -q --filter "name=$name")' ]
 do
     echo "Container still running... waiting..."
