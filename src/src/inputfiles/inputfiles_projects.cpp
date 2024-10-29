@@ -10,14 +10,23 @@ namespace inputfiles
 {
 
     project::project(std::string id, simpledate targetd, std::string status, std::string name, std::string desc, 
-                        eProjectType type, const cTags & tags) : 
-        mId(id), mTargetDate(targetd), mStatus(status), mName(name), mDescription(desc), mType(type), mTags(tags)
+                        eProjectType type, const cTags & tags, simpledate approvedd) : 
+        mId(id), mTargetDate(targetd), mStatus(status), mName(name), mDescription(desc), 
+        mType(type), mTags(tags), mApprovedDate(approvedd)
     {
     }
 
     projects::projects() : mMaxProjectNameWidth(0)
     {
         load_projects();
+    }
+
+    simpledate str2date_blankIsForever(const std::string & s)
+    {
+        simpledate sd;
+        if (s.length()==0) sd.setForever();
+        else sd = simpledate(s);
+        return sd;
     }
 
     void projects::load_projects()
@@ -29,13 +38,12 @@ namespace inputfiles
             TERMINATE("Could not open projects.csv!");
 
         std::vector<std::string> row;
-        while (c.getline(row, 7))
+        while (c.getline(row, 8))
         {
-            simpledate sd;
-            if (row[1].length()==0) sd.setForever(); 
-            else sd = simpledate(row[1]);
+            simpledate sd = str2date_blankIsForever(row[1]);
+            simpledate ad = str2date_blankIsForever(row[7]);
 
-            project p(row[0], sd, row[2], row[3], row[4], ProjectTypefromString(row[5]), cTags(row[6]));
+            project p(row[0], sd, row[2], row[3], row[4], ProjectTypefromString(row[5]), cTags(row[6]), ad);
 
             mMaxProjectNameWidth = std::max(mMaxProjectNameWidth, (unsigned int)p.getId().length());
             this->push_back(p);
@@ -44,7 +52,7 @@ namespace inputfiles
 
     void projects::save_projects_CSV(std::ostream &os) const
     {
-        os << R"(Project ID,TargetDate,Status,Project Name,Description,Type,Tags)" << std::endl;
+        os << R"(Project ID,TargetDate,Status,Project Name,Description,Type,Tags,ApprovedDate)" << std::endl;
 
         for (const auto &i : *this)
         {
@@ -56,6 +64,7 @@ namespace inputfiles
                 i.getDesc(),
                 ProjectTypetoString(i.getType()),
                 i.getTags().getAsString(),
+                i.getApprovedDate().getStr()
                 };
             simplecsv::output(os, row);
             os << std::endl;

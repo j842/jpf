@@ -56,6 +56,8 @@ class simpledate
         monthIndex getMonthIndex() const;
         simpledate getEndofMonth() const;
 
+        long daysFromToday() const;
+
     public:
         static bool isWeekend(const simpledate d);
         

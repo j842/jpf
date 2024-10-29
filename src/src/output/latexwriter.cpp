@@ -144,8 +144,14 @@ void LatexWriter::outputrow(int n, const scheduler::scheduledproject &z, std::of
 
     bool scheduled = z.mTotalDevCentiDays > 0.0;
 
+    std::string age;
+    if (!z.getApprovedDate().isForever())
+        age = (S()<<abs(z.getApprovedDate().daysFromToday()));
+
     ofs 
         << n
+        << " & "
+        << age
         << " & "
         << (z.getTargetDate().isForever() ? "" :  z.getTargetDate().getStr_nice_short())
         << " & "
@@ -174,14 +180,14 @@ R"END(
   caption = {)END" << title << R"END(},
   label = {tab:proj},
 ]{
-  colspec = {|p{0.025\linewidth} | p{0.08\linewidth} | p{0.08\linewidth} | p{0.2\linewidth} | p{0.2\linewidth} | p{0.275\linewidth}|},
+  colspec = {|p{0.025\linewidth} |p{0.025\linewidth} | p{0.0675\linewidth} | p{0.0675\linewidth} | p{0.2\linewidth} | p{0.2\linewidth} | p{0.275\linewidth}|},
   rowhead = 1,
   hlines,
   row{even} = {gray9},
   row{1} = {blue!30, font=\small\bfseries, c},
   column{1} = {r},
 } 
-\# & Business Target & Tech Complete & Project & Status/Notes & Description \\
+\# & Age (days) & Business Target & Tech Complete & Project & Status/Notes & Description \\
 )END";
 }
 

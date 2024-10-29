@@ -25,7 +25,7 @@ class project
 {
     public: 
         project(std::string id, simpledate targetd, std::string status, std::string name, std::string desc, 
-                eProjectType type, const cTags & tags);
+                eProjectType type, const cTags & tags, simpledate approvedd);
 
         const std::string & getId() const {return mId;}
         const simpledate getTargetDate() const {return mTargetDate;}
@@ -34,6 +34,7 @@ class project
         const std::string & getDesc() const {return mDescription;}
         const eProjectType & getType() const {return mType;}
         const cTags & getTags() const {return mTags;}
+        const simpledate getApprovedDate() const {return mApprovedDate;}
 
     private:
         const std::string mId;
@@ -43,6 +44,7 @@ class project
         const std::string mDescription;
         const eProjectType mType;
         const cTags mTags;
+        const simpledate mApprovedDate;
 };
 
 class projects : public std::vector<project>

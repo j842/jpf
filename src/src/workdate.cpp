@@ -184,6 +184,11 @@ simpledate simpledate::getEndofMonth() const
     return getGregorian().end_of_month();
 }
 
+long simpledate::daysFromToday() const
+{
+    return (mD-boost::gregorian::day_clock::local_day()).days();
+}
+
 bool simpledate::isWeekend(const simpledate d)
 {
     ASSERT(!d.isForever());
