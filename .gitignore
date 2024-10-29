@@ -11,7 +11,7 @@ _site/
 node_modules/
 .jekyll-cache
 
-docker/copy/temp/jpf
+docker/copy/temp/
 
 version.h
 
