@@ -1,6 +1,0 @@
-Project ID,TargetDate,Status,Project Name,Description,Type,Tags
-Webserver,23/9/2025,Not started,Webserver,Create a new webserver,BAU,Maintenance
-Android App,30/11/2025,In Progress,Android App,Android App to manage accounts,BAU,"Android,Maintenance"
-iPhone App,,Blocked on marketing,iPhone App,iPhone port of the Android app,New,Apple
-Desktop Client,,Need Dave from Taranaki to start project,Windows Desktop Client,Desktop client for managing accounts,New,
-Concrete Sculpture,,Waiting on concrete order to arrive,Enormous Concrete Sculpture,Support for customers who like concrete,New,Concrete

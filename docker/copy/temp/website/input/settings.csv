@@ -1,7 +1,0 @@
-Setting Name,Value,Description
-inputversion,17,Input file format version
-startdate,02/05/22,Start of scheduled period
-enddate,30/12/22,Last month to display in monthly graphs
-costperdevday,500,Cost per developer per day (including overheads)
-title,Demo Project Forecast,Title for reports
-loglevel,DEBUG,"Logging level (Debug, Info, Warning, or Error)"

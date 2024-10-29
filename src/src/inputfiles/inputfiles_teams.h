@@ -17,13 +17,15 @@ class teammember
             
         const std::string mName;
         const tCentiDay mEFTProject, mEFTBAU, mEFTOverhead;
-        const std::string mComments;
 
         const std::vector<leaverange> & getLeave() const;
         void advance(workdate newStart);
 
     private:
         std::vector<leaverange> mLeave;
+
+    public:
+        const std::string mComments;
 };
 
 class team

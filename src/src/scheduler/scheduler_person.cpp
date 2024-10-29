@@ -89,7 +89,7 @@ namespace scheduler
 
     // ------------------------------------------------------------------------------------------------------------
 
-    scheduledperson::scheduledperson(const teammember &m, const inputfiles::publicholidays &pubh) : teammember(m.mName, m.mEFTProject, m.mEFTBAU, m.mEFTOverhead, m.getLeave()),
+    scheduledperson::scheduledperson(const teammember &m, const inputfiles::publicholidays &pubh) : teammember(m.mName, m.mEFTProject, m.mEFTBAU, m.mEFTOverhead, m.getLeave(),m.mComments),
                                                                       mIntervals(m.mEFTProject)
     {
         for (auto & i : getLeave())
