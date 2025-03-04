@@ -66,7 +66,7 @@ private:
     const size_t mLimit = 1024 * 1024 * 5;
 };
 
-    FileStreamer g_FileStreamer;
+FileStreamer g_FileStreamer;
 
 void FileRotationLogSink(std::string s)
 {

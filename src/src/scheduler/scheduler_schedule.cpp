@@ -106,6 +106,9 @@ namespace scheduler
 
     void scheduler::_determinestart_and_dotask(unsigned int backlogitemNdx)
     {
+        if (backlogitemNdx<0 || backlogitemNdx>=mItems.size())
+            TERMINATE(S() << "Invalid backlog item index: " << backlogitemNdx);
+        
         auto &z = mItems[backlogitemNdx];
         // set start date based on EarliestStart
         z.mActualStart = z.mEarliestStart;

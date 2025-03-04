@@ -258,24 +258,27 @@ double str2positivedouble(std::string s)
 {
     if (s.length()==0)
         return 0;
-    double r = 0.0;
+
     try
     {
-        r = stod(s);
-    }
+        double r = stod(s);
+
+        if (r<0.0)
+            {
+            logerror("String has negative number, but required to be positive by str2positivedouble.");
+            return 0.0;
+            }
+
+        return r;    
+       }
     catch (const std::invalid_argument & e)
     {
+        return 0;
     }
     catch (const std::out_of_range & e)
     {
+        return 0;
     }
-
-    if (r<0.0)
-    {
-        logerror("String has negative number, but required to be positive by str2positivedouble.");
-        return 0.0;
-    }
-    return r;    
 }
 
 void streamReplace(std::string ifile, std::ostream &ofs, const std::map<std::string,std::string> & replacerules)
