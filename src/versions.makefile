@@ -1,6 +1,6 @@
 #---------------------------------
-JPF_VERSION   := 0.0.23
-JPF_RELEASE   := 009
+JPF_VERSION   := 0.0.24
+JPF_RELEASE   := 001
 INPUT_VERSION := 18
 #---------------------------------
 

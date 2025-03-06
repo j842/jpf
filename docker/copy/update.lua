@@ -1,13 +1,29 @@
---ngx.header.content_type = "text/html"
+-- Set headers for streaming response
+ngx.header.content_type = "text/html"
 
 local prog = require'resty.exec'.new('/tmp/exec.sock')
-prog.stdout = function(v)
-    ngx.print(v)
-    ngx.flush(true)
+
+-- Function to safely print and flush with invisible padding
+local function safe_print(str)
+    if str then
+        ngx.print(str .. '<!--' .. string.rep(' ', 1024) .. '-->') -- Invisible padding
+        ngx.flush(true)
+    end
 end
+
+prog.stdout = function(v)
+    safe_print(v)
+end
+
 prog.stderr = function(v)
-    ngx.print(v)
-    ngx.flush(true)
+    safe_print('<span style="color: red;">' .. v .. '</span>')
+end
+
+local function run_command(...)
+    local res, err = prog(...)
+    if err then
+        safe_print('<span style="color: red;">Error: ' .. err .. '</span>')
+    end
 end
 
 local function readAll(file)
@@ -24,8 +40,8 @@ ngx.say('<html><div style="white-space: pre; font-family: monospace;">')
 ngx.say('<hr/>')
 ngx.say('Copying Jekyll Template...')
 ngx.flush(true)
-prog('mkdir','-p','/jpftemp/input')
-prog('cp','-r','/website/template','/jpftemp')
+run_command('mkdir','-p','/jpftemp/input')
+run_command('cp','-r','/website/template','/jpftemp')
 
 -------------------------------------------------------------------------------
 
@@ -36,7 +52,7 @@ ngx.flush(true)
 local spreadsheet=readAll('/config/jpf.spreadsheet')
 ngx.say('Spreadsheet = '..spreadsheet)
 ngx.flush(true)
-prog('/root/.local/bin/gs-to-csv','-f','--service-account-credential-file','/config/jpf.credentials.json',spreadsheet,'.*','/jpftemp/input')
+run_command('/root/.local/bin/gs-to-csv','-f','--service-account-credential-file','/config/jpf.credentials.json',spreadsheet,'.*','/jpftemp/input')
 ngx.say('</div>')
 
 -------------------------------------------------------------------------------
@@ -44,14 +60,14 @@ ngx.say('</div>')
 ngx.say('<hr/>')
 ngx.say('Running jpf...')
 ngx.flush(true)
-prog('jpf','--html','/jpftemp')
+run_command('jpf','--html','/jpftemp')
 
 -------------------------------------------------------------------------------
 
 ngx.say('<hr/>')
 ngx.say('Copying Output...')
 ngx.flush(true)
-prog('cp','-r','/jpftemp/output','/var/www')
+run_command('cp','-r','/jpftemp/output','/var/www')
 
 -------------------------------------------------------------------------------
 
