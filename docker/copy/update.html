@@ -17,12 +17,6 @@
             max-height: 80vh;
             overflow-y: auto;
         }
-        .error {
-            color: red;
-        }
-        .success {
-            color: green;
-        }
     </style>
 </head>
 <body>
@@ -31,30 +25,41 @@
 
     <script>
         const output = document.getElementById('output');
+        let eventSource = null;
         
-        function appendMessage(message, isError = false) {
+        function appendMessage(message, color) {
             const div = document.createElement('div');
-            div.textContent = message;
-            div.className = isError ? 'error' : '';
+            div.innerHTML = message;
+            div.style.color = color;
             output.appendChild(div);
             output.scrollTop = output.scrollHeight;
         }
 
-        const eventSource = new EventSource('/update/stream');
-        
-        eventSource.onmessage = function(event) {
-            const data = JSON.parse(event.data);
-            if (data.error) {
-                appendMessage(data.error, true);
-            } else if (data.output) {
-                appendMessage(data.output);
-            }
-        };
+        function startEventSource() {
+            eventSource = new EventSource('/update/stream');
+            
+            eventSource.onmessage = function(event) {
+                const data = JSON.parse(event.data);
+                appendMessage(data.output, data.color);
+                
+                // Check for close message
+                if (data.close) {
+                    eventSource.close();
+                    eventSource = null;
+                }
+            };
 
-        eventSource.onerror = function(error) {
-            appendMessage('Connection error occurred. Please try again.', true);
-            eventSource.close();
-        };
+            eventSource.onerror = function(error) {
+                appendMessage('Connection error occurred. Please try again.', 'red');
+                if (eventSource) {
+                    eventSource.close();
+                    eventSource = null;
+                }
+            };
+        }
+
+        // Start the connection
+        startEventSource();
     </script>
 </body>
 </html> 

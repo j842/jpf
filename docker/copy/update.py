@@ -77,12 +77,12 @@ def stream_command_output(command):
         if output == '' and process.poll() is not None:
             break
         if output:
-            yield f"data: {json.dumps({'output': output.strip()})}\n\n"
+            yield f"data: {json.dumps({'output': output.strip(), 'color': 'black'})}\n\n"
     
     return_code = process.poll()
     if return_code != 0:
         error = process.stderr.read()
-        yield f"data: {json.dumps({'error': error})}\n\n"
+        yield f"data: {json.dumps({'output': error, 'color': 'red'})}\n\n"
 
 @app.get("/update")
 async def update(request: Request):
@@ -95,12 +95,13 @@ async def update_stream(request: Request):
         # Read spreadsheet ID
         spreadsheet = read_spreadsheet_id()
         if not spreadsheet:
-            yield f"data: {json.dumps({'error': 'Could not read spreadsheet ID'})}\n\n"
+            yield f"data: {json.dumps({'output': 'Could not read spreadsheet ID', 'color': 'red'})}\n\n"
+            yield f"data: {json.dumps({'output': '<br>Connection closed due to error.', 'color': 'red', 'close': True})}\n\n"
             return
 
         # Execute all commands in sequence
         for step in COMMANDS:
-            yield f"data: {json.dumps({'output': step['message']})}\n\n"
+            yield f"data: {json.dumps({'output': step['message'], 'color': 'blue'})}\n\n"
             
             for command in step['commands']:
                 # Replace spreadsheet_id placeholder if present
@@ -111,13 +112,15 @@ async def update_stream(request: Request):
                     try:
                         subprocess.run(cmd, check=True)
                     except subprocess.CalledProcessError as e:
-                        yield f"data: {json.dumps({'error': f'Command failed: {e}'})}\n\n"
+                        yield f"data: {json.dumps({'output': f'Command failed: {e}', 'color': 'red'})}\n\n"
+                        yield f"data: {json.dumps({'output': '<br>Connection closed due to error.', 'color': 'red', 'close': True})}\n\n"
                         return
                 else:  # default to stream
                     for output in stream_command_output(cmd):
                         yield output
 
-        yield f"data: {json.dumps({'output': 'SUCCESS: Website has been regenerated successfully!'})}\n\n"
+        yield f"data: {json.dumps({'output': 'SUCCESS: Website has been regenerated successfully!', 'color': 'green'})}\n\n"
+        yield f"data: {json.dumps({'output': '<br>All done.', 'color': 'green', 'close': True})}\n\n"
 
     return StreamingResponse(
         event_generator(),
