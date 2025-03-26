@@ -1,11 +1,13 @@
-from fastapi import FastAPI, Request
-from fastapi.responses import StreamingResponse, FileResponse
+from fastapi import FastAPI, WebSocket, WebSocketDisconnect
+from fastapi.responses import FileResponse
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 import subprocess
 import json
 import os
 import time
+import asyncio
+import sys
 
 app = FastAPI()
 
@@ -61,47 +63,67 @@ def read_spreadsheet_id():
     except Exception as e:
         return None
 
-def stream_command_output(command):
+async def send_message(websocket: WebSocket, message: str, color: str, close: bool = False):
+    """Send a message to the client via WebSocket."""
+    data = {
+        'output': message,
+        'color': color
+    }
+    if close:
+        data['close'] = True
+    await websocket.send_json(data)
+    # Force flush the message
+    await websocket.send_text("")
+
+async def stream_command_output(command, websocket: WebSocket):
     """Execute a command and stream its output in real-time."""
-    process = subprocess.Popen(
-        command,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
-        text=True,
-        bufsize=1,
-        universal_newlines=True
+    process = await asyncio.create_subprocess_exec(
+        *command,
+        stdout=asyncio.subprocess.PIPE,
+        stderr=asyncio.subprocess.PIPE,
+        env={**os.environ, 'PYTHONUNBUFFERED': '1'}
     )
-    
-    while True:
-        output = process.stdout.readline()
-        if output == '' and process.poll() is not None:
-            break
-        if output:
-            yield f"data: {json.dumps({'output': output.strip(), 'color': 'black'})}\n\n"
-    
-    return_code = process.poll()
+
+    async def read_stream(stream, color):
+        while True:
+            line = await stream.readline()
+            if not line:
+                break
+            line = line.decode().strip()
+            if line:
+                await send_message(websocket, line, color)
+
+    # Read stdout and stderr concurrently
+    await asyncio.gather(
+        read_stream(process.stdout, 'black'),
+        read_stream(process.stderr, 'red')
+    )
+
+    # Wait for the process to complete
+    return_code = await process.wait()
     if return_code != 0:
-        error = process.stderr.read()
-        yield f"data: {json.dumps({'output': error, 'color': 'red'})}\n\n"
+        await send_message(websocket, f"Command failed with return code {return_code}", 'red')
 
 @app.get("/update")
-async def update(request: Request):
+async def update():
     """Serve the update.html page."""
     return FileResponse("/var/www/output/html/update.html")
 
-@app.get("/update/stream")
-async def update_stream(request: Request):
-    async def event_generator():
+@app.websocket("/update/ws")
+async def websocket_endpoint(websocket: WebSocket):
+    await websocket.accept()
+    
+    try:
         # Read spreadsheet ID
         spreadsheet = read_spreadsheet_id()
         if not spreadsheet:
-            yield f"data: {json.dumps({'output': 'Could not read spreadsheet ID', 'color': 'red'})}\n\n"
-            yield f"data: {json.dumps({'output': '<br>Connection closed due to error.', 'color': 'red', 'close': True})}\n\n"
+            await send_message(websocket, 'Could not read spreadsheet ID', 'red')
+            await send_message(websocket, '<br>Connection closed due to error.', 'red', close=True)
             return
 
         # Execute all commands in sequence
         for step in COMMANDS:
-            yield f"data: {json.dumps({'output': step['message'], 'color': 'blue'})}\n\n"
+            await send_message(websocket, step['message'], 'blue')
             
             for command in step['commands']:
                 # Replace spreadsheet_id placeholder if present
@@ -110,22 +132,33 @@ async def update_stream(request: Request):
                 
                 if command.get('type') == 'run':
                     try:
-                        subprocess.run(cmd, check=True)
+                        process = await asyncio.create_subprocess_exec(
+                            *cmd,
+                            stdout=asyncio.subprocess.PIPE,
+                            stderr=asyncio.subprocess.PIPE
+                        )
+                        await process.wait()
+                        if process.returncode != 0:
+                            raise subprocess.CalledProcessError(process.returncode, cmd)
                     except subprocess.CalledProcessError as e:
-                        yield f"data: {json.dumps({'output': f'Command failed: {e}', 'color': 'red'})}\n\n"
-                        yield f"data: {json.dumps({'output': '<br>Connection closed due to error.', 'color': 'red', 'close': True})}\n\n"
+                        await send_message(websocket, f'Command failed: {e}', 'red')
+                        await send_message(websocket, '<br>Connection closed due to error.', 'red', close=True)
                         return
                 else:  # default to stream
-                    for output in stream_command_output(cmd):
-                        yield output
+                    await stream_command_output(cmd, websocket)
 
-        yield f"data: {json.dumps({'output': 'SUCCESS: Website has been regenerated successfully!', 'color': 'green'})}\n\n"
-        yield f"data: {json.dumps({'output': '<br>All done.', 'color': 'green', 'close': True})}\n\n"
+        await send_message(websocket, 'SUCCESS: Website has been regenerated successfully!', 'green')
+        await send_message(websocket, '<br>All done.', 'green', close=True)
 
-    return StreamingResponse(
-        event_generator(),
-        media_type="text/event-stream"
-    )
+    except WebSocketDisconnect:
+        print("Client disconnected")
+    except Exception as e:
+        print(f"Error: {e}")
+        try:
+            await send_message(websocket, f'Error: {str(e)}', 'red')
+            await send_message(websocket, '<br>Connection closed due to error.', 'red', close=True)
+        except:
+            pass
 
 if __name__ == "__main__":
     import uvicorn

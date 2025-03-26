@@ -21,7 +21,7 @@ RUN python3 -m venv /opt/venv
 ENV PATH="/opt/venv/bin:$PATH"
 
 # Install Python dependencies in virtual environment
-RUN pip3 install fastapi uvicorn
+RUN pip3 install "uvicorn[standard]" fastapi websockets
 
 # Install Nginx
 RUN apt-get update && \
