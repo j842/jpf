@@ -21,7 +21,8 @@ app.add_middleware(
 )
 
 # Mount static files
-app.mount("/static", StaticFiles(directory="/var/www/output/html"), name="static")
+#app.mount("/static", StaticFiles(directory="/var/www/static"), name="static")
+#app.mount("/output", StaticFiles(directory="/var/www/output/html"), name="output")
 
 # Define all commands to be run
 COMMANDS = [
@@ -107,7 +108,7 @@ async def stream_command_output(command, websocket: WebSocket):
 @app.get("/update")
 async def update():
     """Serve the update.html page."""
-    return FileResponse("/var/www/output/html/update.html")
+    return FileResponse("/var/www/static/update.html")
 
 @app.websocket("/update/ws")
 async def websocket_endpoint(websocket: WebSocket):
