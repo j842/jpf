@@ -40,7 +40,7 @@
             output.scrollTop = output.scrollHeight;
         }
 
-        const eventSource = new EventSource('/update');
+        const eventSource = new EventSource('/update/stream');
         
         eventSource.onmessage = function(event) {
             const data = JSON.parse(event.data);

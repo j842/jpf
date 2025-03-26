@@ -1,6 +1,7 @@
 from fastapi import FastAPI, Request
-from fastapi.responses import StreamingResponse
+from fastapi.responses import StreamingResponse, FileResponse
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 import subprocess
 import json
 import os
@@ -16,6 +17,9 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Mount static files
+app.mount("/static", StaticFiles(directory="/var/www/output/html"), name="static")
 
 # Define all commands to be run
 COMMANDS = [
@@ -82,6 +86,11 @@ def stream_command_output(command):
 
 @app.get("/update")
 async def update(request: Request):
+    """Serve the update.html page."""
+    return FileResponse("/var/www/output/html/update.html")
+
+@app.get("/update/stream")
+async def update_stream(request: Request):
     async def event_generator():
         # Read spreadsheet ID
         spreadsheet = read_spreadsheet_id()
