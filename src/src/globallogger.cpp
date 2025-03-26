@@ -170,22 +170,22 @@ void logverbatim(eLogLevel level, std::string s)
     switch (level)
     {
     case kLDEBUG:
-        std::cout << colours::cDebug << s << colours::cNoColour;
+        std::cout << colours::cDebug << s << colours::cNoColour << std::flush;
         break;
     case kLINFO:
-        std::cout << colours::cInfo << s << colours::cNoColour;
+        std::cout << colours::cInfo << s << colours::cNoColour << std::flush;
         break;
 
     case kLWARN:
-        std::cerr << colours::cWarning << s << colours::cNoColour;
+        std::cerr << colours::cWarning << s << colours::cNoColour << std::flush;
         break;
 
     case kLERROR:
-        std::cerr << colours::cError << s << colours::cNoColour;
+        std::cerr << colours::cError << s << colours::cNoColour << std::flush;
         break;
 
     default:
-        std::cerr << colours::cDefault << s << colours::cNoColour;
+        std::cerr << colours::cDefault << s << colours::cNoColour << std::flush;
         break;
     }
 }
