@@ -1,12 +1,8 @@
 #!/bin/bash
 
+# Start Nginx in the background
+nginx
 
-sockexec /tmp/exec.sock &
-chown nobody:www-data /tmp/exec.sock
-chmod a+rw /tmp/exec.sock
-
-resty /lua/update.lua
-
-#nginx -g "daemon off;"
-
-/usr/local/openresty/bin/openresty -g "daemon off;"
+# Start Python FastAPI server in the foreground
+# This will keep the container running and show logs
+python3 /update.py

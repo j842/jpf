@@ -5,13 +5,7 @@ RUN echo 'APT::Install-Recommends "0";' >> /etc/apt/apt.conf.d/00-docker
 
 RUN apt-get -y update && \
     apt-get install -y wget gnupg ca-certificates lsb-release \
-    python3 python3-pip pipx ruby-full build-essential expect texlive-latex-base texlive-latex-extra luarocks tzdata && \
-    rm -rf /var/lib/apt/lists/*
-
-RUN wget -O - https://openresty.org/package/pubkey.gpg | gpg --dearmor -o /usr/share/keyrings/openresty.gpg
-RUN echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/openresty.gpg] http://openresty.org/package/ubuntu $(lsb_release -sc) main" | tee /etc/apt/sources.list.d/openresty.list > /dev/null
-RUN apt-get -y update && \
-    apt-get install -y openresty openresty-resty && \
+    python3 python3-pip python3-venv pipx ruby-full build-essential expect texlive-latex-base texlive-latex-extra tzdata && \
     rm -rf /var/lib/apt/lists/*
 
 RUN pipx ensurepath
@@ -22,16 +16,21 @@ RUN echo 'export GEM_HOME="$HOME/gems"' >> ~/.bashrc
 RUN echo 'export PATH="$HOME/gems/bin:$PATH"' >> ~/.bashrc
 RUN MAKE="make -j $(nproc)" gem install jekyll bundler --no-document
 
-RUN luarocks install lua-resty-exec
+# Set up Python virtual environment
+RUN python3 -m venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
 
-COPY --chown=755 copy/sockexec /usr/bin/sockexec
+# Install Python dependencies in virtual environment
+RUN pip3 install fastapi uvicorn
 
-COPY copy/nginx-jpf.conf /usr/local/openresty/nginx/conf/nginx.conf
+# Install Nginx
+RUN apt-get update && \
+    apt-get install -y nginx && \
+    rm -rf /var/lib/apt/lists/*
 
-RUN mkdir /lua
-COPY --chmod=755 copy/update.lua /lua
+COPY copy/nginx-jpf.conf /etc/nginx/nginx.conf
 
-RUN  mkdir /config && chmod 755 /config && \
+RUN mkdir /config && chmod 755 /config && \
      mkdir /jpftemp && chmod 777 /jpftemp && \
      mkdir -p /var/www && chmod -R 777 /var/www && \
      chmod 777 /tmp
@@ -41,7 +40,8 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 COPY --chmod=755 copy/temp/website /website
 COPY --chmod=755 copy/temp/jpf /usr/bin/jpf
-
+COPY --chmod=755 copy/update.py /update.py
+COPY --chmod=644 copy/update.html /var/www/output/html/update.html
 
 EXPOSE 80
 

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>JPF Update Progress</title>
+    <style>
+        body {
+            font-family: monospace;
+            margin: 20px;
+            background-color: #f5f5f5;
+        }
+        #output {
+            background-color: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            white-space: pre-wrap;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        .error {
+            color: red;
+        }
+        .success {
+            color: green;
+        }
+    </style>
+</head>
+<body>
+    <h1>JPF Update Progress</h1>
+    <div id="output"></div>
+
+    <script>
+        const output = document.getElementById('output');
+        
+        function appendMessage(message, isError = false) {
+            const div = document.createElement('div');
+            div.textContent = message;
+            div.className = isError ? 'error' : '';
+            output.appendChild(div);
+            output.scrollTop = output.scrollHeight;
+        }
+
+        const eventSource = new EventSource('/update');
+        
+        eventSource.onmessage = function(event) {
+            const data = JSON.parse(event.data);
+            if (data.error) {
+                appendMessage(data.error, true);
+            } else if (data.output) {
+                appendMessage(data.output);
+            }
+        };
+
+        eventSource.onerror = function(error) {
+            appendMessage('Connection error occurred. Please try again.', true);
+            eventSource.close();
+        };
+    </script>
+</body>
+</html> 
