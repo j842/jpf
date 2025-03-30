@@ -72,19 +72,6 @@
             background: rgba(255, 255, 255, 0.4);
             z-index: 999;
         }
-        #play-prompt {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(0, 0, 0, 0.8);
-            color: white;
-            padding: 20px;
-            border-radius: 10px;
-            text-align: center;
-            z-index: 1002;
-            display: none;
-        }
         #back-button {
             display: none;
             margin-top: 20px;
@@ -112,23 +99,15 @@
         <div class="spinner"></div>
         <div class="spinner-text">Updating website...</div>
     </div>
-    <div id="play-prompt">Click anywhere to start music</div>
-    <audio id="background-music" loop>
-        <source src="/static/background.mp3" type="audio/mpeg">
-        Your browser does not support the audio element.
-    </audio>
 
     <script>
         const output = document.getElementById('output');
         const debug = document.getElementById('debug');
         const spinner = document.getElementById('spinner');
         const overlay = document.getElementById('overlay');
-        const music = document.getElementById('background-music');
-        const playPrompt = document.getElementById('play-prompt');
         const backButton = document.getElementById('back-button');
         let ws = null;
         let lastMessageTime = Date.now();
-        let musicStarted = false;
         let updateCompleted = false;
         
         function showSpinner() {
@@ -139,25 +118,6 @@
         function hideSpinner() {
             spinner.style.display = 'none';
             overlay.style.display = 'none';
-        }
-
-        function startMusic() {
-            if (!musicStarted && !updateCompleted) {
-                music.play().then(() => {
-                    musicStarted = true;
-                    playPrompt.style.display = 'none';
-                }).catch(error => {
-                    console.log('Failed to start music:', error);
-                    playPrompt.style.display = updateCompleted ? 'none' : 'block';
-                });
-            }
-        }
-
-        function stopMusic() {
-            music.pause();
-            music.currentTime = 0;
-            musicStarted = false;
-            playPrompt.style.display = 'none';
         }
         
         function logDebug(msg) {
@@ -208,9 +168,6 @@
                             logDebug('Closing connection');
                             hideSpinner();
                             updateCompleted = true;
-                            stopMusic();
-                            document.removeEventListener('click', startMusic);
-                            playPrompt.style.display = 'none';
                             ws.close();
                             ws = null;
                         }
@@ -224,9 +181,7 @@
                 logDebug('Connection error');
                 hideSpinner();
                 updateCompleted = true;
-                stopMusic();
                 appendMessage('Connection error occurred. Please try again.', 'red');
-                document.removeEventListener('click', startMusic);
                 if (ws) {
                     ws.close();
                     ws = null;
@@ -237,20 +192,11 @@
                 logDebug('Connection closed');
                 hideSpinner();
                 updateCompleted = true;
-                stopMusic();
-                playPrompt.style.display = 'none';
-                document.removeEventListener('click', startMusic);
                 if (ws) {
                     ws = null;
                 }
             };
         }
-
-        // Add click handler to start music
-        document.addEventListener('click', startMusic, { once: true });
-        
-        // Show play prompt initially
-        playPrompt.style.display = 'block';
 
         // Start the connection
         startWebSocket();
@@ -258,8 +204,6 @@
         // If user navigates away and comes back after completion
         if (sessionStorage.getItem('updateCompleted') === 'true') {
             updateCompleted = true;
-            playPrompt.style.display = 'none';
-            document.removeEventListener('click', startMusic);
             backButton.style.display = 'block';
         }
         
