@@ -39,10 +39,10 @@ ENV TZ=Pacific/Auckland
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 COPY --chmod=755 copy/temp/website /website
-COPY --chmod=755 copy/static/ /website/static/
 COPY --chmod=755 copy/favicon/ /website/favicon/
 COPY --chmod=755 copy/temp/jpf /usr/bin/jpf
 COPY --chmod=755 copy/update.py /jpf/update.py
+COPY --chmod=755 copy/update.html /website/static/update.html
 
 EXPOSE 80
 
