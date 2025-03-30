@@ -2,6 +2,10 @@
 <html>
 <head>
     <title>JPF Update Progress</title>
+    <!-- Add no-cache meta tags -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <style>
         body {
             font-family: monospace;
@@ -158,8 +162,9 @@
                         const data = JSON.parse(event.data);
                         appendMessage(data.output, data.color);
                         
-                        // Check for success message
-                        if (data.output && data.output.includes('SUCCESS')) {
+                        // Only show success button when specifically receiving a SUCCESS message
+                        // and also make sure it's the final success message, not just any line that includes "SUCCESS"
+                        if (data.output && data.output.startsWith('SUCCESS:')) {
                             backButton.style.display = 'block';
                         }
                         
@@ -201,18 +206,13 @@
         // Start the connection
         startWebSocket();
         
-        // If user navigates away and comes back after completion
-        if (sessionStorage.getItem('updateCompleted') === 'true') {
-            updateCompleted = true;
-            backButton.style.display = 'block';
-        }
+        // Reset button state initially - ensure it's completely hidden until update completes
+        backButton.style.display = 'none';
         
-        // Set update completed status when closing connection
-        window.addEventListener('beforeunload', function() {
-            if (updateCompleted) {
-                sessionStorage.setItem('updateCompleted', 'true');
-            }
-        });
+        // Remove all session storage functionality
+        sessionStorage.removeItem('updateCompleted');
+        
+        // Remove beforeunload event listener that was storing state
     </script>
 </body>
 </html> 

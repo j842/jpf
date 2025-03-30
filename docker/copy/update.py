@@ -8,6 +8,7 @@ import os
 import time
 import asyncio
 import sys
+from starlette.responses import Response
 
 app = FastAPI()
 
@@ -107,8 +108,12 @@ async def stream_command_output(command, websocket: WebSocket):
 
 @app.get("/update")
 async def update():
-    """Serve the update.html page."""
-    return FileResponse("/website/static/update.html")
+    """Serve the update.html page with no-cache headers."""
+    response = FileResponse("/website/static/update.html")
+    response.headers["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0"
+    response.headers["Pragma"] = "no-cache"
+    response.headers["Expires"] = "0"
+    return response
 
 @app.websocket("/update/ws")
 async def websocket_endpoint(websocket: WebSocket):
