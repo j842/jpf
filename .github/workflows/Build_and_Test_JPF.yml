@@ -6,7 +6,7 @@ on:
     branches: [ main ]
 jobs:
   Build_and_Test_JPF:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     steps:
     - name: Checkout
       uses: actions/checkout@v4
@@ -17,7 +17,7 @@ jobs:
     - name: Update Gem
       run: gem update --system
     - name: install prereqs
-      run: sudo apt install build-essential libboost-date-time-dev libcppunit-dev zlib1g-dev pdflatex
+      run: sudo apt install wget gnupg ca-certificates lsb-release python3 python3-pip python3-venv pipx ruby-full build-essential expect texlive-latex-base texlive-latex-extra tzdata libboost-date-time-dev libcppunit-dev zlib1g-dev pdflatex
     - name: Install Jekyll
       run: gem install jekyll bundler --no-document
     - name: make
