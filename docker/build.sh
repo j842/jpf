@@ -1,5 +1,6 @@
 #!/bin/bash
 SCRIPTDIR=$( dirname "$(readlink -f "$0")" )
+TEMPLATEDIR="${SCRIPTDIR}/copy/temp/website/template"
 GROUPID=$(id -g)
 
 function showvar {
@@ -26,9 +27,13 @@ docker run --entrypoint "/bin/bash" --rm \
   -v ${SCRIPTDIR}/../:/code -it j842/jpfbuild \
   -c "chown -R ${UID}:${GROUPID} /code/src/build"
 
+echo "------------------------------------------------------------------"
+echo "                    COPYING files to temp"
+echo "------------------------------------------------------------------"
 
 cp "${SCRIPTDIR}/../src/build/jpf" "${SCRIPTDIR}/copy/temp/"
 cp -r "${SCRIPTDIR}/../website" "${SCRIPTDIR}/copy/temp/"
+cp ${TEMPLATEDIR}/index_docker.html ${TEMPLATEDIR}/index.html
 
 echo "------------------------------------------------------------------"
 echo "                    BUILDING jpf image ${JPF_VERSION}"

@@ -85,11 +85,27 @@
             z-index: 1002;
             display: none;
         }
+        #back-button {
+            display: none;
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #00bfff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+        }
+        #back-button:hover {
+            background-color: #0099cc;
+        }
     </style>
 </head>
 <body>
     <h1>JPF Update Progress</h1>
     <div id="output"></div>
+    <button id="back-button" onclick="window.location.href='/index.html'">Back to Homepage</button>
     <div id="debug"></div>
     <div id="overlay" class="overlay"></div>
     <div id="spinner">
@@ -109,9 +125,11 @@
         const overlay = document.getElementById('overlay');
         const music = document.getElementById('background-music');
         const playPrompt = document.getElementById('play-prompt');
+        const backButton = document.getElementById('back-button');
         let ws = null;
         let lastMessageTime = Date.now();
         let musicStarted = false;
+        let updateCompleted = false;
         
         function showSpinner() {
             spinner.style.display = 'block';
@@ -124,7 +142,7 @@
         }
 
         function startMusic() {
-            if (!musicStarted) {
+            if (!musicStarted && !updateCompleted) {
                 music.play().then(() => {
                     musicStarted = true;
                     playPrompt.style.display = 'none';
@@ -139,7 +157,7 @@
             music.pause();
             music.currentTime = 0;
             musicStarted = false;
-            playPrompt.style.display = 'block';
+            playPrompt.style.display = updateCompleted ? 'none' : 'block';
         }
         
         function logDebug(msg) {
@@ -178,11 +196,18 @@
                 const data = JSON.parse(event.data);
                 appendMessage(data.output, data.color);
                 
+                // Check for success message
+                if (data.output && data.output.includes('SUCCESS')) {
+                    backButton.style.display = 'block';
+                }
+                
                 // Check for close message
                 if (data.close) {
                     logDebug('Closing connection');
                     hideSpinner();
+                    updateCompleted = true;
                     stopMusic();
+                    document.removeEventListener('click', startMusic);
                     ws.close();
                     ws = null;
                 }
@@ -191,8 +216,10 @@
             ws.onerror = function(error) {
                 logDebug('Connection error');
                 hideSpinner();
+                updateCompleted = true;
                 stopMusic();
                 appendMessage('Connection error occurred. Please try again.', 'red');
+                document.removeEventListener('click', startMusic);
                 if (ws) {
                     ws.close();
                     ws = null;
@@ -202,8 +229,10 @@
             ws.onclose = function() {
                 logDebug('Connection closed');
                 hideSpinner();
+                updateCompleted = true;
                 stopMusic();
                 playPrompt.style.display = 'none';
+                document.removeEventListener('click', startMusic);
                 if (ws) {
                     ws = null;
                 }

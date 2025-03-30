@@ -17,7 +17,7 @@ jobs:
     - name: Update Gem
       run: gem update --system
     - name: install prereqs
-      run: sudo apt install build-essential libboost-date-time-dev libcppunit-dev zlib1g-dev
+      run: sudo apt install build-essential libboost-date-time-dev libcppunit-dev zlib1g-dev pdflatex
     - name: Install Jekyll
       run: gem install jekyll bundler --no-document
     - name: make
