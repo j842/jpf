@@ -148,7 +148,7 @@
                     playPrompt.style.display = 'none';
                 }).catch(error => {
                     console.log('Failed to start music:', error);
-                    playPrompt.style.display = 'block';
+                    playPrompt.style.display = updateCompleted ? 'none' : 'block';
                 });
             }
         }
@@ -157,7 +157,7 @@
             music.pause();
             music.currentTime = 0;
             musicStarted = false;
-            playPrompt.style.display = updateCompleted ? 'none' : 'block';
+            playPrompt.style.display = 'none';
         }
         
         function logDebug(msg) {
@@ -193,23 +193,30 @@
             
             ws.onmessage = function(event) {
                 logDebug('Message received');
-                const data = JSON.parse(event.data);
-                appendMessage(data.output, data.color);
-                
-                // Check for success message
-                if (data.output && data.output.includes('SUCCESS')) {
-                    backButton.style.display = 'block';
-                }
-                
-                // Check for close message
-                if (data.close) {
-                    logDebug('Closing connection');
-                    hideSpinner();
-                    updateCompleted = true;
-                    stopMusic();
-                    document.removeEventListener('click', startMusic);
-                    ws.close();
-                    ws = null;
+                try {
+                    if (event.data && event.data.trim() !== '') {
+                        const data = JSON.parse(event.data);
+                        appendMessage(data.output, data.color);
+                        
+                        // Check for success message
+                        if (data.output && data.output.includes('SUCCESS')) {
+                            backButton.style.display = 'block';
+                        }
+                        
+                        // Check for close message
+                        if (data.close) {
+                            logDebug('Closing connection');
+                            hideSpinner();
+                            updateCompleted = true;
+                            stopMusic();
+                            document.removeEventListener('click', startMusic);
+                            playPrompt.style.display = 'none';
+                            ws.close();
+                            ws = null;
+                        }
+                    }
+                } catch (error) {
+                    console.error('Error parsing WebSocket message:', error, event.data);
                 }
             };
 
@@ -247,6 +254,21 @@
 
         // Start the connection
         startWebSocket();
+        
+        // If user navigates away and comes back after completion
+        if (sessionStorage.getItem('updateCompleted') === 'true') {
+            updateCompleted = true;
+            playPrompt.style.display = 'none';
+            document.removeEventListener('click', startMusic);
+            backButton.style.display = 'block';
+        }
+        
+        // Set update completed status when closing connection
+        window.addEventListener('beforeunload', function() {
+            if (updateCompleted) {
+                sessionStorage.setItem('updateCompleted', 'true');
+            }
+        });
     </script>
 </body>
 </html> 

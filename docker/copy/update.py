@@ -21,7 +21,7 @@ app.add_middleware(
 )
 
 # Mount static files
-#app.mount("/static", StaticFiles(directory="/var/www/static"), name="static")
+#app.mount("/static", StaticFiles(directory="/website/static"), name="static")
 #app.mount("/output", StaticFiles(directory="/var/www/output/html"), name="output")
 
 # Define all commands to be run
@@ -73,8 +73,8 @@ async def send_message(websocket: WebSocket, message: str, color: str, close: bo
     if close:
         data['close'] = True
     await websocket.send_json(data)
-    # Force flush the message
-    await websocket.send_text("")
+    # Remove the empty text message that's causing JSON parse errors
+    # await websocket.send_text("")
 
 async def stream_command_output(command, websocket: WebSocket):
     """Execute a command and stream its output in real-time."""
@@ -108,7 +108,7 @@ async def stream_command_output(command, websocket: WebSocket):
 @app.get("/update")
 async def update():
     """Serve the update.html page."""
-    return FileResponse("/var/www/static/update.html")
+    return FileResponse("/website/static/update.html")
 
 @app.websocket("/update/ws")
 async def websocket_endpoint(websocket: WebSocket):

@@ -33,17 +33,16 @@ COPY copy/nginx-jpf.conf /etc/nginx/nginx.conf
 RUN mkdir /config && chmod 755 /config && \
      mkdir /jpftemp && chmod 777 /jpftemp && \
      mkdir -p /var/www && chmod -R 777 /var/www && \
-     mkdir -p /var/www/static && chmod 777 /var/www/static && \
      chmod 777 /tmp
 
 ENV TZ=Pacific/Auckland
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 COPY --chmod=755 copy/temp/website /website
+COPY --chmod=755 copy/static/ /website/static/
+COPY --chmod=755 copy/favicon/ /website/favicon/
 COPY --chmod=755 copy/temp/jpf /usr/bin/jpf
 COPY --chmod=755 copy/update.py /jpf/update.py
-COPY --chmod=644 copy/update.html /var/www/static/update.html
-COPY --chmod=644 copy/background.mp3 /var/www/static/background.mp3
 
 EXPOSE 80
 
